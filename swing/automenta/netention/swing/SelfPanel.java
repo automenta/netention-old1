@@ -58,15 +58,26 @@ public class SelfPanel extends JPanel {
 
         JMenuBar menubar = new JMenuBar();
 
-        JMenu newMenu = new JMenu("New");
+        JMenu newMenu = new JMenu("Add");
         {
             JMenuItem newReal = new JMenuItem("Real...");
             newMenu.add(newReal);
             JMenuItem newImaginary = new JMenuItem("Imaginary...");
             newMenu.add(newImaginary);
+
+            newMenu.addSeparator();
+
+            JMenuItem newPattern = new JMenuItem("Pattern...");
+            newMenu.add(newPattern);
         }
 
         JMenu netMenu = new JMenu("Network");
+        {
+            JMenuItem load = new JMenuItem("Import...");
+            netMenu.add(load);
+            JMenuItem save = new JMenuItem("Export...");
+            netMenu.add(save);
+        }
 
         JMenu viewMenu = new JMenu("View");
 
@@ -89,7 +100,7 @@ public class SelfPanel extends JPanel {
         contentPanel = new JPanel(new BorderLayout());
         content.setRightComponent(new JScrollPane(contentPanel));
 
-        content.setDividerLocation(0.3);
+        content.setDividerLocation(0.45);
 
         add(content, BorderLayout.CENTER);
 
@@ -135,16 +146,16 @@ public class SelfPanel extends JPanel {
             d1.addProperty("numWheels", new IntegerIs(4));
             d1.addProperty("manufacturer", new StringIs("myself"));
             d1.addProperty("wheelRadius", new RealIs(16.0));
-            d1.addProperty("anotherObject", new NodeIs(d2.getID()));
             d1.addProperty("hasKickStand", new BoolIs(true));
+            d1.addProperty("anotherObject", new NodeIs(d2.getID()));
         }
 
         {
             d2.addProperty("numWheels", new IntegerEquals(4));
             d2.addProperty("manufacturer", new StringEquals("myself"));
             d2.addProperty("wheelRadius", new RealEquals(16.0));
-            d2.addProperty("anotherObject", new NodeEquals(d1.getID()));
             d2.addProperty("hasKickStand", new BoolEquals(true));
+            d2.addProperty("anotherObject", new NodeEquals(d1.getID()));
         }
         
         self.addDetail(d1);

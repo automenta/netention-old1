@@ -5,6 +5,7 @@
 package automenta.netention.swing.widget;
 
 import automenta.netention.Detail;
+import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
@@ -18,11 +19,17 @@ import automenta.netention.value.IntProp;
 import automenta.netention.value.RealProp;
 import automenta.netention.value.StringProp;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 
 /**
  * Displays a detail and its links for view/edit
@@ -38,6 +45,27 @@ public class DetailEditPanel extends JPanel {
     private Detail detail;
     private final Self self;
     private boolean editable;
+    private final JSplitPane contentSplit;
+    private final DetailLinksPanel linksPanel;
+    private final DetailMenuBar menuBar;
+
+    protected class DetailMenuBar extends JMenuBar {
+
+        public DetailMenuBar() {
+            super();
+        }
+
+
+        protected void refresh() {
+            removeAll();
+            for (String pid : detail.getPatterns()) {
+                Pattern p = self.getPatterns().get(pid);
+                JMenu j = new JMenu(p.getID());
+                //TODO add props
+                add(j);
+            }
+        }
+    }
 
     public DetailEditPanel(Self s, Detail d, boolean editable) {
         super(new GridBagLayout());
@@ -53,16 +81,29 @@ public class DetailEditPanel extends JPanel {
         gc.anchor = gc.NORTHWEST;
         gc.gridx = gc.gridy = 1;
 
+        menuBar = new DetailMenuBar();
+        
         JPanel header = new JPanel(new BorderLayout());
         header.add(new JScaledLabel(d.getName(), 2.5f), BorderLayout.NORTH);
+        header.add(menuBar, BorderLayout.SOUTH);
         add(header, gc);
 
+        
         gc.gridy++;
         gc.weighty = 1.0;
-        gc.fill = gc.HORIZONTAL;
+        gc.fill = gc.BOTH;
+
+        contentSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        add(contentSplit, gc);
 
         sentences = new JPanel(new GridBagLayout());
-        add(sentences, gc);
+        sentences.setBackground(Color.WHITE);
+        contentSplit.setTopComponent(new JScrollPane(sentences));
+
+        linksPanel = new DetailLinksPanel(self, d);
+        contentSplit.setBottomComponent(new JScrollPane(linksPanel));
+
+        contentSplit.setDividerLocation(0.75);
 
         setDetail(d);
     }
@@ -71,6 +112,10 @@ public class DetailEditPanel extends JPanel {
         this.detail = d;
         sentences.removeAll();
 
+        menuBar.refresh();
+        
+        sentences.setAlignmentY(TOP_ALIGNMENT);
+        
         GridBagConstraints gc = new GridBagConstraints();
         gc.weightx = 1.0;
         gc.weighty = 0.0;
@@ -82,11 +127,21 @@ public class DetailEditPanel extends JPanel {
         for (PropertyValue pv : detail.getProperties()) {
             gc.gridy++;
             JComponent nextLine = getLinePanel(pv);
+            final Color alternateColor = new Color(0.95f, 0.95f, 0.95f);
+            
+            nextLine.setOpaque(true);
+            nextLine.setBackground(gc.gridy % 2 == 0 ? Color.WHITE : alternateColor);
+
             sentences.add(nextLine, gc);
             //gc.gridx+=1;
         }
 
-        updateUI();
+        gc.gridy++;
+        gc.fill = gc.VERTICAL;
+        gc.weighty = 1.0;
+        sentences.add(Box.createVerticalBox(), gc);
+
+        sentences.updateUI();
 
     }
 

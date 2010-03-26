@@ -72,7 +72,7 @@ public class BoolPropertyPanel extends PropertyOptionPanel {
 
         } else if (getMode() == Mode.Imaginary) {
 
-            options.add(new PropertyOption<BoolEquals>("will equal") {
+            options.add(new PropertyOption<BoolEquals>("will be") {
 
                 private TrueFalseCombo combo;
 
