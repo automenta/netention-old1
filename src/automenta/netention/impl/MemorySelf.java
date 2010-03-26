@@ -21,8 +21,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -104,10 +106,10 @@ public class MemorySelf implements Self, Serializable {
         //TODO use dependency information to find all available patterns applicable for d
         //for now, just use all patterns minus existing patterns in 'd'
 
-        Collection<String> patterns = getPatterns().keySet();
+        Set<String> patterns = new HashSet<String>(getPatterns().keySet());
         for (String p : d.getPatterns()) {
             patterns.remove(p);
-        }
+        }        
 
         return patterns;
     }

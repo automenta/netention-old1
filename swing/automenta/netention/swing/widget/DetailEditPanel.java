@@ -22,14 +22,18 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 
 /**
  * Displays a detail and its links for view/edit
@@ -55,13 +59,52 @@ public class DetailEditPanel extends JPanel {
             super();
         }
 
-
         protected void refresh() {
             removeAll();
+
+            JMenu t = new JMenu("It's a...");
+            for (String pid : self.getAvailablePatterns(detail)) {
+                final Pattern p = self.getPatterns().get(pid);
+                JMenuItem ti = new JMenuItem(p.getID());
+                ti.addActionListener(new ActionListener() {
+
+                    @Override public void actionPerformed(ActionEvent e) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override public void run() {
+                                addPattern(p);
+                            }
+                        });
+                    }
+                });
+                t.add(ti);
+            }
+            add(t);
+
             for (String pid : detail.getPatterns()) {
                 Pattern p = self.getPatterns().get(pid);
                 JMenu j = new JMenu(p.getID());
                 //TODO add props
+                for (String propid : p.keySet()) {
+                    final Property prop = self.getProperty(propid);
+                    if (detail.acceptsAnotherProperty(propid)) {
+                        JMenuItem ji = new JMenuItem(prop.getName());
+                        ji.addActionListener(new ActionListener() {
+                            @Override public void actionPerformed(ActionEvent e) {
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    @Override public void run() {
+                                        addProperty(prop);
+                                    }
+                                });
+                            }
+                        });
+                        j.add(ji);
+                    }
+                }
+                if (j.getComponentCount() > 0) {
+                    j.addSeparator();
+                    JMenuItem remove = new JMenuItem("Remove...");
+                    j.add(remove);
+                }
                 add(j);
             }
         }
@@ -75,23 +118,26 @@ public class DetailEditPanel extends JPanel {
         setEditable(editable);
 
         GridBagConstraints gc = new GridBagConstraints();
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
-        gc.fill = gc.HORIZONTAL;
-        gc.anchor = gc.NORTHWEST;
-        gc.gridx = gc.gridy = 1;
+        {
+            gc.weightx = 1.0;
+            gc.weighty = 0.0;
+            gc.fill = gc.HORIZONTAL;
+            gc.anchor = gc.NORTHWEST;
+            gc.gridx = gc.gridy = 1;
+        }
 
         menuBar = new DetailMenuBar();
-        
+
         JPanel header = new JPanel(new BorderLayout());
         header.add(new JScaledLabel(d.getName(), 2.5f), BorderLayout.NORTH);
         header.add(menuBar, BorderLayout.SOUTH);
         add(header, gc);
 
-        
-        gc.gridy++;
-        gc.weighty = 1.0;
-        gc.fill = gc.BOTH;
+        {
+            gc.gridy++;
+            gc.weighty = 1.0;
+            gc.fill = gc.BOTH;
+        }
 
         contentSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         add(contentSplit, gc);
@@ -101,11 +147,13 @@ public class DetailEditPanel extends JPanel {
         contentSplit.setTopComponent(new JScrollPane(sentences));
 
         linksPanel = new DetailLinksPanel(self, d);
-        contentSplit.setBottomComponent(new JScrollPane(linksPanel));
-
-        contentSplit.setDividerLocation(0.75);
+        //contentSplit.setBottomComponent(new JScrollPane(linksPanel));
 
         setDetail(d);
+
+        contentSplit.setDividerLocation(1.0);
+
+        updateUI();
     }
 
     protected void setDetail(Detail d) {
@@ -113,9 +161,9 @@ public class DetailEditPanel extends JPanel {
         sentences.removeAll();
 
         menuBar.refresh();
-        
+
         sentences.setAlignmentY(TOP_ALIGNMENT);
-        
+
         GridBagConstraints gc = new GridBagConstraints();
         gc.weightx = 1.0;
         gc.weighty = 0.0;
@@ -128,12 +176,11 @@ public class DetailEditPanel extends JPanel {
             gc.gridy++;
             JComponent nextLine = getLinePanel(pv);
             final Color alternateColor = new Color(0.95f, 0.95f, 0.95f);
-            
+
             nextLine.setOpaque(true);
             nextLine.setBackground(gc.gridy % 2 == 0 ? Color.WHITE : alternateColor);
 
             sentences.add(nextLine, gc);
-            //gc.gridx+=1;
         }
 
         gc.gridy++;
@@ -141,7 +188,7 @@ public class DetailEditPanel extends JPanel {
         gc.weighty = 1.0;
         sentences.add(Box.createVerticalBox(), gc);
 
-        sentences.updateUI();
+        updateUI();
 
     }
 
@@ -168,4 +215,14 @@ public class DetailEditPanel extends JPanel {
     protected void setEditable(boolean editable) {
         this.editable = editable;
     }
+
+    synchronized protected void addPattern(Pattern p) {
+        detail.getPatterns().add(p.getID());
+        setDetail(detail);
+    }
+    
+    synchronized protected void addProperty(Property p) {
+
+    }
+
 }

@@ -8,9 +8,9 @@ package automenta.netention.impl;
 import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.PropertyValue;
-import automenta.netention.value.integer.IntegerIs;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -18,16 +18,18 @@ import java.util.List;
  */
 public class MemoryDetail implements Detail {
     private final String id;
+    private final String name;
     private final Mode mode;
     private final List<String> patterns = new LinkedList();
     private final List<PropertyValue> properties = new LinkedList();
 
-    public MemoryDetail(String id) {
-        this(id, Mode.Unknown);
+    public MemoryDetail(String name) {
+        this(name, Mode.Unknown);
     }
 
-    public MemoryDetail(String id, Mode mode, String... initialPatterns) {
-        this.id = id;
+    public MemoryDetail(String name, Mode mode, String... initialPatterns) {
+        this.id = UUID.randomUUID().toString();
+        this.name = name;
         this.mode = mode;
 
         for (String p : initialPatterns) {
@@ -57,7 +59,7 @@ public class MemoryDetail implements Detail {
 
     @Override
     public String getName() {
-        return id;
+        return name;
     }
 
     public boolean addProperty(String propID, PropertyValue p) {
@@ -79,8 +81,17 @@ public class MemoryDetail implements Detail {
 
     @Override
     public String toString() {
-        return id;
+        return getName();
     }
 
+    @Override
+    public boolean acceptsAnotherProperty(String propid) {
+        for (String s : getPatterns()) {
+            //TODO take into account the property's cardinality properties
+            if (s.equals(propid))
+                return false;
+        }
+        return true;
+    }
 
 }

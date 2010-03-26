@@ -98,7 +98,7 @@ public class SelfPanel extends JPanel {
         content.setLeftComponent(new JScrollPane(typeTreePanel));
 
         contentPanel = new JPanel(new BorderLayout());
-        content.setRightComponent(new JScrollPane(contentPanel));
+        content.setRightComponent(contentPanel);
 
         content.setDividerLocation(0.45);
 
@@ -111,7 +111,7 @@ public class SelfPanel extends JPanel {
         contentPanel.removeAll();
         if (o instanceof Pattern) {
             //content.setRightComponent(new PatternEditPanel(self, (Pattern)o));
-            contentPanel.add(new PatternEditPanel(self, (Pattern) o), BorderLayout.CENTER);
+            contentPanel.add(new JScrollPane(new PatternEditPanel(self, (Pattern) o)), BorderLayout.CENTER);
 
         } else if (o instanceof Detail) {
             contentPanel.add(new DetailEditPanel(self, (Detail) o, true), BorderLayout.CENTER);
@@ -141,6 +141,7 @@ public class SelfPanel extends JPanel {
 
         MemoryDetail d1 = new MemoryDetail("Real Bike", Mode.Real, "Built");
         MemoryDetail d2 = new MemoryDetail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");
+        MemoryDetail d3 = new MemoryDetail("Empty Description", Mode.Real);
 
         {
             d1.addProperty("numWheels", new IntegerIs(4));
@@ -160,6 +161,7 @@ public class SelfPanel extends JPanel {
         
         self.addDetail(d1);
         self.addDetail(d2);
+        self.addDetail(d3);
 
         new SwingWindow(new SelfPanel(self), 900, 800, true);
     }

@@ -10,7 +10,6 @@ import automenta.netention.Pattern;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.Icon;
 import javax.swing.JPanel;
@@ -43,15 +42,27 @@ public class TypeTreePanel extends JPanel {
         protected void refresh() {
             ((DefaultMutableTreeNode) root).removeAllChildren();
 
+
             MultiHashMap<String, Detail> patterns = new MultiHashMap();
             for (Detail d : self.getDetails().values()) {
-                for (String s : d.getPatterns()) {
-                    patterns.put(s, d);
+                if (d.getPatterns().size() > 0) {
+                    for (String s : d.getPatterns()) {
+                        patterns.put(s, d);
+                    }
+                }
+                else {
+                    patterns.put("Other", d);
                 }
             }
             for (String p : patterns.keySet()) {
                 Pattern pat = self.getPatterns().get(p);
-                DefaultMutableTreeNode pNode = new DefaultMutableTreeNode(pat);
+                DefaultMutableTreeNode pNode;
+                if (pat != null) {
+                    pNode = new DefaultMutableTreeNode(pat);
+                }
+                else {
+                    pNode = new DefaultMutableTreeNode(p);
+                }
                 ((DefaultMutableTreeNode) root).add(pNode);
                 for (Detail d : patterns.get(p)) {
                     DefaultMutableTreeNode dNode = new DefaultMutableTreeNode(d);
