@@ -5,8 +5,10 @@
 
 package automenta.netention.value;
 
+import automenta.netention.Mode;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
+import automenta.netention.value.bool.BoolEquals;
 import automenta.netention.value.bool.BoolIs;
 
 /**
@@ -25,8 +27,13 @@ public class BoolProp extends Property {
 
 
     @Override
-    public PropertyValue newDefaultValue() {
-        return new BoolIs(true);
+    public PropertyValue newDefaultValue(Mode mode) {
+        if (mode == Mode.Imaginary) {
+            return new BoolEquals(true);
+        }
+        else {
+            return new BoolIs(true);
+        }
     }
 
 }

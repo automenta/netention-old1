@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package automenta.netention.swing.property;
+package automenta.netention.swing.widget;
 
 import java.awt.FlowLayout;
 import javax.swing.JPanel;
@@ -15,7 +15,9 @@ import javax.swing.JPanel;
 public class TransparentFlowPanel extends JPanel {
 
     public TransparentFlowPanel() {
-        super(new FlowLayout());
+        super(new FlowLayout(FlowLayout.LEFT));
+//        super();
+//        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         setOpaque(false);
     }
 

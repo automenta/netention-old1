@@ -23,7 +23,6 @@ public interface Detail extends Node {
 	public List<String> getPatterns();
 	public List<PropertyValue> getProperties();
 
-    public boolean acceptsAnotherProperty(String propid);
 
 
 //	/** analogous to the set of rdf:type statements */

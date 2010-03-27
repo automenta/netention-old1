@@ -3,6 +3,7 @@
  */
 package automenta.netention.swing.property;
 
+import automenta.netention.swing.widget.TransparentFlowPanel;
 import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.PropertyValue;

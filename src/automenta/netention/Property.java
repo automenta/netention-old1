@@ -41,7 +41,7 @@ abstract public class Property implements Serializable {
 		return "(" + getID() + ": " + getClass().getSimpleName() + ")";
 	}
 
-	public abstract PropertyValue newDefaultValue();
+	public abstract PropertyValue newDefaultValue(Mode mode);
 
 	/** max cardinality, -1 if unlimited */
 	public int getCardinalityMax() {

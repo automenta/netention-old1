@@ -21,12 +21,16 @@ public class SwingWindow extends JFrame {
             addWindowListener(new WindowAdapter() {
                 @Override public void windowClosing(WindowEvent e) {
                     super.windowClosing(e);
+                    onClosing();
                     System.exit(0);
                 }
             });
         }
     }
 
+    protected void onClosing() {
+        
+    }
 
 }
 

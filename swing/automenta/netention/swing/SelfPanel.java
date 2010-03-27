@@ -29,6 +29,8 @@ import automenta.netention.value.real.RealIs;
 import automenta.netention.value.string.StringEquals;
 import automenta.netention.value.string.StringIs;
 import java.awt.BorderLayout;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -85,13 +87,13 @@ public class SelfPanel extends JPanel {
         menubar.add(netMenu);
         menubar.add(viewMenu);
         add(menubar, BorderLayout.NORTH);
-
+        
         content = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         typeTreePanel = new TypeTreePanel(self);
-        typeTreePanel.tree.addTreeSelectionListener(new TreeSelectionListener() {
+        typeTreePanel.getTree().addTreeSelectionListener(new TreeSelectionListener() {
 
             @Override public void valueChanged(TreeSelectionEvent e) {
-                DefaultMutableTreeNode selected = (DefaultMutableTreeNode) typeTreePanel.tree.getSelectionPath().getLastPathComponent();
+                DefaultMutableTreeNode selected = (DefaultMutableTreeNode) typeTreePanel.getTree().getSelectionPath().getLastPathComponent();
                 selectObject(selected.getUserObject());
             }
         });
@@ -114,7 +116,16 @@ public class SelfPanel extends JPanel {
             contentPanel.add(new JScrollPane(new PatternEditPanel(self, (Pattern) o)), BorderLayout.CENTER);
 
         } else if (o instanceof Detail) {
-            contentPanel.add(new DetailEditPanel(self, (Detail) o, true), BorderLayout.CENTER);
+            final Detail d =  (Detail)o;
+            contentPanel.add(new DetailEditPanel(self, d, true) {
+
+                @Override protected void patternChanged() {
+                    super.patternChanged();
+                    typeTreePanel.refresh();
+                    typeTreePanel.selectObject(d);
+                }
+
+            }, BorderLayout.CENTER);
         } else {
             //content.setRightComponent(new JLabel("Select something."));
             contentPanel.add(new JLabel("Select something."), BorderLayout.CENTER);
@@ -123,47 +134,40 @@ public class SelfPanel extends JPanel {
     }
 
     public static void main(String[] args) {
+        final Logger logger = Logger.getLogger(SelfPanel.class.getName());
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
         }
 
-        MemorySelf self = new MemorySelf("me", "Me");
-        self.addPattern(new Pattern("Built"));
-        self.addPattern(new Pattern("Mobile"));
-        {
-            self.addProperty(new IntProp("numWheels", "Number of Wheels"));
-            self.addProperty(new StringProp("manufacturer", "Manufacturer"));
-            self.addProperty(new RealProp("wheelRadius", "Wheel Radius"));
-            self.addProperty(new NodeProp("anotherObject", "Another Object", "Built"));
-            self.addProperty(new BoolProp("hasKickStand", "Has Kickstand"));
+        final String filePath = "/tmp/netention1";
+
+        //LOAD
+        MemorySelf self;
+        try {
+            self = MemorySelf.load(filePath);
+            logger.log(Level.INFO, "Loaded " + filePath);
+        } catch (Exception ex) {
+            self = new MemorySelf("me", "Me");
+            new SeedSelfBuilder().build(self);
+            logger.log(Level.INFO, "Loaded Seed Self");
         }
 
-        MemoryDetail d1 = new MemoryDetail("Real Bike", Mode.Real, "Built");
-        MemoryDetail d2 = new MemoryDetail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");
-        MemoryDetail d3 = new MemoryDetail("Empty Description", Mode.Real);
+        final MemorySelf mSelf = self;
+        SwingWindow window = new SwingWindow(new SelfPanel(self), 900, 800, true) {
 
-        {
-            d1.addProperty("numWheels", new IntegerIs(4));
-            d1.addProperty("manufacturer", new StringIs("myself"));
-            d1.addProperty("wheelRadius", new RealIs(16.0));
-            d1.addProperty("hasKickStand", new BoolIs(true));
-            d1.addProperty("anotherObject", new NodeIs(d2.getID()));
-        }
+            @Override
+            protected void onClosing() {
+                //SAVE ON EXIT
+                try {
+                    mSelf.save(filePath);
+                    logger.log(Level.INFO, "Saved " + filePath);
+                } catch (Exception ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                }
+            }
+        };
 
-        {
-            d2.addProperty("numWheels", new IntegerEquals(4));
-            d2.addProperty("manufacturer", new StringEquals("myself"));
-            d2.addProperty("wheelRadius", new RealEquals(16.0));
-            d2.addProperty("hasKickStand", new BoolEquals(true));
-            d2.addProperty("anotherObject", new NodeEquals(d1.getID()));
-        }
-        
-        self.addDetail(d1);
-        self.addDetail(d2);
-        self.addDetail(d3);
-
-        new SwingWindow(new SelfPanel(self), 900, 800, true);
     }
-
 }

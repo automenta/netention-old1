@@ -3,7 +3,9 @@
  */
 package automenta.netention.value;
 
+import automenta.netention.Mode;
 import automenta.netention.PropertyValue;
+import automenta.netention.value.integer.IntegerEquals;
 import automenta.netention.value.integer.IntegerIs;
 
 
@@ -20,10 +22,14 @@ public class IntProp extends RealProp {
 	
 	public boolean isInteger() { return true; }	
 
-	@Override public PropertyValue newDefaultValue() {
-		IntegerIs i = new IntegerIs(0);
-		i.setProperty(getID());
-		return i;
+    @Override
+    public PropertyValue newDefaultValue(Mode mode) {
+        if (mode == Mode.Imaginary) {
+            return new IntegerEquals(0);
+        }
+        else {
+            return new IntegerIs(0);
+        }
 	}
 
 }

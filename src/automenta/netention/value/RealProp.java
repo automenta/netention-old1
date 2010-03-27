@@ -3,9 +3,11 @@
  */
 package automenta.netention.value;
 
+import automenta.netention.Mode;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Unit;
+import automenta.netention.value.real.RealEquals;
 import automenta.netention.value.real.RealIs;
 
 
@@ -33,10 +35,11 @@ public class RealProp extends Property {
 	
 	public boolean isInteger() { return false; }	
 
-	@Override public PropertyValue newDefaultValue() {
-		RealIs r = new RealIs(0.0);
-		r.setProperty(getID());
-		return r;
+    @Override public PropertyValue newDefaultValue(Mode mode) {
+        if (mode == Mode.Imaginary)
+            return new RealEquals(0.0);
+        else
+            return new RealIs(0.0);
 	}
 
 	public static Unit getUnit(String s) {

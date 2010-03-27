@@ -3,6 +3,7 @@
  */
 package automenta.netention.swing.property;
 
+import automenta.netention.swing.widget.TransparentFlowPanel;
 import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.PropertyValue;
@@ -22,6 +23,7 @@ import javax.swing.JTextField;
 public class IntPropertyPanel extends PropertyOptionPanel {
 
     private JLabel unitLabel;
+    final static int intColumns = 8;
 
     public IntPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
         super(s, d, v, editable);
@@ -37,14 +39,17 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                     setValue(v);
                     setIs();
 
-                    JPanel p = new TransparentFlowPanel();
+                    JPanel p = new TransparentFlowPanel();                    
                     isBox = new JTextField(Integer.toString(v.getValue()));
+                    isBox.setColumns(intColumns);
+
                     p.add(isBox);
                     return p;
                 }
 
                 @Override public IntegerIs widgetToValue(IntegerIs r) {
                     r.setValue(Integer.valueOf(isBox.getText()));
+
                     return r;
                 }
 
@@ -69,6 +74,7 @@ public class IntPropertyPanel extends PropertyOptionPanel {
 
                     JPanel p = new TransparentFlowPanel();
                     equalsBox = new JTextField(Integer.toString(v.getValue()));
+                    equalsBox.setColumns(intColumns);
                     p.add(equalsBox);
                     return p;
                 }
@@ -98,6 +104,7 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                     JPanel p = new TransparentFlowPanel();
                     moreThanBox = new JTextField();
                     moreThanBox.setText(Double.toString(v.getValue()));
+                    moreThanBox.setColumns(intColumns);
                     p.add(moreThanBox);
                     return p;
                 }
@@ -127,6 +134,7 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                     JPanel p = new TransparentFlowPanel();
                     lessThanBox = new JTextField();
                     lessThanBox.setText(Double.toString(v.getValue()));
+                    lessThanBox.setColumns(intColumns);
                     p.add(lessThanBox);
                     return p;
                 }
@@ -158,12 +166,14 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                     JPanel p = new TransparentFlowPanel();
                     minBox = new JTextField();
                     minBox.setText(Integer.toString(v.getMin()));
+                    minBox.setColumns(intColumns);
                     p.add(minBox);
 
                     p.add(new Label(" and "));
 
                     maxBox = new JTextField();
                     maxBox.setText(Integer.toString(v.getMax()));
+                    maxBox.setColumns(intColumns);
                     p.add(maxBox);
 
                     return p;

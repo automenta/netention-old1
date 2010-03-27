@@ -82,9 +82,15 @@ public class MemorySelf implements Self, Serializable {
     }
 
     
-    public boolean addProperty(Property p) {
+    public boolean addProperty(Property p, String... patterns) {
         //TODO do not allow adding existing pattern
         properties.put(p.getID(), p);
+        for (String patid : patterns) {
+            Pattern pat = getPatterns().get(patid);
+            if (pat!=null) {
+                pat.put(p.getID(), 1.0);
+            }
+        }
         return true;
     }
 
@@ -173,5 +179,20 @@ public class MemorySelf implements Self, Serializable {
         return ms;
     }
 
+    @Override
+    public boolean acceptsAnotherProperty(Detail d, String propid) {
+        int existing = 0;
+        for (PropertyValue v : d.getProperties()) {
+            if (v.getProperty().equals(propid)) {
+                existing++;
+            }
+        }
+
+        //TODO consider the property's cardinality properties
+        if (existing == 1)
+            return false;
+
+        return true;
+    }
 
 }

@@ -3,8 +3,10 @@
  */
 package automenta.netention.value;
 
+import automenta.netention.Mode;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
+import automenta.netention.value.string.StringContains;
 import automenta.netention.value.string.StringIs;
 import java.util.List;
 
@@ -29,10 +31,11 @@ public class StringProp extends Property {
 		this.exampleValues = exampleValues;
 	}
 
-	@Override public PropertyValue newDefaultValue() {
-		PropertyValue s = new StringIs("");
-		s.setProperty(getID());
-		return s;
+    @Override public PropertyValue newDefaultValue(Mode mode) {
+        if (mode == Mode.Imaginary)
+            return new StringContains("");
+        else
+            return new StringIs("");
 	}
 
 	public List<String> getExampleValues() {

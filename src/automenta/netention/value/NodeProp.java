@@ -1,5 +1,6 @@
 package automenta.netention.value;
 
+import automenta.netention.Mode;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.value.node.NodeIs;
@@ -30,8 +31,7 @@ public class NodeProp extends Property {
 	}
 	
 	
-	@Override
-	public PropertyValue newDefaultValue() {
+    @Override public PropertyValue newDefaultValue(Mode mode) {
 		NodeIs ni = new NodeIs("");
 		ni.setProperty(getID());
 		return ni;

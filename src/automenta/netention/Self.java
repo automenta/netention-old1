@@ -38,5 +38,7 @@ public interface Self {
     public boolean addPattern(Pattern p);
 
     public Property getProperty(String propertyID);
-    
+ 
+    public boolean acceptsAnotherProperty(Detail d, String propid);
+
 }

@@ -84,14 +84,5 @@ public class MemoryDetail implements Detail {
         return getName();
     }
 
-    @Override
-    public boolean acceptsAnotherProperty(String propid) {
-        for (String s : getPatterns()) {
-            //TODO take into account the property's cardinality properties
-            if (s.equals(propid))
-                return false;
-        }
-        return true;
-    }
 
 }

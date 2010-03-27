@@ -1,5 +1,6 @@
 package automenta.netention.swing.property;
 
+import automenta.netention.swing.widget.TransparentFlowPanel;
 import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.PropertyValue;
@@ -14,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class StringPropertyPanel extends PropertyOptionPanel {
+
+    final static int stringCols = 16;
 
 	public StringPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
 		super(s, d, v, editable);
@@ -51,6 +54,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                     JPanel p =  new TransparentFlowPanel();
                     rta = new JTextField(value.getString());
+                    rta.setColumns(stringCols);
                     p.add(rta);
 
 
@@ -105,6 +109,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                     JPanel p =  new TransparentFlowPanel();
                     eqBox = new JTextField();
+                    eqBox.setColumns(stringCols);
                     eqBox.setText(value.getString());
                     p.add(eqBox);
 
@@ -134,6 +139,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                     JPanel p =  new TransparentFlowPanel();
                     eqBox = new JTextField();
+                    eqBox.setColumns(stringCols);
                     eqBox.setText(value.getString());
                     p.add(eqBox);
 
@@ -163,6 +169,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                     JPanel p =  new TransparentFlowPanel();
                     eqBox = new JTextField();
+                    eqBox.setColumns(stringCols);
                     eqBox.setText(value.getString());
                     p.add(eqBox);
 

@@ -11,6 +11,7 @@ import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JTree;
@@ -28,9 +29,10 @@ import org.apache.commons.collections15.multimap.MultiHashMap;
 public class TypeTreePanel extends JPanel {
 
     float textScale = 1.25f;
-
     private final MemorySelf self;
-    public final JTree tree;
+    private JTree tree;
+    private TypeTreeModel treeModel;
+
 
     public class TypeTreeModel extends DefaultTreeModel {
 
@@ -44,29 +46,34 @@ public class TypeTreePanel extends JPanel {
 
 
             MultiHashMap<String, Detail> patterns = new MultiHashMap();
+            for (String p : self.getPatterns().keySet()) {
+                patterns.put(p, null);
+            }
+
             for (Detail d : self.getDetails().values()) {
                 if (d.getPatterns().size() > 0) {
                     for (String s : d.getPatterns()) {
                         patterns.put(s, d);
                     }
-                }
-                else {
+                } else {
                     patterns.put("Other", d);
                 }
             }
+
             for (String p : patterns.keySet()) {
                 Pattern pat = self.getPatterns().get(p);
                 DefaultMutableTreeNode pNode;
                 if (pat != null) {
                     pNode = new DefaultMutableTreeNode(pat);
-                }
-                else {
+                } else {
                     pNode = new DefaultMutableTreeNode(p);
                 }
                 ((DefaultMutableTreeNode) root).add(pNode);
                 for (Detail d : patterns.get(p)) {
-                    DefaultMutableTreeNode dNode = new DefaultMutableTreeNode(d);
-                    pNode.add(dNode);
+                    if (d != null) {
+                        DefaultMutableTreeNode dNode = new DefaultMutableTreeNode(d);
+                        pNode.add(dNode);
+                    }
                 }
             }
         }
@@ -74,9 +81,18 @@ public class TypeTreePanel extends JPanel {
 
     public TypeTreePanel(MemorySelf self) {
         super(new BorderLayout());
+
+
         this.self = self;
 
-        TreeModel treeModel = new TypeTreeModel();
+        refresh();
+
+    }
+
+    public void refresh() {
+        removeAll();
+        
+        treeModel = new TypeTreeModel();
         tree = new JTree(treeModel);
 
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer() {
@@ -90,40 +106,86 @@ public class TypeTreePanel extends JPanel {
 
                 Object nodeObj = ((DefaultMutableTreeNode) value).getUserObject();
                 // check whatever you need to on the node user object
-                setIcon(getObjectIcon(nodeObj));
+                setIcon(
+                    getObjectIcon(nodeObj));
 
 
-                setBorderSelectionColor(sel ? getBackgroundSelectionColor() : getBackground());
-                
+
+                if (!leaf) {
+                    if (expanded) {
+                        setFont(getFont().deriveFont(Font.PLAIN));
+                    } else {
+                        setFont(getFont().deriveFont(Font.BOLD));
+                    }
+                } else {
+                    setFont(getFont().deriveFont(Font.PLAIN));
+                }
+
+
+                setBorderSelectionColor(
+                    sel ? getBackgroundSelectionColor() : getBackground());
+
+
+
                 return this;
+
+
             }
 
             public Icon getObjectIcon(Object o) {
                 if (o instanceof Detail) {
                     Detail d = (Detail) o;
+
+
                     if (d.getMode() == Mode.Imaginary) {
                         return Icons.getIcon("media/tango32/status/dialog-information.png");
+
+
                     } else if (d.getMode() == Mode.Real) {
                         return Icons.getIcon("media/tango32/apps/accessories-text-editor.png");
+
+
                     } else {
                         return Icons.getIcon("media/tango32/categories/applications-office.png");
+
+
                     }
 
                 } else if (o instanceof Pattern) {
                     return Icons.getIcon("media/tango32/categories/applications-system.png");
+
+
                 }
                 return null;
+
+
             }
         };
+
+
         {
-            renderer.setFont(getFont().deriveFont((float)(getFont().getSize() * textScale)));
+            renderer.setFont(getFont().deriveFont((float) (getFont().getSize() * textScale)));
 
             final int b = 6;
             renderer.setBorder(new EmptyBorder(b, b, b, b));
+
+
         }
-        
+
+
         tree.setCellRenderer(renderer);
+        tree.setRootVisible(false);
 
         add(tree, BorderLayout.CENTER);
     }
+
+    public JTree getTree() {
+        return tree;
+    }
+
+    /** expands to the first path containing 'd' as a leaf */
+    public void selectObject(Detail d) {
+        //TODO impl this
+    }
+
 }

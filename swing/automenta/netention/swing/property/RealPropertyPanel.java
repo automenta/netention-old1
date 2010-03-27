@@ -3,6 +3,7 @@
  */
 package automenta.netention.swing.property;
 
+import automenta.netention.swing.widget.TransparentFlowPanel;
 import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.PropertyValue;
@@ -24,6 +25,8 @@ public class RealPropertyPanel extends PropertyOptionPanel {
 
     private JLabel unitLabel;
 
+    final static int realColumns = 9;
+    
     public RealPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
         super(s, d, v, editable);
     }
@@ -40,6 +43,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
                     setIs();
                     JPanel p = new TransparentFlowPanel();
                     isBox = new JTextField(Double.toString(v.getValue()));
+                    isBox.setColumns(realColumns);
                     p.add(isBox);
                     return p;
                 }
@@ -69,6 +73,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
 
                     JPanel p = new TransparentFlowPanel();
                     equalsBox = new JTextField(Double.toString(v.getValue()));
+                    equalsBox.setColumns(realColumns);
                     p.add(equalsBox);
                     return p;
                 }
@@ -97,6 +102,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
 
                     JPanel p = new TransparentFlowPanel();
                     moreThanBox = new JTextField(Double.toString(v.getValue()));
+                    moreThanBox.setColumns(realColumns);
                     p.add(moreThanBox);
                     return p;
                 }
@@ -125,6 +131,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
 
                     JPanel p = new TransparentFlowPanel();
                     lessThanBox = new JTextField(Double.toString(v.getValue()));
+                    lessThanBox.setColumns(realColumns);
                     p.add(lessThanBox);
                     return p;
                 }
@@ -156,12 +163,14 @@ public class RealPropertyPanel extends PropertyOptionPanel {
 
                     JPanel p = new TransparentFlowPanel();
                     minBox = new JTextField(Double.toString(v.getMin()));
+                    minBox.setColumns(realColumns);
                     p.add(minBox);
 
                     JLabel l = new JLabel(" and ");
                     p.add(l);
 
                     maxBox = new JTextField(Double.toString(v.getMax()));
+                    maxBox.setColumns(realColumns);
                     p.add(maxBox);
 
                     return p;

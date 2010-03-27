@@ -11,6 +11,7 @@ import automenta.netention.PropertyValue;
 import automenta.netention.Self;
 import automenta.netention.swing.property.BoolPropertyPanel;
 import automenta.netention.swing.property.IntPropertyPanel;
+import automenta.netention.swing.property.PropertyOptionPanel;
 import automenta.netention.swing.property.RealPropertyPanel;
 import automenta.netention.swing.property.StringPropertyPanel;
 import automenta.netention.swing.util.JScaledLabel;
@@ -30,7 +31,9 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
@@ -70,6 +73,7 @@ public class DetailEditPanel extends JPanel {
 
                     @Override public void actionPerformed(ActionEvent e) {
                         SwingUtilities.invokeLater(new Runnable() {
+
                             @Override public void run() {
                                 addPattern(p);
                             }
@@ -81,30 +85,50 @@ public class DetailEditPanel extends JPanel {
             add(t);
 
             for (String pid : detail.getPatterns()) {
-                Pattern p = self.getPatterns().get(pid);
+                final Pattern p = self.getPatterns().get(pid);
                 JMenu j = new JMenu(p.getID());
-                //TODO add props
+
+                int numItems = 0;
+
                 for (String propid : p.keySet()) {
                     final Property prop = self.getProperty(propid);
-                    if (detail.acceptsAnotherProperty(propid)) {
+                    if (self.acceptsAnotherProperty(detail, propid)) {
                         JMenuItem ji = new JMenuItem(prop.getName());
                         ji.addActionListener(new ActionListener() {
+
                             @Override public void actionPerformed(ActionEvent e) {
                                 SwingUtilities.invokeLater(new Runnable() {
+
                                     @Override public void run() {
                                         addProperty(prop);
                                     }
                                 });
                             }
                         });
+                        numItems++;
                         j.add(ji);
                     }
                 }
-                if (j.getComponentCount() > 0) {
+
+                if (numItems > 0) {
                     j.addSeparator();
-                    JMenuItem remove = new JMenuItem("Remove...");
-                    j.add(remove);
                 }
+                JMenuItem remove = new JMenuItem("Remove " + p.getID());
+                remove.addActionListener(new ActionListener() {
+
+                    @Override public void actionPerformed(ActionEvent e) {
+                        if (JOptionPane.showConfirmDialog(DetailEditPanel.this, "Remove " + p.getID() + " from this detail?", "Remove", JOptionPane.OK_CANCEL_OPTION) == 0) {
+                            SwingUtilities.invokeLater(new Runnable() {
+
+                                @Override public void run() {
+                                    removePattern(p);
+                                }
+                            });
+                        }
+                    }
+                });
+                j.add(remove);
+
                 add(j);
             }
         }
@@ -153,7 +177,6 @@ public class DetailEditPanel extends JPanel {
 
         contentSplit.setDividerLocation(1.0);
 
-        updateUI();
     }
 
     protected void setDetail(Detail d) {
@@ -172,9 +195,25 @@ public class DetailEditPanel extends JPanel {
         gc.gridx = 1;
 
 
-        for (PropertyValue pv : detail.getProperties()) {
+        for (final PropertyValue pv : detail.getProperties()) {
             gc.gridy++;
             JComponent nextLine = getLinePanel(pv);
+            if (nextLine instanceof PropertyOptionPanel) {
+                PropertyOptionPanel pop = (PropertyOptionPanel) nextLine;
+                final Property property = self.getProperty(pv.getProperty());
+                JPopupMenu popup = new JPopupMenu();
+                JMenuItem removeItem = new JMenuItem("Remove");
+                removeItem.addActionListener(new ActionListener() {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Remove " + property.getName() + "?", "Remove", JOptionPane.YES_NO_OPTION)) {
+                            removeProperty(pv);
+                        }
+                    }
+                });
+                popup.add(removeItem);
+                pop.getNameLabel().addPopup(popup);
+            }
+
             final Color alternateColor = new Color(0.95f, 0.95f, 0.95f);
 
             nextLine.setOpaque(true);
@@ -216,13 +255,34 @@ public class DetailEditPanel extends JPanel {
         this.editable = editable;
     }
 
+    protected void patternChanged() {
+    }
+
     synchronized protected void addPattern(Pattern p) {
         detail.getPatterns().add(p.getID());
+        patternChanged();
+        refreshUI();
+    }
+
+    synchronized protected void removePattern(Pattern p) {
+        detail.getPatterns().remove(p.getID());
+        //TODO remove properties?
+        patternChanged();
+        refreshUI();
+    }
+
+    synchronized protected void addProperty(Property p) {
+        PropertyValue pv = p.newDefaultValue(detail.getMode());
+        pv.setProperty(p.getID());
+        detail.getProperties().add(pv);
+        refreshUI();
+    }
+    synchronized protected void removeProperty(PropertyValue pv) {
+        detail.getProperties().remove(pv);
+        refreshUI();
+    }
+
+    protected void refreshUI() {
         setDetail(detail);
     }
-    
-    synchronized protected void addProperty(Property p) {
-
-    }
-
 }

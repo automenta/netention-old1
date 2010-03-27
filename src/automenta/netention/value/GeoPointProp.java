@@ -1,5 +1,6 @@
 package automenta.netention.value;
 
+import automenta.netention.Mode;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.value.real.RealIs;
@@ -16,7 +17,7 @@ public class GeoPointProp extends Property {
 	}
 
 	@Override
-	public PropertyValue newDefaultValue() {
+    public PropertyValue newDefaultValue(Mode mode) {
 		//TODO GeoPointIs..
 		PropertyValue pv = new RealIs(0.0);
 		pv.setProperty(getID());

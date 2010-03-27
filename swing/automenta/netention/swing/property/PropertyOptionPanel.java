@@ -10,11 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import automenta.netention.swing.util.JHyperLink;
-import java.awt.FlowLayout;
+import automenta.netention.swing.widget.DetailEditPanel;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 
 abstract public class PropertyOptionPanel extends JPanel {
@@ -33,9 +39,11 @@ abstract public class PropertyOptionPanel extends JPanel {
     private final Property property;
     private boolean editable;
     private final JLabel typeLabel;
+    private JHyperLink nameLabel;
 
 	public PropertyOptionPanel(Self s, Detail d, PropertyValue v, boolean editable) {
-        super(new FlowLayout(FlowLayout.LEFT));
+        //super(new FlowLayout(FlowLayout.LEFT));
+        super(new GridBagLayout());
 
         setOpaque(false);
 
@@ -57,11 +65,20 @@ abstract public class PropertyOptionPanel extends JPanel {
 	}
 
 	protected void refresh() {
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 1;
+        gc.gridy = 1;
+        gc.weightx = 0.0;
+
+        
 		//super.initPropertyPanel();
         removeAll();
 		
         //add(new JLabel(property.getName()));
-        add(new JHyperLink(property.getName(), ""));
+        nameLabel = new JHyperLink(property.getName(), "");
+        
+        add(nameLabel, gc);
+        gc.gridx++;
 
 		typeSelect = new JComboBox();
 		for (PropertyOption po : options) {
@@ -86,12 +103,19 @@ abstract public class PropertyOptionPanel extends JPanel {
 			}
 
 		});
-		add(typeSelect);
-        add(typeLabel);
+
+		add(typeSelect, gc);
+        gc.gridx++;
+
+        add(typeLabel, gc);
+        gc.gridx++;
 		
-		editPanel = new JPanel();
+        editPanel = new JPanel(new GridLayout(1,1));
         editPanel.setOpaque(false);
-		add(editPanel);
+
+        gc.weightx = 1.0;
+        gc.fill = gc.HORIZONTAL;
+		add(editPanel, gc);
 
 		valueToWidget();
 
@@ -205,6 +229,11 @@ abstract public class PropertyOptionPanel extends JPanel {
     public Detail getDetail() {
         return detail;
     }
+
+    public JHyperLink getNameLabel() {
+        return nameLabel;
+    }
+
 
     
 }
