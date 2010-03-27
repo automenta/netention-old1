@@ -113,7 +113,7 @@ public class SelfPanel extends JPanel {
         contentPanel.removeAll();
         if (o instanceof Pattern) {
             //content.setRightComponent(new PatternEditPanel(self, (Pattern)o));
-            contentPanel.add(new JScrollPane(new PatternEditPanel(self, (Pattern) o)), BorderLayout.CENTER);
+            contentPanel.add(new PatternEditPanel(self, (Pattern) o), BorderLayout.CENTER);
 
         } else if (o instanceof Detail) {
             final Detail d =  (Detail)o;
