@@ -21,11 +21,15 @@ import automenta.netention.value.RealProp;
 import automenta.netention.value.StringProp;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -46,7 +50,7 @@ import javax.swing.SwingUtilities;
  *      Remove existing Properties
  * @author seh
  */
-public class DetailEditPanel extends JPanel {
+abstract public class DetailEditPanel extends JPanel {
 
     private final JPanel sentences;
     private Detail detail;
@@ -55,6 +59,8 @@ public class DetailEditPanel extends JPanel {
     private final JSplitPane contentSplit;
     private final DetailLinksPanel linksPanel;
     private final DetailMenuBar menuBar;
+    private List<PropertyOptionPanel> optionPanels = new LinkedList();
+    long updateDelayMS = 650;
 
     protected class DetailMenuBar extends JMenuBar {
 
@@ -153,8 +159,57 @@ public class DetailEditPanel extends JPanel {
         menuBar = new DetailMenuBar();
 
         JPanel header = new JPanel(new BorderLayout());
-        header.add(new JScaledLabel(d.getName(), 2.5f), BorderLayout.NORTH);
-        header.add(menuBar, BorderLayout.SOUTH);
+        {
+            header.add(new JScaledLabel(d.getName(), 2.5f), BorderLayout.CENTER);
+
+            JPanel buttons = new JPanel(new FlowLayout());
+
+            final JButton updateButton = new JButton("Update");
+            updateButton.addActionListener(new ActionListener() {
+
+                @Override public void actionPerformed(ActionEvent e) {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override public void run() {
+                            updateButton.setEnabled(false);
+                            updateDetail();
+                            new Thread(new Runnable() {
+
+                                @Override public void run() {
+                                    try {
+                                        Thread.sleep(updateDelayMS);
+                                    } catch (InterruptedException ex) {
+                                    }
+                                    updateButton.setEnabled(true);
+                                }
+                            }).start();
+
+                        }
+                    });
+                }
+            });
+
+            final JButton deleteButton = new JButton("Delete");
+            deleteButton.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Delete this detail?", "Delete", JOptionPane.YES_NO_OPTION)) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override public void run() {
+                                deleteThis();
+                            }
+                        });
+                    }
+                }
+            });
+
+            buttons.add(deleteButton);
+            buttons.add(updateButton);
+
+            header.add(buttons, BorderLayout.EAST);
+
+            header.add(menuBar, BorderLayout.SOUTH);
+        }
+
         add(header, gc);
 
         {
@@ -194,6 +249,7 @@ public class DetailEditPanel extends JPanel {
         gc.anchor = gc.NORTHWEST;
         gc.gridx = 1;
 
+        optionPanels.clear();
 
         for (final PropertyValue pv : detail.getProperties()) {
             gc.gridy++;
@@ -204,6 +260,7 @@ public class DetailEditPanel extends JPanel {
                 JPopupMenu popup = new JPopupMenu();
                 JMenuItem removeItem = new JMenuItem("Remove");
                 removeItem.addActionListener(new ActionListener() {
+
                     @Override public void actionPerformed(ActionEvent e) {
                         if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Remove " + property.getName() + "?", "Remove", JOptionPane.YES_NO_OPTION)) {
                             removeProperty(pv);
@@ -212,6 +269,7 @@ public class DetailEditPanel extends JPanel {
                 });
                 popup.add(removeItem);
                 pop.getNameLabel().addPopup(popup);
+                optionPanels.add(pop);
             }
 
             final Color alternateColor = new Color(0.95f, 0.95f, 0.95f);
@@ -255,8 +313,6 @@ public class DetailEditPanel extends JPanel {
         this.editable = editable;
     }
 
-    protected void patternChanged() {
-    }
 
     synchronized protected void addPattern(Pattern p) {
         detail.getPatterns().add(p.getID());
@@ -277,12 +333,25 @@ public class DetailEditPanel extends JPanel {
         detail.getProperties().add(pv);
         refreshUI();
     }
+
     synchronized protected void removeProperty(PropertyValue pv) {
         detail.getProperties().remove(pv);
         refreshUI();
     }
 
-    protected void refreshUI() {
+    protected synchronized void refreshUI() {
         setDetail(detail);
     }
+
+    /** writes contents of UI widgets to the detail */
+    protected synchronized void updateDetail() {
+        for (PropertyOptionPanel pop : optionPanels) {
+            pop.widgetToValue();
+        }
+
+    }
+
+    abstract protected void deleteThis();
+    abstract protected void patternChanged();
+
 }

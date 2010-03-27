@@ -85,8 +85,6 @@ public class TypeTreePanel extends JPanel {
 
         this.self = self;
 
-        refresh();
-
     }
 
     public void refresh() {

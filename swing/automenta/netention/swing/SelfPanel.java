@@ -5,29 +5,12 @@
 package automenta.netention.swing;
 
 import automenta.netention.Detail;
-import automenta.netention.Mode;
 import automenta.netention.Pattern;
-import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;
 import automenta.netention.swing.widget.PatternEditPanel;
 import automenta.netention.swing.widget.TypeTreePanel;
-import automenta.netention.value.BoolProp;
-import automenta.netention.value.IntProp;
-import automenta.netention.value.NodeProp;
-import automenta.netention.value.RealProp;
-import automenta.netention.value.StringProp;
-import automenta.netention.value.bool.BoolEquals;
-import automenta.netention.value.bool.BoolIs;
-import automenta.netention.value.integer.IntegerEquals;
-import automenta.netention.value.integer.IntegerIs;
-import automenta.netention.value.node.NodeEquals;
-import automenta.netention.value.node.NodeIs;
-import automenta.netention.value.real.RealEquals;
-import automenta.netention.value.real.RealIs;
-import automenta.netention.value.string.StringEquals;
-import automenta.netention.value.string.StringIs;
 import java.awt.BorderLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,16 +70,11 @@ public class SelfPanel extends JPanel {
         menubar.add(netMenu);
         menubar.add(viewMenu);
         add(menubar, BorderLayout.NORTH);
-        
+
         content = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         typeTreePanel = new TypeTreePanel(self);
-        typeTreePanel.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+        refreshTypeTree();
 
-            @Override public void valueChanged(TreeSelectionEvent e) {
-                DefaultMutableTreeNode selected = (DefaultMutableTreeNode) typeTreePanel.getTree().getSelectionPath().getLastPathComponent();
-                selectObject(selected.getUserObject());
-            }
-        });
         content.setLeftComponent(new JScrollPane(typeTreePanel));
 
         contentPanel = new JPanel(new BorderLayout());
@@ -110,27 +88,49 @@ public class SelfPanel extends JPanel {
     }
 
     public void selectObject(Object o) {
+        System.out.println("selecting: " + o);
+
         contentPanel.removeAll();
-        if (o instanceof Pattern) {
-            //content.setRightComponent(new PatternEditPanel(self, (Pattern)o));
-            contentPanel.add(new PatternEditPanel(self, (Pattern) o), BorderLayout.CENTER);
 
-        } else if (o instanceof Detail) {
-            final Detail d =  (Detail)o;
-            contentPanel.add(new DetailEditPanel(self, d, true) {
+        if (o != null) {
+            if (o instanceof Pattern) {
+                //content.setRightComponent(new PatternEditPanel(self, (Pattern)o));
+                contentPanel.add(new PatternEditPanel(self, (Pattern) o), BorderLayout.CENTER);
 
-                @Override protected void patternChanged() {
-                    super.patternChanged();
-                    typeTreePanel.refresh();
-                    typeTreePanel.selectObject(d);
-                }
+            } else if (o instanceof Detail) {
+                final Detail d = (Detail) o;
+                contentPanel.add(new DetailEditPanel(self, d, true) {
 
-            }, BorderLayout.CENTER);
-        } else {
-            //content.setRightComponent(new JLabel("Select something."));
-            contentPanel.add(new JLabel("Select something."), BorderLayout.CENTER);
+                    @Override protected void patternChanged() {
+                        refreshTypeTree();
+                        typeTreePanel.selectObject(d);
+                    }
+
+                    @Override
+                    protected void deleteThis() {
+                        selectObject(null);
+                        self.removeDetail(d);
+                        refreshTypeTree();
+                    }
+                }, BorderLayout.CENTER);
+            } else {
+                //content.setRightComponent(new JLabel("Select something."));
+                contentPanel.add(new JLabel("Select something."), BorderLayout.CENTER);
+            }
         }
+
         contentPanel.updateUI();
+    }
+
+    protected void refreshTypeTree() {
+        typeTreePanel.refresh();
+        typeTreePanel.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+
+            @Override public void valueChanged(TreeSelectionEvent e) {
+                DefaultMutableTreeNode selected = (DefaultMutableTreeNode) typeTreePanel.getTree().getSelectionPath().getLastPathComponent();
+                selectObject(selected.getUserObject());
+            }
+        });
     }
 
     public static void main(String[] args) {
