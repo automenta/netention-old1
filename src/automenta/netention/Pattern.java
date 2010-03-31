@@ -38,7 +38,10 @@ public class Pattern extends HashMap<String, Double> implements Serializable {
         return id;
     }
 
-
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 
 
 }

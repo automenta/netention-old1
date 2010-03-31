@@ -4,7 +4,9 @@ import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.Self;
 import automenta.netention.swing.util.JScaledLabel;
+import automenta.netention.swing.util.SwingWindow;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -81,15 +83,6 @@ public class PatternEditPanel extends JPanel {
             JLabel title = new JScaledLabel(p.getID(), 2.5f);
             header.add(title, BorderLayout.CENTER);
             
-            JButton updateButton = new JButton("Update");
-            updateButton.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    save();
-                }
-            });
-            header.add(updateButton, BorderLayout.EAST);
         }
         add(header, BorderLayout.NORTH);
 
@@ -103,11 +96,35 @@ public class PatternEditPanel extends JPanel {
         propPanel.setLayout(new BoxLayout(propPanel, BoxLayout.PAGE_AXIS));
         j.add(new JScrollPane(propPanel), BorderLayout.CENTER);
 
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        {
+            JButton newPropButton = new JButton("Add Property...");
+            newPropButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    addProperty();
+                }
+            });
+            buttonPanel.add(newPropButton);
+
+            JButton updateButton = new JButton("Update");
+            updateButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    save();
+                }
+            });
+            buttonPanel.add(updateButton);
+
+        }
+        j.add(buttonPanel, BorderLayout.SOUTH);
+
+
         for (Property pr : self.getProperties().values()) {
             PropertyEditPanel line = new PropertyEditPanel(pr);
             propPanel.add(line);
         }
-        propPanel.add(Box.createVerticalGlue());
+        propPanel.add(Box.createVerticalBox());
 
         updateUI();
     }
@@ -125,5 +142,18 @@ public class PatternEditPanel extends JPanel {
         }
         //TODO save property descriptions
         //TODO save property descriptions
+    }
+
+    protected void addProperty() {
+        NewPropertyPanel ndp = new NewPropertyPanel(self, pattern.getID()) {
+
+            @Override protected void afterCreated(Property p) {
+                setPattern(pattern);
+            }
+        };
+        
+        SwingWindow sw = new SwingWindow(ndp, 500, 200, false);
+        sw.setTitle("New Property...");
+
     }
 }

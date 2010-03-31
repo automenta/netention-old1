@@ -9,18 +9,24 @@ import automenta.netention.Pattern;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;
+import automenta.netention.swing.widget.NewDetailPanel;
 import automenta.netention.swing.widget.PatternEditPanel;
 import automenta.netention.swing.widget.TypeTreePanel;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -36,7 +42,7 @@ public class SelfPanel extends JPanel {
     private final MemorySelf self;
     private final JPanel contentPanel;
 
-    public SelfPanel(MemorySelf self) {
+    public SelfPanel(final MemorySelf self) {
         super(new BorderLayout());
 
         this.self = self;
@@ -45,14 +51,23 @@ public class SelfPanel extends JPanel {
 
         JMenu newMenu = new JMenu("Add");
         {
-            JMenuItem newReal = new JMenuItem("Real...");
-            newMenu.add(newReal);
-            JMenuItem newImaginary = new JMenuItem("Imaginary...");
-            newMenu.add(newImaginary);
+            JMenuItem newDetail = new JMenuItem("Detail...");
+            newDetail.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+            newDetail.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    newDetail();
+                }
+            });
+            newMenu.add(newDetail);
 
             newMenu.addSeparator();
 
             JMenuItem newPattern = new JMenuItem("Pattern...");
+            newPattern.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    newPattern();
+                }
+            });
             newMenu.add(newPattern);
         }
 
@@ -88,7 +103,7 @@ public class SelfPanel extends JPanel {
     }
 
     public void selectObject(Object o) {
-        System.out.println("selecting: " + o);
+        //System.out.println("selecting: " + o);
 
         contentPanel.removeAll();
 
@@ -133,6 +148,26 @@ public class SelfPanel extends JPanel {
         });
     }
 
+    public void newDetail() {
+        NewDetailPanel ndp = new NewDetailPanel(self) {
+
+            @Override protected void afterCreated(Detail d) {
+                selectObject(d);
+                refreshTypeTree();
+            }
+        };
+        SwingWindow sw = new SwingWindow(ndp, 500, 500, false);
+        sw.setTitle("New Detail...");
+    }
+
+    public void newPattern() {
+        String newPatternName = JOptionPane.showInputDialog("New Pattern ID");
+        Pattern p = new Pattern(newPatternName);
+        self.addPattern(p);
+        selectObject(p);
+        refreshTypeTree();
+    }
+   
     public static void main(String[] args) {
         final Logger logger = Logger.getLogger(SelfPanel.class.getName());
 

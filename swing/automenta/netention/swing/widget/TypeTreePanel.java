@@ -5,7 +5,6 @@
 package automenta.netention.swing.widget;
 
 import automenta.netention.Detail;
-import automenta.netention.Mode;
 import automenta.netention.Pattern;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
@@ -19,7 +18,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import org.apache.commons.collections15.multimap.MultiHashMap;
 
 /**
@@ -32,7 +30,6 @@ public class TypeTreePanel extends JPanel {
     private final MemorySelf self;
     private JTree tree;
     private TypeTreeModel treeModel;
-
 
     public class TypeTreeModel extends DefaultTreeModel {
 
@@ -89,7 +86,7 @@ public class TypeTreePanel extends JPanel {
 
     public void refresh() {
         removeAll();
-        
+
         treeModel = new TypeTreeModel();
         tree = new JTree(treeModel);
 
@@ -104,10 +101,7 @@ public class TypeTreePanel extends JPanel {
 
                 Object nodeObj = ((DefaultMutableTreeNode) value).getUserObject();
                 // check whatever you need to on the node user object
-                setIcon(
-                    getObjectIcon(nodeObj));
-
-
+                setIcon(getObjectIcon(nodeObj));
 
                 if (!leaf) {
                     if (expanded) {
@@ -133,30 +127,22 @@ public class TypeTreePanel extends JPanel {
             public Icon getObjectIcon(Object o) {
                 if (o instanceof Detail) {
                     Detail d = (Detail) o;
-
-
-                    if (d.getMode() == Mode.Imaginary) {
-                        return Icons.getIcon("media/tango32/status/dialog-information.png");
-
-
-                    } else if (d.getMode() == Mode.Real) {
-                        return Icons.getIcon("media/tango32/apps/accessories-text-editor.png");
-
-
-                    } else {
-                        return Icons.getIcon("media/tango32/categories/applications-office.png");
-
-
-                    }
+                    return Icons.getObjectIcon(d.getPatterns());
+//                    if (d.getMode() == Mode.Imaginary) {
+//                        return Icons.getIcon("media/tango32/status/dialog-information.png");
+//
+//
+//                    } else if (d.getMode() == Mode.Real) {
+//                        return Icons.getIcon("media/tango32/apps/accessories-text-editor.png");
+//                    } else {
+//                        return Icons.getIcon("media/tango32/categories/applications-office.png");
+//                    }
 
                 } else if (o instanceof Pattern) {
-                    return Icons.getIcon("media/tango32/categories/applications-system.png");
-
-
+                    Pattern p = (Pattern) o;
+                    return Icons.getObjectIcon(p.getID());
                 }
                 return null;
-
-
             }
         };
 
@@ -185,5 +171,4 @@ public class TypeTreePanel extends JPanel {
     public void selectObject(Detail d) {
         //TODO impl this
     }
-
 }

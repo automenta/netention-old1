@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package automenta.netention;
 
 import automenta.netention.linker.Linker;
@@ -20,7 +19,7 @@ public interface Self {
     public Map<String, Property> getProperties();
 
     public Map<String, Detail> getDetails();
-    
+
     /** all available patterns */
     public Map<String, Pattern> getPatterns();
 
@@ -33,12 +32,14 @@ public interface Self {
     public Collection<String> getAvailablePatterns(Detail d);
 
     public void link(Linker l);
+
     public void clearLinks();
 
     public boolean addPattern(Pattern p);
+    public boolean addDetail(Detail d);
+    public boolean addProperty(Property p, String... patterns);
 
     public Property getProperty(String propertyID);
- 
-    public boolean acceptsAnotherProperty(Detail d, String propid);
 
+    public boolean acceptsAnotherProperty(Detail d, String propid);
 }

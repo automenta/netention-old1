@@ -9,6 +9,7 @@ import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
+import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.BoolPropertyPanel;
 import automenta.netention.swing.property.IntPropertyPanel;
 import automenta.netention.swing.property.PropertyOptionPanel;
@@ -75,6 +76,7 @@ abstract public class DetailEditPanel extends JPanel {
             for (String pid : self.getAvailablePatterns(detail)) {
                 final Pattern p = self.getPatterns().get(pid);
                 JMenuItem ti = new JMenuItem(p.getID());
+                ti.setIcon(Icons.getObjectIcon(pid));
                 ti.addActionListener(new ActionListener() {
 
                     @Override public void actionPerformed(ActionEvent e) {
@@ -93,7 +95,7 @@ abstract public class DetailEditPanel extends JPanel {
             for (String pid : detail.getPatterns()) {
                 final Pattern p = self.getPatterns().get(pid);
                 JMenu j = new JMenu(p.getID());
-
+                j.setIcon(Icons.getObjectIcon(pid));
                 int numItems = 0;
 
                 for (String propid : p.keySet()) {
