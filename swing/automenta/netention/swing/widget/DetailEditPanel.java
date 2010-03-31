@@ -228,11 +228,12 @@ abstract public class DetailEditPanel extends JPanel {
         contentSplit.setTopComponent(new JScrollPane(sentences));
 
         linksPanel = new DetailLinksPanel(self, d);
-        //contentSplit.setBottomComponent(new JScrollPane(linksPanel));
+        contentSplit.setBottomComponent(new JScrollPane(linksPanel));
 
         setDetail(d);
 
-        contentSplit.setDividerLocation(1.0);
+        contentSplit.setResizeWeight(0.5);
+        contentSplit.setDividerLocation(0.5);
 
     }
 

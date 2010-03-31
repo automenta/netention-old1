@@ -11,20 +11,13 @@ import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.swing.Icons;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -37,7 +30,7 @@ import javax.swing.JToggleButton;
 abstract public class NewDetailPanel extends AbstractNewPanel {
     private JTextField nameField;
     private JComboBox modeBox;
-    private Map<String, JToggleButton> patternButtons = new HashMap();
+    private Map<String, JToggleButton> patternButtons;
 
     public NewDetailPanel(Self self) {
         super(self);        
@@ -78,13 +71,15 @@ abstract public class NewDetailPanel extends AbstractNewPanel {
         gc.weighty = 0.5;
         gc.weightx = 1.0;
 
+        patternButtons = new HashMap();
+        
         int rows = -1;
         int cols = 1;
         JPanel patterns = new JPanel(new GridLayout(rows, cols));
         //types
-        for (Pattern p : self.getPatterns().values()) {
-            JToggleButton t = new JToggleButton(p.getID(), Icons.getObjectIcon(p.getID()));
-            patternButtons.put(p.getID(), t);
+        for (String p : self.getPatterns().keySet()) {
+            JToggleButton t = new JToggleButton(p, Icons.getObjectIcon(p));
+            patternButtons.put(p, t);
             patterns.add(t);
         }
         center.add(new JScrollPane(patterns), gc);

@@ -29,7 +29,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                 //private SuggestBox isBox;
                 //private RichTextArea rta;
-                JTextField rta;
+                JTextField rta = new JTextField();
 
                 @Override public boolean accepts(Value v) { 	return v.getClass().equals(StringIs.class);		}
 
@@ -49,11 +49,11 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                 }
 
                 @Override public JPanel newEditPanel(StringIs value) {
-
+                    setValue(value);
                     setIs();
 
                     JPanel p =  new TransparentFlowPanel();
-                    rta = new JTextField(value.getString());
+                    rta.setText(value.getString());
                     rta.setColumns(stringCols);
                     p.add(rta);
 
