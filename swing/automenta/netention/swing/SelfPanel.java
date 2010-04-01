@@ -6,6 +6,7 @@ package automenta.netention.swing;
 
 import automenta.netention.Detail;
 import automenta.netention.Pattern;
+import automenta.netention.impl.JSONIO;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;
@@ -140,7 +141,6 @@ public class SelfPanel extends JPanel {
     protected void refreshTypeTree() {
         typeTreePanel.refresh();
         typeTreePanel.getTree().addTreeSelectionListener(new TreeSelectionListener() {
-
             @Override public void valueChanged(TreeSelectionEvent e) {
                 DefaultMutableTreeNode selected = (DefaultMutableTreeNode) typeTreePanel.getTree().getSelectionPath().getLastPathComponent();
                 selectObject(selected.getUserObject());
@@ -181,7 +181,8 @@ public class SelfPanel extends JPanel {
         //LOAD
         MemorySelf self;
         try {
-            self = MemorySelf.load(filePath);
+            //self = MemorySelf.load(filePath);
+            self = JSONIO.load(filePath);
             logger.log(Level.INFO, "Loaded " + filePath);
         } catch (Exception ex) {
             self = new MemorySelf("me", "Me");
@@ -196,7 +197,8 @@ public class SelfPanel extends JPanel {
             protected void onClosing() {
                 //SAVE ON EXIT
                 try {
-                    mSelf.save(filePath);
+                    //mSelf.save(filePath);
+                    JSONIO.save(mSelf, filePath);
                     logger.log(Level.INFO, "Saved " + filePath);
                 } catch (Exception ex) {
                     logger.log(Level.SEVERE, null, ex);
