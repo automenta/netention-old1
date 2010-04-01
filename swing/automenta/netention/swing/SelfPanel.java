@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -42,6 +43,9 @@ public class SelfPanel extends JPanel {
     private final TypeTreePanel typeTreePanel;
     private final MemorySelf self;
     private final JPanel contentPanel;
+
+    int contentMargin = 6;
+    
 
     public SelfPanel(final MemorySelf self) {
         super(new BorderLayout());
@@ -94,6 +98,7 @@ public class SelfPanel extends JPanel {
         content.setLeftComponent(new JScrollPane(typeTreePanel));
 
         contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBorder(new EmptyBorder(contentMargin, contentMargin, contentMargin, contentMargin));
         content.setRightComponent(contentPanel);
 
         content.setDividerLocation(0.45);
@@ -111,7 +116,14 @@ public class SelfPanel extends JPanel {
         if (o != null) {
             if (o instanceof Pattern) {
                 //content.setRightComponent(new PatternEditPanel(self, (Pattern)o));
-                contentPanel.add(new PatternEditPanel(self, (Pattern) o), BorderLayout.CENTER);
+                contentPanel.add(new PatternEditPanel(self, (Pattern) o) {
+                    @Override protected void deleteThis() {
+                        selectObject(null);
+                        self.removePattern(pattern);
+                        refreshTypeTree();
+                    }
+                }, BorderLayout.CENTER
+                );
 
             } else if (o instanceof Detail) {
                 final Detail d = (Detail) o;

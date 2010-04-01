@@ -11,6 +11,7 @@ import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
 import automenta.netention.linker.Linker;
+import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.util.Pair;
@@ -86,6 +87,11 @@ public class MemorySelf implements Self, Serializable {
         return true;
     }
 
+    @Override
+    public boolean removePattern(Pattern pattern) {
+        patterns.remove(pattern.getID());
+        return true;
+    }
     
     public boolean addProperty(Property p, String... patterns) {
         //TODO do not allow adding existing pattern
@@ -198,6 +204,12 @@ public class MemorySelf implements Self, Serializable {
             return false;
 
         return true;
+    }
+
+    @Override public void updateLinks(Runnable whenFinished, Detail... details) {
+        clearLinks();
+        link(new DefaultHeuristicLinker());
+        whenFinished.run();
     }
 
 }

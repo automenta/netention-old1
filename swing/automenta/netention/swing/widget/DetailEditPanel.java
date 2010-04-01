@@ -62,6 +62,7 @@ abstract public class DetailEditPanel extends JPanel {
     private final DetailMenuBar menuBar;
     private List<PropertyOptionPanel> optionPanels = new LinkedList();
     long updateDelayMS = 650;
+    private final JScaledLabel headerLabel;
 
     protected class DetailMenuBar extends JMenuBar {
 
@@ -152,8 +153,8 @@ abstract public class DetailEditPanel extends JPanel {
         GridBagConstraints gc = new GridBagConstraints();
         {
             gc.weightx = 1.0;
-            gc.weighty = 0.0;
-            gc.fill = gc.HORIZONTAL;
+            gc.weighty = 0.05;
+            gc.fill = gc.BOTH;
             gc.anchor = gc.NORTHWEST;
             gc.gridx = gc.gridy = 1;
         }
@@ -162,7 +163,10 @@ abstract public class DetailEditPanel extends JPanel {
 
         JPanel header = new JPanel(new BorderLayout());
         {
-            header.add(new JScaledLabel(d.getName(), 2.5f), BorderLayout.CENTER);
+            headerLabel = new JScaledLabel(d.getName(), 2.5f);
+
+
+            header.add(headerLabel, BorderLayout.CENTER);
 
             JPanel buttons = new JPanel(new FlowLayout());
 
@@ -193,9 +197,11 @@ abstract public class DetailEditPanel extends JPanel {
 
             final JButton deleteButton = new JButton("Delete");
             deleteButton.addActionListener(new ActionListener() {
+
                 @Override public void actionPerformed(ActionEvent e) {
                     if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Delete this detail?", "Delete", JOptionPane.YES_NO_OPTION)) {
                         SwingUtilities.invokeLater(new Runnable() {
+
                             @Override public void run() {
                                 deleteThis();
                             }
@@ -232,7 +238,7 @@ abstract public class DetailEditPanel extends JPanel {
 
         setDetail(d);
 
-        contentSplit.setResizeWeight(0.5);
+        contentSplit.setResizeWeight(0.85);
         contentSplit.setDividerLocation(0.5);
 
     }
@@ -288,6 +294,12 @@ abstract public class DetailEditPanel extends JPanel {
         gc.weighty = 1.0;
         sentences.add(Box.createVerticalBox(), gc);
 
+        if (d.getPatterns().size() > 0) {
+            headerLabel.setIcon(Icons.getObjectIcon(d.getPatterns().get(0)));
+        } else {
+            headerLabel.setIcon(null);
+        }
+
         updateUI();
 
     }
@@ -315,7 +327,6 @@ abstract public class DetailEditPanel extends JPanel {
     protected void setEditable(boolean editable) {
         this.editable = editable;
     }
-
 
     synchronized protected void addPattern(Pattern p) {
         detail.getPatterns().add(p.getID());
@@ -355,6 +366,6 @@ abstract public class DetailEditPanel extends JPanel {
     }
 
     abstract protected void deleteThis();
-    abstract protected void patternChanged();
 
+    abstract protected void patternChanged();
 }

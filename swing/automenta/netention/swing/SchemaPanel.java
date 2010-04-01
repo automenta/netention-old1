@@ -33,7 +33,7 @@ import javax.swing.event.ListSelectionListener;
  *      Open Example Editor Window for a Selection of Patterns
  * @author seh
  */
-public class SchemaPanel extends JPanel {
+@Deprecated public class SchemaPanel extends JPanel {
 
     private Self self;
     private final DefaultListModel patternModel;
@@ -91,7 +91,14 @@ public class SchemaPanel extends JPanel {
         patternList = new JList(patternModel);
 
 
-        editPanel = new PatternEditPanel(self);
+        editPanel = new PatternEditPanel(self) {
+
+            @Override
+            protected void deleteThis() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+        };
 
         add(patternList, BorderLayout.WEST);
         add(editPanel, BorderLayout.CENTER);

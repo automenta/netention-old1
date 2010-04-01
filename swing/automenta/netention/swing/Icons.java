@@ -38,6 +38,7 @@ public class Icons {
     static {
         objectToIconPath.put("default", "media/tango32/actions/document-new.png");
         objectToIconPath.put("pattern", "media/tango32/categories/applications-system.png");
+        objectToIconPath.put("property", "media/tango32/actions/list-add.png");
         objectToIconPath.put("Built", "media/tango32/categories/preferences-system.png");
         objectToIconPath.put("Event", "media/tango32/mimetypes/x-office-calendar.png");
         objectToIconPath.put("Media", "media/tango32/categories/applications-multimedia.png");

@@ -3,6 +3,7 @@ package automenta.netention.swing.widget;
 import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.Self;
+import automenta.netention.swing.Icons;
 import automenta.netention.swing.util.JScaledLabel;
 import automenta.netention.swing.util.SwingWindow;
 import java.awt.BorderLayout;
@@ -16,18 +17,20 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-public class PatternEditPanel extends JPanel {
+abstract public class PatternEditPanel extends JPanel {
 
     private JTextArea desc;
     private Map<String, JSlider> propStrengths = new HashMap();
     private final Self self;
-    private Pattern pattern;
+    protected Pattern pattern;
 
     public class PropertyEditPanel extends JPanel {
 
@@ -45,7 +48,10 @@ public class PatternEditPanel extends JPanel {
 
             Double v = pattern.get(pr.getID());
             double value = v != null ? v : 0.0;
-            left.add(new JScaledLabel(pr.getID() + " (" + pr.getClass().getSimpleName() + ")", 1.25f));
+            JLabel lsl = new JScaledLabel(pr.getID() + " (" + pr.getClass().getSimpleName() + ")", 1.25f);
+            lsl.setIcon(Icons.getObjectIcon("property"));
+
+            left.add(lsl);
 
             JSlider vf = new JSlider(0, 100, (int) (value * 100.0));
             left.add(vf);
@@ -81,6 +87,7 @@ public class PatternEditPanel extends JPanel {
         JPanel header = new JPanel(new BorderLayout());
         {
             JLabel title = new JScaledLabel(p.getID(), 2.5f);
+            title.setIcon(Icons.getObjectIcon(p.getID()));
             header.add(title, BorderLayout.CENTER);
             
         }
@@ -106,6 +113,21 @@ public class PatternEditPanel extends JPanel {
                 }
             });
             buttonPanel.add(newPropButton);
+
+            JButton deleteButton = new JButton("Delete");
+            deleteButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (0 == JOptionPane.showConfirmDialog(PatternEditPanel.this, "Delete this pattern?", "Delete", JOptionPane.YES_NO_OPTION)) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override public void run() {
+                                deleteThis();
+                            }
+                        });
+                    }
+                }
+            });
+            buttonPanel.add(deleteButton);
 
             JButton updateButton = new JButton("Update");
             updateButton.addActionListener(new ActionListener() {
@@ -143,6 +165,8 @@ public class PatternEditPanel extends JPanel {
         //TODO save property descriptions
         //TODO save property descriptions
     }
+
+    abstract protected void deleteThis();
 
     protected void addProperty() {
         NewPropertyPanel ndp = new NewPropertyPanel(self, pattern.getID()) {

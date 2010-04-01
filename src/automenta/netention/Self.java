@@ -36,10 +36,15 @@ public interface Self {
     public void clearLinks();
 
     public boolean addPattern(Pattern p);
+    public boolean removePattern(Pattern pattern);
     public boolean addDetail(Detail d);
     public boolean addProperty(Property p, String... patterns);
 
     public Property getProperty(String propertyID);
 
     public boolean acceptsAnotherProperty(Detail d, String propid);
+
+    /** signals that certain details have changed, causing the system to update the links for them */
+    public void updateLinks(Runnable whenFinished, Detail... details);
+
 }
