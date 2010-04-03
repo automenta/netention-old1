@@ -6,25 +6,27 @@ package automenta.netention.swing;
 
 import automenta.netention.Detail;
 import automenta.netention.Pattern;
-import automenta.netention.impl.JSONIO;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;
 import automenta.netention.swing.widget.NewDetailPanel;
 import automenta.netention.swing.widget.PatternEditPanel;
-import automenta.netention.swing.widget.TypeTreePanel;
+import automenta.netention.swing.widget.SelfBrowserView;
+import automenta.netention.swing.widget.WhatTreePanel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
@@ -40,12 +42,63 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class SelfPanel extends JPanel {
 
     private final JSplitPane content;
-    private final TypeTreePanel typeTreePanel;
+    private SelfBrowserView typeTreePanel;
     private final MemorySelf self;
     private final JPanel contentPanel;
 
     int contentMargin = 6;
-    
+
+    public class ViewMenu extends JMenu implements ActionListener {
+        private final JRadioButtonMenuItem where;
+        private final JRadioButtonMenuItem what;
+        private final JRadioButtonMenuItem who;
+        private final ButtonGroup group;
+
+        public ViewMenu() {
+            super();
+            setToolTipText("Views");
+
+            what = new JRadioButtonMenuItem("What", Icons.getObjectIcon("what"));
+            what.addActionListener(this);
+            who = new JRadioButtonMenuItem("Who", Icons.getObjectIcon("who"));
+            who.addActionListener(this);
+            where = new JRadioButtonMenuItem("Where", Icons.getObjectIcon("where"));
+            where.addActionListener(this);
+
+            add(what);
+            add(who);
+            add(where);
+
+            group = new ButtonGroup();
+            group.add(what);
+            group.add(who);
+            group.add(where);
+
+            setIcon(what.getIcon());
+            what.setSelected(true);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (what.isSelected()) {
+                setIcon(what.getIcon());
+                viewWhat();
+            }
+            else if (who.isSelected()) {
+                setIcon(who.getIcon());
+                viewWho();
+            }
+            else if (where.isSelected()) {
+                setIcon(where.getIcon());
+                viewWhere();
+            }
+        }
+
+        //        JMenu viewMenu = new JMenu(/*"View"*/);
+//        viewMenu.setIcon(Icons.getObjectIcon("view"));
+//        viewMenu.setToolTipText("Views");
+
+    }
 
     public SelfPanel(final MemorySelf self) {
         super(new BorderLayout());
@@ -54,7 +107,9 @@ public class SelfPanel extends JPanel {
 
         JMenuBar menubar = new JMenuBar();
 
-        JMenu newMenu = new JMenu("Add");
+        JMenu newMenu = new JMenu(/*"Add"*/);
+        newMenu.setIcon(Icons.getObjectIcon("add"));
+        newMenu.setToolTipText("Add...");
         {
             JMenuItem newDetail = new JMenuItem("Detail...");
             newDetail.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
@@ -74,28 +129,36 @@ public class SelfPanel extends JPanel {
                 }
             });
             newMenu.add(newPattern);
+
+            newMenu.addSeparator();
+
+            JMenuItem ambientMessages = new JMenuItem("Ambient Messages");
+            newMenu.add(ambientMessages);
         }
 
-        JMenu netMenu = new JMenu("Network");
+        JMenu netMenu = new JMenu(/*"Network"*/);
+        netMenu.setIcon(Icons.getObjectIcon("network"));
+        netMenu.setToolTipText("Network");
         {
             JMenuItem load = new JMenuItem("Import...");
             netMenu.add(load);
             JMenuItem save = new JMenuItem("Export...");
             netMenu.add(save);
+
         }
 
-        JMenu viewMenu = new JMenu("View");
+        JMenu viewMenu = new ViewMenu();
 
         menubar.add(newMenu);
-        menubar.add(netMenu);
         menubar.add(viewMenu);
+        menubar.add(netMenu);
+        
         add(menubar, BorderLayout.NORTH);
 
         content = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        typeTreePanel = new TypeTreePanel(self);
-        refreshTypeTree();
 
-        content.setLeftComponent(new JScrollPane(typeTreePanel));
+        viewWhat();
+
 
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(contentMargin, contentMargin, contentMargin, contentMargin));
@@ -120,7 +183,7 @@ public class SelfPanel extends JPanel {
                     @Override protected void deleteThis() {
                         selectObject(null);
                         self.removePattern(pattern);
-                        refreshTypeTree();
+                        refreshView();
                     }
                 }, BorderLayout.CENTER
                 );
@@ -130,7 +193,7 @@ public class SelfPanel extends JPanel {
                 contentPanel.add(new DetailEditPanel(self, d, true) {
 
                     @Override protected void patternChanged() {
-                        refreshTypeTree();
+                        refreshView();
                         typeTreePanel.selectObject(d);
                     }
 
@@ -138,7 +201,7 @@ public class SelfPanel extends JPanel {
                     protected void deleteThis() {
                         selectObject(null);
                         self.removeDetail(d);
-                        refreshTypeTree();
+                        refreshView();
                     }
                 }, BorderLayout.CENTER);
             } else {
@@ -150,14 +213,19 @@ public class SelfPanel extends JPanel {
         contentPanel.updateUI();
     }
 
-    protected void refreshTypeTree() {
+    protected void refreshView() {
         typeTreePanel.refresh();
-        typeTreePanel.getTree().addTreeSelectionListener(new TreeSelectionListener() {
-            @Override public void valueChanged(TreeSelectionEvent e) {
-                DefaultMutableTreeNode selected = (DefaultMutableTreeNode) typeTreePanel.getTree().getSelectionPath().getLastPathComponent();
-                selectObject(selected.getUserObject());
-            }
-        });
+
+        //TODO un-hack this
+        if (typeTreePanel instanceof WhatTreePanel) {
+            final WhatTreePanel w = ((WhatTreePanel)typeTreePanel);
+            w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+                @Override public void valueChanged(TreeSelectionEvent e) {
+                    DefaultMutableTreeNode selected = (DefaultMutableTreeNode) w.getTree().getSelectionPath().getLastPathComponent();
+                    selectObject(selected.getUserObject());
+                }
+            });
+        }
     }
 
     public void newDetail() {
@@ -165,7 +233,7 @@ public class SelfPanel extends JPanel {
 
             @Override protected void afterCreated(Detail d) {
                 selectObject(d);
-                refreshTypeTree();
+                refreshView();
             }
         };
         SwingWindow sw = new SwingWindow(ndp, 500, 500, false);
@@ -177,7 +245,7 @@ public class SelfPanel extends JPanel {
         Pattern p = new Pattern(newPatternName);
         self.addPattern(p);
         selectObject(p);
-        refreshTypeTree();
+        refreshView();
     }
    
     public static void main(String[] args) {
@@ -193,10 +261,11 @@ public class SelfPanel extends JPanel {
         //LOAD
         MemorySelf self;
         try {
-            //self = MemorySelf.load(filePath);
-            self = JSONIO.load(filePath);
+            self = MemorySelf.load(filePath);
+            //self = JSONIO.load(filePath);
             logger.log(Level.INFO, "Loaded " + filePath);
         } catch (Exception ex) {
+            System.out.println("unable to load " + filePath + " : " + ex);
             self = new MemorySelf("me", "Me");
             new SeedSelfBuilder().build(self);
             logger.log(Level.INFO, "Loaded Seed Self");
@@ -209,8 +278,8 @@ public class SelfPanel extends JPanel {
             protected void onClosing() {
                 //SAVE ON EXIT
                 try {
-                    //mSelf.save(filePath);
-                    JSONIO.save(mSelf, filePath);
+                    mSelf.save(filePath);
+                    //JSONIO.save(mSelf, filePath);
                     logger.log(Level.INFO, "Saved " + filePath);
                 } catch (Exception ex) {
                     logger.log(Level.SEVERE, null, ex);
@@ -219,4 +288,20 @@ public class SelfPanel extends JPanel {
         };
 
     }
+
+    protected void viewWhat() {        
+        typeTreePanel = new WhatTreePanel(self);
+        refreshView();
+
+        content.setLeftComponent(new JScrollPane((JPanel)typeTreePanel));
+    }
+
+    protected void viewWho() {
+        content.setLeftComponent(new JPanel());
+    }
+    
+    protected void viewWhere() {
+        content.setLeftComponent(new JPanel());
+    }
+    
 }

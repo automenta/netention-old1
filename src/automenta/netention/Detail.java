@@ -19,6 +19,9 @@ public interface Detail extends Node {
 //
 //	}
 
+    /** creator's URI */
+    public String getCreator();
+
     public Mode getMode();
 	public List<String> getPatterns();
 	public List<PropertyValue> getProperties();

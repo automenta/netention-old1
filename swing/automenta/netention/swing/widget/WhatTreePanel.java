@@ -24,7 +24,7 @@ import org.apache.commons.collections15.multimap.MultiHashMap;
  *
  * @author seh
  */
-public class TypeTreePanel extends JPanel implements SelfIndexView {
+public class WhatTreePanel extends JPanel implements SelfBrowserView {
 
     float textScale = 1.25f;
     private final MemorySelf self;
@@ -76,7 +76,7 @@ public class TypeTreePanel extends JPanel implements SelfIndexView {
         }
     }
 
-    public TypeTreePanel(MemorySelf self) {
+    public WhatTreePanel(MemorySelf self) {
         super(new BorderLayout());
 
 

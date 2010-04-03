@@ -178,6 +178,7 @@ abstract public class DetailEditPanel extends JPanel {
 
                         @Override public void run() {
                             updateButton.setEnabled(false);
+                            linksPanel.refresh();
                             updateDetail();
                             new Thread(new Runnable() {
 

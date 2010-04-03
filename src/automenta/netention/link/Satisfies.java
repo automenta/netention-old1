@@ -17,4 +17,10 @@ public class Satisfies extends AbstractLink {
         super(source, target, strength);
     }
 
+    @Override
+    public String toString() {
+        return "satisfies";
+    }
+
+
 }

@@ -31,8 +31,8 @@ public class JSONIO {
     
     public static void save(MemorySelf self, String path, String... excludes) throws Exception {
         JSONSerializer serializer = new JSONSerializer();
-        
-        String output = serializer.exclude(excludes).prettyPrint(self);
+
+        String output = serializer./*exclude(excludes)*/prettyPrint(self);
         FileOutputStream fout = new FileOutputStream(path);
         DataOutputStream dout = new DataOutputStream(fout);
         dout.writeUTF(output);

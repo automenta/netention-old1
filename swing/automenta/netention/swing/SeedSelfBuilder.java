@@ -40,7 +40,8 @@ public class SeedSelfBuilder {
             self.addProperty(new NodeProp("anotherObject", "Another Object", "Built"));
             self.addProperty(new BoolProp("hasKickStand", "Has Kickstand"));
         }
-        MemoryDetail d1 = new MemoryDetail("Real Bike", Mode.Real, "Built");
+        MemoryDetail d1 = new MemoryDetail("Red Bike", Mode.Real, "Built", "Mobile");
+        MemoryDetail d11 = new MemoryDetail("Blue Bike", Mode.Real, "Built");
         MemoryDetail d2 = new MemoryDetail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");
         MemoryDetail d3 = new MemoryDetail("Empty Description", Mode.Real);
         {
@@ -48,16 +49,25 @@ public class SeedSelfBuilder {
             d1.addProperty("manufacturer", new StringIs("myself"));
             d1.addProperty("wheelRadius", new RealIs(16.0));
             d1.addProperty("hasKickStand", new BoolIs(true));
-            d1.addProperty("anotherObject", new NodeIs(d2.getID()));
+            //d1.addProperty("anotherObject", new NodeIs(d2.getID()));
+            {
+                d11.addProperty("numWheels", new IntegerIs(2));
+                d11.addProperty("manufacturer", new StringIs("myself"));
+                d11.addProperty("wheelRadius", new RealIs(16.0));
+                d11.addProperty("hasKickStand", new BoolIs(true));
+                //d11.addProperty("anotherObject", new NodeIs(d2.getID()));
+            }
+
         }
         {
             d2.addProperty("numWheels", new IntegerEquals(4));
             d2.addProperty("manufacturer", new StringEquals("myself"));
             d2.addProperty("wheelRadius", new RealEquals(16.0));
             d2.addProperty("hasKickStand", new BoolEquals(true));
-            d2.addProperty("anotherObject", new NodeEquals(d1.getID()));
+            //d2.addProperty("anotherObject", new NodeEquals(d1.getID()));
         }
         self.addDetail(d1);
+        self.addDetail(d11);
         self.addDetail(d2);
         self.addDetail(d3);
     }

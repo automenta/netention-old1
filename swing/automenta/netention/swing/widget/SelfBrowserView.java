@@ -5,10 +5,16 @@
 
 package automenta.netention.swing.widget;
 
+import automenta.netention.Detail;
+
 /**
  *
  * @author seh
  */
-interface SelfIndexView {
+public interface SelfBrowserView {
+
+    public void selectObject(Detail d);
+
+    public void refresh();
 
 }

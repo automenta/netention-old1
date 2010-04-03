@@ -8,14 +8,18 @@ import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 
 public class JHyperLink extends JButton {
-
-    public JHyperLink(String toString, String tooltip) {
+    public JHyperLink(String toString, String tooltip, float fontScale) {
         super("<html><u>" + toString + "</u></html>");
         setOpaque(false);
         setBorderPainted(false);
-        setFont(getFont().deriveFont(Font.BOLD));
+        float nextSize = getFont().getSize2D() * fontScale;
+        setFont(getFont().deriveFont(Font.BOLD).deriveFont(nextSize));
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         setToolTipText(tooltip);
+    }
+
+    public JHyperLink(String toString, String tooltip) {
+        this(toString, tooltip, 1.0f);
     }
 
     public void addPopup(final JPopupMenu menu) {

@@ -17,5 +17,10 @@ public class SimilarTo extends AbstractLink {
     public SimilarTo(String source, String target, double strength) {
         super(source, target, strength);
     }
-    
+ 
+    @Override
+    public String toString() {
+        return "similar";
+    }
+
 }

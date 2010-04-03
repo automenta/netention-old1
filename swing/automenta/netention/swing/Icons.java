@@ -4,6 +4,7 @@
  */
 package automenta.netention.swing;
 
+import automenta.netention.Detail;
 import java.awt.Image;
 import java.io.File;
 import java.util.HashMap;
@@ -38,7 +39,14 @@ public class Icons {
     static {
         objectToIconPath.put("default", "media/tango32/actions/document-new.png");
         objectToIconPath.put("pattern", "media/tango32/categories/applications-system.png");
-        objectToIconPath.put("property", "media/tango32/actions/list-add.png");
+        objectToIconPath.put("property", "media/tango32/status/dialog-information.png");
+        objectToIconPath.put("add", "media/tango32/actions/list-add.png");
+        objectToIconPath.put("network", "media/tango32/status/network-transmit-receive.png");
+
+        objectToIconPath.put("what", "media/tango32/places/folder.png");
+        objectToIconPath.put("who", "media/tango32/apps/system-users.png");
+        objectToIconPath.put("where", "media/tango32/categories/applications-internet.png");
+
         objectToIconPath.put("Built", "media/tango32/categories/preferences-system.png");
         objectToIconPath.put("Event", "media/tango32/mimetypes/x-office-calendar.png");
         objectToIconPath.put("Media", "media/tango32/categories/applications-multimedia.png");
@@ -82,5 +90,12 @@ public class Icons {
         }
 
         return getIcon(objectToIconPath.get("default"));
+    }
+
+    public static Icon getDetailIcon(Detail d) {
+        if (d.getPatterns().size() == 0) {
+            return null;
+        }
+        return getObjectIcon(d.getPatterns().get(0));
     }
 }

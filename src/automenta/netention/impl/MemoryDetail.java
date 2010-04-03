@@ -8,6 +8,7 @@ package automenta.netention.impl;
 import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.PropertyValue;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,9 @@ public class MemoryDetail implements Detail {
     private final Mode mode;
     private final List<String> patterns = new LinkedList();
     private final List<PropertyValue> properties = new LinkedList();
+    private String creator;
+    private Date whenCreated = null;
+    private Date whenModified = null;
 
     public MemoryDetail(String name) {
         this(name, Mode.Unknown);
@@ -31,6 +35,7 @@ public class MemoryDetail implements Detail {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.mode = mode;
+        this.creator = "Me";
 
         for (String p : initialPatterns) {
             addPattern(p);
@@ -82,6 +87,11 @@ public class MemoryDetail implements Detail {
     @Override
     public String toString() {
         return getName();
+    }
+
+    @Override
+    public String getCreator() {
+        return creator;
     }
 
 

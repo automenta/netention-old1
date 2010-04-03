@@ -7,6 +7,8 @@ package automenta.netention.swing.widget;
 import automenta.netention.Detail;
 import automenta.netention.Link;
 import automenta.netention.Self;
+import automenta.netention.swing.Icons;
+import automenta.netention.swing.util.JHyperLink;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.util.Collection;
@@ -16,6 +18,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  *
@@ -30,12 +33,26 @@ public class DetailLinksPanel extends JPanel {
         private final Link link;
 
         private LinkPanel(Link l) {
-            super(new FlowLayout());
+            super(new FlowLayout(FlowLayout.LEFT));
             this.link = l;
 
-            JLabel la = new JLabel(l.getSource() + " " +  l.toString() + " " + l.getTarget());
+            String otherID = getOther();
+
+            Detail other = self.getDetails().get(otherID);
+
+            JHyperLink la = new JHyperLink(other.getName() + " (" + l.toString() + ")", "", 1.2f);
+            la.setIcon(Icons.getDetailIcon(other));
             add(la);
 
+            JLabel s = new JLabel(((int)(link.getStrength() * 100.0)) + "%");
+            add(s);
+
+        }
+
+        public String getOther() {
+            if (link.getSource().equals(detail.getID()))
+                return link.getTarget();
+            return link.getSource();
         }
 
     }
@@ -74,7 +91,7 @@ public class DetailLinksPanel extends JPanel {
 
                 JPanel linkPanel = new JPanel();
                 linkPanel.setLayout(new BoxLayout(linkPanel, BoxLayout.PAGE_AXIS));
-                add(linkPanel, BorderLayout.CENTER);
+                add(new JScrollPane(linkPanel), BorderLayout.CENTER);
 
                 for (Link l : edges) {
                     addLink(linkPanel, l);
