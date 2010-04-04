@@ -17,8 +17,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -30,7 +28,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -39,7 +36,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 /**
  * Displays a list of one's Details and a tabbed viewer of them 
  */
-public class SelfPanel extends JPanel {
+public class SelfBrowserPanel extends JPanel {
 
     private final JSplitPane content;
     private SelfBrowserView typeTreePanel;
@@ -100,7 +97,7 @@ public class SelfPanel extends JPanel {
 
     }
 
-    public SelfPanel(final MemorySelf self) {
+    public SelfBrowserPanel(final MemorySelf self) {
         super(new BorderLayout());
 
         this.self = self;
@@ -149,8 +146,8 @@ public class SelfPanel extends JPanel {
 
         JMenu viewMenu = new ViewMenu();
 
-        menubar.add(newMenu);
         menubar.add(viewMenu);
+        menubar.add(newMenu);
         menubar.add(netMenu);
         
         add(menubar, BorderLayout.NORTH);
@@ -248,46 +245,6 @@ public class SelfPanel extends JPanel {
         refreshView();
     }
    
-    public static void main(String[] args) {
-        final Logger logger = Logger.getLogger(SelfPanel.class.getName());
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
-        }
-
-        final String filePath = "/tmp/netention1";
-
-        //LOAD
-        MemorySelf self;
-        try {
-            self = MemorySelf.load(filePath);
-            //self = JSONIO.load(filePath);
-            logger.log(Level.INFO, "Loaded " + filePath);
-        } catch (Exception ex) {
-            System.out.println("unable to load " + filePath + " : " + ex);
-            self = new MemorySelf("me", "Me");
-            new SeedSelfBuilder().build(self);
-            logger.log(Level.INFO, "Loaded Seed Self");
-        }
-
-        final MemorySelf mSelf = self;
-        SwingWindow window = new SwingWindow(new SelfPanel(self), 900, 800, true) {
-
-            @Override
-            protected void onClosing() {
-                //SAVE ON EXIT
-                try {
-                    mSelf.save(filePath);
-                    //JSONIO.save(mSelf, filePath);
-                    logger.log(Level.INFO, "Saved " + filePath);
-                } catch (Exception ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
-        };
-
-    }
 
     protected void viewWhat() {        
         typeTreePanel = new WhatTreePanel(self);

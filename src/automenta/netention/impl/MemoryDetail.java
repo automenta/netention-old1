@@ -18,14 +18,19 @@ import java.util.UUID;
  * @author seh
  */
 public class MemoryDetail implements Detail {
-    private final String id;
-    private final String name;
-    private final Mode mode;
-    private final List<String> patterns = new LinkedList();
-    private final List<PropertyValue> properties = new LinkedList();
+    private String id;
+    private String name;
+    private Mode mode;
+    private List<String> patterns = new LinkedList();
+    private List<PropertyValue> properties = new LinkedList();
     private String creator;
     private Date whenCreated = null;
     private Date whenModified = null;
+
+    public MemoryDetail() {
+        this("");
+    }
+
 
     public MemoryDetail(String name) {
         this(name, Mode.Unknown);

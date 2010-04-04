@@ -33,22 +33,26 @@ import java.util.Set;
  */
 public class MemorySelf implements Self, Serializable {
 
-    public final String id, name;
+    private String id, name;
 
     /** propertyID -> properties */
-    public final Map<String, Property> properties = new HashMap();
+    private Map<String, Property> properties = new HashMap();
 
     /** patternID -> patterns */
-    public final Map<String, Pattern> patterns = new HashMap();
+    private Map<String, Pattern> patterns = new HashMap();
 
     /** detailID -> details */
-    public final LinkedHashMap<String, Detail> details = new LinkedHashMap();
+    private Map<String, Detail> details = new HashMap();
 
     /* detail -> detail link graph */
-    public DirectedSparseMultigraph<Detail, Link> links = new DirectedSparseMultigraph<Detail, Link>();
+    transient private DirectedSparseMultigraph<Detail, Link> links = new DirectedSparseMultigraph<Detail, Link>();
+
+    public MemorySelf() {
+        super();
+    }
 
     public MemorySelf(String id, String name) {
-        super();
+        this();
         this.id = id;
         this.name = name;
     }

@@ -14,6 +14,11 @@ import automenta.netention.PropertyValue;
 public class BoolEquals extends PropertyValue {
     private boolean value;
 
+    public BoolEquals() {
+        this(false);
+    }
+
+
     public BoolEquals(boolean b) {
         super();
         this.value = b;

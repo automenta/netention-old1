@@ -16,6 +16,11 @@ import automenta.netention.PropertyValue;
 public class BoolIs extends PropertyValue implements DefiniteValue<Boolean> {
     private boolean value;
 
+    public BoolIs() {
+        this(false);
+    }
+
+
     public BoolIs(boolean b) {
         super();
         this.value = b;
