@@ -127,20 +127,10 @@ public class WhatTreePanel extends JPanel implements SelfBrowserView {
             public Icon getObjectIcon(Object o) {
                 if (o instanceof Detail) {
                     Detail d = (Detail) o;
-                    return Icons.getObjectIcon(d.getPatterns());
-//                    if (d.getMode() == Mode.Imaginary) {
-//                        return Icons.getIcon("media/tango32/status/dialog-information.png");
-//
-//
-//                    } else if (d.getMode() == Mode.Real) {
-//                        return Icons.getIcon("media/tango32/apps/accessories-text-editor.png");
-//                    } else {
-//                        return Icons.getIcon("media/tango32/categories/applications-office.png");
-//                    }
-
+                    return Icons.getDetailIcon(self, d);
                 } else if (o instanceof Pattern) {
                     Pattern p = (Pattern) o;
-                    return Icons.getObjectIcon(p.getID());
+                    return Icons.getPatternIcon(p);
                 }
                 return null;
             }

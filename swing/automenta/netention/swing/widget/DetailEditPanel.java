@@ -77,7 +77,7 @@ abstract public class DetailEditPanel extends JPanel {
             for (String pid : self.getAvailablePatterns(detail)) {
                 final Pattern p = self.getPatterns().get(pid);
                 JMenuItem ti = new JMenuItem(p.getID());
-                ti.setIcon(Icons.getObjectIcon(pid));
+                ti.setIcon(Icons.getPatternIcon(p));
                 ti.addActionListener(new ActionListener() {
 
                     @Override public void actionPerformed(ActionEvent e) {
@@ -96,7 +96,7 @@ abstract public class DetailEditPanel extends JPanel {
             for (String pid : detail.getPatterns()) {
                 final Pattern p = self.getPatterns().get(pid);
                 JMenu j = new JMenu(p.getID());
-                j.setIcon(Icons.getObjectIcon(pid));
+                j.setIcon(Icons.getPatternIcon(p));
                 int numItems = 0;
 
                 for (String propid : p.keySet()) {
@@ -295,11 +295,7 @@ abstract public class DetailEditPanel extends JPanel {
         gc.weighty = 1.0;
         sentences.add(Box.createVerticalBox(), gc);
 
-        if (d.getPatterns().size() > 0) {
-            headerLabel.setIcon(Icons.getObjectIcon(d.getPatterns().get(0)));
-        } else {
-            headerLabel.setIcon(null);
-        }
+        headerLabel.setIcon(Icons.getDetailIcon(self, d));
 
         updateUI();
 

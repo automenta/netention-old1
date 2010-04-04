@@ -78,7 +78,7 @@ abstract public class NewDetailPanel extends AbstractNewPanel {
         JPanel patterns = new JPanel(new GridLayout(rows, cols));
         //types
         for (String p : self.getPatterns().keySet()) {
-            JToggleButton t = new JToggleButton(p, Icons.getObjectIcon(p));
+            JToggleButton t = new JToggleButton(p, Icons.getPatternIcon(self.getPatterns().get(p)));
             patternButtons.put(p, t);
             patterns.add(t);
         }

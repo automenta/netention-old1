@@ -12,6 +12,7 @@ import automenta.netention.PropertyValue;
 import automenta.netention.Self;
 import automenta.netention.linker.Linker;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
+import automenta.netention.value.StringProp;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.util.Pair;
@@ -214,6 +215,12 @@ public class MemorySelf implements Self, Serializable {
         clearLinks();
         link(new DefaultHeuristicLinker());
         whenFinished.run();
+    }
+
+    public void addProperties(String pattern, Property... properties) {
+        for (Property p : properties) {
+            addProperty(p, pattern);
+        }
     }
 
 }

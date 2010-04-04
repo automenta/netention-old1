@@ -4,9 +4,11 @@ import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.Self;
 import automenta.netention.swing.Icons;
+import automenta.netention.swing.util.JHyperLink;
 import automenta.netention.swing.util.JScaledLabel;
 import automenta.netention.swing.util.SwingWindow;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -22,8 +24,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 abstract public class PatternEditPanel extends JPanel {
 
@@ -32,10 +37,11 @@ abstract public class PatternEditPanel extends JPanel {
     private final Self self;
     protected Pattern pattern;
 
-    public class PropertyEditPanel extends JPanel {
+    public class PropertyEditPanel extends JPanel implements ChangeListener {
 
         private final Property property;
         final int b = 4;
+        private final JSlider strengthSlider;
 
         public PropertyEditPanel(Property pr) {
             super(new GridLayout(1, 2));
@@ -43,29 +49,43 @@ abstract public class PatternEditPanel extends JPanel {
 
             setBorder(new EmptyBorder(b, b, b, b));
 
-            JPanel left = new JPanel(new GridLayout(2, 1));
-            left.setBorder(new EmptyBorder(b, b, b, b));
+            //JPanel left = new JPanel(new GridLayout(2, 1));
 
             Double v = pattern.get(pr.getID());
             double value = v != null ? v : 0.0;
-            JLabel lsl = new JScaledLabel(pr.getID() + " (" + pr.getClass().getSimpleName() + ")", 1.25f);
-            lsl.setIcon(Icons.getObjectIcon("property"));
+            JHyperLink lsl = new JHyperLink(pr.getName() + " (" + pr.getClass().getSimpleName() + ")", pr.getID(), 1.25f);
+            lsl.setIcon(Icons.getIcon("property"));
+            lsl.setHorizontalAlignment(SwingConstants.LEFT);
+            add(lsl);
 
-            left.add(lsl);
+            strengthSlider = new JSlider(0, 100, (int) (value * 100.0));
+            strengthSlider.addChangeListener(this);
+            add(strengthSlider);
 
-            JSlider vf = new JSlider(0, 100, (int) (value * 100.0));
-            left.add(vf);
-
-
-            add(left);
-            add(new JScrollPane(new JTextArea(pr.getName())));
-
-
+            //add(new JScrollPane(new JTextArea(pr.getName())));
 
 //            JTextField vf = new JTextField(Double.toString(value));
 //            add(vf);
-            propStrengths.put(pr.getID(), vf);
+            propStrengths.put(pr.getID(), strengthSlider);
 
+            setOpaque(true);
+            updateColor();
+        }
+
+
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            updateColor();
+        }
+
+        protected void updateColor() {
+            float strength = ((float)strengthSlider.getValue()) * 0.01f;
+            float r = 0.5f + (strength/3.0f);
+            float g = 0.5f + (strength/3.0f);
+            float b = 0.5f + (strength/3.0f);
+            Color c = new Color(r, g, b);
+            setBackground(c);
         }
     }
 
@@ -87,7 +107,7 @@ abstract public class PatternEditPanel extends JPanel {
         JPanel header = new JPanel(new BorderLayout());
         {
             JLabel title = new JScaledLabel(p.getID(), 2.5f);
-            title.setIcon(Icons.getObjectIcon(p.getID()));
+            title.setIcon(Icons.getPatternIcon(p));
             header.add(title, BorderLayout.CENTER);
             
         }

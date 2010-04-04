@@ -5,10 +5,11 @@
 package automenta.netention.swing;
 
 import automenta.netention.Detail;
+import automenta.netention.Pattern;
+import automenta.netention.Self;
 import java.awt.Image;
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,17 +48,13 @@ public class Icons {
         objectToIconPath.put("who", "media/tango32/apps/system-users.png");
         objectToIconPath.put("where", "media/tango32/categories/applications-internet.png");
 
-        objectToIconPath.put("Built", "media/tango32/categories/preferences-system.png");
-        objectToIconPath.put("Event", "media/tango32/mimetypes/x-office-calendar.png");
-        objectToIconPath.put("Media", "media/tango32/categories/applications-multimedia.png");
-        objectToIconPath.put("Message", "media/tango32/apps/internet-mail.png");
-        objectToIconPath.put("Mobile", "media/tango32/places/start-here.png");
-        objectToIconPath.put("Person", "media/tango32/apps/system-users.png");
-        objectToIconPath.put("Project", "media/tango32/mimetypes/x-office-presentation.png");
-        //objectToIconPath.put("Event", "media/tango32/mimetypes/x-office-calendar.png");
     }
 
-    public static Icon getIcon(String path) {
+    public static Icon getFileIcon(String path) {
+        if (path.startsWith("media://")) {
+            path = path.replace("media://", "media/");            
+        }
+
         try {
             //System.out.println("loading icon " + path);
             ImageIcon i = icons.get(path);
@@ -73,29 +70,33 @@ public class Icons {
         return null;
     }
 
-    public static Icon getObjectIcon(String type) {
+    public static Icon getIcon(String type) {
         String path = objectToIconPath.get(type);
         if (path != null) {
-            return getIcon(path);
+            return getFileIcon(path);
         }
-        return getIcon(objectToIconPath.get("default"));
+        return getFileIcon(objectToIconPath.get("default"));
     }
 
-    public static Icon getObjectIcon(List<String> patterns) {
-        for (String s : patterns) {
-            String path = objectToIconPath.get(s);
-            if (path != null) {
-                return getIcon(path);
+    public static Icon getDetailIcon(Self s, Detail d) {
+        String p = d.getIconURL();
+        if (p == null) {
+            for (String pat : d.getPatterns()) {
+                Icon i = getPatternIcon(s.getPatterns().get(pat));
+                if (i!=null)
+                    return i;
             }
-        }
-
-        return getIcon(objectToIconPath.get("default"));
-    }
-
-    public static Icon getDetailIcon(Detail d) {
-        if (d.getPatterns().size() == 0) {
             return null;
         }
-        return getObjectIcon(d.getPatterns().get(0));
+        else
+            return getFileIcon(p);
+    }
+
+    public static Icon getPatternIcon(Pattern p) {
+        String u = p.getIconURL();
+        if (u!=null)
+            return getFileIcon(p.getIconURL());
+        else
+            return null;
     }
 }

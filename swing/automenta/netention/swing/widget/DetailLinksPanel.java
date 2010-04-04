@@ -41,7 +41,7 @@ public class DetailLinksPanel extends JPanel {
             Detail other = self.getDetails().get(otherID);
 
             JHyperLink la = new JHyperLink(other.getName() + " (" + l.toString() + ")", "", 1.2f);
-            la.setIcon(Icons.getDetailIcon(other));
+            la.setIcon(Icons.getDetailIcon(self, other));
             add(la);
 
             JLabel s = new JLabel(((int)(link.getStrength() * 100.0)) + "%");

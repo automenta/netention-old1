@@ -55,11 +55,11 @@ public class SelfBrowserPanel extends JPanel {
             super();
             setToolTipText("Views");
 
-            what = new JRadioButtonMenuItem("What", Icons.getObjectIcon("what"));
+            what = new JRadioButtonMenuItem("What", Icons.getIcon("what"));
             what.addActionListener(this);
-            who = new JRadioButtonMenuItem("Who", Icons.getObjectIcon("who"));
+            who = new JRadioButtonMenuItem("Who", Icons.getIcon("who"));
             who.addActionListener(this);
-            where = new JRadioButtonMenuItem("Where", Icons.getObjectIcon("where"));
+            where = new JRadioButtonMenuItem("Where", Icons.getIcon("where"));
             where.addActionListener(this);
 
             add(what);
@@ -105,7 +105,7 @@ public class SelfBrowserPanel extends JPanel {
         JMenuBar menubar = new JMenuBar();
 
         JMenu newMenu = new JMenu(/*"Add"*/);
-        newMenu.setIcon(Icons.getObjectIcon("add"));
+        newMenu.setIcon(Icons.getIcon("add"));
         newMenu.setToolTipText("Add...");
         {
             JMenuItem newDetail = new JMenuItem("Detail...");
@@ -134,7 +134,7 @@ public class SelfBrowserPanel extends JPanel {
         }
 
         JMenu netMenu = new JMenu(/*"Network"*/);
-        netMenu.setIcon(Icons.getObjectIcon("network"));
+        netMenu.setIcon(Icons.getIcon("network"));
         netMenu.setToolTipText("Network");
         {
             JMenuItem load = new JMenuItem("Import...");

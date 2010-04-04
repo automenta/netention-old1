@@ -15,14 +15,16 @@ import java.util.HashMap;
 public class Pattern extends HashMap<String, Double> implements Serializable {
 
     public final String id;
-    public String description;
+    private String description;
+    private String iconURL;
 
     public Pattern(String id) {
         this.id = id;
     }
 
-    public void setDescription(String description) {
+    public Pattern setDescription(String description) {
         this.description = description;
+        return this;
     }
 
     public String getDescription() {
@@ -43,5 +45,15 @@ public class Pattern extends HashMap<String, Double> implements Serializable {
         return id.hashCode();
     }
 
+    public Pattern setIconURL(String iconURL) {
+        this.iconURL = iconURL;
+        return this;
+    }
+
+    public String getIconURL() {
+        return iconURL;
+    }
+
+    
 
 }

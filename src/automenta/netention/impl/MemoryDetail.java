@@ -99,5 +99,11 @@ public class MemoryDetail implements Detail {
         return creator;
     }
 
+    @Override
+    public String getIconURL() {
+        return null;
+    }
+
+
 
 }
