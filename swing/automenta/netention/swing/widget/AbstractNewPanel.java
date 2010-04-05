@@ -60,8 +60,8 @@ abstract public class AbstractNewPanel extends JPanel {
     abstract protected void init(JPanel center);
 
     public void closeThis() {
-        //TODO  un-hackify this by searching parents for the JFrame that contains it
-        ((JFrame)AbstractNewPanel.this.getParent().getParent().getParent()).setVisible(false);
+        //TODO  impl this
+        throw new UnsupportedOperationException("impl closeThis()");
     }
 
 

@@ -42,7 +42,7 @@ public class SelfBrowserPanel extends JPanel {
     private final JSplitPane content;
     private SelfBrowserView typeTreePanel;
     private final MemorySelf self;
-    private final JTabbedPane contentPanel;
+    private final JTabbedPane contentTabs;
     int contentMargin = 6;
 
     public class ViewMenu extends JMenu implements ActionListener {
@@ -158,15 +158,22 @@ public class SelfBrowserPanel extends JPanel {
 
         //contentPanel = new JPanel(new BorderLayout());
         //contentPanel.setBorder(new EmptyBorder(contentMargin, contentMargin, contentMargin, contentMargin));
-        contentPanel = new JTabbedPane();
+        contentTabs = new JTabbedPane();
 
-        content.setRightComponent(contentPanel);
+        content.setRightComponent(contentTabs);
 
         content.setDividerLocation(0.45);
 
         add(content, BorderLayout.CENTER);
 
         updateUI();
+    }
+
+    public void addTab(JComponent c, String title) {
+        int index = contentTabs.getTabCount();
+        contentTabs.insertTab(title, null, c, title, index);
+        contentTabs.setTabComponentAt(index, new ButtonTabPanel(contentTabs));
+        contentTabs.updateUI();
     }
 
     public void addTab(Object o) {
@@ -210,10 +217,7 @@ public class SelfBrowserPanel extends JPanel {
             }
         }
         if (tabContent != null) {
-            int index = contentPanel.getTabCount();
-            contentPanel.insertTab(title, null, tabContent, title, index);
-            contentPanel.setTabComponentAt(index, new ButtonTabPanel(contentPanel));
-            contentPanel.updateUI();
+            addTab(tabContent, title);
         }
 
     }
@@ -239,11 +243,14 @@ public class SelfBrowserPanel extends JPanel {
 
             @Override protected void afterCreated(Detail d) {
                 addTab(d);
+                //TODO replace tab with d
                 refreshView();
             }
         };
-        SwingWindow sw = new SwingWindow(ndp, 500, 500, false);
-        sw.setTitle("New Detail...");
+        addTab(ndp, "New Detail...");
+
+//        SwingWindow sw = new SwingWindow(ndp, 500, 500, false);
+//        sw.setTitle("New Detail...");
     }
 
     public void newPattern() {
