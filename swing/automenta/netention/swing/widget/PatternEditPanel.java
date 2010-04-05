@@ -53,7 +53,7 @@ abstract public class PatternEditPanel extends JPanel {
 
             Double v = pattern.get(pr.getID());
             double value = v != null ? v : 0.0;
-            JHyperLink lsl = new JHyperLink(pr.getName() + " (" + pr.getClass().getSimpleName() + ")", pr.getID(), 1.25f);
+            JHyperLink lsl = new JHyperLink(pr.getName() + " (" + pr.getClass().getSimpleName() + ")", pr.getID(), 1f);
             lsl.setIcon(Icons.getIcon("property"));
             lsl.setHorizontalAlignment(SwingConstants.LEFT);
             add(lsl);

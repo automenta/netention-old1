@@ -7,6 +7,7 @@ package automenta.netention.swing;
 import automenta.netention.Detail;
 import automenta.netention.Pattern;
 import automenta.netention.impl.MemorySelf;
+import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;
 import automenta.netention.swing.widget.NewDetailPanel;
@@ -18,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -27,8 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -41,11 +42,11 @@ public class SelfBrowserPanel extends JPanel {
     private final JSplitPane content;
     private SelfBrowserView typeTreePanel;
     private final MemorySelf self;
-    private final JPanel contentPanel;
-
+    private final JTabbedPane contentPanel;
     int contentMargin = 6;
 
     public class ViewMenu extends JMenu implements ActionListener {
+
         private final JRadioButtonMenuItem where;
         private final JRadioButtonMenuItem what;
         private final JRadioButtonMenuItem who;
@@ -80,21 +81,17 @@ public class SelfBrowserPanel extends JPanel {
             if (what.isSelected()) {
                 setIcon(what.getIcon());
                 viewWhat();
-            }
-            else if (who.isSelected()) {
+            } else if (who.isSelected()) {
                 setIcon(who.getIcon());
                 viewWho();
-            }
-            else if (where.isSelected()) {
+            } else if (where.isSelected()) {
                 setIcon(where.getIcon());
                 viewWhere();
             }
         }
-
         //        JMenu viewMenu = new JMenu(/*"View"*/);
 //        viewMenu.setIcon(Icons.getObjectIcon("view"));
 //        viewMenu.setToolTipText("Views");
-
     }
 
     public SelfBrowserPanel(final MemorySelf self) {
@@ -111,6 +108,7 @@ public class SelfBrowserPanel extends JPanel {
             JMenuItem newDetail = new JMenuItem("Detail...");
             newDetail.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
             newDetail.addActionListener(new ActionListener() {
+
                 @Override public void actionPerformed(ActionEvent e) {
                     newDetail();
                 }
@@ -121,6 +119,7 @@ public class SelfBrowserPanel extends JPanel {
 
             JMenuItem newPattern = new JMenuItem("Pattern...");
             newPattern.addActionListener(new ActionListener() {
+
                 @Override public void actionPerformed(ActionEvent e) {
                     newPattern();
                 }
@@ -149,7 +148,7 @@ public class SelfBrowserPanel extends JPanel {
         menubar.add(viewMenu);
         menubar.add(newMenu);
         menubar.add(netMenu);
-        
+
         add(menubar, BorderLayout.NORTH);
 
         content = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -157,8 +156,10 @@ public class SelfBrowserPanel extends JPanel {
         viewWhat();
 
 
-        contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBorder(new EmptyBorder(contentMargin, contentMargin, contentMargin, contentMargin));
+        //contentPanel = new JPanel(new BorderLayout());
+        //contentPanel.setBorder(new EmptyBorder(contentMargin, contentMargin, contentMargin, contentMargin));
+        contentPanel = new JTabbedPane();
+
         content.setRightComponent(contentPanel);
 
         content.setDividerLocation(0.45);
@@ -168,26 +169,27 @@ public class SelfBrowserPanel extends JPanel {
         updateUI();
     }
 
-    public void selectObject(Object o) {
+    public void addTab(Object o) {
         //System.out.println("selecting: " + o);
 
-        contentPanel.removeAll();
+        JComponent tabContent = null;
+        String title = "";
 
         if (o != null) {
             if (o instanceof Pattern) {
                 //content.setRightComponent(new PatternEditPanel(self, (Pattern)o));
-                contentPanel.add(new PatternEditPanel(self, (Pattern) o) {
+                tabContent = new PatternEditPanel(self, (Pattern) o) {
+
                     @Override protected void deleteThis() {
-                        selectObject(null);
+                        addTab(null);
                         self.removePattern(pattern);
                         refreshView();
                     }
-                }, BorderLayout.CENTER
-                );
-
+                };
+                title = ((Pattern) o).getID();
             } else if (o instanceof Detail) {
                 final Detail d = (Detail) o;
-                contentPanel.add(new DetailEditPanel(self, d, true) {
+                tabContent = new DetailEditPanel(self, d, true) {
 
                     @Override protected void patternChanged() {
                         refreshView();
@@ -196,18 +198,24 @@ public class SelfBrowserPanel extends JPanel {
 
                     @Override
                     protected void deleteThis() {
-                        selectObject(null);
+                        addTab(null);
                         self.removeDetail(d);
                         refreshView();
                     }
-                }, BorderLayout.CENTER);
+                };
+                title = d.getName();
             } else {
                 //content.setRightComponent(new JLabel("Select something."));
-                contentPanel.add(new JLabel("Select something."), BorderLayout.CENTER);
+                //contentPanel.add(new JLabel("Select something."), BorderLayout.CENTER);
             }
         }
+        if (tabContent != null) {
+            int index = contentPanel.getTabCount();
+            contentPanel.insertTab(title, null, tabContent, title, index);
+            contentPanel.setTabComponentAt(index, new ButtonTabPanel(contentPanel));
+            contentPanel.updateUI();
+        }
 
-        contentPanel.updateUI();
     }
 
     protected void refreshView() {
@@ -215,11 +223,12 @@ public class SelfBrowserPanel extends JPanel {
 
         //TODO un-hack this
         if (typeTreePanel instanceof WhatTreePanel) {
-            final WhatTreePanel w = ((WhatTreePanel)typeTreePanel);
+            final WhatTreePanel w = ((WhatTreePanel) typeTreePanel);
             w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+
                 @Override public void valueChanged(TreeSelectionEvent e) {
                     DefaultMutableTreeNode selected = (DefaultMutableTreeNode) w.getTree().getSelectionPath().getLastPathComponent();
-                    selectObject(selected.getUserObject());
+                    addTab(selected.getUserObject());
                 }
             });
         }
@@ -229,7 +238,7 @@ public class SelfBrowserPanel extends JPanel {
         NewDetailPanel ndp = new NewDetailPanel(self) {
 
             @Override protected void afterCreated(Detail d) {
-                selectObject(d);
+                addTab(d);
                 refreshView();
             }
         };
@@ -241,24 +250,22 @@ public class SelfBrowserPanel extends JPanel {
         String newPatternName = JOptionPane.showInputDialog("New Pattern ID");
         Pattern p = new Pattern(newPatternName);
         self.addPattern(p);
-        selectObject(p);
+        addTab(p);
         refreshView();
     }
-   
 
-    protected void viewWhat() {        
+    protected void viewWhat() {
         typeTreePanel = new WhatTreePanel(self);
         refreshView();
 
-        content.setLeftComponent(new JScrollPane((JPanel)typeTreePanel));
+        content.setLeftComponent(new JScrollPane((JPanel) typeTreePanel));
     }
 
     protected void viewWho() {
         content.setLeftComponent(new JPanel());
     }
-    
+
     protected void viewWhere() {
         content.setLeftComponent(new JPanel());
     }
-    
 }
