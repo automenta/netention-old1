@@ -89,13 +89,9 @@ abstract public class PatternEditPanel extends JPanel {
         }
     }
 
-    public PatternEditPanel(Self s) {
+    public PatternEditPanel(Self s, Pattern p) {
         super(new BorderLayout());
         this.self = s;
-    }
-
-    public PatternEditPanel(Self s, Pattern p) {
-        this(s);
         setPattern(p);
     }
 
@@ -125,20 +121,12 @@ abstract public class PatternEditPanel extends JPanel {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         {
-            JButton newPropButton = new JButton("Add Property...");
-            newPropButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    addProperty();
-                }
-            });
-            buttonPanel.add(newPropButton);
 
             JButton deleteButton = new JButton("Delete");
             deleteButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (0 == JOptionPane.showConfirmDialog(PatternEditPanel.this, "Delete this pattern?", "Delete", JOptionPane.YES_NO_OPTION)) {
+                    if (0 == JOptionPane.showConfirmDialog(PatternEditPanel.this, "Delete this pattern?  There may be details that presently depend upon it.", "Delete", JOptionPane.YES_NO_OPTION)) {
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override public void run() {
                                 deleteThis();
@@ -188,16 +176,5 @@ abstract public class PatternEditPanel extends JPanel {
 
     abstract protected void deleteThis();
 
-    protected void addProperty() {
-        NewPropertyPanel ndp = new NewPropertyPanel(self, pattern.getID()) {
 
-            @Override protected void afterCreated(Property p) {
-                setPattern(pattern);
-            }
-        };
-        
-        SwingWindow sw = new SwingWindow(ndp, 500, 200, false);
-        sw.setTitle("New Property...");
-
-    }
 }

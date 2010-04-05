@@ -25,11 +25,9 @@ abstract public class NewPropertyPanel extends AbstractNewPanel {
     private JTextField idField;
     private JTextField nameField;
     private JComboBox typeCombo;
-    private final String pattern;
 
-    public NewPropertyPanel(Self self, String pattern) {
+    public NewPropertyPanel(Self self) {
         super(self);
-        this.pattern = pattern;
     }
 
     @Override protected void create() {
@@ -52,7 +50,7 @@ abstract public class NewPropertyPanel extends AbstractNewPanel {
         }
 
         if (p!=null) {
-            self.addProperty(p, pattern);
+            self.addProperty(p);
             afterCreated(p);
         }
     }

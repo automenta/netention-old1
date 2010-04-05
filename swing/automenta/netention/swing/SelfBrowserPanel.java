@@ -6,11 +6,13 @@ package automenta.netention.swing;
 
 import automenta.netention.Detail;
 import automenta.netention.Pattern;
+import automenta.netention.Property;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;
 import automenta.netention.swing.widget.NewDetailPanel;
+import automenta.netention.swing.widget.NewPropertyPanel;
 import automenta.netention.swing.widget.PatternEditPanel;
 import automenta.netention.swing.widget.SelfBrowserView;
 import automenta.netention.swing.widget.WhatTreePanel;
@@ -30,6 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -126,6 +129,15 @@ public class SelfBrowserPanel extends JPanel {
             });
             newMenu.add(newPattern);
 
+            JMenuItem newProperty = new JMenuItem("Property...");
+            newProperty.addActionListener(new ActionListener() {
+
+                @Override public void actionPerformed(ActionEvent e) {
+                    newProperty();
+                }
+            });
+            newMenu.add(newProperty);
+
             newMenu.addSeparator();
 
             JMenuItem ambientMessages = new JMenuItem("Ambient Messages");
@@ -173,6 +185,7 @@ public class SelfBrowserPanel extends JPanel {
         int index = contentTabs.getTabCount();
         contentTabs.insertTab(title, null, c, title, index);
         contentTabs.setTabComponentAt(index, new ButtonTabPanel(contentTabs));
+        contentTabs.setSelectedIndex(index);
         contentTabs.updateUI();
     }
 
@@ -188,8 +201,8 @@ public class SelfBrowserPanel extends JPanel {
                 tabContent = new PatternEditPanel(self, (Pattern) o) {
 
                     @Override protected void deleteThis() {
-                        addTab(null);
                         self.removePattern(pattern);
+                        contentTabs.removeTabAt(contentTabs.getSelectedIndex());
                         refreshView();
                     }
                 };
@@ -205,8 +218,8 @@ public class SelfBrowserPanel extends JPanel {
 
                     @Override
                     protected void deleteThis() {
-                        addTab(null);
                         self.removeDetail(d);
+                        contentTabs.removeTabAt(contentTabs.getSelectedIndex());
                         refreshView();
                     }
                 };
@@ -238,19 +251,49 @@ public class SelfBrowserPanel extends JPanel {
         }
     }
 
-    public void newDetail() {
-        NewDetailPanel ndp = new NewDetailPanel(self) {
+    public void newProperty() {
+        NewPropertyPanel ndp = new NewPropertyPanel(self) {
 
-            @Override protected void afterCreated(Detail d) {
-                addTab(d);
-                //TODO replace tab with d
-                refreshView();
+            @Override protected void afterCreated(Property p) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override public void run() {
+                        closeThis();
+                        refreshView();
+                    }
+                });
+
+            }
+
+            @Override public void closeThis() {
+                int s = contentTabs.getSelectedIndex();
+                if (s != -1)
+                    contentTabs.removeTabAt(s);
+            }
+        };
+
+        addTab(ndp, "New Property...");
+
+    }
+
+    public void newDetail() {
+        final NewDetailPanel ndp = new NewDetailPanel(self) {
+
+            @Override protected void afterCreated(final Detail d) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override public void run() {
+                        addTab(d);
+                        refreshView();
+                    }
+                });
+            }
+
+            @Override public void closeThis() {
+                int s = contentTabs.getSelectedIndex();
+                if (s != -1)
+                    contentTabs.removeTabAt(s);
             }
         };
         addTab(ndp, "New Detail...");
-
-//        SwingWindow sw = new SwingWindow(ndp, 500, 500, false);
-//        sw.setTitle("New Detail...");
     }
 
     public void newPattern() {

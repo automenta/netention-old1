@@ -77,8 +77,10 @@ public class ButtonTabPanel extends JPanel {
             setBorderPainted(false);
             //Making nice rollover effect
             //we use the same listener for all buttons
+            
             addMouseListener(buttonMouseListener);
             setRolloverEnabled(true);
+
             //Close the proper tab by clicking the button
             addActionListener(this);
         }

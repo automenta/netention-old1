@@ -93,6 +93,8 @@ public class Icons {
     }
 
     public static Icon getPatternIcon(Pattern p) {
+        if (p == null)
+            return null;
         String u = p.getIconURL();
         if (u!=null)
             return getFileIcon(p.getIconURL());

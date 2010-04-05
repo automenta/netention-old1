@@ -58,11 +58,7 @@ abstract public class AbstractNewPanel extends JPanel {
 
     abstract protected void create();
     abstract protected void init(JPanel center);
-
-    public void closeThis() {
-        //TODO  impl this
-        throw new UnsupportedOperationException("impl closeThis()");
-    }
+    abstract public void closeThis();
 
 
 }
