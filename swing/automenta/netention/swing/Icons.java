@@ -47,6 +47,9 @@ public class Icons {
         objectToIconPath.put("what", "media/tango32/places/folder.png");
         objectToIconPath.put("who", "media/tango32/apps/system-users.png");
         objectToIconPath.put("where", "media/tango32/categories/applications-internet.png");
+        objectToIconPath.put("when", "media/tango32/actions/appointment-new.png");
+        objectToIconPath.put("recent", "media/tango32/places/user-home.png");
+        objectToIconPath.put("frequent", "media/tango32/status/dialog-warning.png");
 
     }
 

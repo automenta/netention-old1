@@ -54,6 +54,9 @@ public class SelfBrowserPanel extends JPanel {
         private final JRadioButtonMenuItem what;
         private final JRadioButtonMenuItem who;
         private final ButtonGroup group;
+        private final JRadioButtonMenuItem when;
+        private final JRadioButtonMenuItem recent;
+        private final JRadioButtonMenuItem frequent;
 
         public ViewMenu() {
             super();
@@ -65,15 +68,28 @@ public class SelfBrowserPanel extends JPanel {
             who.addActionListener(this);
             where = new JRadioButtonMenuItem("Where", Icons.getIcon("where"));
             where.addActionListener(this);
+            
+            when = new JRadioButtonMenuItem("When", Icons.getIcon("when"));
+            //when.addActionListener(this);
+            recent = new JRadioButtonMenuItem("Recent", Icons.getIcon("recent"));
+            //when.addActionListener(this);
+            frequent = new JRadioButtonMenuItem("Frequent", Icons.getIcon("frequent"));
+            //when.addActionListener(this);
 
             add(what);
             add(who);
             add(where);
+            add(when);
+            add(recent);
+            add(frequent);
 
             group = new ButtonGroup();
             group.add(what);
             group.add(who);
             group.add(where);
+            group.add(when);
+            group.add(recent);
+            group.add(frequent);
 
             setIcon(what.getIcon());
             what.setSelected(true);

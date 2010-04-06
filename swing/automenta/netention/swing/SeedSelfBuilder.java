@@ -36,9 +36,12 @@ public class SeedSelfBuilder {
         s.addPattern(new Pattern("Mobile").setIconURL("media://tango32/places/start-here.png"));
         {
             s.addProperties("Mobile",
+                    new StringProp("currentLocation", "Current Location"),
+                    new StringProp("nextLocation", "Next Location"),
                     new IntProp("numWheels", "Number of Wheels"),
                     new RealProp("wheelRadius", "Wheel Radius"),
-                    new BoolProp("hasKickStand", "Has Kickstand"));
+                    new BoolProp("hasKickStand", "Has Kickstand")
+                    );
         }
 
         s.addPattern(new Pattern("Person").setIconURL("media://tango32/apps/system-users.png"));
@@ -79,7 +82,7 @@ public class SeedSelfBuilder {
         MemoryDetail d1 = new MemoryDetail("Red Bike", Mode.Real, "Built", "Mobile");
         MemoryDetail d11 = new MemoryDetail("Blue Bike", Mode.Real, "Built");
         MemoryDetail d2 = new MemoryDetail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");
-        MemoryDetail d3 = new MemoryDetail("Empty Description", Mode.Real);
+        MemoryDetail d3 = new MemoryDetail("What is Netention?", Mode.Real, "Message");
         {
             d1.addProperty("numWheels", new IntegerIs(4));
             d1.addProperty("manufacturer", new StringIs("myself"));
@@ -101,6 +104,8 @@ public class SeedSelfBuilder {
             d2.addProperty("wheelRadius", new RealEquals(16.0));
             d2.addProperty("hasKickStand", new BoolEquals(true));
             //d2.addProperty("anotherObject", new NodeEquals(d1.getID()));
+        }
+        {
         }
         s.addDetail(d1);
         s.addDetail(d11);
