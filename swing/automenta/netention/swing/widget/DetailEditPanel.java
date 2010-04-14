@@ -5,6 +5,7 @@
 package automenta.netention.swing.widget;
 
 import automenta.netention.Detail;
+import automenta.netention.Link;
 import automenta.netention.Mode;
 import automenta.netention.Pattern;
 import automenta.netention.Property;
@@ -16,17 +17,18 @@ import automenta.netention.swing.property.IntPropertyPanel;
 import automenta.netention.swing.property.PropertyOptionPanel;
 import automenta.netention.swing.property.RealPropertyPanel;
 import automenta.netention.swing.property.StringPropertyPanel;
+import automenta.netention.swing.util.JHyperLink;
 import automenta.netention.value.BoolProp;
 import automenta.netention.value.IntProp;
 import automenta.netention.value.RealProp;
 import automenta.netention.value.StringProp;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.Box;
@@ -60,16 +62,49 @@ abstract public class DetailEditPanel extends JPanel {
     private final Self self;
     private boolean editable;
     private final JSplitPane contentSplit;
-    private final DetailLinksPanel linksPanel;
     private final DetailMenuBar menuBar;
     private List<PropertyOptionPanel> optionPanels = new LinkedList();
     long updateDelayMS = 650;
     private final JTextArea headerLabel;
-    private final JLabel headerIcon;
+
+    //Tooltips
+    final static String itsATooltip = "Selects Patterns for this Detail";
+    final static String realOrImaginary = "Real details describe things that actually exist. \nImaginary details describe hypothetical or desired things.";
+
+    protected class LinkPanel extends JPanel {
+
+        private final Link link;
+
+        private LinkPanel(Link l) {
+            super(new FlowLayout(FlowLayout.LEFT));
+            this.link = l;
+
+            setOpaque(false);
+
+            String otherID = getOther();
+
+            Detail other = self.getDetails().get(otherID);
+
+            JHyperLink la = new JHyperLink(other.getName() + " (" + l.toString() + ")", "", 1.2f);
+            la.setIcon(Icons.getDetailIcon(self, other));
+            add(la);
+
+            JLabel s = new JLabel(((int) (link.getStrength() * 100.0)) + "%");
+            add(s);
+
+        }
+
+        public String getOther() {
+            if (link.getSource().equals(detail.getID())) {
+                return link.getTarget();
+            }
+            return link.getSource();
+        }
+    }
 
     protected class DetailMenuBar extends JMenuBar {
 
-        private JComboBox modeList;
+        float menuFontScale = 1.25f;
 
         public DetailMenuBar() {
             super();
@@ -79,6 +114,7 @@ abstract public class DetailEditPanel extends JPanel {
             removeAll();
 
             JMenu t = new JMenu("It's a...");
+            t.setToolTipText(itsATooltip);
             for (String pid : self.getAvailablePatterns(detail)) {
                 final Pattern p = self.getPatterns().get(pid);
                 JMenuItem ti = new JMenuItem(p.getID());
@@ -153,36 +189,32 @@ abstract public class DetailEditPanel extends JPanel {
             }
 
             if (detail.getPatterns().size() > 0) {
-                modeList = new JComboBox();
-                modeList.addItem("in Reality");
-                modeList.addItem("in Imagination");
-                add(modeList);
+                String currentModeString = getModeString(detail.getMode());
+                JMenu modeMenu = new JMenu("..." + currentModeString);
+                modeMenu.setToolTipText(realOrImaginary);
 
-                resetModeListIndex();
-
-                modeList.addActionListener(new ActionListener() {
+                JMenuItem realItem = new JMenuItem(getModeString(Mode.Real));
+                realItem.addActionListener(new ActionListener() {
 
                     @Override public void actionPerformed(ActionEvent e) {
-                        SwingUtilities.invokeLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                Mode nextMode = null;
-                                int i = modeList.getSelectedIndex();
-                                if (i == 0) {
-                                    nextMode = Mode.Real;
-                                } else if (i == 1) {
-                                    nextMode = Mode.Imaginary;
-                                }
-                                modeList.setEnabled(false);
-                                if (!switchMode(nextMode)) {
-                                    resetModeListIndex();
-                                }
-                                modeList.setEnabled(true);
-                            }
-                        });
+                        if (!switchMode(Mode.Real)) {
+                        }
                     }
                 });
+                modeMenu.add(realItem);
+
+                JMenuItem imagItem = new JMenuItem(getModeString(Mode.Imaginary));
+                imagItem.addActionListener(new ActionListener() {
+
+                    @Override public void actionPerformed(ActionEvent e) {
+                        if (!switchMode(Mode.Imaginary)) {
+                        }
+                    }
+                });
+                modeMenu.add(imagItem);
+
+                add(modeMenu);
+
             } else {
                 add(new JLabel("Thought"));
                 switchMode(Mode.Unknown);
@@ -191,12 +223,20 @@ abstract public class DetailEditPanel extends JPanel {
             add(Box.createHorizontalGlue());
         }
 
-        private void resetModeListIndex() {
-            if (detail.getMode() == Mode.Real) {
-                modeList.setSelectedIndex(0);
-            } else if (detail.getMode() == Mode.Imaginary) {
-                modeList.setSelectedIndex(1);
+        public String getModeString(Mode mode) {
+            if (mode == Mode.Real) {
+                return "in Reality";
+            } else if (mode == Mode.Imaginary) {
+                return "in Imagination";
+            } else {
+                return "Thought";
             }
+        }
+
+        @Override
+        public JMenu add(JMenu c) {
+            c.setFont(c.getFont().deriveFont(c.getFont().getSize2D() * menuFontScale));
+            return super.add(c);
         }
     }
 
@@ -210,40 +250,50 @@ abstract public class DetailEditPanel extends JPanel {
         GridBagConstraints gc = new GridBagConstraints();
         {
             gc.weightx = 1.0;
-            gc.weighty = 0.05;
-            gc.fill = gc.BOTH;
-            gc.anchor = gc.NORTHWEST;
+            gc.weighty = 0.0;
+            gc.fill = gc.HORIZONTAL;
+            gc.anchor = gc.NORTH;
             gc.gridx = gc.gridy = 1;
         }
 
         menuBar = new DetailMenuBar();
 
-        JPanel header = new JPanel(new BorderLayout(4, 4));
-        {
-            headerIcon = new JLabel("");
-            header.add(headerIcon, BorderLayout.WEST);
-            headerIcon.setVerticalAlignment(JLabel.TOP);
+//        JPanel header = new JPanel(new BorderLayout(4, 4));
+//        {
+//            //headerIcon = new JLabel("");
+//            //header.add(headerIcon, BorderLayout.WEST);
+//            //headerIcon.setVerticalAlignment(JLabel.TOP);
+//
+//
+//            //header.add(headerLabel, BorderLayout.CENTER);
+//
+//            header.add(menuBar, BorderLayout.NORTH);
+//        }
 
-            headerLabel = new JTextArea(d.getName());
-            headerLabel.setFont(headerLabel.getFont().deriveFont(headerLabel.getFont().getSize2D() * 1.7f));
-
-            header.add(headerLabel, BorderLayout.CENTER);
-
-
-            header.add(menuBar, BorderLayout.SOUTH);
-        }
-
-        add(header, gc);
+        add(menuBar, gc);
 
 
         contentSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        {
+            gc.weightx = 1.0;
+            gc.weighty = 0.1;
+            gc.fill = gc.BOTH;
+            gc.anchor = gc.NORTHWEST;
+            gc.gridx = 1;
+            gc.gridy = 2;
+        }
+        add(contentSplit, gc);
+
+        headerLabel = new JTextArea(d.getName());
+        headerLabel.setFont(headerLabel.getFont().deriveFont(headerLabel.getFont().getSize2D() * 1.7f));
 
         sentences = new JPanel(new GridBagLayout());
         sentences.setBackground(Color.WHITE);
-        contentSplit.setTopComponent(new JScrollPane(sentences));
 
-        linksPanel = new DetailLinksPanel(self, d);
-        contentSplit.setBottomComponent(new JScrollPane(linksPanel));
+
+        contentSplit.setTopComponent(new JScrollPane(headerLabel));
+        contentSplit.setBottomComponent(new JScrollPane(sentences));
+
 
         {
             JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -256,7 +306,6 @@ abstract public class DetailEditPanel extends JPanel {
 
                         @Override public void run() {
                             updateButton.setEnabled(false);
-                            linksPanel.refresh();
                             updateDetail();
                             new Thread(new Runnable() {
 
@@ -373,19 +422,10 @@ abstract public class DetailEditPanel extends JPanel {
 
         menuBar.refresh();
 
+        final GridBagConstraints gc = new GridBagConstraints();
+
         if (d.getPatterns().size() == 0) {
-            remove(contentSplit);
         } else {
-            GridBagConstraints gc = new GridBagConstraints();
-            {
-                gc.weightx = 1.0;
-                gc.weighty = 0.1;
-                gc.fill = gc.BOTH;
-                gc.anchor = gc.NORTHWEST;
-                gc.gridx = 1;
-                gc.gridy = 2;
-            }
-            add(contentSplit, gc);
 
             sentences.setAlignmentY(TOP_ALIGNMENT);
 
@@ -427,13 +467,43 @@ abstract public class DetailEditPanel extends JPanel {
                 sentences.add(nextLine, gc);
             }
 
+            self.updateLinks(new Runnable() {
+
+                @Override
+                public void run() {
+                    List<Link> edges = new LinkedList();
+                    Collection<Link> inEdges = self.getLinks().getInEdges(detail);
+                    Collection<Link> outEdges = self.getLinks().getOutEdges(detail);
+
+                    if (inEdges != null) {
+                        edges.addAll(inEdges);
+                    }
+                    if (outEdges != null) {
+                        edges.addAll(outEdges);
+                    }
+
+                    if (edges.size() == 0) {
+                        return;
+                    }
+
+
+                    for (Link l : edges) {
+                        gc.gridy++;
+                        sentences.add(new LinkPanel(l), gc);
+                    }
+
+                    updateUI();
+                }
+            }, detail);
+
+
             gc.gridy++;
             gc.fill = gc.VERTICAL;
             gc.weighty = 1.0;
             sentences.add(Box.createVerticalBox(), gc);
         }
 
-        headerIcon.setIcon(Icons.getDetailIcon(self, d));
+        //headerIcon.setIcon(Icons.getDetailIcon(self, d));
 
         updateUI();
 
@@ -466,7 +536,7 @@ abstract public class DetailEditPanel extends JPanel {
     protected void chooseInitialMode() {
         Object[] options = {"Imaginary", "Real"};
         int n = JOptionPane.showOptionDialog(this,
-            "Is this detail Real or Imaginary?\n\nReal details describe things that actually exist.\nImaginary details describe hypothetical or desired things.",
+            "Is this detail Real or Imaginary?\n\n" + realOrImaginary,
             "Select Mode",
             JOptionPane.YES_NO_CANCEL_OPTION,
             JOptionPane.QUESTION_MESSAGE,
@@ -475,15 +545,14 @@ abstract public class DetailEditPanel extends JPanel {
             options[1]);
         if (n == 1) {
             detail.setMode(Mode.Real);
-        }
-        else {
+        } else {
             detail.setMode(Mode.Imaginary);
         }
     }
 
     synchronized protected void addPattern(Pattern p) {
         updateDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
-        
+
         if (detail.getPatterns().size() == 0) {
             chooseInitialMode();
         }
