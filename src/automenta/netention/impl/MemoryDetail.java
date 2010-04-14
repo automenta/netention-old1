@@ -47,6 +47,15 @@ public class MemoryDetail implements Detail {
         }
     }
 
+    @Override public void setName(String newName) {
+        this.name = newName;
+    }
+
+    @Override public void setMode(Mode newMode) {
+        this.mode = newMode;
+    }
+
+
     @Override
     public Mode getMode() {
         return mode;

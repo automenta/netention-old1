@@ -44,6 +44,8 @@ public class Icons {
         objectToIconPath.put("add", "media/tango32/actions/list-add.png");
         objectToIconPath.put("network", "media/tango32/status/network-transmit-receive.png");
 
+        objectToIconPath.put("thought", "media/tango32/categories/applications-system.png");
+
         objectToIconPath.put("what", "media/tango32/places/folder.png");
         objectToIconPath.put("who", "media/tango32/apps/system-users.png");
         objectToIconPath.put("where", "media/tango32/categories/applications-internet.png");
@@ -89,7 +91,7 @@ public class Icons {
                 if (i!=null)
                     return i;
             }
-            return null;
+            return getIcon("thought");
         }
         else
             return getFileIcon(p);

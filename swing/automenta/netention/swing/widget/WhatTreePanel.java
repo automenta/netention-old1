@@ -53,7 +53,7 @@ public class WhatTreePanel extends JPanel implements SelfBrowserView {
                         patterns.put(s, d);
                     }
                 } else {
-                    patterns.put("Other", d);
+                    patterns.put("Thought", d);
                 }
             }
 
@@ -100,6 +100,7 @@ public class WhatTreePanel extends JPanel implements SelfBrowserView {
                     expanded, leaf, row, hasFocus);
 
                 Object nodeObj = ((DefaultMutableTreeNode) value).getUserObject();
+
                 // check whatever you need to on the node user object
                 setIcon(getObjectIcon(nodeObj));
 
@@ -132,7 +133,7 @@ public class WhatTreePanel extends JPanel implements SelfBrowserView {
                     Pattern p = (Pattern) o;
                     return Icons.getPatternIcon(p);
                 }
-                return null;
+                return Icons.getIcon("thought");
             }
         };
 

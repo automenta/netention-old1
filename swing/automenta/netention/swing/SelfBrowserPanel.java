@@ -5,13 +5,13 @@
 package automenta.netention.swing;
 
 import automenta.netention.Detail;
+import automenta.netention.Mode;
 import automenta.netention.Pattern;
 import automenta.netention.Property;
+import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.util.ButtonTabPanel;
-import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;
-import automenta.netention.swing.widget.NewDetailPanel;
 import automenta.netention.swing.widget.NewPropertyPanel;
 import automenta.netention.swing.widget.PatternEditPanel;
 import automenta.netention.swing.widget.SelfBrowserView;
@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Date;
 import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -292,24 +293,28 @@ public class SelfBrowserPanel extends JPanel {
     }
 
     public void newDetail() {
-        final NewDetailPanel ndp = new NewDetailPanel(self) {
-
-            @Override protected void afterCreated(final Detail d) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override public void run() {
-                        addTab(d);
-                        refreshView();
-                    }
-                });
-            }
-
-            @Override public void closeThis() {
-                int s = contentTabs.getSelectedIndex();
-                if (s != -1)
-                    contentTabs.removeTabAt(s);
-            }
-        };
-        addTab(ndp, "New Detail...");
+//        final NewDetailPanel ndp = new NewDetailPanel(self) {
+//
+//            @Override protected void afterCreated(final Detail d) {
+//                SwingUtilities.invokeLater(new Runnable() {
+//                    @Override public void run() {
+//                        addTab(d);
+//                        refreshView();
+//                    }
+//                });
+//            }
+//
+//            @Override public void closeThis() {
+//                int s = contentTabs.getSelectedIndex();
+//                if (s != -1)
+//                    contentTabs.removeTabAt(s);
+//            }
+//        };
+        MemoryDetail d = new MemoryDetail("", Mode.Unknown);
+        d.setName(new Date().toLocaleString() + " I'm thinking about...");
+        self.addDetail(d);
+        addTab(d);
+        refreshView();
     }
 
     public void newPattern() {

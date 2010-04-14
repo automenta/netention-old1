@@ -28,6 +28,10 @@ public interface Detail extends Node {
 
     public String getIconURL();
 
+    public void setName(String newName);
+
+    public void setMode(Mode mode);
+
 
 //	/** analogous to the set of rdf:type statements */
 //	public List<String> getPatterns() {

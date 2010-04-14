@@ -6,7 +6,6 @@ import automenta.netention.Self;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.util.JHyperLink;
 import automenta.netention.swing.util.JScaledLabel;
-import automenta.netention.swing.util.SwingWindow;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
