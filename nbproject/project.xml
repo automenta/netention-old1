@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>automenta.netention2</name>
             <source-roots>
+                <root id="src.echo3.dir"/>
                 <root id="src.swing.dir"/>
                 <root id="src.dir"/>
             </source-roots>
