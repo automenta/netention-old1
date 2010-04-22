@@ -83,7 +83,7 @@ abstract public class DetailEditPanel extends JPanel {
 
             String otherID = getOther();
 
-            Detail other = self.getDetails().get(otherID);
+            Detail other = self.getDetail(otherID);
 
             JHyperLink la = new JHyperLink(other.getName() + " (" + l.toString() + ")", "", 1.2f);
             la.setIcon(Icons.getDetailIcon(self, other));
@@ -356,6 +356,8 @@ abstract public class DetailEditPanel extends JPanel {
 
         contentSplit.setResizeWeight(0.85);
         contentSplit.setDividerLocation(0.5);
+
+        headerLabel.selectAll();
 
     }
 

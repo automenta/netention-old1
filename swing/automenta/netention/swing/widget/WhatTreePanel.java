@@ -18,6 +18,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import org.apache.commons.collections15.IteratorUtils;
 import org.apache.commons.collections15.multimap.MultiHashMap;
 
 /**
@@ -47,7 +48,7 @@ public class WhatTreePanel extends JPanel implements SelfBrowserView {
                 patterns.put(p, null);
             }
 
-            for (Detail d : self.getDetails().values()) {
+            for (Detail d : IteratorUtils.toList(self.iterateDetails())) {
                 if (d.getPatterns().size() > 0) {
                     for (String s : d.getPatterns()) {
                         patterns.put(s, d);

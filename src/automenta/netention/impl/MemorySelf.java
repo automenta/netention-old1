@@ -24,9 +24,11 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.collections15.IteratorUtils;
 
 /**
  *
@@ -82,9 +84,19 @@ public class MemorySelf implements Self, Serializable {
         return links;
     }
 
-    public Map<String, Detail> getDetails() {
-        return details;
+    @Override
+    public Detail getDetail(String id) {
+        return details.get(id);
     }
+
+    @Override
+    public Iterator<Detail> iterateDetails() {
+        return details.values().iterator();
+    }
+
+//    public Map<String, Detail> getDetails() {
+//        return details;
+//    }
 
     public boolean addPattern(Pattern p) {
         //TODO do not allow adding existing pattern
@@ -165,7 +177,7 @@ public class MemorySelf implements Self, Serializable {
 
     @Override
     public void link(Linker l) {
-        DirectedGraph<Detail, Link> g = l.run(getDetails().values());
+        DirectedGraph<Detail, Link> g = l.run(IteratorUtils.toList(iterateDetails()));
         for (Detail d : g.getVertices()) {
             links.addVertex(d);
         }

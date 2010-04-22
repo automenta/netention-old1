@@ -1,25 +1,18 @@
 package automenta.netention.echo3;
 
-import automenta.netention.Self;
-import automenta.netention.webui.NetworkPanel;
-import automenta.netention.webui.SchemaPanel;
-import automenta.netention.webui.StoryPanel;
 import nextapp.echo.app.ApplicationInstance;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.Window;
 import nextapp.echo.app.WindowPane;
-import nextapp.echo.app.event.WindowPaneListener;
 
 public class MainApp extends ApplicationInstance {
 
     public final static String  VERSION = "Netention 0.1";
-    private final Self network;
 
-    public MainApp(Self network) {
+    public MainApp() {
         super();
-        this.network = network;
     }
 
 
@@ -38,7 +31,7 @@ public class MainApp extends ApplicationInstance {
 
         WindowPane scp = new WindowPane();
         scp.setTitle("Schema");
-        scp.add(new SchemaPanel(network.getSchema()));
+        //scp.add(new SchemaPanel(network.getSchema()));
         contentPane.add(scp);
 
         WindowPane stp = new WindowPane();

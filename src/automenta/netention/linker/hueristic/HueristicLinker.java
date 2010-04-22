@@ -11,6 +11,7 @@ import automenta.netention.linker.Linker;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import java.util.Collection;
+import org.apache.commons.collections15.IteratorUtils;
 
 abstract public class HueristicLinker implements Linker {
 
@@ -21,7 +22,7 @@ abstract public class HueristicLinker implements Linker {
     }
 
     public DirectedGraph<Detail,Link> run(Self self) {
-        return run(self.getDetails().values());
+        return run(IteratorUtils.toList(self.iterateDetails()));
     }
     
     public DirectedGraph<Detail,Link> run(Collection<Detail> details) {
