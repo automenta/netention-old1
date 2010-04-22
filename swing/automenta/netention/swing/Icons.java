@@ -9,6 +9,7 @@ import automenta.netention.Pattern;
 import automenta.netention.Self;
 import java.awt.Image;
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -55,24 +56,41 @@ public class Icons {
 
     }
 
-    public static Icon getFileIcon(String path) {
-        if (path.startsWith("media://")) {
-            path = path.replace("media://", "media/");            
+    public static Icon getFileIcon(String origPath) {
+        String path = origPath;
+        if (icons.containsKey(origPath)) {
+            return icons.get(origPath);
         }
 
-        try {
-            //System.out.println("loading icon " + path);
-            ImageIcon i = icons.get(path);
-            if (i == null) {
-                i = new ImageIcon(new File(".").getAbsolutePath() + "/" + path);
-                i.setImage(i.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
-                icons.put(path, i);
+        ImageIcon i = null;
+        if (path.startsWith("http://")) {
+            try {
+                i = new ImageIcon(new URL(path));
+                Logger.getLogger(Icons.class.getName()).log(Level.INFO, "Loaded image " + path);
+            } catch (Exception ex) {
+                Logger.getLogger(Icons.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return i;
-        } catch (Exception ex) {
-            Logger.getLogger(Icons.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        else {
+            if (path.startsWith("media://")) {
+                path = path.replace("media://", "media/");
+            }
+
+            try {
+                i = new ImageIcon(new File(".").getAbsolutePath() + "/" + path);
+            } catch (Exception ex) {
+                Logger.getLogger(Icons.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        
+        if (i != null) {
+            i.setImage(i.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+            icons.put(origPath, i);
+        }
+
+        return i;
+
     }
 
     public static Icon getIcon(String type) {
@@ -88,22 +106,27 @@ public class Icons {
         if (p == null) {
             for (String pat : d.getPatterns()) {
                 Icon i = getPatternIcon(s.getPatterns().get(pat));
-                if (i!=null)
+                if (i != null) {
                     return i;
+                }
             }
             return getIcon("thought");
-        }
-        else
+        } else {
             return getFileIcon(p);
+        }
     }
 
     public static Icon getPatternIcon(Pattern p) {
-        if (p == null)
+        if (p == null) {
             return null;
+        }
         String u = p.getIconURL();
-        if (u!=null)
+        if (u != null) {
             return getFileIcon(p.getIconURL());
-        else
+        } else {
             return null;
+        }
+        
     }
+
 }

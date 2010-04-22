@@ -48,6 +48,7 @@ public class SelfBrowserPanel extends JPanel {
     private final MemorySelf self;
     private final JTabbedPane contentTabs;
     int contentMargin = 6;
+    int maxTabTitleLength = 24;
 
     public class ViewMenu extends JMenu implements ActionListener {
 
@@ -184,7 +185,6 @@ public class SelfBrowserPanel extends JPanel {
 
         viewWhat();
 
-
         //contentPanel = new JPanel(new BorderLayout());
         //contentPanel.setBorder(new EmptyBorder(contentMargin, contentMargin, contentMargin, contentMargin));
         contentTabs = new JTabbedPane();
@@ -200,6 +200,9 @@ public class SelfBrowserPanel extends JPanel {
 
     public void addTab(JComponent c, String title) {
         int index = contentTabs.getTabCount();
+        if (title.length() > maxTabTitleLength) {
+            title = title.substring(0, maxTabTitleLength);
+        }
         contentTabs.insertTab(title, null, c, title, index);
         contentTabs.setTabComponentAt(index, new ButtonTabPanel(contentTabs));
         contentTabs.setSelectedIndex(index);

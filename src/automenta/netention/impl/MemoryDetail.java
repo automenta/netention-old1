@@ -26,11 +26,11 @@ public class MemoryDetail implements Detail {
     private String creator;
     private Date whenCreated = null;
     private Date whenModified = null;
+    private String iconURL = null;
 
     public MemoryDetail() {
         this("");
     }
-
 
     public MemoryDetail(String name) {
         this(name, Mode.Unknown);
@@ -110,7 +110,11 @@ public class MemoryDetail implements Detail {
 
     @Override
     public String getIconURL() {
-        return null;
+        return iconURL;
+    }
+
+    public void setIconURL(String u) {
+        this.iconURL = u;
     }
 
 

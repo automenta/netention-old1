@@ -285,6 +285,8 @@ abstract public class DetailEditPanel extends JPanel {
         add(contentSplit, gc);
 
         headerLabel = new JTextArea(d.getName());
+        headerLabel.setWrapStyleWord(true);
+        headerLabel.setLineWrap(true);
         headerLabel.setFont(headerLabel.getFont().deriveFont(headerLabel.getFont().getSize2D() * 1.7f));
 
         sentences = new JPanel(new GridBagLayout());

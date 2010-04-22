@@ -5,6 +5,7 @@
 package automenta.netention.swing;
 
 import automenta.netention.impl.MemorySelf;
+import automenta.netention.io.twitter.Twitter;
 import automenta.netention.swing.util.SwingWindow;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +39,7 @@ public class RunSelfBrowser {
             new SeedSelfBuilder().build(self);
             logger.log(Level.INFO, "Loaded Seed Self");
         }
+        self.addPlugin(new Twitter());
 
         final MemorySelf mSelf = self;
         SwingWindow window = new SwingWindow(new SelfBrowserPanel(self), 900, 800, true) {

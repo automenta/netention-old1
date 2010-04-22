@@ -5,7 +5,7 @@
 
 package automenta.netention.io;
 
-import automenta.netention.RODetail;
+import automenta.netention.Detail;
 import java.util.Iterator;
 
 /**
@@ -14,6 +14,10 @@ import java.util.Iterator;
  */
 public interface DetailSource {
 
-    public Iterator<RODetail> iterateDetails();
+    //TODO use RODetail
+    public Iterator<Detail> iterateDetails();
+
+    /** returns null if non-existent in this source */
+    public Detail getDetail(String id);
     
 }

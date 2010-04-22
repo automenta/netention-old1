@@ -10,9 +10,10 @@ import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
+import automenta.netention.io.DetailSource;
+import automenta.netention.io.SelfPlugin;
 import automenta.netention.linker.Linker;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
-import automenta.netention.value.StringProp;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.util.Pair;
@@ -25,7 +26,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.collections15.IteratorUtils;
@@ -50,8 +52,11 @@ public class MemorySelf implements Self, Serializable {
     /* detail -> detail link graph */
     transient private DirectedSparseMultigraph<Detail, Link> links = new DirectedSparseMultigraph<Detail, Link>();
 
+    transient private List<SelfPlugin> plugins;
+    
     public MemorySelf() {
         super();
+        plugins = new LinkedList();
     }
 
     public MemorySelf(String id, String name) {
@@ -86,12 +91,36 @@ public class MemorySelf implements Self, Serializable {
 
     @Override
     public Detail getDetail(String id) {
-        return details.get(id);
+        Detail d = details.get(id);
+        if (d != null) {
+            return d;
+        }
+        else {
+            for (SelfPlugin sp : plugins) {
+                if (sp instanceof DetailSource) {
+                    DetailSource ds = (DetailSource) sp;
+                    Detail e = ds.getDetail(id);
+                    if (e!=null)
+                        return e;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public Iterator<Detail> iterateDetails() {
-        return details.values().iterator();
+        List<Iterator<? extends Detail>> iList = new LinkedList();
+        iList.add(details.values().iterator());
+        if (plugins!=null) {
+            for (SelfPlugin sp : plugins) {
+                if (sp instanceof DetailSource) {
+                    DetailSource ds = (DetailSource) sp;
+                    iList.add(ds.iterateDetails());
+                }
+            }
+        }
+        return IteratorUtils.chainedIterator(iList);
     }
 
 //    public Map<String, Detail> getDetails() {
@@ -233,6 +262,12 @@ public class MemorySelf implements Self, Serializable {
         for (Property p : properties) {
             addProperty(p, pattern);
         }
+    }
+
+    public void addPlugin(SelfPlugin p) {
+        if (plugins == null)
+            plugins = new LinkedList();
+        plugins.add(p);
     }
 
 }

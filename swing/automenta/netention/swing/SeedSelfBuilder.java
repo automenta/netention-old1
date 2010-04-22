@@ -67,7 +67,9 @@ public class SeedSelfBuilder {
 
         s.addPattern(new Pattern("Media").setIconURL("media://tango32/categories/applications-multimedia.png"));
         {
-
+            s.addProperties("Media",
+                new StringProp("url", "URL")
+                );
         }
 
         s.addPattern(new Pattern("Message").setIconURL("media://tango32/apps/internet-mail.png"));
