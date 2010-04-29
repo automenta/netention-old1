@@ -23,8 +23,8 @@ public class TestDynamicDirectedGraph extends TestCase {
         SimpleDynamicDirectedGraph<Integer,String> ddg = new SimpleDynamicDirectedGraph();
         ddg.addNode(0);
         ddg.addNode(1);
-        ValueDirectedEdge<Integer,String> e = ddg.addEdge("a", 0, 1);
         
+        ValueDirectedEdge<Integer,String> e = ddg.addEdge("a", 0, 1);       
         {
             assertEquals(2, ddg.getOrder());
             assertTrue(ddg.getAdjacentNodes(0).contains(1));
@@ -34,13 +34,11 @@ public class TestDynamicDirectedGraph extends TestCase {
         }
 
         ddg.removeEdge(e);
-
         {
             assertTrue(!ddg.getAdjacentNodes(0).contains(1));
         }
 
         ddg.removeVertex(0);
-
         {
             assertEquals(1, ddg.getOrder());
         }
@@ -54,7 +52,6 @@ public class TestDynamicDirectedGraph extends TestCase {
 
         ValueDirectedEdge e = new ValueDirectedEdge("z", "x", "y");
         ddg.addEdge(e);
-
         {
             assertEquals(2, ddg.getOrder());
             assertTrue(ddg.getAdjacentNodes("x").contains("y"));
@@ -63,14 +60,12 @@ public class TestDynamicDirectedGraph extends TestCase {
             assertTrue(ddg.containsVertex("y"));
         }
 
-        ddg.removeEdge(e);
-        
+        ddg.removeEdge(e);        
         {
             assertTrue(!ddg.getAdjacentNodes("x").contains("y"));
         }
 
         ddg.removeVertex("x");
-
         {
             assertEquals(1, ddg.getOrder());
         }
