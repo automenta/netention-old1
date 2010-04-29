@@ -9,7 +9,9 @@ import automenta.netention.io.twitter.Twitter;
 import automenta.netention.swing.util.SwingWindow;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import org.pushingpixels.substance.api.skin.SubstanceMistAquaLookAndFeel;
 
 /**
  *
@@ -20,10 +22,7 @@ public class RunSelfBrowser {
     public static void main(String[] args) {
         final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
-        }
+
 
         final String filePath = "/tmp/netention1";
 
@@ -42,20 +41,36 @@ public class RunSelfBrowser {
         self.addPlugin(new Twitter());
 
         final MemorySelf mSelf = self;
-        SwingWindow window = new SwingWindow(new SelfBrowserPanel(self), 900, 800, true) {
+
+        SwingUtilities.invokeLater(new Runnable() {
 
             @Override
-            protected void onClosing() {
-                //SAVE ON EXIT
+            public void run() {
                 try {
-                    mSelf.save(filePath);
-                    //JSONIO.save(mSelf, filePath);
-                    logger.log(Level.INFO, "Saved " + filePath);
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    //UIManager.setLookAndFeel(new SubstanceMagellanLookAndFeel());
+                   //UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
+                    //UIManager.setLookAndFeel(new SubstanceMistAquaLookAndFeel());
                 } catch (Exception ex) {
-                    logger.log(Level.SEVERE, null, ex);
+                    System.err.println(ex);
                 }
+
+                SwingWindow window = new SwingWindow(new SelfBrowserPanel(mSelf), 900, 800, true) {
+
+                    @Override
+                    protected void onClosing() {
+                        //SAVE ON EXIT
+                        try {
+                            mSelf.save(filePath);
+                            //JSONIO.save(mSelf, filePath);
+                            logger.log(Level.INFO, "Saved " + filePath);
+                        } catch (Exception ex) {
+                            logger.log(Level.SEVERE, null, ex);
+                        }
+                    }
+                };
             }
-        };
+        });
 
     }
 }

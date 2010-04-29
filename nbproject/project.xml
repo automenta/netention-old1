@@ -4,17 +4,20 @@
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>automenta.netention2</name>
+            <explicit-platform explicit-source-supported="true"/>
             <source-roots>
+                <root id="src.jogl.dir"/>
                 <root id="src.echo3.dir"/>
                 <root id="src.swing.dir"/>
-                <root id="src.dir"/>
+                <root id="src.dir" name="src"/>
             </source-roots>
             <test-roots>
-                <root id="test.src.dir"/>
+                <root id="test.src.dir" name="test"/>
             </test-roots>
         </data>
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
             <definitions>./lib/nblibraries.properties</definitions>
         </libraries>
+        <references xmlns="http://www.netbeans.org/ns/ant-project-references/1"/>
     </configuration>
 </project>
