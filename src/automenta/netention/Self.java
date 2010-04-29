@@ -4,8 +4,8 @@
  */
 package automenta.netention;
 
+import automenta.netention.graph.SimpleDynamicDirectedGraph;
 import automenta.netention.linker.Linker;
-import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,7 +27,7 @@ public interface Self {
     /** all available patterns */
     public Map<String, Pattern> getPatterns();
 
-    public DirectedSparseMultigraph<Detail, Link> getLinks();
+    public SimpleDynamicDirectedGraph<Node, Link> getLinks();
 
 
     /** gets available patterns that may be added to a detail */

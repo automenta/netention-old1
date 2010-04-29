@@ -23,4 +23,10 @@ public class ValueDirectedEdge<N,V> extends SimpleDirectedEdge<N> {
         }
         return false;
     }
+
+    public V getValue() {
+        return value;
+    }
+
+    
 }

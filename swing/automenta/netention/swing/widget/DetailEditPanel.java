@@ -7,10 +7,12 @@ package automenta.netention.swing.widget;
 import automenta.netention.Detail;
 import automenta.netention.Link;
 import automenta.netention.Mode;
+import automenta.netention.Node;
 import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
+import automenta.netention.graph.ValueDirectedEdge;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.BoolPropertyPanel;
 import automenta.netention.swing.property.IntPropertyPanel;
@@ -28,12 +30,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -476,20 +477,16 @@ abstract public class DetailEditPanel extends JPanel {
                 @Override
                 public void run() {
                     List<Link> edges = new LinkedList();
-                    Collection<Link> inEdges = self.getLinks().getInEdges(detail);
-                    Collection<Link> outEdges = self.getLinks().getOutEdges(detail);
+                    Set<ValueDirectedEdge<Node,Link>> ae = self.getLinks().getAdjacentEdges(detail);
 
-                    if (inEdges != null) {
-                        edges.addAll(inEdges);
-                    }
-                    if (outEdges != null) {
-                        edges.addAll(outEdges);
+                    if (ae != null) {
+                        for (ValueDirectedEdge<Node,Link> e : ae)
+                            edges.add(e.getValue());
                     }
 
                     if (edges.size() == 0) {
                         return;
                     }
-
 
                     for (Link l : edges) {
                         gc.gridy++;

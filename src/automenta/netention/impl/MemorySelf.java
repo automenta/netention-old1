@@ -6,17 +6,18 @@ package automenta.netention.impl;
 
 import automenta.netention.Detail;
 import automenta.netention.Link;
+import automenta.netention.Node;
 import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
+import automenta.netention.graph.Pair;
+import automenta.netention.graph.SimpleDynamicDirectedGraph;
+import automenta.netention.graph.ValueDirectedEdge;
 import automenta.netention.io.DetailSource;
 import automenta.netention.io.SelfPlugin;
 import automenta.netention.linker.Linker;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
-import edu.uci.ics.jung.graph.util.Pair;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -50,7 +51,8 @@ public class MemorySelf implements Self, Serializable {
     private Map<String, Detail> details = new HashMap();
 
     /* detail -> detail link graph */
-    transient private DirectedSparseMultigraph<Detail, Link> links = new DirectedSparseMultigraph<Detail, Link>();
+    //transient private DirectedSparseMultigraph<Detail, Link> links = new DirectedSparseMultigraph<Detail, Link>();
+    transient private SimpleDynamicDirectedGraph<Node, Link> links = new SimpleDynamicDirectedGraph<Node, Link>();
 
     transient private List<SelfPlugin> plugins;
     
@@ -85,7 +87,7 @@ public class MemorySelf implements Self, Serializable {
         return patterns;
     }
 
-    public DirectedSparseMultigraph<Detail, Link> getLinks() {
+    public SimpleDynamicDirectedGraph<Node, Link> getLinks() {
         return links;
     }
 
@@ -206,19 +208,19 @@ public class MemorySelf implements Self, Serializable {
 
     @Override
     public void link(Linker l) {
-        DirectedGraph<Detail, Link> g = l.run(IteratorUtils.toList(iterateDetails()));
-        for (Detail d : g.getVertices()) {
-            links.addVertex(d);
+        SimpleDynamicDirectedGraph<Node, Link> g = l.run(IteratorUtils.toList(iterateDetails()));
+        for (Node n : g.getNodes()) {
+            links.addNode(n);
         }
-        for (Link e : g.getEdges()) {
-            Pair<Detail> ep = g.getEndpoints(e);
-            links.addEdge(e, ep.getFirst(), ep.getSecond());
+        for (ValueDirectedEdge<Node,Link> e : g.getEdges()) {
+            Pair<Node> ep = g.getEndpoints(e);
+            links.addEdge(e.getValue(), ep.getFirst(), ep.getSecond());
         }
     }
 
     @Override
     public void clearLinks() {
-        links = new DirectedSparseMultigraph<Detail, Link>();
+        links = new SimpleDynamicDirectedGraph<Node, Link>();
     }
 
     public void save(String path) throws Exception {

@@ -3,13 +3,13 @@ package automenta.netention.linker.hueristic;
 import automenta.netention.Detail;
 import automenta.netention.Link;
 import automenta.netention.Mode;
+import automenta.netention.Node;
 import automenta.netention.Self;
+import automenta.netention.graph.SimpleDynamicDirectedGraph;
 import java.util.HashSet;
 import java.util.Set;
 
 import automenta.netention.linker.Linker;
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import java.util.Collection;
 import org.apache.commons.collections15.IteratorUtils;
 
@@ -21,12 +21,12 @@ abstract public class HueristicLinker implements Linker {
         super();
     }
 
-    public DirectedGraph<Detail,Link> run(Self self) {
+    public SimpleDynamicDirectedGraph<Node,Link> run(Self self) {
         return run(IteratorUtils.toList(self.iterateDetails()));
     }
     
-    public DirectedGraph<Detail,Link> run(Collection<Detail> details) {
-        DirectedSparseMultigraph<Detail,Link> graph = new DirectedSparseMultigraph();
+    public SimpleDynamicDirectedGraph<Node,Link> run(Collection<Detail> details) {
+        SimpleDynamicDirectedGraph<Node,Link> graph = new SimpleDynamicDirectedGraph();
         for (Detail d : details) {
             for (Detail n : details) {
                 if (d == n) {
@@ -39,8 +39,8 @@ abstract public class HueristicLinker implements Linker {
                         Link link = compareSatisfying(n, d);
                         if (link != null) {
                             if (link.getStrength() > getStrengthThreshold()) {
-                                graph.addVertex(d);
-                                graph.addVertex(n);
+                                graph.addNode(d);
+                                graph.addNode(n);
                                 graph.addEdge(link, d, n);
                             }
                         }

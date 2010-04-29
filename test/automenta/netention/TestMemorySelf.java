@@ -5,6 +5,7 @@
 
 package automenta.netention;
 
+import automenta.netention.graph.SimpleDynamicDirectedGraph;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
@@ -12,7 +13,6 @@ import automenta.netention.value.IntProp;
 import automenta.netention.value.StringProp;
 import automenta.netention.value.integer.IntegerEquals;
 import automenta.netention.value.integer.IntegerIs;
-import edu.uci.ics.jung.graph.DirectedGraph;
 import junit.framework.TestCase;
 
 /**
@@ -66,9 +66,9 @@ public class TestMemorySelf extends TestCase {
         //test linker
         {
             s.link(new DefaultHeuristicLinker());
-            DirectedGraph<Detail, Link> g = s.getLinks();
-            assertEquals(2, g.getVertexCount());
-            assertEquals(1, g.getEdgeCount());
+            SimpleDynamicDirectedGraph<Node, Link> g = s.getLinks();
+            assertEquals(2, g.getNodes().size());
+            assertEquals(1, g.getEdges().size());
         }
     }
 }
