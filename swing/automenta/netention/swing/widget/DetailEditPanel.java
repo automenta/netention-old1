@@ -12,6 +12,7 @@ import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
+import automenta.netention.graph.Pair;
 import automenta.netention.graph.ValueDirectedEdge;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.BoolPropertyPanel;
@@ -75,31 +76,37 @@ abstract public class DetailEditPanel extends JPanel {
     protected class LinkPanel extends JPanel {
 
         private final Link link;
+        private final Node source;
+        private final Node target;
 
-        private LinkPanel(Link l) {
+        private LinkPanel(ValueDirectedEdge<Node,Link> edge) {
             super(new FlowLayout(FlowLayout.LEFT));
-            this.link = l;
+
+            Pair<Node> endpoints = self.getGraph().getEndpoints(edge);
+            this.link = edge.getValue();
+            this.source = endpoints.getFirst();
+            this.target = endpoints.getSecond();
 
             setOpaque(false);
 
-            String otherID = getOther();
+            Node other = getOther();
 
-            Detail other = self.getDetail(otherID);
-
-            JHyperLink la = new JHyperLink(other.getName() + " (" + l.toString() + ")", "", 1.2f);
-            la.setIcon(Icons.getDetailIcon(self, other));
+            JHyperLink la = new JHyperLink(other.getName() + " (" + link.toString() + ")", "", 1.2f);
+            if (other instanceof Detail) {
+               la.setIcon(Icons.getDetailIcon(self, (Detail)other));
+            }
             add(la);
 
-            JLabel s = new JLabel(((int) (link.getStrength() * 100.0)) + "%");
-            add(s);
+//            JLabel s = new JLabel(((int) (link.getStrength() * 100.0)) + "%");
+//            add(s);
 
         }
 
-        public String getOther() {
-            if (link.getSource().equals(detail.getID())) {
-                return link.getTarget();
+        public Node getOther() {
+            if (source.equals(detail.getID())) {
+                return target;
             }
-            return link.getSource();
+            return source;
         }
     }
 
@@ -476,21 +483,13 @@ abstract public class DetailEditPanel extends JPanel {
 
                 @Override
                 public void run() {
-                    List<Link> edges = new LinkedList();
-                    Set<ValueDirectedEdge<Node,Link>> ae = self.getLinks().getAdjacentEdges(detail);
+                    Set<ValueDirectedEdge<Node,Link>> ae = self.getGraph().getAdjacentEdges(detail);
 
                     if (ae != null) {
-                        for (ValueDirectedEdge<Node,Link> e : ae)
-                            edges.add(e.getValue());
-                    }
-
-                    if (edges.size() == 0) {
-                        return;
-                    }
-
-                    for (Link l : edges) {
-                        gc.gridy++;
-                        sentences.add(new LinkPanel(l), gc);
+                        for (ValueDirectedEdge<Node,Link> e : ae) {
+                            gc.gridy++;
+                            sentences.add(new LinkPanel(e), gc);
+                        }
                     }
 
                     updateUI();

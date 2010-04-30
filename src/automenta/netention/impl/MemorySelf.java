@@ -52,13 +52,14 @@ public class MemorySelf implements Self, Serializable {
 
     /* detail -> detail link graph */
     //transient private DirectedSparseMultigraph<Detail, Link> links = new DirectedSparseMultigraph<Detail, Link>();
-    transient private SimpleDynamicDirectedGraph<Node, Link> links = new SimpleDynamicDirectedGraph<Node, Link>();
+    final private SimpleDynamicDirectedGraph<Node, Link> graph;
 
     transient private List<SelfPlugin> plugins;
     
     public MemorySelf() {
         super();
         plugins = new LinkedList();
+        graph = new SimpleDynamicDirectedGraph<Node, Link>();
     }
 
     public MemorySelf(String id, String name) {
@@ -87,8 +88,8 @@ public class MemorySelf implements Self, Serializable {
         return patterns;
     }
 
-    public SimpleDynamicDirectedGraph<Node, Link> getLinks() {
-        return links;
+    public SimpleDynamicDirectedGraph<Node, Link> getGraph() {
+        return graph;
     }
 
     @Override
@@ -110,9 +111,8 @@ public class MemorySelf implements Self, Serializable {
         return null;
     }
 
-    @Override
-    public Iterator<Detail> iterateDetails() {
-        List<Iterator<? extends Detail>> iList = new LinkedList();
+    @Override public Iterator<Node> iterateDetails() {
+        List<Iterator<? extends Node>> iList = new LinkedList();
         iList.add(details.values().iterator());
         if (plugins!=null) {
             for (SelfPlugin sp : plugins) {
@@ -124,10 +124,6 @@ public class MemorySelf implements Self, Serializable {
         }
         return IteratorUtils.chainedIterator(iList);
     }
-
-//    public Map<String, Detail> getDetails() {
-//        return details;
-//    }
 
     public boolean addPattern(Pattern p) {
         //TODO do not allow adding existing pattern
@@ -210,17 +206,18 @@ public class MemorySelf implements Self, Serializable {
     public void link(Linker l) {
         SimpleDynamicDirectedGraph<Node, Link> g = l.run(IteratorUtils.toList(iterateDetails()));
         for (Node n : g.getNodes()) {
-            links.addNode(n);
+            graph.addNode(n);
         }
         for (ValueDirectedEdge<Node,Link> e : g.getEdges()) {
             Pair<Node> ep = g.getEndpoints(e);
-            links.addEdge(e.getValue(), ep.getFirst(), ep.getSecond());
+            graph.addEdge(e.getValue(), ep.getFirst(), ep.getSecond());
         }
     }
 
     @Override
-    public void clearLinks() {
-        links = new SimpleDynamicDirectedGraph<Node, Link>();
+    public void clearGraph() {
+        //links = new SimpleDynamicDirectedGraph<Node, Link>();
+        graph.clear();
     }
 
     public void save(String path) throws Exception {
@@ -255,9 +252,11 @@ public class MemorySelf implements Self, Serializable {
     }
 
     @Override public void updateLinks(Runnable whenFinished, Detail... details) {
-        clearLinks();
+        clearGraph();
         link(new DefaultHeuristicLinker());
-        whenFinished.run();
+        
+        if (whenFinished!=null)
+            whenFinished.run();
     }
 
     public void addProperties(String pattern, Property... properties) {

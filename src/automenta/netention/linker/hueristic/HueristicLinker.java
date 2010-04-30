@@ -25,24 +25,30 @@ abstract public class HueristicLinker implements Linker {
         return run(IteratorUtils.toList(self.iterateDetails()));
     }
     
-    public SimpleDynamicDirectedGraph<Node,Link> run(Collection<Detail> details) {
+    public SimpleDynamicDirectedGraph<Node,Link> run(Collection<Node> details) {
         SimpleDynamicDirectedGraph<Node,Link> graph = new SimpleDynamicDirectedGraph();
-        for (Detail d : details) {
-            for (Detail n : details) {
-                if (d == n) {
+        for (Node nd : details) {
+            for (Node nn : details) {
+                if (nd == nn) {
                     continue;
                 }
+
+                if (!(nd instanceof Detail) && (nn instanceof Detail))
+                    continue;
+
+                Detail d = (Detail)nd;
+                Detail n = (Detail)nn;
 
                 if (d.getMode() == Mode.Real) {
                     if (n.getMode() == Mode.Imaginary) {
 
                         Link link = compareSatisfying(n, d);
                         if (link != null) {
-                            if (link.getStrength() > getStrengthThreshold()) {
+                            //if (link.getStrength() > getStrengthThreshold()) {
                                 graph.addNode(d);
                                 graph.addNode(n);
                                 graph.addEdge(link, d, n);
-                            }
+                            //}
                         }
                     }
                 }
@@ -52,9 +58,9 @@ abstract public class HueristicLinker implements Linker {
 
     }
 
-    private double getStrengthThreshold() {
-        return 0.0;
-    }
+//    private double getStrengthThreshold() {
+//        return 0.0;
+//    }
 
     abstract public Link compareSatisfying(Detail real, Detail imaginary);
 

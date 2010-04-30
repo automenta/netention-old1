@@ -34,7 +34,7 @@ public class SGCanvas extends SG {
     }
 
     float nearF = 5f;
-    float farF = 15.0f;
+    float farF = 25.0f;
     
     protected List<Drawable> drawables = new LinkedList();
     private GLU glu = new GLU();
@@ -57,7 +57,6 @@ public class SGCanvas extends SG {
 
 
     public void init(GLAutoDrawable g) {
-
         GL2 gl = g.getGL().getGL2();
         gl.glShadeModel(GL2.GL_SMOOTH);
         gl.glEnable(GL2.GL_DEPTH_TEST);
@@ -89,7 +88,16 @@ public class SGCanvas extends SG {
     public void dispose(GLAutoDrawable g) {
     }
 
+    public void reshape(GLAutoDrawable g, int x, int y, int w, int h) {
+        GL2 gl = g.getGL().getGL2();
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glLoadIdentity();
+        glu.gluPerspective(15, (float) w / (float) h, nearF, farF);
+    }
+
     public void display(GLAutoDrawable g) {
+        g.getContext().makeCurrent();
+
         GL2 gl = g.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
@@ -106,6 +114,8 @@ public class SGCanvas extends SG {
         fps.draw();
 
         time.update();
+        
+        g.getContext().release();
 
     }
     
@@ -122,13 +132,6 @@ public class SGCanvas extends SG {
    
     }
 
-    public void reshape(GLAutoDrawable g, int x, int y, int w, int h) {
-        GL2 gl = g.getGL().getGL2();
-        gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glLoadIdentity();
-        glu.gluPerspective(15, (float) w / (float) h, nearF, farF);
-
-    }
 
     public Camera getCamera() {
         return camera;

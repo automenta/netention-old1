@@ -6,4 +6,5 @@ package automenta.netention;
  */
 public enum Mode {
     Unknown, Real, Imaginary
+
 }

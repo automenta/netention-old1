@@ -11,7 +11,7 @@ import javax.media.opengl.GLEventListener;
 
 public abstract class SG implements GLEventListener, MouseMotionListener, MouseListener, KeyListener, MouseWheelListener {
 
-    public interface DemoListener {
+    public interface SGListener {
 
         /** Indicates that the demo wants to be terminated. */
         public void shutdownDemo();
@@ -20,11 +20,11 @@ public abstract class SG implements GLEventListener, MouseMotionListener, MouseL
         public void repaint();
     }
     
-    protected DemoListener demoListener;
+    protected SGListener sgListener;
     private boolean doShutdown = true;
 
-    public void setDemoListener(DemoListener listener) {
-        this.demoListener = listener;
+    public void setSGListener(SGListener listener) {
+        this.sgListener = listener;
     }
 
     // Override this with any other cleanup actions
@@ -33,7 +33,7 @@ public abstract class SG implements GLEventListener, MouseMotionListener, MouseL
         boolean shouldDoShutdown = doShutdown;
         doShutdown = false;
         if (shouldDoShutdown) {
-            demoListener.shutdownDemo();
+            sgListener.shutdownDemo();
         }
     }
     public void mouseDragged(MouseEvent e) {

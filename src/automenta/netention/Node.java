@@ -15,19 +15,15 @@ public interface Node extends Serializable {
         private String id;
         private String name;
 
-        public AbstractNode() {
-            super();
-        }
 
         public AbstractNode(String id) {
-            this();
-            this.id = id;
-            this.name = id;
+            this(id, id);
         }
 
         public AbstractNode(String id, String name) {
-            this(id);
+            super();
 
+            this.id = id;
             this.name = name;
         }
 
@@ -47,6 +43,24 @@ public interface Node extends Serializable {
         @Override public String toString() {
             return getID() + " (" + getName() + ")";
         }
+
+        @Override
+        public int hashCode() {
+            return id.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof AbstractNode) {
+                AbstractNode an = (AbstractNode)obj;
+                return an.id.equals(id);
+            }
+            return false;
+        }
+
+
+
+
     }
 
 }

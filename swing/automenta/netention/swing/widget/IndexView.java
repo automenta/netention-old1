@@ -8,10 +8,10 @@ package automenta.netention.swing.widget;
 import automenta.netention.Detail;
 
 /**
- *
+ * Navigator component
  * @author seh
  */
-public interface SelfBrowserView {
+public interface IndexView {
 
     public void selectObject(Detail d);
 

@@ -4,46 +4,23 @@
  */
 package automenta.netention;
 
-import java.io.Serializable;
+import java.util.UUID;
 
 /**
  *
  * @author seh
  */
-public interface Link extends Serializable {
-    /** target detailID */
-    public String getSource();
-
-    /** target detailID */
-    public String getTarget();
-
-    public double getStrength();
+public interface Link extends Node {
     
-    public static abstract class AbstractLink implements Link {
-        final public String source, target;
-        private double strength;
+    public static abstract class AbstractLink extends AbstractNode implements Link {
 
-        public AbstractLink(String source, String target, double strength) {
-            this.source = source;
-            this.target = target;
-            this.strength = strength;
+        public AbstractLink(String id) {
+            super(id + UUID.randomUUID().toString());
         }
 
-        @Override
-        public String getSource() {
-            return source;
+        public AbstractLink(String id, String name) {
+            super(id + UUID.randomUUID().toString(), name);
         }
-
-        @Override
-        public String getTarget() {
-            return target;
-        }
-
-
-
-        @Override public double getStrength() {
-            return strength;
-        }    
 
     }
 

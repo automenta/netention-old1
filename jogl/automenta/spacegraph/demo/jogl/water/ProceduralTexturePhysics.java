@@ -33,7 +33,7 @@
 package automenta.spacegraph.demo.jogl.water;
 
 import automenta.spacegraph.SG;
-import automenta.spacegraph.SG.DemoListener;
+import automenta.spacegraph.SG.SGListener;
 import automenta.spacegraph.gleem.BSphere;
 import automenta.spacegraph.gleem.BSphereProvider;
 import automenta.spacegraph.gleem.CameraParameters;
@@ -104,7 +104,7 @@ public class ProceduralTexturePhysics extends SG {
         });
 
         final Animator animator = new Animator(canvas);
-        demo.setDemoListener(new DemoListener() {
+        demo.setSGListener(new SGListener() {
 
             public void shutdownDemo() {
                 runExit(animator);

@@ -1,11 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author seh
- */
 package automenta.spacegraph;
 
 import java.awt.BorderLayout;
@@ -17,7 +9,7 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import com.sun.opengl.util.Animator;
 
-/** Shows how to place 2D text in 3D using the TextRenderer. */
+/** Contains a "heavyweight" GLCanvas component for high performance */
 public class SGWindow {
 
     private final Frame frame;

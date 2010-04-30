@@ -10,6 +10,6 @@ import java.util.Collection;
 /** a weaver is a process that semantically links stories in real-time */
 public interface Linker {
 
-    public SimpleDynamicDirectedGraph<Node, Link> run(Collection<Detail> details);
+    public SimpleDynamicDirectedGraph<Node, Link> run(Collection<Node> details);
 
 }

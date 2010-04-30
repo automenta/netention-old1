@@ -16,7 +16,11 @@ class Spatial {
     protected Vec3f center;
     protected Vec3f size;
     protected Vec3f rotation;
-    //private final Mat4f transform = new Mat4f();
+
+    public Spatial() {
+        this(new Vec3f(0,0,0), new Vec3f(1,1,1), new Vec3f(0,0,0));
+    }
+
 
     public Spatial(Vec3f center, Vec3f size, Vec3f rotation) {
         super();
@@ -48,12 +52,14 @@ class Spatial {
 //        transform.setRotation(getRotation());
 //        gl.glLoadMatrixf(transform.data, 0);
 
-        gl.glScalef(getSize().x(), getSize().y(), getSize().z());
-        gl.glTranslatef(getCenter().x(), getCenter().y(), getCenter().z());
-
         gl.glRotatef(getRotation().x(), 1, 0, 0);
         gl.glRotatef(getRotation().y(), 0, 1, 0);
         gl.glRotatef(getRotation().z(), 0, 0, 1);
+
+        gl.glTranslatef(getCenter().x(), getCenter().y(), getCenter().z());
+
+        gl.glScalef(getSize().x(), getSize().y(), getSize().z());
+
 
     }
 

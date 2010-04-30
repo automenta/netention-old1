@@ -5,10 +5,16 @@
 
 package automenta.netention.link;
 
+import automenta.netention.Link.AbstractLink;
+
 /**
  *
  * @author seh
  */
-public class Created {
+public class PatternOf extends AbstractLink {
+
+    public PatternOf() {
+        super("pattern");
+    }
 
 }

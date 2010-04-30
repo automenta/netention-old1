@@ -5,6 +5,7 @@
 package automenta.netention.swing.widget;
 
 import automenta.netention.Detail;
+import automenta.netention.Node;
 import automenta.netention.Pattern;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
@@ -25,7 +26,7 @@ import org.apache.commons.collections15.multimap.MultiHashMap;
  *
  * @author seh
  */
-public class WhatTreePanel extends JPanel implements SelfBrowserView {
+public class WhatTreePanel extends JPanel implements IndexView {
 
     float textScale = 1.25f;
     private final MemorySelf self;
@@ -48,13 +49,16 @@ public class WhatTreePanel extends JPanel implements SelfBrowserView {
                 patterns.put(p, null);
             }
 
-            for (Detail d : IteratorUtils.toList(self.iterateDetails())) {
-                if (d.getPatterns().size() > 0) {
-                    for (String s : d.getPatterns()) {
-                        patterns.put(s, d);
+            for (Node n : IteratorUtils.toList(self.iterateDetails())) {
+                if (n instanceof Detail) {
+                    Detail d = (Detail)n;
+                    if (d.getPatterns().size() > 0) {
+                        for (String s : d.getPatterns()) {
+                            patterns.put(s, d);
+                        }
+                    } else {
+                        patterns.put("Thought", d);
                     }
-                } else {
-                    patterns.put("Thought", d);
                 }
             }
 

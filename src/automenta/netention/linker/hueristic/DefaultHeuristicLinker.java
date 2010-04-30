@@ -5,7 +5,6 @@ import automenta.netention.Detail;
 import automenta.netention.IndefiniteValue;
 import automenta.netention.Link;
 import automenta.netention.PropertyValue;
-import automenta.netention.Self;
 import automenta.netention.link.Satisfies;
 import java.util.List;
 import java.util.logging.Logger;
@@ -26,7 +25,7 @@ public class DefaultHeuristicLinker extends HueristicLinker {
 	private static final Logger logger = Logger.getLogger(DefaultHeuristicLinker.class.getName());
 
 
-	@Override public Link compareSatisfying(Detail a, Detail b) {
+    @Override public Link compareSatisfying(Detail a, Detail b) {
 		double strength = 0;
 		
 		//System.out.println(" comparing: " + a.getProperties() + " -> " + b.getProperties());
@@ -38,7 +37,7 @@ public class DefaultHeuristicLinker extends HueristicLinker {
 			strength += getIndefiniteIndefiniteComparison(a, b);
 		}
 			
-		return new Satisfies(a.getID(), b.getID(), strength);
+		return new Satisfies(strength);
 	}
 	
 

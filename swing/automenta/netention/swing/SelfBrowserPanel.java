@@ -12,9 +12,10 @@ import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.widget.DetailEditPanel;
+import automenta.netention.swing.widget.GraphPanel;
 import automenta.netention.swing.widget.NewPropertyPanel;
 import automenta.netention.swing.widget.PatternEditPanel;
-import automenta.netention.swing.widget.SelfBrowserView;
+import automenta.netention.swing.widget.IndexView;
 import automenta.netention.swing.widget.WhatTreePanel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -28,6 +29,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -44,11 +46,17 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class SelfBrowserPanel extends JPanel {
 
     private final JSplitPane content;
-    private SelfBrowserView typeTreePanel;
+    private IndexView indexView;
     private final MemorySelf self;
     private final JTabbedPane contentTabs;
     int contentMargin = 6;
     int maxTabTitleLength = 24;
+    
+    static
+    {
+    // do not remove this line, necessary for Swing integration !
+    JPopupMenu.setDefaultLightWeightPopupEnabled( false );
+    }
 
     public class ViewMenu extends JMenu implements ActionListener {
 
@@ -76,7 +84,7 @@ public class SelfBrowserPanel extends JPanel {
             recent = new JRadioButtonMenuItem("Recent", Icons.getIcon("recent"));
             //when.addActionListener(this);
             frequent = new JRadioButtonMenuItem("Frequent", Icons.getIcon("frequent"));
-            //when.addActionListener(this);
+            frequent.addActionListener(this);
 
             add(what);
             add(who);
@@ -108,7 +116,15 @@ public class SelfBrowserPanel extends JPanel {
             } else if (where.isSelected()) {
                 setIcon(where.getIcon());
                 viewWhere();
+            } else if (when.isSelected()) {
+                
+            } else if (recent.isSelected()) {
+                
+            } else if (frequent.isSelected()) {
+                setIcon(frequent.getIcon());
+                viewFrequent();
             }
+
         }
         //        JMenu viewMenu = new JMenu(/*"View"*/);
 //        viewMenu.setIcon(Icons.getObjectIcon("view"));
@@ -233,7 +249,7 @@ public class SelfBrowserPanel extends JPanel {
 
                     @Override protected void patternChanged() {
                         refreshView();
-                        typeTreePanel.selectObject(d);
+                        indexView.selectObject(d);
                     }
 
                     @Override
@@ -256,11 +272,11 @@ public class SelfBrowserPanel extends JPanel {
     }
 
     protected void refreshView() {
-        typeTreePanel.refresh();
+        indexView.refresh();
 
         //TODO un-hack this
-        if (typeTreePanel instanceof WhatTreePanel) {
-            final WhatTreePanel w = ((WhatTreePanel) typeTreePanel);
+        if (indexView instanceof WhatTreePanel) {
+            final WhatTreePanel w = ((WhatTreePanel) indexView);
             w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
 
                 @Override public void valueChanged(TreeSelectionEvent e) {
@@ -329,10 +345,17 @@ public class SelfBrowserPanel extends JPanel {
     }
 
     protected void viewWhat() {
-        typeTreePanel = new WhatTreePanel(self);
+        indexView = new WhatTreePanel(self);
         refreshView();
 
-        content.setLeftComponent(new JScrollPane((JPanel) typeTreePanel));
+        content.setLeftComponent(new JScrollPane((JPanel) indexView));
+    }
+
+    protected void viewFrequent() {
+        indexView = new GraphPanel(self);
+        refreshView();
+
+        content.setLeftComponent((JPanel)indexView);
     }
 
     protected void viewWho() {

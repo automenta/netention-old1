@@ -13,14 +13,15 @@ import automenta.netention.Link.AbstractLink;
  * @author seh
  */
 public class SimilarTo extends AbstractLink {
+    private final double strength;
 
-    public SimilarTo(String source, String target, double strength) {
-        super(source, target, strength);
+    public SimilarTo(double strength) {
+        super("similar", "similar(" + strength + ")");
+        this.strength = strength;
     }
- 
-    @Override
-    public String toString() {
-        return "similar";
+
+    public double getStrength() {
+        return strength;
     }
 
 }

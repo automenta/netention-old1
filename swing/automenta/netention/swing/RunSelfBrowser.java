@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import org.pushingpixels.substance.api.skin.SubstanceMistAquaLookAndFeel;
 
 /**
  *
@@ -38,7 +37,7 @@ public class RunSelfBrowser {
             new SeedSelfBuilder().build(self);
             logger.log(Level.INFO, "Loaded Seed Self");
         }
-        self.addPlugin(new Twitter());
+        //self.addPlugin(new Twitter());
 
         final MemorySelf mSelf = self;
 

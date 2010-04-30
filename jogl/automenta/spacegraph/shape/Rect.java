@@ -15,7 +15,7 @@ import javax.media.opengl.GL2;
 public class Rect extends Spatial implements Drawable {
 
     public Rect() {
-        super(new Vec3f(0,0,0), new Vec3f(1,1,1), new Vec3f(0,0,0));
+        super();
     }
 
     public void draw(GL2 gl) {

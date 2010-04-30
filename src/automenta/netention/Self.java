@@ -21,13 +21,13 @@ public interface Self {
 
     public boolean addDetail(Detail d);
     public Detail getDetail(String id);
-    public Iterator<Detail> iterateDetails();
+    public Iterator<Node> iterateDetails();
     //public Map<String, Detail> getDetails();
 
     /** all available patterns */
     public Map<String, Pattern> getPatterns();
 
-    public SimpleDynamicDirectedGraph<Node, Link> getLinks();
+    public SimpleDynamicDirectedGraph<Node, Link> getGraph();
 
 
     /** gets available patterns that may be added to a detail */
@@ -47,6 +47,6 @@ public interface Self {
 
     public void link(Linker l);
 
-    public void clearLinks();
+    public void clearGraph();
 
 }

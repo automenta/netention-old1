@@ -1,6 +1,7 @@
 package automenta.netention.graph;
 
 import com.syncleus.dann.graph.AbstractBidirectedGraph;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 /** BidirectedGraph that can be edited dynamically: adding and removing both nodes and edges.
     Contains code adapted from JUNG2's DirectedSparseMultigraph and its ancestry.  */
-public class SimpleDynamicDirectedGraph<N, E> extends AbstractBidirectedGraph<N, ValueDirectedEdge<N,E>> {
+public class SimpleDynamicDirectedGraph<N, E> extends AbstractBidirectedGraph<N, ValueDirectedEdge<N,E>> implements Serializable {
     //Original dANN fields:
     //	final private HashSet<N> nodes;
     //	final private HashSet<E> edges;
@@ -21,15 +22,26 @@ public class SimpleDynamicDirectedGraph<N, E> extends AbstractBidirectedGraph<N,
     //	final private Map<N, List<N>> neighborNodes = new HashMap<N, List<N>>();
 
     //JUNG2's DirectedSparseMultigraph fields, for comparison:
-    protected Map<N, Pair<Set<ValueDirectedEdge<N,E>>>> vertices; // Map of vertices to Pair of adjacency sets {incoming, outgoing}
+    protected final Map<N, Pair<Set<ValueDirectedEdge<N,E>>>> vertices; // Map of vertices to Pair of adjacency sets {incoming, outgoing}
     //protected Map<E, Pair<N>> edges;            // Map of edges to incident vertex pairs
-    protected Set<ValueDirectedEdge<N,E>> edges;
+    protected final Set<ValueDirectedEdge<N,E>> edges;
     
 
     public SimpleDynamicDirectedGraph() {
         super();
         vertices = new HashMap();
         edges = new HashSet();
+    }
+
+    public SimpleDynamicDirectedGraph(SimpleDynamicDirectedGraph<N, E> copyFrom) {
+        super();
+        this.vertices = new HashMap(copyFrom.vertices);
+        this.edges = new HashSet(copyFrom.edges);
+    }
+
+    public synchronized void clear() {
+        vertices.clear();
+        edges.clear();
     }
 
     public boolean addNode(N vertex) {
@@ -231,5 +243,6 @@ public class SimpleDynamicDirectedGraph<N, E> extends AbstractBidirectedGraph<N,
             return null;
         return this.getEndpoints(edge).getSecond();
     }
+
 
 }

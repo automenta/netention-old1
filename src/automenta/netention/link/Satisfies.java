@@ -12,10 +12,16 @@ import automenta.netention.Link.AbstractLink;
  * @author seh
  */
 public class Satisfies extends AbstractLink {
+    private final double strength;
 
-    public Satisfies(String source, String target, double strength) {
-        super(source, target, strength);
+    public Satisfies(double strength) {
+        super("satisfies", "satisfies(" + strength + ")");
+        this.strength = strength;
     }
+
+    public double getStrength() {
+        return strength;
+    }        
 
     @Override
     public String toString() {
