@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.glu.GLU;
@@ -37,7 +38,7 @@ public class SGCanvas extends SG {
     float nearF = 5f;
     float farF = 100.0f;
     
-    protected List<Drawable> drawables = new LinkedList();
+    protected List<Drawable> drawables = new CopyOnWriteArrayList<Drawable>();
     private GLU glu = new GLU();
     protected final Time time = new SystemTime();
     private FPSCounter fps;
@@ -128,10 +129,10 @@ public class SGCanvas extends SG {
 
     protected void drawSpace(GL2 gl) {
         updateSpace(gl);
-        
-        for (Drawable d : drawables) {
-            d.draw(gl);
-        }
+
+            for (Drawable d : drawables) {
+                d.draw(gl);
+            }
    
     }
 
