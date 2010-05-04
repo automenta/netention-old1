@@ -57,7 +57,11 @@ public class SeedSelfBuilder {
 
         s.addPattern(new Pattern("Project").setIconURL("media://tango32/mimetypes/x-office-presentation.png"));
         {
-
+            s.addProperties("Project",
+                new StringProp("purpose", "Purpose"),
+                new StringProp("goal", "Goal"),
+                new StringProp("member", "Member")
+                );
         }
 
         s.addPattern(new Pattern("Event").setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
@@ -85,6 +89,12 @@ public class SeedSelfBuilder {
                 );            
         }
 
+        s.addPattern(new Pattern("Psych").setIconURL("media://tango32/apps/internet-mail.png"));
+        {
+            s.addProperties("Psych",
+                new StringProp("emotion", "Emotion")
+                );
+        }
 
         MemoryDetail d1 = new MemoryDetail("Red Bike", Mode.Real, "Built", "Mobile");
         MemoryDetail d11 = new MemoryDetail("Blue Bike", Mode.Real, "Built");
