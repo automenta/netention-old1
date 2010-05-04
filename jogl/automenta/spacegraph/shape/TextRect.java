@@ -4,8 +4,8 @@
  */
 package automenta.spacegraph.shape;
 
+import automenta.spacegraph.gleem.linalg.Vec3f;
 import com.sun.opengl.util.awt.TextRenderer;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import javax.media.opengl.GL2;
@@ -20,6 +20,7 @@ public class TextRect extends Rect {
     private float textScaleFactor;
     private String text;
     private boolean useVertexArrays = false;
+    private Vec3f textColor = new Vec3f(1f,1f,1f);
 
     public TextRect(String initialText) {
         super();
@@ -76,7 +77,7 @@ public class TextRect extends Rect {
         bounds = textRenderer.getBounds(text);
         w = (float) bounds.getWidth();
         h = (float) bounds.getHeight();
-        textRenderer.setColor(1f, 1f, 1f, 1f);
+        textRenderer.setColor(textColor.x(), textColor.y(), textColor.z(), 1f);
         textRenderer.draw3D(text,
             w / -2.0f * textScaleFactor,
             h / -2.0f * textScaleFactor,
@@ -87,5 +88,9 @@ public class TextRect extends Rect {
         gl.glPopMatrix();
 
 
+    }
+
+    public void setTextColor(Vec3f color) {
+        this.textColor = color;
     }
 }

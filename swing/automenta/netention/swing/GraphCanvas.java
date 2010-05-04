@@ -22,14 +22,13 @@ import com.syncleus.dann.graph.AbstractBidirectedGraph;
 import com.syncleus.dann.graph.Graph;
 import com.syncleus.dann.graph.SimpleDirectedEdge;
 import com.syncleus.dann.math.Vector;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import javax.media.opengl.GL2;
 import javolution.context.ConcurrentContext;
@@ -64,6 +63,7 @@ public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>  extends SGCanvas {
             
         for (N s : sg.getNodes()) {
             TextRect box = new TextRect(tr, s.toString());
+            box.setTextColor(getColor(s));
             //Rect box = new Rect();
             boxes.put(s, box);
             add(box);
@@ -80,6 +80,10 @@ public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>  extends SGCanvas {
             add(c);
         }
 
+    }
+
+    public Vec3f getColor(N n) {
+        return new Vec3f().fromColor(Color.getHSBColor((float)Math.random(), 0.75f, 1.0f));
     }
 
     @Override

@@ -39,6 +39,8 @@
 
 package automenta.spacegraph.gleem.linalg;
 
+import java.awt.Color;
+
 /** 3-element single-precision vector */
 
 public class Vec3f {
@@ -235,5 +237,12 @@ public class Vec3f {
           y() * momentum + (1.0f - momentum) * other.y(),
           z() * momentum + (1.0f - momentum) * other.z()
           );
+  }
+
+  public Vec3f fromColor(Color c) {
+      float[] a = new float[4];
+      c.getRGBComponents(a);
+      set(a[0], a[1], a[2]);
+      return this;
   }
 }

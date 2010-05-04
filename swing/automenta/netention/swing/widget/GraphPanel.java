@@ -13,9 +13,9 @@ import automenta.netention.graph.SimpleDynamicDirectedGraph;
 import automenta.netention.linker.MetadataGrapher;
 import automenta.netention.swing.GraphCanvas;
 import automenta.spacegraph.SGPanel;
+import automenta.spacegraph.gleem.linalg.Vec3f;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
@@ -24,6 +24,7 @@ import javax.swing.JPanel;
  */
 public class GraphPanel extends JPanel implements IndexView {
     private final Self self;
+        int minWidth = 150;
 
     public GraphPanel(Self self) {
         super(new BorderLayout());
@@ -42,11 +43,17 @@ public class GraphPanel extends JPanel implements IndexView {
         SimpleDynamicDirectedGraph<Node,Link> target = new SimpleDynamicDirectedGraph(self.getGraph());
         MetadataGrapher.run(self, target, true, true, true, true);
 
-        JPanel j = new SGPanel(new GraphCanvas(target, 3));
+        GraphCanvas gc = new GraphCanvas(target, 3);
+        gc.setBackground(new Vec3f(0.2f, 0.2f, 0.2f));
+        
+
+        JPanel j = new SGPanel(gc);
         add(j, BorderLayout.CENTER);
 
-        j.setMinimumSize(new Dimension(1,1));
-        setMinimumSize(new Dimension(1,1));
+        j.setMinimumSize(new Dimension(minWidth,minWidth));
+        setMinimumSize(new Dimension(minWidth,minWidth));
+
+        updateUI();
     }
 
 

@@ -23,6 +23,7 @@ import javax.media.opengl.glu.GLU;
  * @author seh
  */
 public class SGCanvas extends SG {
+    private Vec3f background = new Vec3f(0,0,0);
 
     public static class Camera {
         public final Vec3f camPos = new Vec3f(0, 0, 10);
@@ -100,6 +101,7 @@ public class SGCanvas extends SG {
 
         GL2 gl = g.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        gl.glClearColor(background.x(), background.y(), background.z(), 1f);
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -169,6 +171,8 @@ public class SGCanvas extends SG {
         return pointer;
     }
 
-    
+    public void setBackground(Vec3f c) {
+        this.background = c;
+    }
 
 }
