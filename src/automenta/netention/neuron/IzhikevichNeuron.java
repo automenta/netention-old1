@@ -61,17 +61,17 @@ public class IzhikevichNeuron extends SpikingNeuron {
     /**
      * Updates the neuron.
      */
-    public void update(double timeStep) {
+    public void update(double dt) {
         double inputs = getWeightedInputs();
 
         if (addNoise) {
             //inputs += noiseGenerator.getRandom();
         }
 
-        recovery += (timeStep * (a * ((b * activation) - recovery)));
+        recovery += (dt * (a * ((b * activation) - recovery)));
 
         double val = activation
-                + (timeStep * (((.04 * (activation * activation))
+                + (dt * (((.04 * (activation * activation))
                         + (5 * activation) + 140)
                         - recovery + inputs));
 

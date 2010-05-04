@@ -12,9 +12,9 @@ import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.SGCanvas;
 import automenta.spacegraph.SGPanel;
 import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.shape.Curve;
 import automenta.spacegraph.shape.Rect;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javolution.context.ConcurrentContext;
@@ -62,24 +62,33 @@ public class RunIzhiDemo {
 
             float x = -1.0f;
             float lastY = 0;
+            private Rect lastP;
 
             @Override
             public void run() {
                 while (true) {
                     nn.getNeuron((int)(Math.random() * numNeurons)).setActivation(2 * Math.random() - 1.0);
 
-                    nn.printNeurons();
-                    
-                    nn.update(0.02);
+                    //nn.printNeurons();
+
+                    for (int i = 0; i < 50; i++)
+                        nn.update(0.01);
 
                     float s = 0.005f;
                     float y = (float)nn.getNeuron(0).getActivation();
                     
                     Rect p = new Rect();
-                    p.setBackgroundColor(new Vec3f(Color.WHITE));
+                    p.setBackgroundColor(new Vec3f((float)(nn.getNeuron(0).getTotalInput()/200.0f), (float)(nn.getNeuron(0).getTotalInput()/-200.0f), 0.5f));
                     p.getCenter().set(x, (y)/100.0f, 0);
                     p.getSize().set(s, s, s);
                     sc.add(p);
+
+
+                    if (lastP!=null) {
+                        Curve c = new Curve(p, lastP, 2);
+                        sc.add(c);
+                    }
+
 
                     x += 0.005f;
                     if (x > 5f)
@@ -91,6 +100,7 @@ public class RunIzhiDemo {
                     }
 
                     lastY = y;
+                    lastP = p;
                 }
             }
 
