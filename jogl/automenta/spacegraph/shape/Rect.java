@@ -14,9 +14,20 @@ import javax.media.opengl.GL2;
  */
 public class Rect extends Spatial implements Drawable {
 
+    Vec3f backgroundColor = new Vec3f(1f, 0f, 1f);
+
     public Rect() {
         super();
     }
+
+    public void setBackgroundColor(Vec3f backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public Vec3f getBackgroundColor() {
+        return backgroundColor;
+    }
+    
 
     public void draw(GL2 gl) {
         gl.glPushMatrix();
@@ -29,17 +40,16 @@ public class Rect extends Spatial implements Drawable {
 
         // Six faces of cube
         // Top face
-        gl.glPushMatrix();
-        //gl.glColor3f(r, g, b);
+        gl.glColor3f(backgroundColor.x(), backgroundColor.y(), backgroundColor.z());
         gl.glBegin(GL2.GL_QUADS);
         {
             //Front
-                gl.glNormal3f(0, 0, 1); {
+                //gl.glNormal3f(0, 0, 1); {
                     gl.glVertex3f(-w, -h, 0);
                     gl.glVertex3f(w, -h, 0);
                     gl.glVertex3f(w, h, 0);
                     gl.glVertex3f(-w, h, 0);
-                }
+                //}
         }
         gl.glEnd();
 

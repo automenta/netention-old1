@@ -78,7 +78,12 @@ public class SeedSelfBuilder {
         }
 
         
-
+        s.addPattern(new Pattern("Business").setIconURL("media://tango32/apps/internet-mail.png"));
+        {
+            s.addProperties("Business",
+                new StringProp("stockticker", "Stock Ticker")
+                );            
+        }
 
 
         MemoryDetail d1 = new MemoryDetail("Red Bike", Mode.Real, "Built", "Mobile");

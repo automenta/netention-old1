@@ -16,14 +16,13 @@ import automenta.spacegraph.gleem.linalg.Vec2f;
 import automenta.spacegraph.gleem.linalg.Vec3f;
 import automenta.spacegraph.shape.Curve;
 import automenta.spacegraph.shape.Rect;
-import automenta.spacegraph.shape.TextRect;
+import automenta.spacegraph.shape.WideIcon;
 import com.sun.opengl.util.awt.TextRenderer;
 import com.syncleus.dann.graph.AbstractBidirectedGraph;
 import com.syncleus.dann.graph.Graph;
 import com.syncleus.dann.graph.SimpleDirectedEdge;
 import com.syncleus.dann.math.Vector;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -37,7 +36,7 @@ import javolution.context.ConcurrentContext;
  *
  * @author seh
  */
-public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>  extends SGCanvas {
+public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>     extends SGCanvas {
 
     private float textScaleFactor;
     float xAng = 0;
@@ -57,14 +56,12 @@ public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>  extends SGCanvas {
 
         this.sg = graph;
 
-        hmap = new HyperassociativeMap3(sg, dimensions, 0.004, 1.0, 2, 4);
+        hmap = new HyperassociativeMap3(sg, dimensions, 0.05, 0.5, 8, 4);
 
-        tr = TextRect.newTextRenderer(new Font("Arial", Font.PLAIN, 72));
-            
+        //tr = TextRect.newTextRenderer(new Font("Arial", Font.PLAIN, 72));
+
         for (N s : sg.getNodes()) {
-            TextRect box = new TextRect(tr, s.toString());
-            box.setTextColor(getColor(s));
-            //Rect box = new Rect();
+            Rect box = newNodeRect(s);
             boxes.put(s, box);
             add(box);
         }
@@ -75,15 +72,33 @@ public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>  extends SGCanvas {
                 Logger.getLogger(GraphCanvas.class.toString()).severe("could not find boxes for edge: " + e);
                 continue;
             }
-            
-            Curve c = new Curve(e.toString(), aBox, bBox);
+
+            final WideIcon curveLabel = new WideIcon(e.toString(), getColor(null), getColor(null));
+
+            Curve c = new Curve(aBox, bBox, 2) {
+
+                @Override
+                public void draw(GL2 gl) {
+                    super.draw(gl);
+                    curveLabel.getCenter().set(
+                        ctrlPoints[3], ctrlPoints[4], ctrlPoints[5]);
+                    curveLabel.getSize().set(0.1f, 0.1f, 0.1f);
+                    //curveLabel.draw(gl);
+                }
+            };
+
             add(c);
         }
 
     }
 
+    public Rect newNodeRect(N n) {
+        WideIcon box = new WideIcon(n.toString(), getColor(n), getColor(n));
+        return box;
+    }
+
     public Vec3f getColor(N n) {
-        return new Vec3f().fromColor(Color.getHSBColor((float)Math.random(), 0.75f, 1.0f));
+        return new Vec3f().fromColor(Color.getHSBColor((float) Math.random(), 0.75f, 1.0f));
     }
 
     @Override
@@ -106,7 +121,7 @@ public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>  extends SGCanvas {
     public void mouseWheelMoved(MouseWheelEvent e) {
         super.mouseWheelMoved(e);
 
-        Vec3f delta = new Vec3f(0, 0, e.getWheelRotation() * 0.5f);
+        Vec3f delta = new Vec3f(0, 0, e.getWheelRotation() * 1.5f);
         targetPos.add(delta);
         targetTarget.add(delta);
     }
@@ -148,11 +163,15 @@ public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>  extends SGCanvas {
                 float z = (float) (v.getCoordinate(3) * m);
                 b.getCenter().set(x, y, z);
             }
-            b.getSize().set(0.5f, 0.5f, 0.5f);
+            updateRect(s, b);
         }
 
         getCamera().camPos.lerp(targetPos, 0.95f);
         getCamera().camTarget.lerp(targetTarget, 0.95f);
+    }
+
+    protected void updateRect(N s, Rect r) {
+        r.getSize().set(0.5f, 0.5f, 0.5f);
     }
 
     @Override
@@ -179,11 +198,10 @@ public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>  extends SGCanvas {
 
         self.updateLinks(null);
 
-        SimpleDynamicDirectedGraph<Node,Link> target = new SimpleDynamicDirectedGraph(self.getGraph());
+        SimpleDynamicDirectedGraph<Node, Link> target = new SimpleDynamicDirectedGraph(self.getGraph());
         //MetadataGrapher.run(self, target, true, true, true, true);
         MetadataGrapher.run(self, target, true, true, true, true);
 
         new SGWindow("DemoSGCanvas", new GraphCanvas(target, 3));
     }
-
 }

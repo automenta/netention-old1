@@ -5,7 +5,7 @@
 package automenta.netention.swing;
 
 import automenta.netention.impl.MemorySelf;
-import automenta.netention.io.twitter.Twitter;
+import automenta.netention.plugin.twitter.Twitter;
 import automenta.netention.swing.util.SwingWindow;
 import java.util.logging.Level;
 import java.util.logging.Logger;

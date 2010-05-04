@@ -65,6 +65,11 @@ public class Vec3f {
     set(x, y, z);
   }
 
+  public Vec3f(Color c) {
+    this();
+    fromColor(c);
+  }
+
   public Vec3f copy() {
     return new Vec3f(this);
   }

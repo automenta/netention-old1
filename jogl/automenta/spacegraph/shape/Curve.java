@@ -12,33 +12,44 @@ import javax.media.opengl.GL2;
  */
 public class Curve extends Spatial implements Drawable {
 
-    private final String label;
     private final Rect aRect;
     private final Rect bRect;
     float lineWidth = 2f;
-    float lineSteps = 20.0f;
-    int bezierPartitions = 20;
-    private final TextRect labelRect;
+    float lineSteps = 4.0f;
+    int bezierPartitions = 4;
+    public float[] ctrlPoints;
+    private final int degree;
+    //private final TextRect labelRect;
 
-    public Curve(String label, Rect aRect, Rect bRect) {
+    public Curve(Rect aRect, Rect bRect, int degree) {
         super();
-        this.label = label;
         this.aRect = aRect;
         this.bRect = bRect;
-        this.labelRect = new TextRect(label);
+        this.degree = degree;
     }
 
     @Override
     public void draw(GL2 gl) {
-
-        final int nbCtrlPoints = 4;
-        final int sizeCtrlPoints = nbCtrlPoints * 3;
-        float ctrlPoints[] = {
-            aRect.getCenter().x(), aRect.getCenter().y(), aRect.getCenter().z(),
-            aRect.getCenter().x(), aRect.getCenter().y(), bRect.getCenter().z(),
-            aRect.getCenter().x(), bRect.getCenter().y(), bRect.getCenter().z(),
-            bRect.getCenter().x(), bRect.getCenter().y(), bRect.getCenter().z()
-        };
+        int nbCtrlPoints = 0;
+        
+        if (degree == 4) {
+            nbCtrlPoints = 4;
+            final int sizeCtrlPoints = nbCtrlPoints * 3;
+            ctrlPoints = new float[] {
+                aRect.getCenter().x(), aRect.getCenter().y(), aRect.getCenter().z(),
+                aRect.getCenter().x(), aRect.getCenter().y(), bRect.getCenter().z(),
+                aRect.getCenter().x(), bRect.getCenter().y(), bRect.getCenter().z(),
+                bRect.getCenter().x(), bRect.getCenter().y(), bRect.getCenter().z()
+            };
+        }
+        else if (degree == 2) {
+            nbCtrlPoints = 2;
+            final int sizeCtrlPoints = nbCtrlPoints * 3;
+            ctrlPoints = new float[] {
+                aRect.getCenter().x(), aRect.getCenter().y(), aRect.getCenter().z(),
+                bRect.getCenter().x(), bRect.getCenter().y(), bRect.getCenter().z()
+            };
+        }
 
         gl.glMap1f(gl.GL_MAP1_VERTEX_3,
             0.0f, 1.0f, 3,
@@ -77,11 +88,6 @@ public class Curve extends Spatial implements Drawable {
         gl.glEnd();
         gl.glPopMatrix();
 
-        labelRect.getCenter().set(
-            ctrlPoints[3], ctrlPoints[4], ctrlPoints[5]
-            );
-        labelRect.getSize().set(0.1f, 0.1f, 0.1f);
-        labelRect.draw(gl);
     }
 
 

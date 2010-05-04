@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package automenta.netention.io.twitter;
+package automenta.netention.plugin.twitter;
 
 import automenta.netention.Mode;
 import automenta.netention.PropertyValue;

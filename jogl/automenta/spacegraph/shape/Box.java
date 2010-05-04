@@ -36,7 +36,10 @@ public class Box extends Spatial implements Drawable {
         // Six faces of cube
         // Top face
         gl.glPushMatrix();
-        //gl.glColor3f(r, g, b);
+        float r = 1.0f;
+        float g = 0.0f;
+        float b = 0.5f;
+        gl.glColor3f(r, g, b);
         gl.glBegin(GL2.GL_QUADS);
         {
             //Front

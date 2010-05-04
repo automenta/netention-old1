@@ -35,7 +35,7 @@ public class SGCanvas extends SG {
     }
 
     float nearF = 5f;
-    float farF = 25.0f;
+    float farF = 100.0f;
     
     protected List<Drawable> drawables = new LinkedList();
     private GLU glu = new GLU();
@@ -66,17 +66,18 @@ public class SGCanvas extends SG {
 
         //Lighting, see nehe.gamedev.net/data/lessons/lesson.asp?lesson=07
         {
-            FloatBuffer lightAmbient = FloatBuffer.wrap(new float[] { 0.5f, 0.5f, 0.5f, 1.0f } );
-            gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightAmbient);				// Setup The Ambient Light
+//            FloatBuffer lightAmbient = FloatBuffer.wrap(new float[] { 0.5f, 0.5f, 0.5f, 1.0f } );
+//            gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightAmbient);				// Setup The Ambient Light
+//
+//            FloatBuffer lightDiffuse = FloatBuffer.wrap(new float[] { 1f, 1f, 1f, 1f } );
+//            gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightDiffuse);				// Setup The Diffuse Light
+//
+//            FloatBuffer lightPosition = FloatBuffer.wrap(new float[] { 0f, 0f, 20f, 1f } ); //Leave the last number at 1.0f. This tells OpenGL the designated coordinates are the position of the light source. More about this in a later tutorial.
+//            gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lightPosition);			// Position The Light
 
-            FloatBuffer lightDiffuse = FloatBuffer.wrap(new float[] { 1f, 1f, 1f, 1f } );
-            gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightDiffuse);				// Setup The Diffuse Light
-
-            FloatBuffer lightPosition = FloatBuffer.wrap(new float[] { 0f, 0f, 20f, 1f } ); //Leave the last number at 1.0f. This tells OpenGL the designated coordinates are the position of the light source. More about this in a later tutorial.
-            gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lightPosition);			// Position The Light
-
-            gl.glEnable(GL2.GL_LIGHT1);							// Enable Light One
-            gl.glEnable(GL2.GL_LIGHTING);
+            
+//            gl.glEnable(GL2.GL_LIGHT1);							// Enable Light One
+//            gl.glEnable(GL2.GL_LIGHTING);
         }
 
         fps = new FPSCounter(g, 36);

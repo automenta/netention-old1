@@ -6,6 +6,7 @@
             <name>automenta.netention2</name>
             <explicit-platform explicit-source-supported="true"/>
             <source-roots>
+                <root id="src.plugin.dir"/>
                 <root id="src.jogl.dir"/>
                 <root id="src.echo3.dir"/>
                 <root id="src.swing.dir"/>
