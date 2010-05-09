@@ -6,6 +6,7 @@ package automenta.netention.swing.widget;
 
 import automenta.netention.Detail;
 import automenta.netention.Link;
+import automenta.netention.Link.HasStrength;
 import automenta.netention.Mode;
 import automenta.netention.Node;
 import automenta.netention.Pattern;
@@ -46,8 +47,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
@@ -89,8 +90,15 @@ abstract public class DetailEditPanel extends JPanel {
             this.link = edge.getValue();
             this.source = endpoints.getFirst();
             this.target = endpoints.getSecond();
-
+            
             setOpaque(false);
+
+            if (link instanceof HasStrength) {
+                double strength = ((HasStrength)link).getStrength();
+                JProgressBar jp = new JProgressBar(0, 1000);
+                jp.setValue((int)(strength * 1000.0));
+                add(jp);
+            }
 
             Node other = getOther();
 
@@ -124,19 +132,27 @@ abstract public class DetailEditPanel extends JPanel {
         protected void refresh() {
             removeAll();
 
-            JToggleButton realButton = new JToggleButton(" ! ");
+            final JToggleButton realButton = new JToggleButton(" ! ");
             realButton.setToolTipText("Real");
             realButton.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
+                    if (detail.getMode() == Mode.Real)
+                        realButton.setSelected(true);   //undo the change since its already the same
+                    
                     if (!switchMode(Mode.Real)) {
+                        realButton.setSelected(false);
                     }
                 }
             });
-            JToggleButton imaginaryButton = new JToggleButton(" ? ");
+            final JToggleButton imaginaryButton = new JToggleButton(" ? ");
             imaginaryButton.setToolTipText("Imaginary");
             imaginaryButton.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
+                    if (detail.getMode() == Mode.Imaginary)
+                        imaginaryButton.setSelected(true); //undo the change since its already the same
+
                     if (!switchMode(Mode.Imaginary)) {
+                        imaginaryButton.setSelected(false);
                     }
                 }
             });
@@ -349,7 +365,7 @@ abstract public class DetailEditPanel extends JPanel {
 
 
         sentences = new JPanel(new GridBagLayout());
-        sentences.setBackground(Color.WHITE);
+        //sentences.setBackground(Color.WHITE);
 
 
         //contentSplit.setTopComponent(new JScrollPane(nameEdit));
@@ -405,7 +421,7 @@ abstract public class DetailEditPanel extends JPanel {
 
             GridBagConstraints gcx = new GridBagConstraints();
             gcx.weightx = 1.0;
-            gcx.weighty = 0.1;
+            gcx.weighty = 0.0;
             gcx.fill = gc.NONE;
             gcx.anchor = gc.SOUTHEAST;
             gcx.gridx = 1;
@@ -524,10 +540,11 @@ abstract public class DetailEditPanel extends JPanel {
                     optionPanels.add(pop);
                 }
 
-                final Color alternateColor = new Color(0.95f, 0.95f, 0.95f);
+                //final Color alternateColor = new Color(0.95f, 0.95f, 0.95f);
 
-                nextLine.setOpaque(true);
-                nextLine.setBackground(gc.gridy % 2 == 0 ? Color.WHITE : alternateColor);
+                nextLine.setOpaque(false);
+                //nextLine.setOpaque(true);
+                //nextLine.setBackground(gc.gridy % 2 == 0 ? Color.WHITE : alternateColor);
 
                 sentences.add(nextLine, gc);
             }

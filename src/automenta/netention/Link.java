@@ -11,7 +11,11 @@ import java.util.UUID;
  * @author seh
  */
 public interface Link extends Node {
-    
+
+    public interface HasStrength {
+        public double getStrength();
+    }
+
     public static abstract class AbstractLink extends AbstractNode implements Link {
 
         public AbstractLink(String id) {

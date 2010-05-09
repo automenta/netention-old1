@@ -24,8 +24,8 @@ public class MemoryDetail implements Detail {
     private List<String> patterns = new LinkedList();
     private List<PropertyValue> properties = new LinkedList();
     private String creator;
-    private Date whenCreated = null;
-    private Date whenModified = null;
+    private Date whenCreated;
+    private Date whenModified;
     private String iconURL = null;
 
     public MemoryDetail() {
@@ -41,6 +41,7 @@ public class MemoryDetail implements Detail {
         this.name = name;
         this.mode = mode;
         this.creator = "Me";
+        this.whenCreated = this.whenModified = new Date();
 
         for (String p : initialPatterns) {
             addPattern(p);
@@ -117,6 +118,23 @@ public class MemoryDetail implements Detail {
         this.iconURL = u;
     }
 
+    public Date getWhenCreated() {
+        return whenCreated;
+    }
 
+    public void setWhenCreated(Date whenCreated) {
+        this.whenCreated = whenCreated;
+    }
+
+    public Date getWhenModified() {
+        return whenModified;
+    }
+
+    public void setWhenModified(Date whenModified) {
+        this.whenModified = whenModified;
+    }
+
+
+    
 
 }

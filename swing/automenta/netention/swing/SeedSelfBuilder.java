@@ -66,7 +66,11 @@ public class SeedSelfBuilder {
 
         s.addPattern(new Pattern("Event").setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
         {
-
+            s.addProperties("Event",
+                new StringProp("startTime", "Start Time"),
+                new StringProp("endTime", "End Time"),
+                new StringProp("location", "Location")
+                );
         }
 
         s.addPattern(new Pattern("Media").setIconURL("media://tango32/categories/applications-multimedia.png"));
