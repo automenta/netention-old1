@@ -53,16 +53,15 @@ abstract public class PropertyOptionPanel extends JPanel {
         this.value = v;
         this.editable = editable;
 
-
         typeLabel = new JLabel("");
         
         setValue(value);
 
-        initOptions(options);
-
-        refresh();
-
 	}
+
+    protected void addOption(PropertyOption po) {
+        options.add(po);
+    }
 
 	protected void refresh() {
         GridBagConstraints gc = new GridBagConstraints();
@@ -97,7 +96,7 @@ abstract public class PropertyOptionPanel extends JPanel {
 				setCurrentOption(po);
 
                 if (!po.accepts(getValue()))
-                    setValue(po.newDefaultValue());
+                    setValue( po.newDefaultValue() );
 
 				JPanel p = po.newEditPanel(value);
 				
@@ -144,8 +143,6 @@ abstract public class PropertyOptionPanel extends JPanel {
     protected void setValue(PropertyValue val) {
         this.value = val;
     }
-
-	abstract protected void initOptions(List<PropertyOption> options);
 
 	/** load */
 	private void valueToWidget() {

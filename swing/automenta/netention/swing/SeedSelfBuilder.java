@@ -4,16 +4,17 @@ import automenta.netention.Mode;
 import automenta.netention.Pattern;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
-import automenta.netention.value.BoolProp;
-import automenta.netention.value.IntProp;
-import automenta.netention.value.RealProp;
-import automenta.netention.value.StringProp;
+import automenta.netention.value.bool.BoolProp;
+import automenta.netention.value.integer.IntProp;
+import automenta.netention.value.real.RealProp;
+import automenta.netention.value.string.StringProp;
 import automenta.netention.value.bool.BoolEquals;
 import automenta.netention.value.bool.BoolIs;
 import automenta.netention.value.integer.IntegerEquals;
 import automenta.netention.value.integer.IntegerIs;
 import automenta.netention.value.real.RealEquals;
 import automenta.netention.value.real.RealIs;
+import automenta.netention.value.set.SelectionProp;
 import automenta.netention.value.string.StringEquals;
 import automenta.netention.value.string.StringIs;
 
@@ -51,7 +52,8 @@ public class SeedSelfBuilder {
                 new StringProp("biography", "Biography"),
                 new StringProp("emailAddress", "E-Mail"),
                 new StringProp("webAddress", "Website"),
-                new StringProp("birthdate", "Birthdate")
+                new StringProp("birthdate", "Birthdate"),
+                new SelectionProp("gender", "Gender", "male", "female", "other")
                 );
         }
 

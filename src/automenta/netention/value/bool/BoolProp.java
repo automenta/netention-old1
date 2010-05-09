@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package automenta.netention.value;
+package automenta.netention.value.bool;
 
 import automenta.netention.Mode;
 import automenta.netention.Property;

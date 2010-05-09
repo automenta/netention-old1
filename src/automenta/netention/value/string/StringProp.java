@@ -1,7 +1,7 @@
 /**
  * 
  */
-package automenta.netention.value;
+package automenta.netention.value.string;
 
 import automenta.netention.Mode;
 import automenta.netention.Property;

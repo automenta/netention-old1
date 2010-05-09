@@ -10,7 +10,7 @@ import automenta.netention.PropertyValue;
 import automenta.netention.Self;
 import automenta.netention.Unit;
 import automenta.netention.Value;
-import automenta.netention.value.RealProp;
+import automenta.netention.value.real.RealProp;
 import automenta.netention.value.real.RealBetween;
 import automenta.netention.value.real.RealEquals;
 import automenta.netention.value.real.RealIs;
@@ -29,12 +29,10 @@ public class RealPropertyPanel extends PropertyOptionPanel {
     
     public RealPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
         super(s, d, v, editable);
-    }
 
-    @Override protected void initOptions(List<PropertyOption> options) {
         if (getMode() == Mode.Real) {
 
-            options.add(new PropertyOption<RealIs>("is") {
+            addOption(new PropertyOption<RealIs>("is") {
 
                 private JTextField isBox;
 
@@ -63,7 +61,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
             });
         } else if (getMode() == Mode.Imaginary) {
 
-            options.add(new PropertyOption<RealEquals>("exactly") {
+            addOption(new PropertyOption<RealEquals>("exactly") {
 
                 private JTextField equalsBox;
 
@@ -92,7 +90,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<RealMoreThan>("greater than") {
+            addOption(new PropertyOption<RealMoreThan>("greater than") {
 
                 private JTextField moreThanBox;
 
@@ -121,7 +119,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<RealLessThan>("less than") {
+            addOption(new PropertyOption<RealLessThan>("less than") {
 
                 private JTextField lessThanBox;
 
@@ -151,7 +149,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<RealBetween>("between") {
+            addOption(new PropertyOption<RealBetween>("between") {
 
                 private JTextField minBox;
                 private JTextField maxBox;
@@ -192,6 +190,8 @@ public class RealPropertyPanel extends PropertyOptionPanel {
                 }
             });
         }
+
+        refresh();
 
     }
 

@@ -10,7 +10,6 @@ import automenta.netention.value.string.StringContains;
 import automenta.netention.value.string.StringEquals;
 import automenta.netention.value.string.StringIs;
 import automenta.netention.value.string.StringNotContains;
-import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -18,20 +17,20 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
     final static int stringCols = 16;
 
-	public StringPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
-		super(s, d, v, editable);
-	}
+    public StringPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
+        super(s, d, v, editable);
 
-	@Override protected void initOptions(List<PropertyOption> options) {
         if (getMode() == Mode.Real) {
 
-            options.add(new PropertyOption<StringIs>("is") {
+            addOption(new PropertyOption<StringIs>("is") {
 
                 //private SuggestBox isBox;
                 //private RichTextArea rta;
                 JTextField rta = new JTextField();
 
-                @Override public boolean accepts(Value v) { 	return v.getClass().equals(StringIs.class);		}
+                @Override public boolean accepts(Value v) {
+                    return v.getClass().equals(StringIs.class);
+                }
 
                 @Override public StringIs newDefaultValue() {
                     return new StringIs("");
@@ -39,12 +38,12 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                 @Override public StringIs widgetToValue(StringIs r) {
                     r.setValue(rta.getText());
-    //				if (rta !=null) {
-    //					r.setValue( rta.getText() );
-    //				}
-    //				else {
-    //					r.setValue( isBox.getText() );
-    //				}
+                    //				if (rta !=null) {
+                    //					r.setValue( rta.getText() );
+                    //				}
+                    //				else {
+                    //					r.setValue( isBox.getText() );
+                    //				}
                     return r;
                 }
 
@@ -52,7 +51,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                     setValue(value);
                     setReal();
 
-                    JPanel p =  new TransparentFlowPanel();
+                    JPanel p = new TransparentFlowPanel();
                     rta.setText(value.getString());
                     rta.setColumns(stringCols);
                     p.add(rta);
@@ -60,42 +59,41 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                     //StringVar sv = (StringVar) getPropertyData();
 
-    //				if (sv.isRich()) {
-    //					rta = new RichTextArea();
-    //					rta.setText(value.getValue());
-    //					p.add(rta);
-    //				}
-    //				else {
-    //					MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
-    //
-    //					if (sv.getExampleValues()!=null) {
-    //						oracle.setDefaultSuggestionsFromText(sv.getExampleValues());
-    //					}
-    //
-    //					isBox = new SuggestBox(oracle);
-    //
-    //					isBox.setText(value.getValue());
-    //					p.add(isBox);
+                    //				if (sv.isRich()) {
+                    //					rta = new RichTextArea();
+                    //					rta.setText(value.getValue());
+                    //					p.add(rta);
+                    //				}
+                    //				else {
+                    //					MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+                    //
+                    //					if (sv.getExampleValues()!=null) {
+                    //						oracle.setDefaultSuggestionsFromText(sv.getExampleValues());
+                    //					}
+                    //
+                    //					isBox = new SuggestBox(oracle);
+                    //
+                    //					isBox.setText(value.getValue());
+                    //					p.add(isBox);
 
-    //				}
+                    //				}
 
                     return p;
                 }
-
             });
 
-        }
-        else if (getMode() == Mode.Imaginary) {
-            options.add(new PropertyOption<StringEquals>("exactly") {
+        } else if (getMode() == Mode.Imaginary) {
+            addOption(new PropertyOption<StringEquals>("exactly") {
 
                 //private TextBox eqBox;
                 private JTextField eqBox;
 
-                @Override public boolean accepts(Value v) { 	return v.getClass().equals(StringEquals.class);		}
-
+                @Override public boolean accepts(Value v) {
+                    return v.getClass().equals(StringEquals.class);
+                }
 
                 @Override public StringEquals widgetToValue(StringEquals r) {
-                    r.setValue( eqBox.getText() );
+                    r.setValue(eqBox.getText());
                     return r;
                 }
 
@@ -107,7 +105,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                     setValue(value);
                     setImaginary();
 
-                    JPanel p =  new TransparentFlowPanel();
+                    JPanel p = new TransparentFlowPanel();
                     eqBox = new JTextField();
                     eqBox.setColumns(stringCols);
                     eqBox.setText(value.getString());
@@ -115,21 +113,22 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                     return p;
                 }
-
             });
 
-            options.add(new PropertyOption<StringContains>("containing") {
+            addOption(new PropertyOption<StringContains>("containing") {
 
                 private JTextField eqBox;
 
-                @Override public boolean accepts(Value v) { 	return v.getClass().equals(StringContains.class);		}
+                @Override public boolean accepts(Value v) {
+                    return v.getClass().equals(StringContains.class);
+                }
 
                 @Override public StringContains newDefaultValue() {
                     return new StringContains("");
                 }
 
                 @Override public StringContains widgetToValue(StringContains r) {
-                    r.setValue( eqBox.getText() );
+                    r.setValue(eqBox.getText());
                     return r;
                 }
 
@@ -137,7 +136,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                     setValue(value);
                     setImaginary();
 
-                    JPanel p =  new TransparentFlowPanel();
+                    JPanel p = new TransparentFlowPanel();
                     eqBox = new JTextField();
                     eqBox.setColumns(stringCols);
                     eqBox.setText(value.getString());
@@ -145,17 +144,18 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                     return p;
                 }
-
             });
 
-            options.add(new PropertyOption<StringNotContains>("not containing") {
+            addOption(new PropertyOption<StringNotContains>("not containing") {
 
                 private JTextField eqBox;
 
-                @Override public boolean accepts(Value v) { 	return v.getClass().equals(StringNotContains.class);		}
+                @Override public boolean accepts(Value v) {
+                    return v.getClass().equals(StringNotContains.class);
+                }
 
                 @Override public StringNotContains widgetToValue(StringNotContains r) {
-                    r.setValue( eqBox.getText() );
+                    r.setValue(eqBox.getText());
                     return r;
                 }
 
@@ -167,7 +167,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                     setValue(value);
                     setImaginary();
 
-                    JPanel p =  new TransparentFlowPanel();
+                    JPanel p = new TransparentFlowPanel();
                     eqBox = new JTextField();
                     eqBox.setColumns(stringCols);
                     eqBox.setText(value.getString());
@@ -175,11 +175,10 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                     return p;
                 }
-
             });
         }
 
-	}
+        refresh();
 
-
+    }
 }

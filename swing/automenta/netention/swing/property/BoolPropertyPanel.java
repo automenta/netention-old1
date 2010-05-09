@@ -39,11 +39,9 @@ public class BoolPropertyPanel extends PropertyOptionPanel {
 
     public BoolPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
         super(s, d, v, editable);
-    }
 
-    @Override protected void initOptions(List<PropertyOption> options) {
         if (getMode() == Mode.Real) {
-            options.add(new PropertyOption<BoolIs>("is") {
+            addOption(new PropertyOption<BoolIs>("is") {
 
                 private TrueFalseCombo combo;
 
@@ -73,7 +71,7 @@ public class BoolPropertyPanel extends PropertyOptionPanel {
 
         } else if (getMode() == Mode.Imaginary) {
 
-            options.add(new PropertyOption<BoolEquals>("?  ") {
+            addOption(new PropertyOption<BoolEquals>("?  ") {
 
                 private TrueFalseCombo combo;
 
@@ -102,6 +100,8 @@ public class BoolPropertyPanel extends PropertyOptionPanel {
             });
 
         }
+
+        refresh();
 
     }
 }

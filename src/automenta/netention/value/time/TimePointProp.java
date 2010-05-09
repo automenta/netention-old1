@@ -1,5 +1,6 @@
-package automenta.netention.value;
+package automenta.netention.value.time;
 
+import automenta.netention.value.real.RealProp;
 import automenta.netention.Unit;
 
 

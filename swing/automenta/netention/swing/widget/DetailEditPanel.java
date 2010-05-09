@@ -20,13 +20,14 @@ import automenta.netention.swing.property.BoolPropertyPanel;
 import automenta.netention.swing.property.IntPropertyPanel;
 import automenta.netention.swing.property.PropertyOptionPanel;
 import automenta.netention.swing.property.RealPropertyPanel;
+import automenta.netention.swing.property.SelectionPropertyPanel;
 import automenta.netention.swing.property.StringPropertyPanel;
 import automenta.netention.swing.util.JHyperLink;
-import automenta.netention.value.BoolProp;
-import automenta.netention.value.IntProp;
-import automenta.netention.value.RealProp;
-import automenta.netention.value.StringProp;
-import java.awt.Color;
+import automenta.netention.value.bool.BoolProp;
+import automenta.netention.value.integer.IntProp;
+import automenta.netention.value.real.RealProp;
+import automenta.netention.value.set.SelectionProp;
+import automenta.netention.value.string.StringProp;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -103,7 +104,7 @@ abstract public class DetailEditPanel extends JPanel {
 
             Node other = getOther();
 
-            JHyperLink la = new JHyperLink(other.getName() + " (" + link.toString() + ")", "", 1.2f);
+            JHyperLink la = new JHyperLink(other.getName() + " (" + link.toString() + ")", "", 1.0f);
             if (other instanceof Detail) {
                 la.setIcon(Icons.getDetailIcon(self, (Detail) other));
             }
@@ -193,6 +194,9 @@ abstract public class DetailEditPanel extends JPanel {
                 }
                 add(t);
             }
+            
+//            if (detail.getPatterns().size()!=0)
+//                add(new JSeparator(JSeparator.VERTICAL));
 
             for (String pid : detail.getPatterns()) {
                 final Pattern p = self.getPatterns().get(pid);
@@ -581,6 +585,8 @@ abstract public class DetailEditPanel extends JPanel {
             return new RealPropertyPanel(self, detail, pv, editable);
         } else if (prop instanceof StringProp) {
             return new StringPropertyPanel(self, detail, pv, editable);
+        } else if (prop instanceof SelectionProp) {
+            return new SelectionPropertyPanel(self, detail, (SelectionProp)prop, pv, editable);
         } else if (prop instanceof BoolProp) {
             return new BoolPropertyPanel(self, detail, pv, editable);
         }

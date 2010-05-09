@@ -6,10 +6,10 @@ package automenta.netention.swing.widget;
 
 import automenta.netention.Property;
 import automenta.netention.Self;
-import automenta.netention.value.BoolProp;
-import automenta.netention.value.IntProp;
-import automenta.netention.value.RealProp;
-import automenta.netention.value.StringProp;
+import automenta.netention.value.bool.BoolProp;
+import automenta.netention.value.integer.IntProp;
+import automenta.netention.value.real.RealProp;
+import automenta.netention.value.string.StringProp;
 import java.awt.GridLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;

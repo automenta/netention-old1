@@ -15,7 +15,6 @@ import automenta.netention.value.integer.IntegerIs;
 import automenta.netention.value.integer.IntegerLessThan;
 import automenta.netention.value.integer.IntegerMoreThan;
 import java.awt.Label;
-import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -27,11 +26,9 @@ public class IntPropertyPanel extends PropertyOptionPanel {
 
     public IntPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
         super(s, d, v, editable);
-    }
 
-    @Override protected void initOptions(List<PropertyOption> options) {
         if (getMode() == Mode.Real) {
-            options.add(new PropertyOption<IntegerIs>("is") {
+            addOption(new PropertyOption<IntegerIs>("is") {
 
                 private JTextField isBox;
 
@@ -39,7 +36,7 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                     setValue(v);
                     setReal();
 
-                    JPanel p = new TransparentFlowPanel();                    
+                    JPanel p = new TransparentFlowPanel();
                     isBox = new JTextField(Integer.toString(v.getValue()));
                     isBox.setColumns(intColumns);
 
@@ -64,7 +61,7 @@ public class IntPropertyPanel extends PropertyOptionPanel {
 
         } else if (getMode() == Mode.Imaginary) {
 
-            options.add(new PropertyOption<IntegerEquals>("exactly") {
+            addOption(new PropertyOption<IntegerEquals>("exactly") {
 
                 private JTextField equalsBox;
 
@@ -93,7 +90,7 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<IntegerMoreThan>("greater than") {
+            addOption(new PropertyOption<IntegerMoreThan>("greater than") {
 
                 private JTextField moreThanBox;
 
@@ -123,7 +120,7 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<IntegerLessThan>("less than") {
+            addOption(new PropertyOption<IntegerLessThan>("less than") {
 
                 private JTextField lessThanBox;
 
@@ -154,7 +151,7 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<IntegerBetween>("between") {
+            addOption(new PropertyOption<IntegerBetween>("between") {
 
                 private JTextField minBox;
                 private JTextField maxBox;
@@ -193,7 +190,9 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                     return new IntegerBetween(0, 0, true);
                 }
             });
+
         }
 
+        refresh();
     }
 }
