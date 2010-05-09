@@ -49,7 +49,7 @@ public class BoolPropertyPanel extends PropertyOptionPanel {
 
                 @Override public JPanel newEditPanel(BoolIs v) {
                     setValue(v);
-                    setIs();
+                    setReal();
 
                     JPanel p = new TransparentFlowPanel();
                     combo = new TrueFalseCombo(v.getValue());
@@ -73,13 +73,13 @@ public class BoolPropertyPanel extends PropertyOptionPanel {
 
         } else if (getMode() == Mode.Imaginary) {
 
-            options.add(new PropertyOption<BoolEquals>("will be") {
+            options.add(new PropertyOption<BoolEquals>("?  ") {
 
                 private TrueFalseCombo combo;
 
                 @Override public JPanel newEditPanel(BoolEquals v) {
                     setValue(v);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p = new TransparentFlowPanel();
                     combo = new TrueFalseCombo(v.getValue());

@@ -10,15 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import automenta.netention.swing.util.JHyperLink;
-import automenta.netention.swing.widget.DetailEditPanel;
+import automenta.netention.swing.util.JScaledLabel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
@@ -37,9 +35,10 @@ abstract public class PropertyOptionPanel extends JPanel {
     private final Detail detail;
     private final String propertyID;
     private final Property property;
-    private boolean editable;
+    private final boolean editable;
     private final JLabel typeLabel;
-    private JHyperLink nameLabel;
+    private JHyperLink nameButton = null;
+    
 
 	public PropertyOptionPanel(Self s, Detail d, PropertyValue v, boolean editable) {
         //super(new FlowLayout(FlowLayout.LEFT));
@@ -52,6 +51,7 @@ abstract public class PropertyOptionPanel extends JPanel {
         this.propertyID = v.getProperty();
         this.property = s.getProperty(propertyID);
         this.value = v;
+        this.editable = editable;
 
 
         typeLabel = new JLabel("");
@@ -60,7 +60,7 @@ abstract public class PropertyOptionPanel extends JPanel {
 
         initOptions(options);
 
-        setEditable(editable);
+        refresh();
 
 	}
 
@@ -75,9 +75,14 @@ abstract public class PropertyOptionPanel extends JPanel {
         removeAll();
 		
         //add(new JLabel(property.getName()));
-        nameLabel = new JHyperLink(property.getName(), "");
-        
-        add(nameLabel, gc);
+        if (editable) {
+            nameButton = new JHyperLink(property.getName(), "");
+            add(nameButton, gc);
+        }
+        else {
+            add(new JScaledLabel(property.getName() + " ", 1.0f), gc);
+        }
+
         gc.gridx++;
 
 		typeSelect = new JComboBox();
@@ -127,11 +132,13 @@ abstract public class PropertyOptionPanel extends JPanel {
         return getDetail().getMode();
     }
     
-    protected void setIs() {
-
+    protected void setReal() {
+        if (editable)
+            getDetail().setMode(Mode.Real);
     }
-    protected void setWillBe() {
-
+    protected void setImaginary() {
+        if (editable)
+            getDetail().setMode(Mode.Imaginary);
     }
 
     protected void setValue(PropertyValue val) {
@@ -206,6 +213,9 @@ abstract public class PropertyOptionPanel extends JPanel {
 	
 	/** save */
 	public void widgetToValue() {
+        if (!editable)
+            return;
+
 		if (currentOption!=null) {
 			//causes value to be updated by data presently in the widgets
 
@@ -221,18 +231,24 @@ abstract public class PropertyOptionPanel extends JPanel {
         return property;
     }
 
-    private void setEditable(boolean editable) {
-        this.editable = editable;
-        refresh();
-    }
+//    private void setEditable(boolean editable) {
+//        this.editable = editable;
+//        refresh();
+//    }
 
     public Detail getDetail() {
         return detail;
     }
 
-    public JHyperLink getNameLabel() {
-        return nameLabel;
+    public void setPopup(JPopupMenu popup) {
+        if (nameButton!=null) {
+            nameButton.addPopup(popup);
+        }
     }
+
+//    public JHyperLink getNameLabel() {
+//        return nameLabel;
+//    }
 
 
     

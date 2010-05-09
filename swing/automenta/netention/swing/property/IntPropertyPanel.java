@@ -37,7 +37,7 @@ public class IntPropertyPanel extends PropertyOptionPanel {
 
                 @Override public JPanel newEditPanel(IntegerIs v) {
                     setValue(v);
-                    setIs();
+                    setReal();
 
                     JPanel p = new TransparentFlowPanel();                    
                     isBox = new JTextField(Integer.toString(v.getValue()));
@@ -64,13 +64,13 @@ public class IntPropertyPanel extends PropertyOptionPanel {
 
         } else if (getMode() == Mode.Imaginary) {
 
-            options.add(new PropertyOption<IntegerEquals>("will equal") {
+            options.add(new PropertyOption<IntegerEquals>("exactly") {
 
                 private JTextField equalsBox;
 
                 @Override public JPanel newEditPanel(IntegerEquals v) {
                     setValue(v);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p = new TransparentFlowPanel();
                     equalsBox = new JTextField(Integer.toString(v.getValue()));
@@ -93,13 +93,13 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<IntegerMoreThan>("will be greater than") {
+            options.add(new PropertyOption<IntegerMoreThan>("greater than") {
 
                 private JTextField moreThanBox;
 
                 @Override public JPanel newEditPanel(IntegerMoreThan v) {
                     setValue(v);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p = new TransparentFlowPanel();
                     moreThanBox = new JTextField();
@@ -123,13 +123,13 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<IntegerLessThan>("will be less than") {
+            options.add(new PropertyOption<IntegerLessThan>("less than") {
 
                 private JTextField lessThanBox;
 
                 @Override public JPanel newEditPanel(IntegerLessThan v) {
                     setValue(v);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p = new TransparentFlowPanel();
                     lessThanBox = new JTextField();
@@ -154,14 +154,14 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<IntegerBetween>("will be between") {
+            options.add(new PropertyOption<IntegerBetween>("between") {
 
                 private JTextField minBox;
                 private JTextField maxBox;
 
                 @Override public JPanel newEditPanel(IntegerBetween v) {
                     setValue(v);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p = new TransparentFlowPanel();
                     minBox = new JTextField();

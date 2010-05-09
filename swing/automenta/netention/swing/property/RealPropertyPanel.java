@@ -40,7 +40,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
 
                 @Override public JPanel newEditPanel(RealIs v) {
                     setValue(v);
-                    setIs();
+                    setReal();
                     JPanel p = new TransparentFlowPanel();
                     isBox = new JTextField(Double.toString(v.getValue()));
                     isBox.setColumns(realColumns);
@@ -63,13 +63,13 @@ public class RealPropertyPanel extends PropertyOptionPanel {
             });
         } else if (getMode() == Mode.Imaginary) {
 
-            options.add(new PropertyOption<RealEquals>("will equal") {
+            options.add(new PropertyOption<RealEquals>("exactly") {
 
                 private JTextField equalsBox;
 
                 @Override public JPanel newEditPanel(RealEquals v) {
                     setValue(v);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p = new TransparentFlowPanel();
                     equalsBox = new JTextField(Double.toString(v.getValue()));
@@ -92,13 +92,13 @@ public class RealPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<RealMoreThan>("will be greater than") {
+            options.add(new PropertyOption<RealMoreThan>("greater than") {
 
                 private JTextField moreThanBox;
 
                 @Override public JPanel newEditPanel(RealMoreThan v) {
                     setValue(v);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p = new TransparentFlowPanel();
                     moreThanBox = new JTextField(Double.toString(v.getValue()));
@@ -121,13 +121,13 @@ public class RealPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<RealLessThan>("will be less than") {
+            options.add(new PropertyOption<RealLessThan>("less than") {
 
                 private JTextField lessThanBox;
 
                 @Override public JPanel newEditPanel(RealLessThan v) {
                     setValue(v);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p = new TransparentFlowPanel();
                     lessThanBox = new JTextField(Double.toString(v.getValue()));
@@ -151,7 +151,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-            options.add(new PropertyOption<RealBetween>("will be between") {
+            options.add(new PropertyOption<RealBetween>("between") {
 
                 private JTextField minBox;
                 private JTextField maxBox;
@@ -159,7 +159,7 @@ public class RealPropertyPanel extends PropertyOptionPanel {
                 //TODO add inclusive checkbox
                 @Override public JPanel newEditPanel(RealBetween v) {
                     setValue(v);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p = new TransparentFlowPanel();
                     minBox = new JTextField(Double.toString(v.getMin()));

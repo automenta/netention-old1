@@ -50,7 +50,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                 @Override public JPanel newEditPanel(StringIs value) {
                     setValue(value);
-                    setIs();
+                    setReal();
 
                     JPanel p =  new TransparentFlowPanel();
                     rta.setText(value.getString());
@@ -86,7 +86,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
         }
         else if (getMode() == Mode.Imaginary) {
-            options.add(new PropertyOption<StringEquals>("will equal") {
+            options.add(new PropertyOption<StringEquals>("exactly") {
 
                 //private TextBox eqBox;
                 private JTextField eqBox;
@@ -105,7 +105,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                 @Override public JPanel newEditPanel(StringEquals value) {
                     setValue(value);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p =  new TransparentFlowPanel();
                     eqBox = new JTextField();
@@ -118,7 +118,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
             });
 
-            options.add(new PropertyOption<StringContains>("will contain") {
+            options.add(new PropertyOption<StringContains>("containing") {
 
                 private JTextField eqBox;
 
@@ -135,7 +135,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                 @Override public JPanel newEditPanel(StringContains value) {
                     setValue(value);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p =  new TransparentFlowPanel();
                     eqBox = new JTextField();
@@ -148,7 +148,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
             });
 
-            options.add(new PropertyOption<StringNotContains>("will not contain") {
+            options.add(new PropertyOption<StringNotContains>("not containing") {
 
                 private JTextField eqBox;
 
@@ -165,7 +165,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                 @Override public JPanel newEditPanel(StringNotContains value) {
                     setValue(value);
-                    setWillBe();
+                    setImaginary();
 
                     JPanel p =  new TransparentFlowPanel();
                     eqBox = new JTextField();
