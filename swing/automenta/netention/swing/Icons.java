@@ -43,6 +43,7 @@ public class Icons {
         objectToIconPath.put("pattern", "media/tango32/categories/applications-system.png");
         objectToIconPath.put("property", "media/tango32/status/dialog-information.png");
         objectToIconPath.put("add", "media/tango32/actions/list-add.png");
+        objectToIconPath.put("addPattern", "media/tango32/actions/list-add.png");
         objectToIconPath.put("network", "media/tango32/status/network-transmit-receive.png");
 
         objectToIconPath.put("thought", "media/tango32/categories/applications-system.png");

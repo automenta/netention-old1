@@ -27,8 +27,10 @@ import automenta.netention.value.RealProp;
 import automenta.netention.value.StringProp;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -45,9 +47,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Displays a detail and its links for view/edit
@@ -63,12 +67,11 @@ abstract public class DetailEditPanel extends JPanel {
     private Detail detail;
     private final Self self;
     private boolean editable;
-    private final JSplitPane contentSplit;
+    //private final JSplitPane contentSplit;
     private final DetailMenuBar menuBar;
     private List<PropertyOptionPanel> optionPanels = new LinkedList();
     long updateDelayMS = 650;
-    private final JTextArea headerLabel;
-
+    private final JTextArea nameEdit;
     //Tooltips
     final static String itsATooltip = "Selects Patterns for this Detail";
     final static String realOrImaginary = "Real details describe things that actually exist. \nImaginary details describe hypothetical or desired things.";
@@ -79,7 +82,7 @@ abstract public class DetailEditPanel extends JPanel {
         private final Node source;
         private final Node target;
 
-        private LinkPanel(ValueDirectedEdge<Node,Link> edge) {
+        private LinkPanel(ValueDirectedEdge<Node, Link> edge) {
             super(new FlowLayout(FlowLayout.LEFT));
 
             Pair<Node> endpoints = self.getGraph().getEndpoints(edge);
@@ -93,7 +96,7 @@ abstract public class DetailEditPanel extends JPanel {
 
             JHyperLink la = new JHyperLink(other.getName() + " (" + link.toString() + ")", "", 1.2f);
             if (other instanceof Detail) {
-               la.setIcon(Icons.getDetailIcon(self, (Detail)other));
+                la.setIcon(Icons.getDetailIcon(self, (Detail) other));
             }
             add(la);
 
@@ -121,7 +124,68 @@ abstract public class DetailEditPanel extends JPanel {
         protected void refresh() {
             removeAll();
 
-            JMenu t = new JMenu("It's a...");
+            JToggleButton realButton = new JToggleButton(" ! ");
+            realButton.setToolTipText("Real");
+            realButton.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    if (!switchMode(Mode.Real)) {
+                    }
+                }
+            });
+            JToggleButton imaginaryButton = new JToggleButton(" ? ");
+            imaginaryButton.setToolTipText("Imaginary");
+            imaginaryButton.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    if (!switchMode(Mode.Imaginary)) {
+                    }
+                }
+            });
+            if (detail.getMode() == Mode.Real) {
+               realButton.setSelected(true);
+            }
+            else if (detail.getMode() == Mode.Imaginary) {
+                imaginaryButton.setSelected(true);
+            }
+            addButton(realButton);
+            addButton(imaginaryButton);
+
+
+//            if (detail.getPatterns().size() > 0) {
+//                String currentModeString = getModeString(detail.getMode());
+//                JMenu modeMenu = new JMenu("..." + currentModeString);
+//                modeMenu.setToolTipText(realOrImaginary);
+//
+//                JMenuItem realItem = new JMenuItem(getModeString(Mode.Real));
+//                realItem.addActionListener(new ActionListener() {
+//
+//                    @Override public void actionPerformed(ActionEvent e) {
+//                        if (!switchMode(Mode.Real)) {
+//                        }
+//                    }
+//                });
+//                modeMenu.add(realItem);
+//
+//                JMenuItem imagItem = new JMenuItem(getModeString(Mode.Imaginary));
+//                imagItem.addActionListener(new ActionListener() {
+//
+//                    @Override public void actionPerformed(ActionEvent e) {
+//                        if (!switchMode(Mode.Imaginary)) {
+//                        }
+//                    }
+//                });
+//                modeMenu.add(imagItem);
+//
+//                add(modeMenu);
+//
+//            } else {
+//                add(new JLabel("Thought"));
+//                switchMode(Mode.Unknown);
+//            }
+
+            //add(new JSeparator(JSeparator.VERTICAL));
+
+            JMenu t = new JMenu(/*"It's a..."*/);
+            t.setIcon(Icons.getIcon("addPattern"));
             t.setToolTipText(itsATooltip);
             for (String pid : self.getAvailablePatterns(detail)) {
                 final Pattern p = self.getPatterns().get(pid);
@@ -148,9 +212,11 @@ abstract public class DetailEditPanel extends JPanel {
                 j.setIcon(Icons.getPatternIcon(p));
                 int numItems = 0;
 
+                int propertiesAdded = 0;
                 for (String propid : p.keySet()) {
                     final Property prop = self.getProperty(propid);
                     if (self.acceptsAnotherProperty(detail, propid)) {
+                        propertiesAdded++;
                         JMenuItem ji = new JMenuItem(prop.getName());
                         ji.addActionListener(new ActionListener() {
 
@@ -167,6 +233,7 @@ abstract public class DetailEditPanel extends JPanel {
                         j.add(ji);
                     }
                 }
+                j.setText(j.getText() + " (" + propertiesAdded + ")");
 
                 if (numItems > 0) {
                     j.addSeparator();
@@ -196,37 +263,6 @@ abstract public class DetailEditPanel extends JPanel {
 
             }
 
-            if (detail.getPatterns().size() > 0) {
-                String currentModeString = getModeString(detail.getMode());
-                JMenu modeMenu = new JMenu("..." + currentModeString);
-                modeMenu.setToolTipText(realOrImaginary);
-
-                JMenuItem realItem = new JMenuItem(getModeString(Mode.Real));
-                realItem.addActionListener(new ActionListener() {
-
-                    @Override public void actionPerformed(ActionEvent e) {
-                        if (!switchMode(Mode.Real)) {
-                        }
-                    }
-                });
-                modeMenu.add(realItem);
-
-                JMenuItem imagItem = new JMenuItem(getModeString(Mode.Imaginary));
-                imagItem.addActionListener(new ActionListener() {
-
-                    @Override public void actionPerformed(ActionEvent e) {
-                        if (!switchMode(Mode.Imaginary)) {
-                        }
-                    }
-                });
-                modeMenu.add(imagItem);
-
-                add(modeMenu);
-
-            } else {
-                add(new JLabel("Thought"));
-                switchMode(Mode.Unknown);
-            }
 
             add(Box.createHorizontalGlue());
         }
@@ -246,6 +282,12 @@ abstract public class DetailEditPanel extends JPanel {
             c.setFont(c.getFont().deriveFont(c.getFont().getSize2D() * menuFontScale));
             return super.add(c);
         }
+        
+        public void addButton(JComponent c) {
+            //c.setFont(c.getFont().deriveFont(c.getFont().getSize2D() * menuFontScale)));
+            c.setFont(new Font("Monospace", Font.PLAIN, (int)(c.getFont().getSize2D() * menuFontScale)));
+            add(c);
+        }
     }
 
     public DetailEditPanel(Self s, Detail d, boolean editable) {
@@ -255,10 +297,16 @@ abstract public class DetailEditPanel extends JPanel {
 
         setEditable(editable);
 
+        int b = 4;
+        setBorder(new EmptyBorder(b, b, b, b));
+
         GridBagConstraints gc = new GridBagConstraints();
         {
+            int ins = 1;
+            gc.insets = new Insets(ins, ins, ins, ins);
+
             gc.weightx = 1.0;
-            gc.weighty = 0.0;
+            gc.weighty = 0;
             gc.fill = gc.HORIZONTAL;
             gc.anchor = gc.NORTH;
             gc.gridx = gc.gridy = 1;
@@ -277,33 +325,37 @@ abstract public class DetailEditPanel extends JPanel {
 //
 //            header.add(menuBar, BorderLayout.NORTH);
 //        }
+        nameEdit = new JTextArea(d.getName());
+        nameEdit.setWrapStyleWord(true);
+        nameEdit.setLineWrap(true);
+        nameEdit.setFont(nameEdit.getFont().deriveFont(nameEdit.getFont().getSize2D() * 1.7f));
+        add(nameEdit, gc);
+
+        gc.gridy++;
 
         add(menuBar, gc);
 
 
-        contentSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+//        contentSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         {
             gc.weightx = 1.0;
-            gc.weighty = 0.1;
+            gc.weighty = 1.0;
             gc.fill = gc.BOTH;
             gc.anchor = gc.NORTHWEST;
             gc.gridx = 1;
-            gc.gridy = 2;
+            gc.gridy = 3;
         }
-        add(contentSplit, gc);
+//        add(contentSplit, gc);
 
-        headerLabel = new JTextArea(d.getName());
-        headerLabel.setWrapStyleWord(true);
-        headerLabel.setLineWrap(true);
-        headerLabel.setFont(headerLabel.getFont().deriveFont(headerLabel.getFont().getSize2D() * 1.7f));
 
         sentences = new JPanel(new GridBagLayout());
         sentences.setBackground(Color.WHITE);
 
 
-        contentSplit.setTopComponent(new JScrollPane(headerLabel));
-        contentSplit.setBottomComponent(new JScrollPane(sentences));
+        //contentSplit.setTopComponent(new JScrollPane(nameEdit));
+        //contentSplit.setBottomComponent(new JScrollPane(sentences));
 
+        add(new JScrollPane(sentences), gc);
 
         {
             JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -351,23 +403,24 @@ abstract public class DetailEditPanel extends JPanel {
             buttons.add(deleteButton);
             buttons.add(updateButton);
 
-            gc.weightx = 1.0;
-            gc.weighty = 0.0;
-            gc.fill = gc.NONE;
-            gc.anchor = gc.SOUTHEAST;
-            gc.gridx = 1;
-            gc.gridy = 3;
+            GridBagConstraints gcx = new GridBagConstraints();
+            gcx.weightx = 1.0;
+            gcx.weighty = 0.1;
+            gcx.fill = gc.NONE;
+            gcx.anchor = gc.SOUTHEAST;
+            gcx.gridx = 1;
+            gcx.gridy = 4;
 
-            add(buttons, gc);
+            add(buttons, gcx);
 
         }
 
         setDetail(d);
 
-        contentSplit.setResizeWeight(0.85);
-        contentSplit.setDividerLocation(0.5);
+        //contentSplit.setResizeWeight(0.85);
+        //contentSplit.setDividerLocation(0.5);
 
-        headerLabel.selectAll();
+        nameEdit.selectAll();
 
     }
 
@@ -483,10 +536,10 @@ abstract public class DetailEditPanel extends JPanel {
 
                 @Override
                 public void run() {
-                    Set<ValueDirectedEdge<Node,Link>> ae = self.getGraph().getAdjacentEdges(detail);
+                    Set<ValueDirectedEdge<Node, Link>> ae = self.getGraph().getAdjacentEdges(detail);
 
                     if (ae != null) {
-                        for (ValueDirectedEdge<Node,Link> e : ae) {
+                        for (ValueDirectedEdge<Node, Link> e : ae) {
                             gc.gridy++;
                             sentences.add(new LinkPanel(e), gc);
                         }
@@ -553,7 +606,7 @@ abstract public class DetailEditPanel extends JPanel {
     synchronized protected void addPattern(Pattern p) {
         updateDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
 
-        if (detail.getPatterns().size() == 0) {
+        if ((detail.getPatterns().size() == 0) && (detail.getMode() == Mode.Unknown)) {
             chooseInitialMode();
         }
         detail.getPatterns().add(p.getID());
@@ -588,7 +641,7 @@ abstract public class DetailEditPanel extends JPanel {
 
     /** writes contents of UI widgets to the detail */
     protected synchronized void updateDetail() {
-        detail.setName(headerLabel.getText());
+        detail.setName(nameEdit.getText());
         for (PropertyOptionPanel pop : optionPanels) {
             pop.widgetToValue();
         }
