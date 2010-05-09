@@ -31,7 +31,9 @@ public class SeedSelfBuilder {
             s.addProperties("Built",
                     new StringProp("manufacturer", "Manufacturer"),
                     new StringProp("serialNumber", "Serial Number"),
-                    new /*TimePoint*/StringProp("builtWhen", "When Built"));
+                    new /*TimePoint*/StringProp("builtWhen", "When Built"),
+                    new SelectionProp("condition", "Condition", "New", "Used")
+                    );
         }
 
         s.addPattern(new Pattern("Mobile").setIconURL("media://tango32/places/start-here.png"));
@@ -53,7 +55,8 @@ public class SeedSelfBuilder {
                 new StringProp("emailAddress", "E-Mail"),
                 new StringProp("webAddress", "Website"),
                 new StringProp("birthdate", "Birthdate"),
-                new SelectionProp("gender", "Gender", "male", "female", "other")
+                new SelectionProp("gender", "Gender", "male", "female", "other"),
+                new SelectionProp("speaks", "Spoken Language", "English", "Spanish", "Arabic", "Cantonese", "French", "German", "Japanese", "Other")
                 );
         }
 
@@ -86,6 +89,7 @@ public class SeedSelfBuilder {
         {
             s.addProperty(new StringProp("recipient", "Recipient"), "Message");
         }
+
 
         
         s.addPattern(new Pattern("Business").setIconURL("media://tango32/apps/internet-mail.png"));
