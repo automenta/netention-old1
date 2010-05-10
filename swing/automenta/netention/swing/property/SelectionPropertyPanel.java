@@ -37,7 +37,7 @@ public class SelectionPropertyPanel extends PropertyOptionPanel {
                 }
 
                 @Override public SelectionIs widgetToValue(SelectionIs r) {
-                    //r.setValue(rta.getText());
+                    r.setValue((String)rta.getSelectedItem());
                     return r;
                 }
 
@@ -45,10 +45,17 @@ public class SelectionPropertyPanel extends PropertyOptionPanel {
                     setValue(value);
                     setReal();
 
+                    rta.removeAllItems();
+
                     JPanel p = new TransparentFlowPanel();
+                    int i = 0;
                     for (String s : prop.getOptions()) {
                         rta.addItem(s);
+                        if (value.getValue().equals(s))
+                            rta.setSelectedIndex(i);
+                        i++;
                     }
+                    
                     p.add(rta);
 
                     return p;
@@ -65,7 +72,7 @@ public class SelectionPropertyPanel extends PropertyOptionPanel {
                 }
 
                 @Override public SelectionEquals widgetToValue(SelectionEquals r) {
-                    //r.setValue( eqBox.getText() );
+                    r.setValue((String)rta.getSelectedItem());
                     return r;
                 }
 
@@ -77,10 +84,15 @@ public class SelectionPropertyPanel extends PropertyOptionPanel {
                     setValue(value);
                     setImaginary();
 
-
+                    rta.removeAllItems();
+                    
                     JPanel p = new TransparentFlowPanel();
+                    int i = 0;
                     for (String s : prop.getOptions()) {
                         rta.addItem(s);
+                        if (value.getValue().equals(s))
+                            rta.setSelectedIndex(i);
+                        i++;
                     }
                     p.add(rta);
 

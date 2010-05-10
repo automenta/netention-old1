@@ -11,15 +11,10 @@ import automenta.netention.Self;
 import automenta.netention.Value;
 import automenta.netention.value.bool.BoolEquals;
 import automenta.netention.value.bool.BoolIs;
-import java.util.List;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class BoolPropertyPanel extends PropertyOptionPanel {
-
-    private JLabel unitLabel;
 
     public static class TrueFalseCombo extends JComboBox {
 

@@ -23,7 +23,7 @@ public class SelectionEquals extends PropertyValue {
 
 	}
 
-	public String getString() {
+	public String getValue() {
 		return string;
 	}
 

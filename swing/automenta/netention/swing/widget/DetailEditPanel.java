@@ -65,7 +65,7 @@ import javax.swing.border.EmptyBorder;
  */
 abstract public class DetailEditPanel extends JPanel {
 
-    private final JPanel sentences;
+    public final JPanel sentences;
     private Detail detail;
     private final Self self;
     private boolean editable;
@@ -78,6 +78,7 @@ abstract public class DetailEditPanel extends JPanel {
     final static String itsATooltip = "Selects Patterns for this Detail";
     final static String realOrImaginary = "Real details describe things that actually exist. \nImaginary details describe hypothetical or desired things.";
     boolean deletable;
+    public final JPanel bottomBar;
 
     protected class LinkPanel extends JPanel {
 
@@ -202,7 +203,7 @@ abstract public class DetailEditPanel extends JPanel {
                 final Pattern p = self.getPatterns().get(pid);
                 JMenu j = new JMenu(p.getID());
                 j.setIcon(Icons.getPatternIcon(p));
-                int numItems = 0;
+                int numItems = 0, numExists = 0, totalItems = p.keySet().size();
 
                 if (isEditable()) {
                     for (String propid : p.keySet()) {
@@ -223,8 +224,11 @@ abstract public class DetailEditPanel extends JPanel {
                             numItems++;
                             j.add(ji);
                         }
+                        else {
+                            numExists++;
+                        }
                     }
-                    j.setText(j.getText() + " (" + numItems + ")");
+                    j.setText(j.getText() + " (" + numExists + "/" + (totalItems) + ")");
                     if (numItems > 0) {
                         j.addSeparator();
                     }
@@ -352,7 +356,7 @@ abstract public class DetailEditPanel extends JPanel {
         add(new JScrollPane(sentences), gc);
 
         {
-            JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            bottomBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
 
 
@@ -371,7 +375,7 @@ abstract public class DetailEditPanel extends JPanel {
                         }
                     }
                 });
-                buttons.add(deleteButton);
+                bottomBar.add(deleteButton);
             }
 
             if (isEditable()) {
@@ -400,10 +404,10 @@ abstract public class DetailEditPanel extends JPanel {
                     }
                 });
 
-                buttons.add(updateButton);
+                bottomBar.add(updateButton);
             } else {
                 final JButton refreshButton = new JButton("Refresh");
-                buttons.add(refreshButton);
+                bottomBar.add(refreshButton);
             }
 
             GridBagConstraints gcx = new GridBagConstraints();
@@ -414,7 +418,7 @@ abstract public class DetailEditPanel extends JPanel {
             gcx.gridx = 1;
             gcx.gridy = 4;
 
-            add(buttons, gcx);
+            add(bottomBar, gcx);
 
         }
 
@@ -508,6 +512,9 @@ abstract public class DetailEditPanel extends JPanel {
             gc.anchor = gc.NORTHWEST;
             gc.gridx = 1;
             gc.gridy = 1;
+            gc.ipadx = 4;
+            gc.ipady = 4;
+            gc.insets = new Insets(4,4,4,4);
 
             optionPanels.clear();
 
@@ -536,12 +543,6 @@ abstract public class DetailEditPanel extends JPanel {
 
                     optionPanels.add(pop);
                 }
-
-                //final Color alternateColor = new Color(0.95f, 0.95f, 0.95f);
-
-                nextLine.setOpaque(false);
-                //nextLine.setOpaque(true);
-                //nextLine.setBackground(gc.gridy % 2 == 0 ? Color.WHITE : alternateColor);
 
                 sentences.add(nextLine, gc);
             }

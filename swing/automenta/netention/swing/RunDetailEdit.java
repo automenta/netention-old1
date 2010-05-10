@@ -4,6 +4,7 @@
  */
 package automenta.netention.swing;
 
+import automenta.netention.PropertyValue;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.util.SwingWindow;
@@ -11,13 +12,17 @@ import automenta.netention.swing.widget.DetailEditPanel;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 
 /**
  *
@@ -62,6 +67,10 @@ public class RunDetailEdit {
         System.out.println(md.getProperties());
         return md;
     }
+                    public static Color getColor(PropertyValue pv, float s, float b) {
+                        float h = ((float)(pv.getProperty().hashCode() % 512)) / 512.0f;
+                        return Color.getHSBColor(h, s, b);
+                    }
 
     public static void main(String[] args) {
         final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
@@ -96,7 +105,12 @@ public class RunDetailEdit {
                     @Override
                     protected void patternChanged() {
                     }
+
+
                 };
+                views.setBackground(Color.WHITE);
+                views.sentences.setOpaque(false);
+                views.bottomBar.setOpaque(false);
 
                 DetailEditPanel edits = new DetailEditPanel(mSelf, d, true, false) {
 
@@ -113,13 +127,27 @@ public class RunDetailEdit {
                         ep.refresh();
                         views.setDetail(getDetail(ep.getJSON()));
                     }
+
+
+                    @Override
+                    protected JComponent getLinePanel(PropertyValue pv) {
+                        JComponent c = super.getLinePanel(pv);
+                        JPanel p = new JPanel(new BorderLayout());
+                        p.setOpaque(true);
+                        p.setBackground(getColor(pv, 0.2f, 1.0f));
+                        p.setBorder(new LineBorder(getColor(pv, 0.2f, 0.8f), 2));
+                        p.add(c, BorderLayout.CENTER);
+                        return p;
+                    }
+
+
                 };
 
                 JPanel p = new JPanel(new GridLayout(1, 2));
-                JPanel s = new JPanel(new GridLayout(2, 1));
+                JTabbedPane s = new JTabbedPane();
                 {
-                    s.add(ep);
-                    s.add(views);
+                    s.addTab("Read-Only", views);
+                    s.addTab("JSON", ep);
                 }
 
                 p.add(edits);

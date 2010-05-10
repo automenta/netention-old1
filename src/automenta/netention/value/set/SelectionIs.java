@@ -42,7 +42,7 @@ public class SelectionIs extends PropertyValue implements DefiniteValue<String> 
 	@Override public double satisfies(IndefiniteValue i) {
 		if (i.getClass().equals( SelectionEquals.class )) {
 			//TODO implement string-difference-distance fall-off (ex: 0.05 * # of chars different)
-			return ((SelectionEquals)i).getString().equalsIgnoreCase(getValue()) ? 1.0 : 0.0;
+			return ((SelectionEquals)i).getValue().equalsIgnoreCase(getValue()) ? 1.0 : 0.0;
 		}
 		return 0;
 	}
