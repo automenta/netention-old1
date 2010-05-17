@@ -11,13 +11,13 @@ import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
-import automenta.netention.graph.Pair;
-import automenta.netention.graph.SimpleDynamicDirectedGraph;
-import automenta.netention.graph.ValueDirectedEdge;
+import automenta.netention.graph.ValueEdge;
 import automenta.netention.io.DetailSource;
 import automenta.netention.io.SelfPlugin;
 import automenta.netention.linker.Linker;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
+import com.syncleus.dann.graph.MutableBidirectedGraph;
+import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -52,14 +52,14 @@ public class MemorySelf implements Self, Serializable {
 
     /* detail -> detail link graph */
     //transient private DirectedSparseMultigraph<Detail, Link> links = new DirectedSparseMultigraph<Detail, Link>();
-    final private SimpleDynamicDirectedGraph<Node, Link> graph;
+    private MutableBidirectedGraph<Node, ValueEdge<Node, Link>> graph;
 
     transient private List<SelfPlugin> plugins;
     
     public MemorySelf() {
         super();
         plugins = new LinkedList();
-        graph = new SimpleDynamicDirectedGraph<Node, Link>();
+        clearGraph();
     }
 
     public MemorySelf(String id, String name) {
@@ -88,7 +88,7 @@ public class MemorySelf implements Self, Serializable {
         return patterns;
     }
 
-    public SimpleDynamicDirectedGraph<Node, Link> getGraph() {
+    public MutableBidirectedGraph<Node, ValueEdge<Node, Link>> getGraph() {
         return graph;
     }
 
@@ -204,20 +204,21 @@ public class MemorySelf implements Self, Serializable {
 
     @Override
     public void link(Linker l) {
-        SimpleDynamicDirectedGraph<Node, Link> g = l.run(IteratorUtils.toList(iterateDetails()));
+        MutableBidirectedGraph<Node, ValueEdge<Node, Link>> g = l.run(IteratorUtils.toList(iterateDetails()));
         for (Node n : g.getNodes()) {
-            graph.addNode(n);
+            graph.add(n);
         }
-        for (ValueDirectedEdge<Node,Link> e : g.getEdges()) {
-            Pair<Node> ep = g.getEndpoints(e);
-            graph.addEdge(e.getValue(), ep.getFirst(), ep.getSecond());
+        for (ValueEdge<Node,Link> e : g.getEdges()) {
+            graph.add(new ValueEdge(e.getValue(), e.getSourceNode(), e.getDestinationNode()));
         }
     }
 
     @Override
     public void clearGraph() {
         //links = new SimpleDynamicDirectedGraph<Node, Link>();
-        graph.clear();
+        
+        //graph.clear();
+        graph = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>();
     }
 
     public void save(String path) throws Exception {

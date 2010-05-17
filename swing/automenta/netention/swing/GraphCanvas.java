@@ -6,8 +6,7 @@ package automenta.netention.swing;
 
 import automenta.netention.Link;
 import automenta.netention.Node;
-import automenta.netention.graph.HyperassociativeMap3;
-import automenta.netention.graph.SimpleDynamicDirectedGraph;
+import automenta.netention.graph.ValueEdge;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.linker.MetadataGrapher;
 import automenta.spacegraph.SGCanvas;
@@ -18,15 +17,19 @@ import automenta.spacegraph.shape.Curve;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
 import com.sun.opengl.util.awt.TextRenderer;
-import com.syncleus.dann.graph.AbstractBidirectedGraph;
+import com.syncleus.dann.graph.DirectedEdge;
 import com.syncleus.dann.graph.Graph;
-import com.syncleus.dann.graph.SimpleDirectedEdge;
+import com.syncleus.dann.graph.MutableBidirectedGraph;
+import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
+import com.syncleus.dann.graph.drawing.hyperassociativemap.HyperassociativeMap;
 import com.syncleus.dann.math.Vector;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.media.opengl.GL2;
@@ -36,27 +39,27 @@ import javolution.context.ConcurrentContext;
  *
  * @author seh
  */
-public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>     extends SGCanvas {
+public class GraphCanvas<N, E extends DirectedEdge<N>> extends SGCanvas {
 
     private float textScaleFactor;
     float xAng = 0;
     float yAng = 0;
-    private final AbstractBidirectedGraph<N, E> sg;
+    private final Graph<N, E> sg;
     private final Map<N, Rect> boxes = new HashMap();
     private Vec3f targetPos = new Vec3f(0, 0, 10);
     private Vec3f targetTarget = new Vec3f(0, 0, 0);
     private Vec3f downPointPos;
     private Vec3f downPointTarget;
     private Vec2f downPixel;
-    private final HyperassociativeMap3<Graph<N, E>, N> hmap;
+    public final HyperassociativeMap<Graph<N, E>, N> hmap;
     private TextRenderer tr;
 
-    public GraphCanvas(AbstractBidirectedGraph<N, E> graph, int dimensions) {
+    public GraphCanvas(Graph<N, E> graph, int dimensions) {
         super();
 
         this.sg = graph;
 
-        hmap = new HyperassociativeMap3(sg, dimensions, 0.05, 0.5, 8, 4);
+        hmap = new HyperassociativeMap(sg, dimensions, 0.05, true);
 
         //tr = TextRect.newTextRenderer(new Font("Arial", Font.PLAIN, 72));
 
@@ -105,7 +108,22 @@ public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>     extends SGCanva
     public void keyReleased(KeyEvent e) {
         super.keyReleased(e);
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            hmap.randomizeAllCoordinates();
+            //hmap.randomizeAllCoordinates();
+            randomizeHyperassociativeMap(hmap, 4.0);
+        }
+    }
+
+    public void randomizeHyperassociativeMap(HyperassociativeMap h, double f) {
+        List<N> l = new LinkedList<N>(h.getCoordinates().keySet());
+        for (N n : l) {
+            //synchronized (h.getCoordinates()) {
+            Vector v = (Vector)h.getCoordinates().get(n);
+            for (int i = 1; i <= v.getDimensions(); i++) {
+                double c = (Math.random() * 2.0 - 1.0) * f;
+                v.setCoordinate(c, i);
+            }
+            //put(n, h.randomCoordinates(h.getDimensions()));
+            //}
         }
     }
 
@@ -187,21 +205,22 @@ public class GraphCanvas<N, E extends SimpleDirectedEdge<N>>     extends SGCanva
 //        }
     }
 
-    public static void main(String[] args) {
-
-        ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
-
-        MemorySelf self = new MemorySelf("me", "Me");
-        new SeedSelfBuilder().build(self);
-
-        //self.addPlugin(new Twitter());
-
-        self.updateLinks(null);
-
-        SimpleDynamicDirectedGraph<Node, Link> target = new SimpleDynamicDirectedGraph(self.getGraph());
-        //MetadataGrapher.run(self, target, true, true, true, true);
-        MetadataGrapher.run(self, target, true, true, true, true);
-
-        new SGWindow("DemoSGCanvas", new GraphCanvas(target, 3));
-    }
+//    public static void main(String[] args) {
+//
+//        ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
+//
+//        MemorySelf self = new MemorySelf("me", "Me");
+//        new SeedSelfBuilder().build(self);
+//
+//        //self.addPlugin(new Twitter());
+//
+//        self.updateLinks(null);
+//
+//        MutableBidirectedGraph<Node, ValueEdge<Node, Link>> target = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>(self.getGraph());
+//        //MetadataGrapher.run(self, target, true, true, true, true);
+//        MetadataGrapher.run(self, target, true, true, true, true);
+//
+//        new SGWindow("DemoSGCanvas", new GraphCanvas(target, 3));
+//    }
+    
 }

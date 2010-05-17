@@ -14,7 +14,7 @@ import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
 import automenta.netention.graph.Pair;
-import automenta.netention.graph.ValueDirectedEdge;
+import automenta.netention.graph.ValueEdge;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.BoolPropertyPanel;
 import automenta.netention.swing.property.IntPropertyPanel;
@@ -86,13 +86,13 @@ abstract public class DetailEditPanel extends JPanel {
         private final Node source;
         private final Node target;
 
-        private LinkPanel(ValueDirectedEdge<Node, Link> edge) {
+        private LinkPanel(ValueEdge<Node, Link> edge) {
             super(new FlowLayout(FlowLayout.LEFT));
 
-            Pair<Node> endpoints = self.getGraph().getEndpoints(edge);
+            //Pair<Node> endpoints = self.getGraph().getEndpoints(edge);
             this.link = edge.getValue();
-            this.source = endpoints.getFirst();
-            this.target = endpoints.getSecond();
+            this.source = edge.getSourceNode();
+            this.target = edge.getDestinationNode();
 
             setOpaque(false);
 
@@ -263,8 +263,6 @@ abstract public class DetailEditPanel extends JPanel {
 
             }
 
-
-            add(Box.createHorizontalGlue());
         }
 
         public String getModeString(Mode mode) {
@@ -335,7 +333,7 @@ abstract public class DetailEditPanel extends JPanel {
         nameEdit.setWrapStyleWord(true);
         nameEdit.setLineWrap(true);
         nameEdit.setFont(nameEdit.getFont().deriveFont(nameEdit.getFont().getSize2D() * 1.7f));
-        add(nameEdit, gc);
+        add(new JScrollPane(nameEdit), gc);
 
         gc.gridy++;
 
@@ -508,7 +506,7 @@ abstract public class DetailEditPanel extends JPanel {
 
             gc.weightx = 1.0;
             gc.weighty = 0.0;
-            gc.fill = gc.HORIZONTAL;
+            gc.fill = gc.NONE;
             gc.anchor = gc.NORTHWEST;
             gc.gridx = 1;
             gc.gridy = 1;
@@ -551,10 +549,10 @@ abstract public class DetailEditPanel extends JPanel {
 
                 @Override
                 public void run() {
-                    Set<ValueDirectedEdge<Node, Link>> ae = self.getGraph().getAdjacentEdges(detail);
+                    Set<ValueEdge<Node, Link>> ae = self.getGraph().getAdjacentEdges(detail);
 
                     if (ae != null) {
-                        for (ValueDirectedEdge<Node, Link> e : ae) {
+                        for (ValueEdge<Node, Link> e : ae) {
                             gc.gridy++;
                             sentences.add(new LinkPanel(e), gc);
                         }

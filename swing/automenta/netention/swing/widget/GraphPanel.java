@@ -9,11 +9,13 @@ import automenta.netention.Detail;
 import automenta.netention.Link;
 import automenta.netention.Node;
 import automenta.netention.Self;
-import automenta.netention.graph.SimpleDynamicDirectedGraph;
+import automenta.netention.graph.ValueEdge;
 import automenta.netention.linker.MetadataGrapher;
 import automenta.netention.swing.GraphCanvas;
 import automenta.spacegraph.SGPanel;
 import automenta.spacegraph.gleem.linalg.Vec3f;
+import com.syncleus.dann.graph.MutableBidirectedGraph;
+import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JPanel;
@@ -40,7 +42,7 @@ public class GraphPanel extends JPanel implements IndexView {
     public void refresh() {
         removeAll();
         
-        SimpleDynamicDirectedGraph<Node,Link> target = new SimpleDynamicDirectedGraph(self.getGraph());
+        MutableBidirectedGraph<Node,ValueEdge<Node, Link>> target = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>(self.getGraph());
         MetadataGrapher.run(self, target, true, true, true, true);
 
         GraphCanvas gc = new GraphCanvas(target, 3);

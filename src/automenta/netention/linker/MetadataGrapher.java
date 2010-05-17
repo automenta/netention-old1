@@ -12,12 +12,13 @@ import automenta.netention.Node;
 import automenta.netention.Pattern;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
-import automenta.netention.graph.SimpleDynamicDirectedGraph;
+import automenta.netention.graph.ValueEdge;
 import automenta.netention.link.CreatedBy;
 import automenta.netention.link.HasProperty;
 import automenta.netention.link.PatternOf;
 import automenta.netention.node.Creator;
 import automenta.netention.node.PropertyNode;
+import com.syncleus.dann.graph.MutableBidirectedGraph;
 import java.util.Iterator;
 
 /**
@@ -26,30 +27,40 @@ import java.util.Iterator;
  */
 public class MetadataGrapher {
 
-    public static void run(Self s, SimpleDynamicDirectedGraph<Node,Link> target, boolean creators, boolean mode, boolean patterns, boolean properties) {
+    public static void run(Self s, MutableBidirectedGraph<Node, ValueEdge<Node, Link>> target, boolean creators, boolean mode, boolean patterns, boolean properties) {
         Iterator<Node> i = s.iterateDetails();
         while (i.hasNext()) {
             Node n = i.next();
             if (n instanceof Detail) {
                 Detail d = (Detail)n;
 
+                target.add(d);
+
                 if (creators) {
-                    target.addEdge(new CreatedBy(), d, new Creator(d));
+                    Creator c = new Creator(d);
+                    target.add(c);
+                    target.add(new ValueEdge(new CreatedBy(), d, c));
                 }
 
                 if (mode) {
-                    target.addEdge(new PatternOf(), d, getNode(d.getMode()));
+                    final Node t = getNode(d.getMode());
+                    target.add(t);
+                    target.add(new ValueEdge(new PatternOf(), d, t));
                 }
 
                 if (patterns) {
                     for (String p : d.getPatterns()) {
-                        target.addEdge(new PatternOf(), d, s.getPatterns().get(p));
+                        final Pattern pa = s.getPatterns().get(p);
+                        target.add(pa);
+                        target.add(new ValueEdge(new PatternOf(), d, pa));
                     }
                 }
 
                 if (properties) {
                     for (PropertyValue p : d.getProperties()) {
-                        target.addEdge(new HasProperty(), d, new PropertyNode(p));
+                        final PropertyNode pn = new PropertyNode(p);
+                        target.add(pn);
+                        target.add(new ValueEdge(new HasProperty(), d, pn));
                     }
                 }
             }

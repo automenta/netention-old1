@@ -6,13 +6,15 @@ package automenta.netention.swing;
 
 import automenta.netention.Link;
 import automenta.netention.Node;
-import automenta.netention.graph.SimpleDynamicDirectedGraph;
+import automenta.netention.graph.ValueEdge;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.linker.MetadataGrapher;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.SGCanvas;
 import automenta.spacegraph.SGPanel;
-import com.syncleus.dann.graph.SimpleDirectedEdge;
+import com.syncleus.dann.graph.DirectedEdge;
+import com.syncleus.dann.graph.MutableBidirectedGraph;
+import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -22,7 +24,7 @@ import javolution.context.ConcurrentContext;
  *
  * @author seh
  */
-public class RunGraphCanvasPanel<N, E extends SimpleDirectedEdge<N>>  extends SGCanvas {
+public class RunGraphCanvasPanel<N, E extends DirectedEdge<N>>  extends SGCanvas {
 
 
     public static void main(String[] args) {
@@ -36,7 +38,7 @@ public class RunGraphCanvasPanel<N, E extends SimpleDirectedEdge<N>>  extends SG
 
         self.updateLinks(null);
 
-        SimpleDynamicDirectedGraph<Node,Link> target = new SimpleDynamicDirectedGraph(self.getGraph());
+        MutableBidirectedGraph<Node,ValueEdge<Node, Link>> target = new MutableDirectedAdjacencyGraph(self.getGraph());
         MetadataGrapher.run(self, target, true, true, true, true);
 
         JPanel j = new SGPanel(new GraphCanvas(target, 3));

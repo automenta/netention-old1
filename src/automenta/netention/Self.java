@@ -4,8 +4,9 @@
  */
 package automenta.netention;
 
-import automenta.netention.graph.SimpleDynamicDirectedGraph;
+import automenta.netention.graph.ValueEdge;
 import automenta.netention.linker.Linker;
+import com.syncleus.dann.graph.MutableBidirectedGraph;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,7 +28,7 @@ public interface Self {
     /** all available patterns */
     public Map<String, Pattern> getPatterns();
 
-    public SimpleDynamicDirectedGraph<Node, Link> getGraph();
+    public MutableBidirectedGraph<Node, ValueEdge<Node, Link>> getGraph();
 
 
     /** gets available patterns that may be added to a detail */

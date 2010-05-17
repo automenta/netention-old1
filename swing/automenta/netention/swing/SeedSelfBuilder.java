@@ -77,6 +77,23 @@ public class SeedSelfBuilder {
                 new StringProp("location", "Location")
                 );
         }
+        s.addPattern(new Pattern("Ingestion").setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
+        {
+            s.addProperties("Ingestion",
+                new SelectionProp("ingestionType", "Type", "Food", "Beverage", "Other"),
+                new StringProp("ingestionType", "Type"),
+                new RealProp("ingestionMass", "Volume")
+                );
+        }
+        
+        s.addPattern(new Pattern("Excretion").setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
+        {
+            s.addProperties("Excretion",
+                new SelectionProp("excretionType", "Type", "Urine", "Feces", "Other"),
+                new RealProp("excretionMass", "Mass"),
+                new RealProp("excretionVolume", "Volume")
+                );
+        }
 
         s.addPattern(new Pattern("Media").setIconURL("media://tango32/categories/applications-multimedia.png"));
         {

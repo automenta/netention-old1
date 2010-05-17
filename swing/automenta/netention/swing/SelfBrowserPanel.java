@@ -349,20 +349,25 @@ public class SelfBrowserPanel extends JPanel {
         refreshView();
 
         content.setLeftComponent(new JScrollPane((JPanel) indexView));
+        updateUI();
     }
 
+    /** TODO the code in this method is not actually frequent, but the JOGL Graph view */
     protected void viewFrequent() {
         indexView = new GraphPanel(self);
         refreshView();
 
         content.setLeftComponent((JPanel)indexView);
+        updateUI();
     }
 
     protected void viewWho() {
         content.setLeftComponent(new JPanel());
+        updateUI();
     }
 
     protected void viewWhere() {
         content.setLeftComponent(new JPanel());
+        updateUI();
     }
 }
