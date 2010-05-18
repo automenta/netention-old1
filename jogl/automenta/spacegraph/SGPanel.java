@@ -73,11 +73,13 @@ public class SGPanel extends JPanel implements ComponentListener {
 
     public void startGL() {
          if (!running) {
-            System.out.println("STARTING GL");
+            //System.out.println("STARTING GL");
+             
             running = true;
             new Thread(new Runnable() {
                 public void run() {
                     add(canvas, BorderLayout.CENTER);
+                    updateUI();
                     animator.start();
                 }
             }).start();
@@ -86,7 +88,8 @@ public class SGPanel extends JPanel implements ComponentListener {
 
     public void stopGL() {
         if (running) {
-            System.out.println("STOPPING GL");
+            //System.out.println("STOPPING GL");
+
             running = false;
 
             // Run this on another thread than the AWT event queue to make sure the call to Animator.stop() completes before exiting

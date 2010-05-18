@@ -12,6 +12,7 @@ import automenta.netention.plugin.finance.FinanceGrapher;
 import automenta.netention.plugin.finance.PublicBusiness;
 import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
 import automenta.netention.plugin.finance.PublicBusiness.IntervalType;
+import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.SGCanvas;
 import automenta.spacegraph.SGPanel;
@@ -36,11 +37,18 @@ import javolution.context.ConcurrentContext;
  *
  * @author seh
  */
-public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends SGCanvas {
+public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends SGCanvas implements Demo {
+
 
 
     public static void main(String[] args) {
 
+
+        SwingWindow sw = new SwingWindow(new RunFinanceGraph().newPanel(), 400, 400, true);
+
+    }
+
+    public JPanel newPanel() {
         ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
 
         MutableBidirectedGraph<Node,ValueEdge<Node, Link>> target = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>();
@@ -53,14 +61,14 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends SGCanvas {
         businesses.add(new PublicBusiness("AAPL"));
         businesses.add(new PublicBusiness("INTC"));
         businesses.add(new PublicBusiness("NVDA"));
-        
+
         for (PublicBusiness pb : businesses)
             pb.refreshLatestPerformance(IntervalType.Monthly);
 
         FinanceGrapher.run(businesses, target, 2009, 2010, false);
 
         int numDimensions = 2;
-        
+
         System.out.println(target.getNodes().size() + " : " + target.getEdges().size() );
         final GraphCanvas graphCanvas = new GraphCanvas(target, numDimensions) {
 
@@ -138,8 +146,16 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends SGCanvas {
 
         panel.add(px, BorderLayout.SOUTH);
 
+        return panel;
+    }
 
-        SwingWindow sw = new SwingWindow(panel, 400, 400, true);
+    @Override
+    public String getName() {
+        return "Hyperassociative Finance";
+    }
 
+    @Override
+    public String getDescription() {
+        return "..";
     }
 }

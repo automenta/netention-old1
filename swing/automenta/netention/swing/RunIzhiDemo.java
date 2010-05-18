@@ -8,6 +8,7 @@ import automenta.netention.neuron.IzhikevichNeuron;
 import automenta.netention.neuron.NeuralNetwork;
 import automenta.netention.neuron.Neuron;
 import automenta.netention.neuron.Synapse.ShortTermPlasticitySynapse;
+import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.SGCanvas;
 import automenta.spacegraph.SGPanel;
@@ -23,11 +24,28 @@ import javolution.context.ConcurrentContext;
  *
  * @author seh
  */
-public class RunIzhiDemo {
+public class RunIzhiDemo implements Demo {
 
     public static void main(String[] args) {
         ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
 
+
+        SwingWindow sw = new SwingWindow(new RunIzhiDemo().newPanel(), 900, 400, true);
+
+    }
+
+    @Override
+    public String getName() {
+        return "Izhikevich Spiking Neural Network";
+    }
+
+    @Override
+    public String getDescription() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public JPanel newPanel() {
         final NeuralNetwork nn = new NeuralNetwork();
 
         final int numNeurons = 4;
@@ -56,8 +74,6 @@ public class RunIzhiDemo {
         panel.add(j, BorderLayout.CENTER);
         panel.add(new JButton("X"), BorderLayout.SOUTH);
 
-        SwingWindow sw = new SwingWindow(panel, 900, 400, true);
-
         new Thread(new Runnable() {
 
             float x = -1.0f;
@@ -76,7 +92,7 @@ public class RunIzhiDemo {
 
                     float s = 0.005f;
                     float y = (float)nn.getNeuron(0).getActivation();
-                    
+
                     Rect p = new Rect();
                     p.setBackgroundColor(new Vec3f((float)(nn.getNeuron(0).getTotalInput()/200.0f), (float)(nn.getNeuron(0).getTotalInput()/-200.0f), 0.5f));
                     p.getCenter().set(x, (y)/100.0f, 0);
@@ -93,7 +109,7 @@ public class RunIzhiDemo {
                     x += 0.005f;
                     if (x > 5f)
                         x = -1.0f;
-                    
+
                     try {
                         Thread.sleep(20);
                     } catch (InterruptedException ex) {
@@ -105,5 +121,8 @@ public class RunIzhiDemo {
             }
 
         }).start();
+
+        return panel;
+
     }
 }

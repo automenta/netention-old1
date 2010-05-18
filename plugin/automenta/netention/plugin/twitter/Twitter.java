@@ -29,7 +29,7 @@ public class Twitter implements SelfPlugin, DetailSource {
     
     public Twitter() {
         super();
-        addPublicTimeline();
+        //addPublicTimeline();
     }
     
     @Override
@@ -64,17 +64,17 @@ public class Twitter implements SelfPlugin, DetailSource {
         return md;
     }
 
-    private void addPublicTimeline() {
-        try {
-            for (Status s : t.getPublicTimeline()) {
-                addDetail(getStatusDetail(s));
-            }
-        }
-        catch (Exception te) {
-            System.err.println(te);
-        }
-
-    }
+//    private void addPublicTimeline() {
+//        try {
+//            for (Status s : t.getPublicTimeline()) {
+//                addDetail(getStatusDetail(s));
+//            }
+//        }
+//        catch (Exception te) {
+//            System.err.println(te);
+//        }
+//
+//    }
 
 
 }

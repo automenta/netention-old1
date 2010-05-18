@@ -7,6 +7,7 @@ package automenta.netention.swing;
 import automenta.netention.PropertyValue;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
+import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;
 import flexjson.JSONDeserializer;
@@ -28,7 +29,89 @@ import javax.swing.border.LineBorder;
  *
  * @author seh
  */
-public class RunDetailEdit {
+public class RunDetailEdit implements Demo {
+
+    @Override
+    public String getDescription() {
+        return "";
+    }
+
+    @Override
+    public String getName() {
+        return "Detail Editing";
+    }
+
+
+
+    public JPanel newPanel() {
+        final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
+
+        MemorySelf self = new MemorySelf("me", "Me");
+        new SeedSelfBuilder().build(self);
+        logger.log(Level.INFO, "Loaded Seed Self");
+
+        final MemorySelf mSelf = self;
+
+        final MemoryDetail d = new MemoryDetail("X");
+        mSelf.addDetail(d);
+
+        final EncodingPanel ep = new EncodingPanel(d);
+
+        final DetailEditPanel views = new DetailEditPanel(mSelf, new MemoryDetail(), false, false) {
+
+            @Override
+            protected void deleteThis() {
+            }
+
+            @Override
+            protected void patternChanged() {
+            }
+        };
+        views.setBackground(Color.WHITE);
+        views.sentences.setOpaque(false);
+        views.bottomBar.setOpaque(false);
+
+        DetailEditPanel edits = new DetailEditPanel(mSelf, d, true, false) {
+
+            @Override protected void deleteThis() {
+            }
+
+            @Override
+            protected void patternChanged() {
+            }
+
+            @Override
+            protected synchronized void updateDetail() {
+                super.updateDetail();
+                ep.refresh();
+                views.setDetail(getDetail(ep.getJSON()));
+            }
+
+            @Override
+            protected JComponent getLinePanel(PropertyValue pv) {
+                JComponent c = super.getLinePanel(pv);
+                JPanel p = new JPanel(new BorderLayout());
+                p.setOpaque(true);
+                p.setBackground(getColor(pv, 0.2f, 1.0f));
+                p.setBorder(new LineBorder(getColor(pv, 0.2f, 0.8f), 2));
+                p.add(c, BorderLayout.CENTER);
+                return p;
+            }
+        };
+
+        JPanel p = new JPanel(new GridLayout(1, 2));
+        JTabbedPane s = new JTabbedPane();
+        {
+            s.addTab("Read-Only", views);
+            s.addTab("JSON", ep);
+        }
+
+        s.setBorder(new LineBorder(Color.BLACK, 13));
+        edits.setBorder(new LineBorder(Color.BLACK, 13));
+        p.add(edits);
+        p.add(s);
+        return p;
+    }
 
     public static class EncodingPanel extends JPanel {
 
@@ -48,7 +131,7 @@ public class RunDetailEdit {
             refresh();
         }
 
-        public String getJSON(){
+        public String getJSON() {
             return textArea.getText();
         }
 
@@ -67,19 +150,14 @@ public class RunDetailEdit {
         System.out.println(md.getProperties());
         return md;
     }
-                    public static Color getColor(PropertyValue pv, float s, float b) {
-                        float h = ((float)(pv.getProperty().hashCode() % 512)) / 512.0f;
-                        return Color.getHSBColor(h, s, b);
-                    }
+
+    public static Color getColor(PropertyValue pv, float s, float b) {
+        float h = ((float) (pv.getProperty().hashCode() % 512)) / 512.0f;
+        return Color.getHSBColor(h, s, b);
+    }
 
     public static void main(String[] args) {
-        final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
 
-        MemorySelf self = new MemorySelf("me", "Me");
-        new SeedSelfBuilder().build(self);
-        logger.log(Level.INFO, "Loaded Seed Self");
-
-        final MemorySelf mSelf = self;
 
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -91,67 +169,8 @@ public class RunDetailEdit {
                     System.err.println(ex);
                 }
 
-                final MemoryDetail d = new MemoryDetail("X");
-                mSelf.addDetail(d);
 
-                final EncodingPanel ep = new EncodingPanel(d);
-
-                final DetailEditPanel views = new DetailEditPanel(mSelf, new MemoryDetail(), false, false) {
-
-                    @Override
-                    protected void deleteThis() {
-                    }
-
-                    @Override
-                    protected void patternChanged() {
-                    }
-
-
-                };
-                views.setBackground(Color.WHITE);
-                views.sentences.setOpaque(false);
-                views.bottomBar.setOpaque(false);
-
-                DetailEditPanel edits = new DetailEditPanel(mSelf, d, true, false) {
-
-                    @Override protected void deleteThis() {
-                    }
-
-                    @Override
-                    protected void patternChanged() {
-                    }
-
-                    @Override
-                    protected synchronized void updateDetail() {
-                        super.updateDetail();
-                        ep.refresh();
-                        views.setDetail(getDetail(ep.getJSON()));
-                    }
-
-
-                    @Override
-                    protected JComponent getLinePanel(PropertyValue pv) {
-                        JComponent c = super.getLinePanel(pv);
-                        JPanel p = new JPanel(new BorderLayout());
-                        p.setOpaque(true);
-                        p.setBackground(getColor(pv, 0.2f, 1.0f));
-                        p.setBorder(new LineBorder(getColor(pv, 0.2f, 0.8f), 2));
-                        p.add(c, BorderLayout.CENTER);
-                        return p;
-                    }
-
-
-                };
-
-                JPanel p = new JPanel(new GridLayout(1, 2));
-                JTabbedPane s = new JTabbedPane();
-                {
-                    s.addTab("Read-Only", views);
-                    s.addTab("JSON", ep);
-                }
-
-                p.add(edits);
-                p.add(s);
+                JPanel p = new RunDetailEdit().newPanel();
 
                 SwingWindow window = new SwingWindow(p, 900, 800, true);
             }

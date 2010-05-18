@@ -327,6 +327,7 @@ abstract public class DetailEditPanel extends JPanel {
 //
 //            header.add(menuBar, BorderLayout.NORTH);
 //        }
+        
         nameEdit = new JTextArea(d.getName());
         nameEdit.setEditable(isEditable());
         nameEdit.setOpaque(isEditable());

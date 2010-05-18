@@ -5,10 +5,11 @@
 package automenta.netention.swing;
 
 import automenta.netention.impl.MemorySelf;
-import automenta.netention.plugin.twitter.Twitter;
+import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -16,12 +17,10 @@ import javax.swing.UIManager;
  *
  * @author seh
  */
-public class RunSelfBrowser {
+public class RunSelfBrowser implements Demo {
 
-    public static void main(String[] args) {
+    public JPanel newPanel() {
         final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
-
-
 
         final String filePath = "/tmp/netention1";
 
@@ -41,6 +40,11 @@ public class RunSelfBrowser {
 
         final MemorySelf mSelf = self;
 
+        return new SelfBrowserPanel(mSelf);
+    }
+
+    public static void main(String[] args) {
+
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -54,22 +58,36 @@ public class RunSelfBrowser {
                     System.err.println(ex);
                 }
 
-                SwingWindow window = new SwingWindow(new SelfBrowserPanel(mSelf), 900, 800, true) {
 
-                    @Override
-                    protected void onClosing() {
-                        //SAVE ON EXIT
-                        try {
-                            mSelf.save(filePath);
-                            //JSONIO.save(mSelf, filePath);
-                            logger.log(Level.INFO, "Saved " + filePath);
-                        } catch (Exception ex) {
-                            logger.log(Level.SEVERE, null, ex);
-                        }
-                    }
+                SwingWindow window = new SwingWindow(new RunSelfBrowser().newPanel(), 900, 800, true) {
+
+//                    @Override
+//                    protected void onClosing() {
+//                        //SAVE ON EXIT
+//                        try {
+//
+//                            mSelf.save(filePath);
+//                            //JSONIO.save(mSelf, filePath);
+//                            logger.log(Level.INFO, "Saved " + filePath);
+//                        } catch (Exception ex) {
+//                            logger.log(Level.SEVERE, null, ex);
+//                        }
+//                    }
+                    
                 };
             }
         });
 
     }
+
+    @Override
+    public String getName() {
+        return "Self Browser";
+    }
+
+    @Override
+    public String getDescription() {
+        return "";
+    }
+
 }
