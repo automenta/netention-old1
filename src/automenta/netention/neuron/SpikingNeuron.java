@@ -9,7 +9,7 @@ package automenta.netention.neuron;
  *
  * @author seh
  */
-abstract public class SpikingNeuron extends Neuron {
+abstract public class SpikingNeuron extends RealtimeNeuron {
 
     /** Time of last spike.  */
     //public double lastSpikeTime;

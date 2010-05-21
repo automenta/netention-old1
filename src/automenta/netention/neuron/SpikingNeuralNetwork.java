@@ -5,23 +5,29 @@
 
 package automenta.netention.neuron;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
+import com.syncleus.dann.neural.Neuron;
+import com.syncleus.dann.neural.Synapse;
 
 /**
  *
  * @author seh
  */
-public class NeuralNetwork {
+public class SpikingNeuralNetwork extends MutableDirectedAdjacencyGraph<RealtimeNeuron, SpikingSynapse> {
 
-    List<Neuron> neuronList = new LinkedList();
-    List<Synapse> synapseList = new LinkedList();
+    //List<RealtimeNeuron> neuronList = new LinkedList();
+    //List<SpikingSynapse> synapseList = new LinkedList();
 
-    public void addNeuron(Neuron n) {
-        neuronList.add(n);
+    public SpikingNeuralNetwork() {
+        super();
     }
-    public void addSynapse(Synapse s) {
-        synapseList.add(s);
+
+
+    public void addNeuron(RealtimeNeuron n) {
+        add(n);
+    }
+    public void addSynapse(SpikingSynapse s) {
+        add(s);
     }
 
     public void update(double dt) {
@@ -35,12 +41,12 @@ public class NeuralNetwork {
     protected void updateAllNeurons(double dt) {
 
         // First update the activation buffers
-        for (Neuron n : neuronList) {
-            n.update(dt); // update neuron buffers
+        for (RealtimeNeuron n : getNodes()) {
+            n.update(getInEdges(n), dt); // update neuron buffers
         }
 
         // Then update the activations themselves
-        for (Neuron n : neuronList) {
+        for (RealtimeNeuron n : getNodes()) {
             n.setActivation(n.getBuffer());
         }
     }
@@ -51,19 +57,15 @@ public class NeuralNetwork {
     protected void updateAllSynapses() {
 
         // No Buffering necessary because the values of weights don't depend on one another
-        for (Synapse s : synapseList) {
+        for (SpikingSynapse s : getEdges()) {
             s.update();
         }
     }
 
-    public Neuron getNeuron(int i) {
-        return neuronList.get(i);
-    }
-
     public void printNeurons() {
-        for (Neuron n : neuronList) {
+        for (RealtimeNeuron n : getNodes()) {
             System.out.println(n);
-            System.out.println("  totalInput: " + n.getTotalInput());
+            //System.out.println("  totalInput: " + n.getTotalInput());
             System.out.println("  activation: " + n.getActivation());
             System.out.println();
         }

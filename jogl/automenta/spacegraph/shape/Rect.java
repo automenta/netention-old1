@@ -53,9 +53,13 @@ public class Rect extends Spatial implements Drawable {
         }
         gl.glEnd();
 
-
+        drawFront(gl);
 
         gl.glPopMatrix();
     }
 
+    /** draw within -1..+1 for x, y */
+    protected void drawFront(GL2 gl) {
+
+    }
 }

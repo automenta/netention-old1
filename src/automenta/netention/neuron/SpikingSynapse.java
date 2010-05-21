@@ -4,17 +4,18 @@
  */
 package automenta.netention.neuron;
 
+import com.syncleus.dann.graph.ImmutableDirectedEdge;
 import java.util.LinkedList;
 import java.util.List;
 
-abstract public class Synapse {
+abstract public class SpikingSynapse extends ImmutableDirectedEdge<RealtimeNeuron> {
 
     public abstract static class SpikeResponder {
 
         /** Value. */
         protected double value = 0;
         /** Parent. */
-        protected Synapse parent;
+        protected SpikingSynapse parent;
 
         /** Used for combo box. */
         /**
@@ -46,14 +47,14 @@ abstract public class Synapse {
         /**
          * @return Returns the parent.
          */
-        public Synapse getParent() {
+        public SpikingSynapse getParent() {
             return parent;
         }
 
         /**
          * @param parent The parent to set.
          */
-        public void setParent(final Synapse parent) {
+        public void setParent(final SpikingSynapse parent) {
             this.parent = parent;
         }
     }
@@ -136,7 +137,7 @@ abstract public class Synapse {
         }
     }
 
-    public static class ShortTermPlasticitySynapse extends Synapse {
+    public static class ShortTermPlasticitySynapse extends SpikingSynapse {
 
         /** STD. */
         private static final int STD = 0;
@@ -179,7 +180,7 @@ abstract public class Synapse {
          * @param val initial weight value
          * @param theId Id of the synapse
          */
-        public ShortTermPlasticitySynapse(final Neuron src, final Neuron tar, final double val, final String theId) {
+        public ShortTermPlasticitySynapse(final RealtimeNeuron src, final RealtimeNeuron tar, final double val, final String theId) {
             super(src, tar);
 //        setSource(src);
 //        setTarget(tar);
@@ -187,15 +188,13 @@ abstract public class Synapse {
             id = theId;
         }
 
-        
-
-            /**
+        /**
          * Creates a weight connecting source and target neurons.
          *
          * @param source source neuron
          * @param target target neuron
          */
-        public ShortTermPlasticitySynapse(final Neuron source, final Neuron target) {
+        public ShortTermPlasticitySynapse(final RealtimeNeuron source, final RealtimeNeuron target) {
             super(source, target);
         }
 
@@ -315,11 +314,10 @@ abstract public class Synapse {
             this.firingThreshold = firingThreshold;
         }
     }
-
     /** Neuron activation will come from. */
-    private Neuron source;
+    //private Neuron source;
     /** Neuron to which the synapse is attached. */
-    private Neuron target;
+    //private Neuron target;
     /**  Only used of source neuron is a spiking neuron. */
     protected SpikeResponder spikeResponder = null;
     /** Synapse id. */
@@ -347,9 +345,9 @@ abstract public class Synapse {
     /** Manages delays of synapses. */
     private LinkedList<Double> delayManager = null;
 
-    public Synapse(Neuron source, Neuron target) {
-        setSource(source);
-        setTarget(target);
+    public SpikingSynapse(RealtimeNeuron source, RealtimeNeuron target) {
+        super(source, target);
+
         initSpikeResponder();
     }
 
@@ -357,7 +355,7 @@ abstract public class Synapse {
      * Set a default spike responder if the source neuron is a  spiking neuron, else set the spikeResponder to null.
      */
     public void initSpikeResponder() {
-        if (source instanceof SpikingNeuron) {
+        if (getSource() instanceof SpikingNeuron) {
             setSpikeResponder(new JumpAndDecay());
         } else {
             setSpikeResponder(null);
@@ -369,7 +367,7 @@ abstract public class Synapse {
      */
     public abstract void update();
 
-
+    
     /**
      * For spiking source neurons, returns the spike-responder's value times the synapse strength.
      * For non-spiking neurons, returns the pre-synaptic activation times the synapse strength.
@@ -379,11 +377,11 @@ abstract public class Synapse {
     public double getValue() {
         double val;
 
-        if (source instanceof SpikingNeuron) {
+        if (getSource() instanceof SpikingNeuron) {
             spikeResponder.update();
             val = strength * spikeResponder.getValue();
         } else {
-            val = source.getActivation() * strength;
+            val = getSource().getActivation() * strength;
         }
 
         if (delayManager == null) {
@@ -414,61 +412,35 @@ abstract public class Synapse {
         return getStrength();
     }
 
-    /**
-     * Cleans up this Synapse that has been deleted.
-     */
-    void delete() {
-        if (source != null) {
-            source.removeTarget(this);
-        }
-        if (target != null) {
-            target.removeSource(this);
-        }
-    }
 
     /**
      * @return Source neuron to which the synapse is attached.
      */
-    public Neuron getSource() {
-        return source;
+    public RealtimeNeuron getSource() {
+        return getSourceNode();
     }
 
-    /**
-     * New source neuron to attach the synapse.
-     * @param n Neuron to attach synapse
-     */
-    public void setSource(final Neuron n) {
-        if (this.source != null) {
-            this.source.removeTarget(this);
-        }
-
-        if (n != null) {
-            this.source = n;
-            n.addTarget(this);
-        }
-    }
-
+//    /**
+//     * New source neuron to attach the synapse.
+//     * @param n Neuron to attach synapse
+//     */
+//    public void setSource(final Neuron n) {
+//        if (this.getSource() != null) {
+//            this.source.removeTarget(this);
+//        }
+//
+//        if (n != null) {
+//            //this.source = n;
+//            n.addTarget(this);
+//        }
+//    }
     /**
      * @return Target neuron to which the synapse is attached.
      */
-    public Neuron getTarget() {
-        return target;
+    public RealtimeNeuron getTarget() {
+        return getDestinationNode();
     }
 
-    /**
-     * New target neuron to attach the synapse.
-     * @param n Neuron to attach synapse
-     */
-    public void setTarget(final Neuron n) {
-        if (this.target != null) {
-            this.target.removeSource(this);
-        }
-
-        if (n != null) {
-            this.target = n;
-            n.addSource(this);
-        }
-    }
 
     /**
      * Sets the strength of the synapse.
@@ -572,9 +544,9 @@ abstract public class Synapse {
      * A bit of a hack, since it it is used on a collection a bunch of redundancy could
      * happen.
      */
-    public void randomizeSymmetric() {
+    public void randomizeSymmetric(List<SpikingSynapse> targetFanOut) {
         randomize();
-        Synapse symmetric = getSymmetricSynapse();
+        SpikingSynapse symmetric = getSymmetricSynapse(targetFanOut);
         if (symmetric != null) {
             symmetric.setStrength(strength);
         }
@@ -584,8 +556,8 @@ abstract public class Synapse {
      * Returns symmetric synapse if there is one, null otherwise.
      * @return the symmetric synapse, if any.
      */
-    public Synapse getSymmetricSynapse() {
-        List<Synapse> targetsOut = this.getTarget().getFanOut();
+    public SpikingSynapse getSymmetricSynapse(List<SpikingSynapse> targetFanOut) {
+        List<SpikingSynapse> targetsOut = targetFanOut;
         int index = targetsOut.indexOf(this.getSource());
 
         return (index < 0) ? null : targetsOut.get(index);

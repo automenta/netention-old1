@@ -5,14 +5,14 @@
 
 package automenta.netention.neuron;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  *
  * @author seh
  */
-public abstract class Neuron  {
+public abstract class RealtimeNeuron  {
 
 
     /** Activation value of the neuron.  The main state variable. */
@@ -34,10 +34,10 @@ public abstract class Neuron  {
     private double inputValue = 0;
 
 //    /** List of synapses this neuron attaches to. */
-    private ArrayList<Synapse> fanOut = new ArrayList<Synapse>();
+    //private ArrayList<Synapse> fanOut = new ArrayList<Synapse>();
 //
 //    /** List of synapses attaching to this neuron. */
-    private ArrayList<Synapse> fanIn = new ArrayList<Synapse>();
+    //private ArrayList<Synapse> fanIn = new ArrayList<Synapse>();
 
     /** If true then do not update this neuron. */
     private boolean clamped = false;
@@ -50,7 +50,7 @@ public abstract class Neuron  {
      * Default constructor needed for external calls which create neurons then
      * set their parameters.
      */
-    protected Neuron() {
+    protected RealtimeNeuron() {
     }
 
 
@@ -125,19 +125,19 @@ public abstract class Neuron  {
         increment = d;
     }
 
-    /**
-     * @return the fan in array list.
-     */
-    public List<Synapse> getFanIn() {
-        return fanIn;
-    }
-
-    /**
-     * @return the fan out array list.
-     */
-    public List<Synapse> getFanOut() {
-        return fanOut;
-    }
+//    /**
+//     * @return the fan in array list.
+//     */
+//    public List<Synapse> getFanIn() {
+//        return fanIn;
+//    }
+//
+//    /**
+//     * @return the fan out array list.
+//     */
+//    public List<Synapse> getFanOut() {
+//        return fanOut;
+//    }
 
     /**
      * Increment this neuron by increment.
@@ -157,41 +157,42 @@ public abstract class Neuron  {
         }
     }
 
-    /**
-     * Connect this neuron to target neuron via a weight.
-     *
-     * @param target the connnection between this neuron and a target neuron
-     */
-    void addTarget(final Synapse target) {
-        fanOut.add(target);
-    }
-
-    /**
-     * Remove this neuron from target neuron via a weight.
-     *
-     * @param target the connnection between this neuron and a target neuron
-     */
-    void removeTarget(final Synapse target) {
-        fanOut.remove(target);
-    }
-
-    /**
-     * Connect this neuron to source neuron via a weight.
-     *
-     * @param source the connnection between this neuron and a source neuron
-     */
-    void addSource(final Synapse source) {
-        fanIn.add(source);
-    }
-
-    /**
-     * Remove this neuron from source neuron via a weight.
-     *
-     * @param source the connnection between this neuron and a source neuron
-     */
-    void removeSource(final Synapse source) {
-        fanIn.remove(source);
-    }
+//    /**
+//     * Connect this neuron to target neuron via a weight.
+//     *
+//     * @param target the connnection between this neuron and a target neuron
+//     */
+//    void addTarget(final Synapse target) {
+//        fanOut.add(target);
+//    }
+//
+//    /**
+//     * Remove this neuron from target neuron via a weight.
+//     *
+//     * @param target the connnection between this neuron and a target neuron
+//     */
+//    void removeTarget(final Synapse target) {
+//        fanOut.remove(target);
+//    }
+//
+//    /**
+//     * Connect this neuron to source neuron via a weight.
+//     *
+//     * @param source the connnection between this neuron and a source neuron
+//     */
+//    void addSource(final Synapse source) {
+//        fanIn.add(source);
+//    }
+//
+//    /**
+//     * Remove this neuron from source neuron via a weight.
+//     *
+//     * @param source the connnection between this neuron and a source neuron
+//     */
+//    void removeSource(final Synapse source) {
+//        fanIn.remove(source);
+//    }
+    
 // not used.  Consider deleting?
 //    /**
 //     * Add specified amount of activation to this neuron.
@@ -207,11 +208,10 @@ public abstract class Neuron  {
      *
      * @return weighted input to this node
      */
-    public double getWeightedInputs() {
+    public double getWeightedInputs(Collection<SpikingSynapse> fanIn) {
         double wtdSum = inputValue;
         if (fanIn.size() > 0) {
-            for (int j = 0; j < fanIn.size(); j++) {
-                Synapse w = (Synapse) fanIn.get(j);
+            for (SpikingSynapse w : fanIn) {
                 if (w.isSendWeightedInput()) {
                     wtdSum += w.getValue();
                 }
@@ -389,11 +389,11 @@ public abstract class Neuron  {
      *
      * @return the sum of the incoming weights to this neuron.
      */
-    public double getSummedIncomingWeights() {
+    public double getSummedIncomingWeights(List<SpikingSynapse> fanIn) {
         double ret = 0;
 
         for (int i = 0; i < fanIn.size(); i++) {
-            Synapse tempRef = (Synapse) fanIn.get(i);
+            SpikingSynapse tempRef = (SpikingSynapse) fanIn.get(i);
             ret += tempRef.getStrength();
         }
 
@@ -407,10 +407,10 @@ public abstract class Neuron  {
      * @param threshold value above which neurons are considered "active."
      * @return number of "active" neurons
      */
-    public int getNumberOfActiveInputs(final int threshold) {
+    public int getNumberOfActiveInputs(List<SpikingSynapse> fanIn, final int threshold) {
         int numActiveLines = 0;
         // Determine number of active (greater than 0) input lines
-        for (Synapse incoming : fanIn) {
+        for (SpikingSynapse incoming : fanIn) {
             if (incoming.getSource().getActivation() > threshold) {
                 numActiveLines++;
             }
@@ -421,18 +421,18 @@ public abstract class Neuron  {
     /**
      * @return the average activation of neurons connecting to this neuron
      */
-    public double getAverageInput() {
-        return getTotalInput() / fanIn.size();
+    public double getAverageInput(List<SpikingSynapse> fanIn) {
+        return getTotalInput(fanIn) / ((double)fanIn.size());
     }
 
     /**
      * @return the total activation of neurons connecting to this neuron
      */
-    public double getTotalInput() {
+    public double getTotalInput(List<SpikingSynapse> fanIn) {
         double ret = 0;
 
         for (int i = 0; i < fanIn.size(); i++) {
-            ret += ((Synapse) fanIn.get(i)).getSource().getActivation();
+            ret += ((SpikingSynapse) fanIn.get(i)).getSource().getActivation();
         }
 
         return ret;
@@ -472,7 +472,7 @@ public abstract class Neuron  {
      * @param s the synapse to check.
      * @return true if synapse is connected, false otherwise.
      */
-    public boolean isConnected(final Synapse s) {
+    public boolean isConnected(List<SpikingSynapse> fanIn, List<SpikingSynapse> fanOut, final SpikingSynapse s) {
         return (fanIn.contains(s) || fanOut.contains(s));
      }
 
@@ -517,6 +517,6 @@ public abstract class Neuron  {
         this.clamped = clamped;
     }
 
-    abstract public void update(double dt);
+    abstract public void update(Collection<SpikingSynapse> fanIn, double dt);
 
 }

@@ -6,14 +6,17 @@ package automenta.netention.swing;
 
 import automenta.netention.swing.util.SwingWindow;
 import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -24,6 +27,7 @@ import javax.swing.UIManager;
 public class RunDemos extends JPanel {
 
     private JPanel demoPanel;
+    private final JTextArea descriptionArea;
 
     public static abstract interface Demo {
 
@@ -36,13 +40,21 @@ public class RunDemos extends JPanel {
     
 
 
-    public   RunDemos(Collection
-          < Demo> demos) {
+    public   RunDemos(Collection< Demo> demos) {
         super(new BorderLayout());
 
         JPanel buttonColumn = new JPanel();
-        buttonColumn.setLayout(new BoxLayout(buttonColumn, BoxLayout.PAGE_AXIS));
+        buttonColumn.setLayout(new GridBagLayout());
 
+        GridBagConstraints gc = new GridBagConstraints();
+
+        gc.gridx = 1;
+        gc.gridy = 1;
+        gc.weightx = 1.0;
+        gc.weighty = 0.1;
+        gc.fill = gc.BOTH;
+        gc.anchor = gc.NORTH;
+        
         for (final Demo d : demos) {
             final JButton b = new JButton(d.getName());
             b.addActionListener(new ActionListener() {
@@ -51,13 +63,21 @@ public class RunDemos extends JPanel {
                     setDemo(b, d);
                 }
             });
-            buttonColumn.add(b);
+            buttonColumn.add(b, gc);
+            gc.gridy++;
         }
 
-        add(buttonColumn, BorderLayout.WEST);
+        add(new JScrollPane(buttonColumn), BorderLayout.WEST);
+
+        descriptionArea = new JTextArea();
+        descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
+        descriptionArea.setRows(3);
+        descriptionArea.setFont(descriptionArea.getFont().deriveFont((float)(descriptionArea.getFont().getSize() * 1.5f)));
+        add(/*new JScrollPane(*/descriptionArea, BorderLayout.NORTH);
     }
 
-    public void setDemo(JButton b, Demo d) {
+    public void setDemo(JButton b, final Demo d) {
         if (demoPanel != null) {
             remove(demoPanel);
         }
@@ -69,6 +89,7 @@ public class RunDemos extends JPanel {
             SwingUtilities.invokeLater(new Runnable() {
 
                 @Override public void run() {
+                    descriptionArea.setText(d.getClass().getSimpleName() + ": " + d.getDescription());
                     add(demoPanel, BorderLayout.CENTER);
                     updateUI();
                 }
@@ -94,27 +115,29 @@ public class RunDemos extends JPanel {
 
     public static void main(String[] args) {
         List<Demo> demos = new LinkedList();
+        demos.add(new RunAbout());
         demos.add(new RunSelfBrowser());
         demos.add(new RunDetailEdit());
         demos.add(new RunFinanceGraph());
         demos.add(new RunSelfGraphPanel());
-        demos.add(new RunIzhiDemo());
+        demos.add(new RunSpikingGraph());
         demos.add(new RunDialogPanel());
-//        demos.add(new Demo("Self Browser", "..") {
-//            @Override public JPanel newPanel() {
-//                return RunSelfBrowser.newPanel();
-//            }
-//        });
-//        demos.add(new Demo("Detail Editing", "..") {
-//            @Override public JPanel newPanel() {
-//                return RunDetailEdit.newPanel();
-//            }
-//        });
-//        demos.add(new Demo("Hyperassociative Finance", "..") {
-//            @Override public JPanel newPanel() {
-//                return RunFinanceGraph.newPanel();
-//            }
-//        });
-        new SwingWindow(new RunDemos(demos), 900, 700, true);
+        //        demos.add(new Demo("Self Browser", "..") {
+        //            @Override public JPanel newPanel() {
+        //                return RunSelfBrowser.newPanel();
+        //            }
+        //        });
+        //        demos.add(new Demo("Detail Editing", "..") {
+        //            @Override public JPanel newPanel() {
+        //                return RunDetailEdit.newPanel();
+        //            }
+        //        });
+        //        demos.add(new Demo("Hyperassociative Finance", "..") {
+        //            @Override public JPanel newPanel() {
+        //                return RunFinanceGraph.newPanel();
+        //            }
+        //        });
+        SwingWindow w = new SwingWindow(new RunDemos(demos), 900, 700, true);
+        w.setTitle("Netention - Demos");
     }
 }

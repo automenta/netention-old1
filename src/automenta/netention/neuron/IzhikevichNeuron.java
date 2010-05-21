@@ -5,6 +5,8 @@
 
 package automenta.netention.neuron;
 
+import java.util.Collection;
+
 /*
  * Part of Simbrain--a java-based neural network kit
  * Copyright (C) 2005,2007 The Authors.  See http://www.simbrain.net/credits
@@ -61,8 +63,8 @@ public class IzhikevichNeuron extends SpikingNeuron {
     /**
      * Updates the neuron.
      */
-    public void update(double dt) {
-        double inputs = getWeightedInputs();
+    public void update(Collection<SpikingSynapse> fanIn, double dt) {
+        double inputs = getWeightedInputs(fanIn);
 
         if (addNoise) {
             //inputs += noiseGenerator.getRandom();

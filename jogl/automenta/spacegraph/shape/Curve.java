@@ -90,6 +90,16 @@ public class Curve extends Spatial implements Drawable {
 
     }
 
+    public void setLineWidth(float lineWidth) {
+        this.lineWidth = lineWidth;
+    }
+
+    public float getLineWidth() {
+        return lineWidth;
+    }
+
+    
+
 
 //    @Override public void draw(GL2 gl) {
 //        gl.glColor3f(1f, 1f, 1f);

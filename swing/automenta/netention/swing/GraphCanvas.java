@@ -4,13 +4,7 @@
  */
 package automenta.netention.swing;
 
-import automenta.netention.Link;
-import automenta.netention.Node;
-import automenta.netention.graph.ValueEdge;
-import automenta.netention.impl.MemorySelf;
-import automenta.netention.linker.MetadataGrapher;
 import automenta.spacegraph.SGCanvas;
-import automenta.spacegraph.SGWindow;
 import automenta.spacegraph.gleem.linalg.Vec2f;
 import automenta.spacegraph.gleem.linalg.Vec3f;
 import automenta.spacegraph.shape.Curve;
@@ -19,8 +13,6 @@ import automenta.spacegraph.shape.WideIcon;
 import com.sun.opengl.util.awt.TextRenderer;
 import com.syncleus.dann.graph.DirectedEdge;
 import com.syncleus.dann.graph.Graph;
-import com.syncleus.dann.graph.MutableBidirectedGraph;
-import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
 import com.syncleus.dann.graph.drawing.hyperassociativemap.HyperassociativeMap;
 import com.syncleus.dann.math.Vector;
 import java.awt.Color;
@@ -33,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.media.opengl.GL2;
-import javolution.context.ConcurrentContext;
 
 /**
  *
@@ -54,6 +45,8 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends SGCanvas {
     public final HyperassociativeMap<Graph<N, E>, N> hmap;
     private TextRenderer tr;
 
+    protected final Map<E, Curve> edgeLines = new HashMap<E, Curve>();
+    
     public GraphCanvas(Graph<N, E> graph, int dimensions) {
         super();
 
@@ -90,6 +83,7 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends SGCanvas {
                 }
             };
 
+            edgeLines.put(e, c);
             add(c);
         }
 
