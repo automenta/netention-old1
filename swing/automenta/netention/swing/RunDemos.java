@@ -29,6 +29,17 @@ public class RunDemos extends JPanel {
     private JPanel demoPanel;
     private final JTextArea descriptionArea;
 
+    static {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            //UIManager.setLookAndFeel(new SubstanceMagellanLookAndFeel());
+            //UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
+            //UIManager.setLookAndFeel(new SubstanceMistAquaLookAndFeel());
+        } catch (Exception ex) {
+            System.err.println(ex);
+        }
+    }
+
     public static abstract interface Demo {
 
         public String getName();
@@ -37,10 +48,8 @@ public class RunDemos extends JPanel {
 
         abstract public JPanel newPanel();
     }
-    
 
-
-    public   RunDemos(Collection< Demo> demos) {
+    public RunDemos(Collection<Demo> demos) {
         super(new BorderLayout());
 
         JPanel buttonColumn = new JPanel();
@@ -54,7 +63,7 @@ public class RunDemos extends JPanel {
         gc.weighty = 0.1;
         gc.fill = gc.BOTH;
         gc.anchor = gc.NORTH;
-        
+
         for (final Demo d : demos) {
             final JButton b = new JButton(d.getName());
             b.addActionListener(new ActionListener() {
@@ -72,8 +81,8 @@ public class RunDemos extends JPanel {
         descriptionArea = new JTextArea();
         descriptionArea.setLineWrap(true);
         descriptionArea.setWrapStyleWord(true);
-        descriptionArea.setRows(3);
-        descriptionArea.setFont(descriptionArea.getFont().deriveFont((float)(descriptionArea.getFont().getSize() * 1.5f)));
+        //descriptionArea.setRows(3);
+        descriptionArea.setFont(descriptionArea.getFont().deriveFont((float) (descriptionArea.getFont().getSize() * 1.5f)));
         add(/*new JScrollPane(*/descriptionArea, BorderLayout.NORTH);
     }
 
@@ -111,7 +120,6 @@ public class RunDemos extends JPanel {
             System.err.println(ex);
         }
     }
-    
 
     public static void main(String[] args) {
         List<Demo> demos = new LinkedList();

@@ -19,6 +19,7 @@ public class Curve extends Spatial implements Drawable {
     int bezierPartitions = 4;
     public float[] ctrlPoints;
     private final int degree;
+    private float cr, cg, cb;
     //private final TextRect labelRect;
 
     public Curve(Rect aRect, Rect bRect, int degree) {
@@ -26,6 +27,7 @@ public class Curve extends Spatial implements Drawable {
         this.aRect = aRect;
         this.bRect = bRect;
         this.degree = degree;
+        cr = cg = cb = 1.0f;
     }
 
     @Override
@@ -78,6 +80,8 @@ public class Curve extends Spatial implements Drawable {
 
         gl.glEnable(gl.GL_LINE_SMOOTH);
         gl.glLineWidth(lineWidth);
+
+        gl.glColor3f(cr, cg, cb);
         
         gl.glBegin(gl.GL_LINE_STRIP);
         {
@@ -96,6 +100,12 @@ public class Curve extends Spatial implements Drawable {
 
     public float getLineWidth() {
         return lineWidth;
+    }
+
+    public void setColor(float cr, float cg, float cb) {
+        this.cr = cr;
+        this.cg = cg;
+        this.cb = cb;
     }
 
     

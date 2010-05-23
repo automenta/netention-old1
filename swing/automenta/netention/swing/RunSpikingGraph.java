@@ -41,7 +41,7 @@ import javolution.context.ConcurrentContext;
  */
 public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends SGCanvas implements Demo {
 
-    float neuronDT = 0.01f;
+    float neuronDT = 0.02f;
 
     public static void main(String[] args) {
 
@@ -119,6 +119,10 @@ public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends SGCanvas impl
                 for (SpikingSynapse s : edgeLines.keySet()) {
                     Curve c = edgeLines.get(s);
                     c.setLineWidth((float) Math.abs(s.getStrength()));
+                    float cr = (float)(0.1f + Math.abs(s.getStrength())/2.0f);
+                    float cg = cr;
+                    float cb = cr;
+                    c.setColor(cr, cg, cb);
                 }
 
                 super.display(g);
@@ -270,11 +274,11 @@ public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends SGCanvas impl
 
     @Override
     public String getName() {
-        return "Hyperassociative Finance";
+        return "Spiking Neural Network";
     }
 
     @Override
     public String getDescription() {
-        return "..";
+        return ".." /* izhicheck network intro */;
     }
 }

@@ -10,6 +10,7 @@ import automenta.netention.dialog.StepWatcher;
 import automenta.netention.dialog.step.MessageStep;
 import automenta.netention.dialog.step.MessageStep.Choice;
 import automenta.netention.swing.widget.DialogPanel;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -30,6 +31,9 @@ public class MessageStepPanel extends AbstractStepPanel implements StepWatcher {
         this.message = messageStep;
 
         message.addStepWatcher(this);
+
+        setMinimumSize(new Dimension(300, 200));
+        setPreferredSize(new Dimension(300, 200));
 
         refresh();
     }

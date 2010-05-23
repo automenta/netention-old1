@@ -117,8 +117,6 @@ public class DialogPanel extends JPanel {
 
         if (step instanceof MessageStep) {
             n = new MessageStepPanel(this, (MessageStep) step);
-            n.setMinimumSize(new Dimension(300, 200));
-            n.setPreferredSize(new Dimension(300, 200));
         } else {
             n = new JLabel(step.toString());
         }
