@@ -4,12 +4,6 @@
  */
 package automenta.netention.swing;
 
-import automenta.netention.neuron.IzhikevichNeuron;
-import automenta.netention.neuron.RealtimeNeuron;
-import automenta.netention.neuron.SpikingNeuralNetwork;
-import automenta.netention.neuron.SpikingNeuron;
-import automenta.netention.neuron.SpikingSynapse;
-import automenta.netention.neuron.SpikingSynapse.ShortTermPlasticitySynapse;
 import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
@@ -20,6 +14,14 @@ import automenta.spacegraph.shape.Curve;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
 import com.syncleus.dann.graph.DirectedEdge;
+import com.syncleus.dann.neural.realtime.AbstractRealtimeBrain;
+import com.syncleus.dann.neural.realtime.RealtimeBrain;
+import com.syncleus.dann.neural.realtime.RealtimeNeuron;
+import com.syncleus.dann.neural.realtime.RealtimeSynapse;
+import com.syncleus.dann.neural.realtime.neuron.IzhikevichNeuron;
+import com.syncleus.dann.neural.realtime.neuron.SpikingNeuron;
+import com.syncleus.dann.neural.realtime.synapse.ShortTermPlasticitySynapse;
+import com.syncleus.dann.neural.realtime.synapse.response.JumpAndDecay;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -44,8 +46,7 @@ public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends SGCanvas impl
     float neuronDT = 0.02f;
 
     public static void main(String[] args) {
-
-
+        
         SwingWindow sw = new SwingWindow(new RunSpikingGraph().newPanel(), 400, 400, true);
 
     }
@@ -61,7 +62,7 @@ public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends SGCanvas impl
             this.historySize = historySize;
         }
 
-        public void update(SpikingNeuralNetwork n) {
+        public void update(RealtimeBrain n) {
             for (RealtimeNeuron rn : n.getNodes()) {
                 double a = rn.getActivation();
                 LinkedList<Double> ll = activation.get(rn);
@@ -83,10 +84,10 @@ public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends SGCanvas impl
     public JPanel newPanel() {
         ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
 
-        final SpikingNeuralNetwork spiker = new SpikingNeuralNetwork();
+        final AbstractRealtimeBrain spiker = new AbstractRealtimeBrain();
         final ActivationHistory activationHistory = new ActivationHistory(120);
 
-        final int numNeurons = 66;
+        final int numNeurons = 156;
         //int numSynapses = 4;
         {
             for (int n = 0; n < numNeurons; n++) {
@@ -96,10 +97,10 @@ public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends SGCanvas impl
             for (int a = 0; a < numNeurons; a++) {
                 for (int b = 0; b < numNeurons; b++) {
                     if (a != b) {
-                        if (Math.random() < 0.1) {
+                        if (Math.random() < 0.01) {
                             RealtimeNeuron s = n.get(a);
                             RealtimeNeuron t = n.get(b);
-                            spiker.addSynapse(new ShortTermPlasticitySynapse(s, t));
+                            spiker.addSynapse(new ShortTermPlasticitySynapse(s, t, new JumpAndDecay(), 1.0));
                         }
                     }
                 }
@@ -110,13 +111,13 @@ public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends SGCanvas impl
         int numDimensions = 3;
 
         System.out.println(spiker.getNodes().size() + " : " + spiker.getEdges().size());
-        final GraphCanvas<RealtimeNeuron, SpikingSynapse> graphCanvas = new GraphCanvas<RealtimeNeuron, SpikingSynapse>(spiker, numDimensions) {
+        final GraphCanvas<RealtimeNeuron, RealtimeSynapse> graphCanvas = new GraphCanvas<RealtimeNeuron, RealtimeSynapse>(spiker, numDimensions) {
 
             float t = 0;
 
             @Override
             public void display(GLAutoDrawable g) {
-                for (SpikingSynapse s : edgeLines.keySet()) {
+                for (RealtimeSynapse s : edgeLines.keySet()) {
                     Curve c = edgeLines.get(s);
                     c.setLineWidth((float) Math.abs(s.getStrength()));
                     float cr = (float)(0.1f + Math.abs(s.getStrength())/2.0f);
@@ -208,7 +209,7 @@ public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends SGCanvas impl
             @Override
             protected void updateRect(RealtimeNeuron n, Rect r) {
                 final Vec3f green = new Vec3f(Color.GREEN);
-                final Vec3f blue = new Vec3f(Color.BLUE);
+                final Vec3f blue = new Vec3f(Color.BLACK);
                 if (n instanceof SpikingNeuron) {
                     SpikingNeuron sn = (SpikingNeuron) n;
                     float size = Math.abs(((float) sn.getActivation()) / 300.0f);

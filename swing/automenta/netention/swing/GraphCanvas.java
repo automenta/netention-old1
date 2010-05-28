@@ -5,6 +5,7 @@
 package automenta.netention.swing;
 
 import automenta.spacegraph.SGCanvas;
+import automenta.spacegraph.SGTouchRay;
 import automenta.spacegraph.gleem.linalg.Vec2f;
 import automenta.spacegraph.gleem.linalg.Vec3f;
 import automenta.spacegraph.shape.Curve;
@@ -52,7 +53,7 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends SGCanvas {
 
         this.sg = graph;
 
-        hmap = new HyperassociativeMap(sg, dimensions, 0.05, true);
+        hmap = new HyperassociativeMap(sg, dimensions, 0.01, false);
 
         //tr = TextRect.newTextRenderer(new Font("Arial", Font.PLAIN, 72));
 
@@ -86,6 +87,7 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends SGCanvas {
             edgeLines.put(e, c);
             add(c);
         }
+
 
     }
 
@@ -121,6 +123,10 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends SGCanvas {
         }
     }
 
+    public void mouseMoved(MouseEvent e)    {
+        super.mouseMoved(e);
+    }
+
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
@@ -133,7 +139,7 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends SGCanvas {
     public void mouseWheelMoved(MouseWheelEvent e) {
         super.mouseWheelMoved(e);
 
-        Vec3f delta = new Vec3f(0, 0, e.getWheelRotation() * 1.5f);
+        Vec3f delta = new Vec3f(0, 0, e.getWheelRotation() * 4.0f);
         targetPos.add(delta);
         targetTarget.add(delta);
     }

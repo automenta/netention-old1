@@ -15,11 +15,16 @@ import javax.media.opengl.GL2;
 public class WideIcon extends Rect {
 
     private final TextRect textRect;
+    int MAX_LABEL_LENGTH = 32;
     
     public WideIcon(String label, Vec3f backgroundColor, Vec3f textColor) {
         super();
 
         setBackgroundColor(backgroundColor);
+
+        if (label.length() > MAX_LABEL_LENGTH) {
+            label = label.substring(0, MAX_LABEL_LENGTH);
+        }
 
         textRect = new TextRect(label) {
             @Override public Vec3f getCenter() {
