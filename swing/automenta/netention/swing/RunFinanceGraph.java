@@ -14,9 +14,9 @@ import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
 import automenta.netention.plugin.finance.PublicBusiness.IntervalType;
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
-import automenta.spacegraph.SGCanvas;
-import automenta.spacegraph.SGPanel;
-import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.Surface;
+import automenta.spacegraph.impl.SGPanel;
+import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
 import com.syncleus.dann.graph.DirectedEdge;
@@ -37,7 +37,7 @@ import javolution.context.ConcurrentContext;
  *
  * @author seh
  */
-public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends SGCanvas implements Demo {
+public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends Surface implements Demo {
 
 
 

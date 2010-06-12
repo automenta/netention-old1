@@ -6,7 +6,7 @@ package automenta.netention.swing;
 
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
-import com.syncleus.dann.math.statistics.MarkovChain;
+import com.syncleus.dann.math.statistics.SimpleMarkovChain;
 import com.syncleus.dann.math.statistics.SimpleMarkovChainEvidence;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -43,6 +43,7 @@ public class RunTextCutup extends JPanel implements Demo {
     private Set<String> known;
     int maxKnown = 10;
     int order = 2;
+    double orderWeights[] = { 1, 0.5, 0.25, 0.15, 0.05, 0.01 };
 
     public RunTextCutup() {
         super(new BorderLayout(4, 4));
@@ -202,6 +203,8 @@ public class RunTextCutup extends JPanel implements Demo {
         List<String> seq = getSequence(tokens);
         for (String s : seq) {
             sme.learnStep(s);
+            //if (s.equals(".") || (s.equals("?")) || (s.equals("!")))
+                //sme.newChain();
         }
         double learnTime = (System.nanoTime() - learnStart)/1e9;
         System.out.println("Learning: " + learnTime + " #: " + seq.size());
@@ -210,7 +213,9 @@ public class RunTextCutup extends JPanel implements Demo {
 
         try {
             long markovStart = System.nanoTime();
-            MarkovChain<String> mc = sme.getMarkovChain();
+            
+            //TODO the cast will be unnecessary when MarkovChain supports weighted transition generation
+            SimpleMarkovChain<String> mc = (SimpleMarkovChain)sme.getMarkovChain();
             double markovChainGenerationTime = (System.nanoTime() - markovStart)/1e9;
             System.out.println("Markov Chain: " + markovChainGenerationTime);
             
@@ -233,6 +238,7 @@ public class RunTextCutup extends JPanel implements Demo {
             }
         } catch (Exception e) {
             output += "\n" + e.toString();
+            e.printStackTrace();
 
 
         }

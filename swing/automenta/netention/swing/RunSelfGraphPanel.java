@@ -11,8 +11,8 @@ import automenta.netention.impl.MemorySelf;
 import automenta.netention.linker.MetadataGrapher;
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
-import automenta.spacegraph.SGCanvas;
-import automenta.spacegraph.SGPanel;
+import automenta.spacegraph.Surface;
+import automenta.spacegraph.impl.SGPanel;
 import com.syncleus.dann.graph.DirectedEdge;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
@@ -25,7 +25,7 @@ import javolution.context.ConcurrentContext;
  *
  * @author seh
  */
-public class RunSelfGraphPanel  extends SGCanvas implements Demo {
+public class RunSelfGraphPanel  extends Surface implements Demo {
 
 
     public static void main(String[] args) {        

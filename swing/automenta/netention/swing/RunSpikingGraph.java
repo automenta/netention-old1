@@ -7,9 +7,9 @@ package automenta.netention.swing;
 import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
-import automenta.spacegraph.SGCanvas;
-import automenta.spacegraph.SGPanel;
-import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.Surface;
+import automenta.spacegraph.impl.SGPanel;
+import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.shape.Curve;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
@@ -41,7 +41,7 @@ import javolution.context.ConcurrentContext;
  *
  * @author seh
  */
-public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends SGCanvas implements Demo {
+public class RunSpikingGraph<N, E extends DirectedEdge<N>> extends Surface implements Demo {
 
     float neuronDT = 0.02f;
 

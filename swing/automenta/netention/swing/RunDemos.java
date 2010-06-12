@@ -5,7 +5,9 @@
 package automenta.netention.swing;
 
 import automenta.netention.swing.util.SwingWindow;
+import automenta.spacegraph.demo.DemoSurface;
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -28,17 +30,6 @@ public class RunDemos extends JPanel {
 
     private JPanel demoPanel;
     private final JTextArea descriptionArea;
-
-    static {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            //UIManager.setLookAndFeel(new SubstanceMagellanLookAndFeel());
-            //UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
-            //UIManager.setLookAndFeel(new SubstanceMistAquaLookAndFeel());
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-    }
 
     public static abstract interface Demo {
 
@@ -110,19 +101,8 @@ public class RunDemos extends JPanel {
 
     }
 
-    static {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            //UIManager.setLookAndFeel(new SubstanceMagellanLookAndFeel());
-            //UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
-            //UIManager.setLookAndFeel(new SubstanceMistAquaLookAndFeel());
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-    }
-
     public static void main(String[] args) {
-        List<Demo> demos = new LinkedList();
+        final List<Demo> demos = new LinkedList();
         demos.add(new RunAbout());
         demos.add(new RunSelfBrowser());
         demos.add(new RunDetailEdit());
@@ -130,6 +110,9 @@ public class RunDemos extends JPanel {
         demos.add(new RunSelfGraphPanel());
         demos.add(new RunSpikingGraph());
         demos.add(new RunDialogPanel());
+        demos.add(new RunGraphMix());
+        demos.add(new DemoSurface());
+        demos.add(new RunTextCutup());
         //        demos.add(new Demo("Self Browser", "..") {
         //            @Override public JPanel newPanel() {
         //                return RunSelfBrowser.newPanel();
@@ -145,7 +128,26 @@ public class RunDemos extends JPanel {
         //                return RunFinanceGraph.newPanel();
         //            }
         //        });
-        SwingWindow w = new SwingWindow(new RunDemos(demos), 900, 700, true);
-        w.setTitle("Netention - Demos");
+
+        EventQueue.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    //UIManager.setLookAndFeel(new SubstanceMagellanLookAndFeel());
+                    //UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
+                    //UIManager.setLookAndFeel(new SubstanceMistAquaLookAndFeel());
+
+                    UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                } catch (Exception ex) {
+                    System.err.println(ex);
+                }
+                SwingWindow w = new SwingWindow(new RunDemos(demos), 900, 700, true);
+
+                w.setTitle("Netention - Demos");
+            }
+        });
+
     }
 }

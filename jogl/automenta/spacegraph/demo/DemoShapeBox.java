@@ -4,10 +4,10 @@
  */
 package automenta.spacegraph.demo;
 
-import automenta.spacegraph.SGCanvas;
-import automenta.spacegraph.SGWindow;
-import automenta.spacegraph.gleem.linalg.Vec3f;
-import automenta.spacegraph.layer.MouseLayer;
+import automenta.spacegraph.DefaultSurface;
+import automenta.spacegraph.impl.SGWindow;
+import automenta.spacegraph.math.linalg.Vec3f;
+import automenta.spacegraph.layer.PointerLayer;
 import automenta.spacegraph.shape.Box;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -17,7 +17,7 @@ import javax.media.opengl.GL2;
  *
  * @author seh
  */
-public class DemoShapeBox extends SGCanvas {
+public class DemoShapeBox extends DefaultSurface {
 
     private float textScaleFactor;
     float xAng = 0;
@@ -28,7 +28,7 @@ public class DemoShapeBox extends SGCanvas {
         super();
 
 
-        add(new MouseLayer(this));
+        add(new PointerLayer(this));
 
         box = new Box();
         add(box);

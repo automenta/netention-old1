@@ -163,13 +163,6 @@ public class RunDetailEdit implements Demo {
 
             @Override
             public void run() {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch (Exception ex) {
-                    System.err.println(ex);
-                }
-
-
                 JPanel p = new RunDetailEdit().newPanel();
 
                 SwingWindow window = new SwingWindow(p, 900, 800, true);

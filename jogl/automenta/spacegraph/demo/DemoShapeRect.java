@@ -4,9 +4,9 @@
  */
 package automenta.spacegraph.demo;
 
-import automenta.spacegraph.SGCanvas;
-import automenta.spacegraph.SGWindow;
-import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.DefaultSurface;
+import automenta.spacegraph.impl.SGWindow;
+import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.shape.Rect;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -16,7 +16,7 @@ import javax.media.opengl.GL2;
  *
  * @author seh
  */
-public class DemoShapeRect extends SGCanvas {
+public class DemoShapeRect extends DefaultSurface {
 
     float xAng = 0;
     float yAng = 0;

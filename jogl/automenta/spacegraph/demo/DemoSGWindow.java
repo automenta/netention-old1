@@ -8,7 +8,7 @@ import automenta.spacegraph.demo.jogl.FPSCounter;
 import automenta.spacegraph.demo.jogl.SystemTime;
 import automenta.spacegraph.demo.jogl.Time;
 import automenta.spacegraph.SG;
-import automenta.spacegraph.SGWindow;
+import automenta.spacegraph.impl.SGWindow;
 import com.sun.opengl.util.awt.TextRenderer;
 import java.awt.Font;
 import java.awt.event.KeyEvent;

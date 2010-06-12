@@ -4,10 +4,9 @@
  */
 package automenta.netention.swing;
 
-import automenta.spacegraph.SGCanvas;
-import automenta.spacegraph.SGTouchRay;
-import automenta.spacegraph.gleem.linalg.Vec2f;
-import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.DefaultSurface;
+import automenta.spacegraph.math.linalg.Vec2f;
+import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.shape.Curve;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
@@ -31,7 +30,7 @@ import javax.media.opengl.GL2;
  *
  * @author seh
  */
-public class GraphCanvas<N, E extends DirectedEdge<N>> extends SGCanvas {
+public class GraphCanvas<N, E extends DirectedEdge<N>> extends DefaultSurface {
 
     private float textScaleFactor;
     float xAng = 0;
@@ -60,7 +59,7 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends SGCanvas {
         for (N s : sg.getNodes()) {
             Rect box = newNodeRect(s);
             boxes.put(s, box);
-            add(box);
+            this.add(box);
         }
         for (E e : sg.getEdges()) {
             Rect aBox = boxes.get(e.getSourceNode());

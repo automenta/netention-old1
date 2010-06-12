@@ -4,7 +4,7 @@
  */
 package automenta.spacegraph.shape;
 
-import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.math.linalg.Vec3f;
 import javax.media.opengl.GL2;
 
 /**

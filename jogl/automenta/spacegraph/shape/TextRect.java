@@ -4,7 +4,7 @@
  */
 package automenta.spacegraph.shape;
 
-import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.math.linalg.Vec3f;
 import com.sun.opengl.util.awt.TextRenderer;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;

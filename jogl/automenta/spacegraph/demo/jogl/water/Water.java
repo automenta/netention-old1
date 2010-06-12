@@ -33,8 +33,8 @@
 
 package automenta.spacegraph.demo.jogl.water;
 
-import automenta.spacegraph.gleem.linalg.Mat4f;
-import automenta.spacegraph.gleem.linalg.Rotf;
+import automenta.spacegraph.math.linalg.Mat4f;
+import automenta.spacegraph.math.linalg.Rotf;
 import com.sun.opengl.util.FileUtil;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureData;

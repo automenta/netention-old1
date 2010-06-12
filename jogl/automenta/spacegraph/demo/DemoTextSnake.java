@@ -4,9 +4,9 @@
  */
 package automenta.spacegraph.demo;
 
-import automenta.spacegraph.SGCanvas;
-import automenta.spacegraph.SGWindow;
-import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.Surface;
+import automenta.spacegraph.impl.SGWindow;
+import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.shape.TextRect;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
  *
  * @author seh
  */
-public class DemoTextSnake extends SGCanvas {
+public class DemoTextSnake extends Surface {
 
     private List<TextRect> tr = new LinkedList();
     float o = 0, ov = 0;

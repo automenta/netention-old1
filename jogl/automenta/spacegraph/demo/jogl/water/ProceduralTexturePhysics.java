@@ -34,12 +34,12 @@ package automenta.spacegraph.demo.jogl.water;
 
 import automenta.spacegraph.SG;
 import automenta.spacegraph.SG.SGListener;
-import automenta.spacegraph.gleem.BSphere;
-import automenta.spacegraph.gleem.BSphereProvider;
-import automenta.spacegraph.gleem.CameraParameters;
-import automenta.spacegraph.gleem.ExaminerViewer;
-import automenta.spacegraph.gleem.ManipManager;
-import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.math.BSphere;
+import automenta.spacegraph.math.BSphereProvider;
+import automenta.spacegraph.math.CameraParameters;
+import automenta.spacegraph.math.ExaminerViewer;
+import automenta.spacegraph.math.ManipManager;
+import automenta.spacegraph.math.linalg.Vec3f;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.KeyAdapter;

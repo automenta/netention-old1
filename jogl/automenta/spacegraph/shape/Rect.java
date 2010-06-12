@@ -5,7 +5,7 @@
 
 package automenta.spacegraph.shape;
 
-import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.math.linalg.Vec3f;
 import javax.media.opengl.GL2;
 
 /**
@@ -14,10 +14,29 @@ import javax.media.opengl.GL2;
  */
 public class Rect extends Spatial implements Drawable {
 
-    Vec3f backgroundColor = new Vec3f(1f, 0f, 1f);
+    Vec3f backgroundColor = new Vec3f(0.5f, 0.5f, 0.5f);
+
+    boolean filled = true;
 
     public Rect() {
         super();
+    }
+
+    public void setFilled(boolean filled) {
+        this.filled = filled;
+    }
+
+    public boolean isFilled() {
+        return filled;
+    }
+
+    public Rect color(float r, float g, float b) {
+        return color(new Vec3f(r, g, b));
+    }
+
+    public Rect color(Vec3f c) {
+        setBackgroundColor(c);
+        return this;
     }
 
     public void setBackgroundColor(Vec3f backgroundColor) {
@@ -30,32 +49,34 @@ public class Rect extends Spatial implements Drawable {
     
 
     public void draw(GL2 gl) {
-        gl.glPushMatrix();
+        if (isFilled()) {
+            gl.glPushMatrix();
 
-        transform(gl);
+            transform(gl);
 
 
-        final float w = 1f;
-        final float h = 1f;
+            final float w = 0.5f;
+            final float h = 0.5f;
 
-        // Six faces of cube
-        // Top face
-        gl.glColor3f(backgroundColor.x(), backgroundColor.y(), backgroundColor.z());
-        gl.glBegin(GL2.GL_QUADS);
-        {
-            //Front
-                //gl.glNormal3f(0, 0, 1); {
-                    gl.glVertex3f(-w, -h, 0);
-                    gl.glVertex3f(w, -h, 0);
-                    gl.glVertex3f(w, h, 0);
-                    gl.glVertex3f(-w, h, 0);
-                //}
+            // Six faces of cube
+            // Top face
+            gl.glColor3f(backgroundColor.x(), backgroundColor.y(), backgroundColor.z());
+            gl.glBegin(GL2.GL_QUADS);
+            {
+                //Front
+                    //gl.glNormal3f(0, 0, 1); {
+                        gl.glVertex3f(-w, -h, 0);
+                        gl.glVertex3f(w, -h, 0);
+                        gl.glVertex3f(w, h, 0);
+                        gl.glVertex3f(-w, h, 0);
+                    //}
+            }
+            gl.glEnd();
+
+            drawFront(gl);
+
+            gl.glPopMatrix();
         }
-        gl.glEnd();
-
-        drawFront(gl);
-
-        gl.glPopMatrix();
     }
 
     /** draw within -1..+1 for x, y */

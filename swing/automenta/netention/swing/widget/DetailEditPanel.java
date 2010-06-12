@@ -13,7 +13,6 @@ import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
-import automenta.netention.graph.Pair;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.BoolPropertyPanel;
@@ -35,6 +34,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -73,7 +74,7 @@ abstract public class DetailEditPanel extends JPanel {
     private final DetailMenuBar menuBar;
     private List<PropertyOptionPanel> optionPanels = new LinkedList();
     long updateDelayMS = 650;
-    private final JTextArea nameEdit;
+    private JTextArea nameEdit;
     //Tooltips
     final static String itsATooltip = "Selects Patterns for this Detail";
     final static String realOrImaginary = "Real details describe things that actually exist. \nImaginary details describe hypothetical or desired things.";
@@ -172,30 +173,7 @@ abstract public class DetailEditPanel extends JPanel {
             addButton(imaginaryButton);
 
 
-            if (isEditable()) {
-                JMenu t = new JMenu(/*"It's a..."*/);
-                t.setIcon(Icons.getIcon("addPattern"));
-                t.setToolTipText(itsATooltip);
-                for (String pid : self.getAvailablePatterns(detail)) {
-                    final Pattern p = self.getPatterns().get(pid);
-                    JMenuItem ti = new JMenuItem(p.getID());
-                    ti.setIcon(Icons.getPatternIcon(p));
-                    ti.addActionListener(new ActionListener() {
 
-                        @Override public void actionPerformed(ActionEvent e) {
-                            SwingUtilities.invokeLater(new Runnable() {
-
-                                @Override public void run() {
-                                    addPattern(p);
-                                }
-                            });
-                        }
-                    });
-                    t.add(ti);
-                }
-                add(t);
-            }
-            
 //            if (detail.getPatterns().size()!=0)
 //                add(new JSeparator(JSeparator.VERTICAL));
 
@@ -223,8 +201,7 @@ abstract public class DetailEditPanel extends JPanel {
                             });
                             numItems++;
                             j.add(ji);
-                        }
-                        else {
+                        } else {
                             numExists++;
                         }
                     }
@@ -261,6 +238,29 @@ abstract public class DetailEditPanel extends JPanel {
                 add(j);
 
 
+            }
+            if (isEditable()) {
+                JMenu t = new JMenu(/*"It's a..."*/);
+                t.setIcon(Icons.getIcon("addPattern"));
+                t.setToolTipText(itsATooltip);
+                for (String pid : self.getAvailablePatterns(detail)) {
+                    final Pattern p = self.getPatterns().get(pid);
+                    JMenuItem ti = new JMenuItem(p.getID());
+                    ti.setIcon(Icons.getPatternIcon(p));
+                    ti.addActionListener(new ActionListener() {
+
+                        @Override public void actionPerformed(ActionEvent e) {
+                            SwingUtilities.invokeLater(new Runnable() {
+
+                                @Override public void run() {
+                                    addPattern(p);
+                                }
+                            });
+                        }
+                    });
+                    t.add(ti);
+                }
+                add(t);
             }
 
         }
@@ -327,18 +327,13 @@ abstract public class DetailEditPanel extends JPanel {
 //
 //            header.add(menuBar, BorderLayout.NORTH);
 //        }
-        
-        nameEdit = new JTextArea(d.getName());
-        nameEdit.setEditable(isEditable());
-        nameEdit.setOpaque(isEditable());
-        nameEdit.setWrapStyleWord(true);
-        nameEdit.setLineWrap(true);
-        nameEdit.setFont(nameEdit.getFont().deriveFont(nameEdit.getFont().getSize2D() * 1.7f));
-        add(new JScrollPane(nameEdit), gc);
+
+        add(menuBar, gc);
 
         gc.gridy++;
 
-        add(menuBar, gc);
+
+
 
         {
             gc.weightx = 1.0;
@@ -346,7 +341,7 @@ abstract public class DetailEditPanel extends JPanel {
             gc.fill = gc.BOTH;
             gc.anchor = gc.NORTHWEST;
             gc.gridx = 1;
-            gc.gridy = 3;
+            //gc.gridy = 3;
         }
 
 
@@ -490,11 +485,14 @@ abstract public class DetailEditPanel extends JPanel {
         }
     }
 
+    protected void setDetailName(String s) {
+        detail.setName(s);
+    }
+
     public void setDetail(Detail d) {
         this.detail = d;
         sentences.removeAll();
 
-        nameEdit.setText(d.getName());
 
         menuBar.refresh();
 
@@ -507,15 +505,44 @@ abstract public class DetailEditPanel extends JPanel {
 
             gc.weightx = 1.0;
             gc.weighty = 0.0;
-            gc.fill = gc.NONE;
             gc.anchor = gc.NORTHWEST;
             gc.gridx = 1;
             gc.gridy = 1;
             gc.ipadx = 4;
             gc.ipady = 4;
-            gc.insets = new Insets(4,4,4,4);
+            gc.insets = new Insets(4, 4, 4, 4);
 
             optionPanels.clear();
+
+            gc.fill = gc.HORIZONTAL;
+            
+            nameEdit = new JTextArea(d.getName());
+            nameEdit.setEditable(isEditable());
+            nameEdit.setOpaque(isEditable());
+            nameEdit.addKeyListener(new KeyListener() {
+
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    setDetailName(nameEdit.getText());
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    setDetailName(nameEdit.getText());
+                }
+
+                @Override
+                public void keyReleased(KeyEvent e) {
+                    setDetailName(nameEdit.getText());
+                }
+
+            });
+            //nameEdit.setWrapStyleWord(true);
+            //nameEdit.setLineWrap(true);
+            //nameEdit.setFont(nameEdit.getFont().deriveFont(nameEdit.getFont().getSize2D() * 1.7f));
+            sentences.add(nameEdit, gc);
+
+            gc.fill = gc.NONE;
 
             for (final PropertyValue pv : detail.getProperties()) {
                 gc.gridy++;
@@ -523,7 +550,7 @@ abstract public class DetailEditPanel extends JPanel {
                 if (nextLine instanceof PropertyOptionPanel) {
                     PropertyOptionPanel pop = (PropertyOptionPanel) nextLine;
                     final Property property = self.getProperty(pv.getProperty());
-                    
+
                     if (isEditable()) {
                         JPopupMenu popup = new JPopupMenu();
                         JMenuItem removeItem = new JMenuItem("Remove");
@@ -586,7 +613,7 @@ abstract public class DetailEditPanel extends JPanel {
         } else if (prop instanceof StringProp) {
             return new StringPropertyPanel(self, detail, pv, editable);
         } else if (prop instanceof SelectionProp) {
-            return new SelectionPropertyPanel(self, detail, (SelectionProp)prop, pv, editable);
+            return new SelectionPropertyPanel(self, detail, (SelectionProp) prop, pv, editable);
         } else if (prop instanceof BoolProp) {
             return new BoolPropertyPanel(self, detail, pv, editable);
         }
@@ -660,8 +687,7 @@ abstract public class DetailEditPanel extends JPanel {
     }
 
     /** writes contents of UI widgets to the detail */
-    protected synchronized void updateDetail() {
-        detail.setName(nameEdit.getText());
+    protected synchronized void updateDetail() {        
         for (PropertyOptionPanel pop : optionPanels) {
             pop.widgetToValue();
         }

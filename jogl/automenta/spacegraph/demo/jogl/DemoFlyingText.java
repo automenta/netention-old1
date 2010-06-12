@@ -40,7 +40,7 @@
 package automenta.spacegraph.demo.jogl;
 
 import automenta.spacegraph.SG;
-import automenta.spacegraph.gleem.linalg.Vec2f;
+import automenta.spacegraph.math.linalg.Vec2f;
 import com.sun.opengl.util.awt.TextRenderer;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureCoords;

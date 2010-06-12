@@ -1,0 +1,264 @@
+Debug: [Main]: Setting up plugin paths... 
+Debug: [Main]: ...done. 
+Debug: [Main]: Mixxx 1.7.2 "" is starting... 
+Debug: [Main]: At current version 1.7.2 
+Debug: [Main]: ControlObject::getControl returning NULL for ( "[Mixer Profile]" , "LoEQFrequency" ) 
+Debug: [Main]: SampleRate 44100 
+Debug: [Main]: Latency 92 
+Debug: [Main]: createWaveformViewer() 
+Debug: [Main]: WaveformViewerFactory :: Creating new visual waveform 
+Debug: [Main]: WaveformViewerFactory :: Making new GL context. 
+Debug: [Main]: WaveformRenderer::setupControlObjects - VisualResample:  400 
+Debug: [Main]: Got bgColor  QColor(ARGB 1, 0, 0.25098, 0) 
+Debug: [Main]: Got signalColor  QColor(ARGB 1, 0, 1, 0) 
+Debug: [Main]: createWaveformViewer() 
+Debug: [Main]: WaveformViewerFactory :: Creating new visual waveform 
+Debug: [Main]: WaveformViewerFactory :: Sharing existing GL context. 
+Debug: [Main]: WaveformRenderer::setupControlObjects - VisualResample:  400 
+Debug: [Main]: Got bgColor  QColor(ARGB 1, 0, 0.25098, 0) 
+Debug: [Main]: Got signalColor  QColor(ARGB 1, 0, 1, 0) 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/." 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/.." 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/compressor.xml" 
+Debug: [Main]: LADSPA: Plugin  "Compress"  not found (required by preset  "Compressor" ) 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/delay5s.xml" 
+Debug: [Main]: LADSPA: Plugin  "delay_5s"  not found (required by preset  "Delay5s" ) 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/djflanger.xml" 
+Debug: [Main]: LADSPA: Plugin  "djFlanger"  not found (required by preset  "DJFlanger" ) 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/karaoke.xml" 
+Debug: [Main]: LADSPA: Plugin  "karaoke"  not found (required by preset  "Karaoke" ) 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/null.xml" 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/plate.xml" 
+Debug: [Main]: LADSPA: Plugin  "Plate2x2"  not found (required by preset  "PlateReverb" ) 
+Debug: [Main]: Setting up LADSPA EnableEffect "0" 
+Debug: [Main]: Key string: "EnableEffect0" 
+Debug: [Main]: Setting up LADSPA EnableEffect "1" 
+Debug: [Main]: Key string: "EnableEffect1" 
+Debug: [Main]: Setting up LADSPA EnableEffect "2" 
+Debug: [Main]: Key string: "EnableEffect2" 
+Debug: [Main]: Loading playlists and library tracks from XML... 
+Debug: [Main]: Track::readXML "/home/seh/.mixxx/mixxxtrack.xml" 
+Debug: [Main]: Promo track directory does not exist: "/usr/share/mixxx/promo" 
+Debug: [Main]: Constructed LibraryScanner!!! 
+Debug: [Main]: No playlists, returning 
+Debug: [Main]: FIXME: Need to tell the m_pPlaylistListModel to refresh in src/track.cpp on line: 1370 
+Debug: [Main]: Trying to add 14699 songs to the library playlist 
+Debug: [Main]: Adjusting column widths: tracktable width = 100  1% of that is: 1  FIXME: this should be done when initalizing the skin. 
+Debug: [Main]: Shrinking Title/Comment for small screen...  
+Debug: [Main]: FIXME: repaintEverything switches table model and shouldn't do that when viewing the playlist model in  src/wtracktableview.cpp:  227 
+Debug: [Main]: Warning: Creation of the midi queue failed.  Operation not permitted 
+Debug: [MidiObject 1]: MidiMapping: Loading MIDI XML from "/home/seh/.mixxx/MixxxMIDIBindings.xml" 
+Debug: [MidiObject 1]: Could not open xml file: "/home/seh/.mixxx/MixxxMIDIBindings.xml" 
+Debug: [Main]: selectedAPI is:  "ALSA" 
+Debug: [Main]: getSliderLatencyMsec in:  12 
+Debug: [Main]: getSliderLatencyMsec out:  92 
+Debug: [Main]: loadSettings: 1 0 "SlowFade" 
+Debug: [Main]: slotApply crossfader: 1 "SlowFade" 
+Debug: [Main]: BpmSchemes::readXML "/home/seh/.mixxx/mixxxbpmscheme.xml" 
+Debug: [Main]: getting midi device list, size  0  and:  "" 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/." 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/.." 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/compressor.xml" 
+Debug: [Main]: LADSPA: Plugin  "Compress"  not found (required by preset  "Compressor" ) 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/delay5s.xml" 
+Debug: [Main]: LADSPA: Plugin  "delay_5s"  not found (required by preset  "Delay5s" ) 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/djflanger.xml" 
+Debug: [Main]: LADSPA: Plugin  "djFlanger"  not found (required by preset  "DJFlanger" ) 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/karaoke.xml" 
+Debug: [Main]: LADSPA: Plugin  "karaoke"  not found (required by preset  "Karaoke" ) 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/null.xml" 
+Debug: [Main]: LADSPA: file  "/usr/share/mixxx/skins/nCut/../../ladspa_presets/plate.xml" 
+Debug: [Main]: LADSPA: Plugin  "Plate2x2"  not found (required by preset  "PlateReverb" ) 
+Debug: [Main]: Setting up LADSPA EnableEffect "0" 
+Debug: [Main]: Key string: "EnableEffect0" 
+Debug: [Main]: Setting up LADSPA EnableEffect "1" 
+Debug: [Main]: Key string: "EnableEffect1" 
+Debug: [Main]: Setting up LADSPA EnableEffect "2" 
+Debug: [Main]: Key string: "EnableEffect2" 
+Debug: [Main]: SoundManager::setupDevices() 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: iNumDevicesOpenedForOutput: 0 
+Debug: [Main]: iNumDevicesOpenedForInput: 0 
+Debug: [Main]: SoundManager::setupDevices() 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: iNumDevicesOpenedForOutput: 0 
+Debug: [Main]: iNumDevicesOpenedForInput: 0 
+Debug: [Main]: SoundManager::setupDevices() 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: iNumDevicesOpenedForOutput: 0 
+Debug: [Main]: iNumDevicesOpenedForInput: 0 
+Debug: [Main]: DlgPrefVinyl::Apply 
+Debug: [Main]: in VinylGainSlotApply() with gain: 1 
+Debug: [Main]: DlgPrefSound::Apply 
+Debug: [Main]: Setting ChannelMaster in config to:  "0" 
+Debug: [Main]: getSliderLatencyMsec in:  12 
+Debug: [Main]: getSliderLatencyMsec out:  92 
+Debug: [Main]: getSliderLatencyMsec in:  12 
+Debug: [Main]: getSliderLatencyMsec out:  92 
+Debug: [Main]: request msec  92 
+Debug: [Main]: SoundManager::setupDevices() 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: SoundDevicePortAudio::open() "4, front" 
+Debug: [Main]: m_dSampleRate 44100 
+Debug: [Main]: iLatencyMSec: 92 
+Debug: [Main]: output channels: 2 | input channels: 0 
+Debug: [Main]: iFramesPerBuffer 4096 
+Debug: [Main]: iLatencyMSec: 92 
+Debug: [Main]: Opening stream with id 4 
+Debug: [Main]: Opened PortAudio stream successfully... starting 
+Debug: [Main]: Dynamically loaded PortAudio library! 
+Debug: [Main]: PortAudio: Started stream successfully 
+Debug: [Main]: iNumDevicesOpenedForOutput: 1 
+Debug: [Main]: iNumDevicesOpenedForInput: 0 
+Debug: [Main]: slotApply crossfader: 1 "SlowFade" 
+Debug: [Main]: SoundManager::setupDevices() 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: SoundDevicePortAudio::open() "4, front" 
+Debug: [Main]: m_dSampleRate 44100 
+Debug: [Main]: iLatencyMSec: 92 
+Debug: [Main]: output channels: 2 | input channels: 0 
+Debug: [Main]: iFramesPerBuffer 4096 
+Debug: [Main]: iLatencyMSec: 92 
+Debug: [Main]: Opening stream with id 4 
+Debug: [Main]: Opened PortAudio stream successfully... starting 
+Debug: [Main]: Dynamically loaded PortAudio library! 
+Debug: [Main]: PortAudio: Started stream successfully 
+Debug: [Main]: iNumDevicesOpenedForOutput: 1 
+Debug: [Main]: iNumDevicesOpenedForInput: 0 
+Debug: [Main]: Displaying mixxx 
+Debug: [Main]: Adjusting column widths: tracktable width = 994  1% of that is: 9.94  FIXME: this should be done when initalizing the skin. 
+Debug: [Main]: Running Mixxx 
+Debug: [Main]: Load to player1: "/in/dvd1 (Simon Posford)/Shpongle/Shpongle+/Crystal Skulls.mp3" 
+Debug: [Main]: Song in library not found on at "/in/dvd1 (Simon Posford)/Shpongle/Shpongle+/Crystal Skulls.mp3" on disk. 
+Debug: [Main]: Removing from library... 
+Debug: [Main]: FIXME: repaintEverything switches table model and shouldn't do that when viewing the playlist model in  src/wtracktableview.cpp:  227 
+Debug: [Main]: DlgPrefVinyl::Apply 
+Debug: [Main]: in VinylGainSlotApply() with gain: 1 
+Debug: [Main]: DlgPrefSound::Apply 
+Debug: [Main]: Setting ChannelMaster in config to:  "8" 
+Debug: [Main]: getSliderLatencyMsec in:  12 
+Debug: [Main]: getSliderLatencyMsec out:  92 
+Debug: [Main]: getSliderLatencyMsec in:  12 
+Debug: [Main]: getSliderLatencyMsec out:  92 
+Debug: [Main]: request msec  92 
+Debug: [Main]: SoundManager::setupDevices() 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: SoundDevicePortAudio::open() "13, pulse" 
+Debug: [Main]: m_dSampleRate 44100 
+Debug: [Main]: iLatencyMSec: 92 
+Debug: [Main]: output channels: 10 | input channels: 0 
+Debug: [Main]: iFramesPerBuffer 4096 
+Debug: [Main]: iLatencyMSec: 92 
+Debug: [Main]: Opening stream with id 13 
+Debug: [Main]: Opened PortAudio stream successfully... starting 
+Debug: [Main]: Dynamically loaded PortAudio library! 
+Debug: [Main]: PortAudio: Started stream successfully 
+Debug: [Main]: iNumDevicesOpenedForOutput: 1 
+Debug: [Main]: iNumDevicesOpenedForInput: 0 
+Debug: [Main]: slotApply crossfader: 1 "SlowFade" 
+Debug: [Main]: Load to player2: "/in/dvd1 (Simon Posford)/Shpongle/Shpongle+/Once Upon A Time.mp3" 
+Debug: [Main]: Song in library not found on at "/in/dvd1 (Simon Posford)/Shpongle/Shpongle+/Once Upon A Time.mp3" on disk. 
+Debug: [Main]: Removing from library... 
+Debug: [Main]: FIXME: repaintEverything switches table model and shouldn't do that when viewing the playlist model in  src/wtracktableview.cpp:  227 
+Debug: [Main]: getSliderLatencyMsec in:  12 
+Debug: [Main]: getSliderLatencyMsec out:  92 
+Debug: [Main]: getSliderLatencyMsec in:  13 
+Debug: [Main]: getSliderLatencyMsec out:  185 
+Debug: [Main]: getSliderLatencyMsec in:  13 
+Debug: [Main]: getSliderLatencyMsec out:  185 
+Debug: [Main]: getSliderLatencyMsec in:  12 
+Debug: [Main]: getSliderLatencyMsec out:  92 
+Debug: [Main]: getSliderLatencyMsec in:  12 
+Debug: [Main]: getSliderLatencyMsec out:  92 
+Debug: [Main]: getSliderLatencyMsec in:  11 
+Debug: [Main]: getSliderLatencyMsec out:  46 
+Debug: [Main]: getSliderLatencyMsec in:  11 
+Debug: [Main]: getSliderLatencyMsec out:  46 
+Debug: [Main]: DlgPrefSound::Apply 
+Debug: [Main]: Setting ChannelMaster in config to:  "8" 
+Debug: [Main]: getSliderLatencyMsec in:  11 
+Debug: [Main]: getSliderLatencyMsec out:  46 
+Debug: [Main]: getSliderLatencyMsec in:  11 
+Debug: [Main]: getSliderLatencyMsec out:  46 
+Debug: [Main]: request msec  46 
+Debug: [Main]: SoundManager::setupDevices() 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: SoundDevicePortAudio::open() "15, default" 
+Debug: [Main]: m_dSampleRate 44100 
+Debug: [Main]: iLatencyMSec: 46 
+Debug: [Main]: output channels: 10 | input channels: 0 
+Debug: [Main]: iFramesPerBuffer 2048 
+Debug: [Main]: iLatencyMSec: 46 
+Debug: [Main]: Opening stream with id 15 
+Debug: [Main]: Opened PortAudio stream successfully... starting 
+Debug: [Main]: Dynamically loaded PortAudio library! 
+Debug: [Main]: PortAudio: Started stream successfully 
+Debug: [Main]: iNumDevicesOpenedForOutput: 1 
+Debug: [Main]: iNumDevicesOpenedForInput: 0 
+Debug: [Main]: DlgPrefVinyl::Apply 
+Debug: [Main]: in VinylGainSlotApply() with gain: 1 
+Debug: [Main]: DlgPrefSound::Apply 
+Debug: [Main]: Setting ChannelMaster in config to:  "8" 
+Debug: [Main]: getSliderLatencyMsec in:  11 
+Debug: [Main]: getSliderLatencyMsec out:  46 
+Debug: [Main]: getSliderLatencyMsec in:  11 
+Debug: [Main]: getSliderLatencyMsec out:  46 
+Debug: [Main]: request msec  46 
+Debug: [Main]: SoundManager::setupDevices() 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: Building timecode lookup tables... 
+Debug: [Main]: Starting vinyl control xwax thread 
+Debug: [Main]: SoundDevicePortAudio::open() "15, default" 
+Debug: [Main]: m_dSampleRate 44100 
+Debug: [Main]: iLatencyMSec: 46 
+Debug: [Main]: output channels: 10 | input channels: 0 
+Debug: [Main]: iFramesPerBuffer 2048 
+Debug: [Main]: iLatencyMSec: 46 
+Debug: [Main]: Opening stream with id 15 
+Debug: [Main]: Opened PortAudio stream successfully... starting 
+Debug: [Main]: Dynamically loaded PortAudio library! 
+Debug: [Main]: PortAudio: Started stream successfully 
+Debug: [Main]: iNumDevicesOpenedForOutput: 1 
+Debug: [Main]: iNumDevicesOpenedForInput: 0 
+Debug: [Main]: slotApply crossfader: 1 "SlowFade" 
+Debug: [Main]: BpmSchemes::readXML "/home/seh/.mixxx/mixxxbpmscheme.xml" 
+Debug: [Main]: Destroying MixxxApp 
+Debug: [Main]: save config,  0 
+Debug: [Main]: Write track xml,  1 
+Debug: [Main]: close soundmanager 2359 
+Debug: [Main]: soundmanager->close() done 
+Debug: [Main]: delete soundmanager,  2458 
+Debug: [Main]: delete master,  2459 
+Debug: [Main]: in ~EngineMaster() 
+Debug: [Main]: delete channel1,  2460 
+Debug: [Main]: delete channel2,  2460 
+Debug: [Main]: delete buffer1,  2460 
+Debug: [Main]: delete buffer2,  2460 
+Debug: [Main]: delete midi,  2461 
+Debug: [Main]: MidiObject: Deleting MidiMapping... 
+Debug: [Main]: MidiObject: Deleting MIDI script engine... 
+Debug: [Main]: delete view,  2594 
+Debug: [Main]: delete tracks,  2599 
+Debug: [Main]: delete config,  2602 

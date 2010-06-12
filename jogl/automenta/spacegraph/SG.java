@@ -1,5 +1,6 @@
 package automenta.spacegraph;
 
+import automenta.spacegraph.control.Repeat;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -7,6 +8,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.LinkedList;
+import java.util.List;
 import javax.media.opengl.GLEventListener;
 
 public abstract class SG implements GLEventListener, MouseMotionListener, MouseListener, KeyListener, MouseWheelListener {
@@ -20,6 +23,9 @@ public abstract class SG implements GLEventListener, MouseMotionListener, MouseL
         public void repaint();
     }
     
+    protected double t = 0;
+    protected List<Repeat> repeats = new LinkedList();
+
     protected SGListener sgListener;
     private boolean doShutdown = true;
 
@@ -68,5 +74,14 @@ public abstract class SG implements GLEventListener, MouseMotionListener, MouseL
 
     public void mouseWheelMoved(MouseWheelEvent e) {
     }
+
+    public <R extends Repeat> R add(R r) {
+        repeats.add(r);
+        return r;
+    }
+    public boolean remove(Repeat r) {
+        return repeats.remove(r);
+    }
+
 
 }

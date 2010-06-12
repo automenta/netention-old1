@@ -49,15 +49,6 @@ public class RunSelfBrowser implements Demo {
 
             @Override
             public void run() {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    //UIManager.setLookAndFeel(new SubstanceMagellanLookAndFeel());
-                   //UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
-                    //UIManager.setLookAndFeel(new SubstanceMistAquaLookAndFeel());
-                } catch (Exception ex) {
-                    System.err.println(ex);
-                }
-
 
                 SwingWindow window = new SwingWindow(new RunSelfBrowser().newPanel(), 900, 800, true) {
 

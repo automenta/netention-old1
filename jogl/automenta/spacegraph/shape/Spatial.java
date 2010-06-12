@@ -5,7 +5,7 @@
 
 package automenta.spacegraph.shape;
 
-import automenta.spacegraph.gleem.linalg.Vec3f;
+import automenta.spacegraph.math.linalg.Vec3f;
 import javax.media.opengl.GL2;
 
 /**
@@ -27,6 +27,17 @@ class Spatial {
         this.center = center;
         this.size = size;
         this.rotation = rotation;
+    }
+
+    public void scale(float sx, float sy, float sz) {
+        getSize().set(sx, sy, sz);
+    }
+
+    public void move(float dx, float dy, float dz) {
+        float cx = getCenter().x();
+        float cy = getCenter().y();
+        float cz = getCenter().z();
+        getCenter().set(cx + dx, cy + dy, cz + dz);
     }
 
     public Vec3f getCenter() {
