@@ -4,6 +4,8 @@
  */
 package automenta.spacegraph;
 
+import automenta.spacegraph.control.Camera;
+import automenta.spacegraph.control.Pointer;
 import automenta.spacegraph.control.Repeat;
 import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec3f;
@@ -22,22 +24,9 @@ import javax.media.opengl.glu.GLU;
  *
  * @author seh
  */
-public class Surface extends SG {
+abstract public class Surface extends SG {
 
     private Vec3f background = new Vec3f(0, 0, 0);
-
-    public static class Camera {
-
-        public final Vec3f camPos = new Vec3f(0, 0, 10);
-        public final Vec3f camTarget = new Vec3f(0, 0, 0);
-        public final Vec3f camUp = new Vec3f(0, 1, 0);
-    }
-
-    public static class Pointer {
-
-        public final Vec2f pixel = new Vec2f(0, 0);
-        public final Vec3f world = new Vec3f(0, 0, 0);
-    }
     float nearF = 3f;
     float farF = 50.0f;
     private GLU glu = new GLU();
@@ -149,7 +138,7 @@ public class Surface extends SG {
             //visible rectangle determination    
             float visR = (float) ((Math.sin(Math.toRadians(focus) / 2.0) * getCamera().camPos.z()) / Math.sin(Math.PI / 2.0 - Math.toRadians(focus) / 2.0));
             
-            System.out.println("focus: " + visR + " @ " + getCamera().camPos.z());
+            //System.out.println("focus: " + visR + " @ " + getCamera().camPos.z());
             
             float cx = getCamera().camPos.x();
             float cy = getCamera().camPos.y();
@@ -163,11 +152,30 @@ public class Surface extends SG {
             float visY = visR*2.0f;
             float visX = visR / aspect*2.0f;
 
-            float blX = cx - visX/2.0f;
-            float blY = cy - visY/2.0f;
-
-            float urX = cx + visX/2.0f;
-            float urY = cy + visY/2.0f;
+            float vx = visX/2.0f;
+            float vy = visY/2.0f;
+            float tiltAngle = (float)Math.atan2(getCamera().camUp.y(), getCamera().camUp.x());
+            
+            Vec2f dwY = new Vec2f(
+             visR * (float)Math.cos(tiltAngle),
+             visR * (float)Math.sin(tiltAngle));
+            Vec2f dwX = new Vec2f(
+             visR * (float)Math.cos(tiltAngle - Math.PI/2.0),
+             visR * (float)Math.sin(tiltAngle - Math.PI/2.0));
+             dwY.normalize();
+             dwX.normalize();
+            
+            Vec2f dw = new Vec2f(dwY);
+            dw.add(dwX);
+            dw.normalize();
+            
+            //System.out.println("tiltAngle = " + tiltAngle + " dw=" + dw.x() + " , dw=" + dw.y() + ":::" + " dwx=" + dwX.x() + " , dwy=" + dwX.y()+ ":::" + " dwx=" + dwY.x() + " , dwy=" + dwY.y());
+            
+//            float blX = cx - vx;
+//            float blY = cy - vy;
+//
+//            float urX = cx + vx;
+//            float urY = cy + vy;
 
             float pixX = (pointer.pixel.x());
             float pixY = (viewport[3] - pointer.pixel.y());
@@ -191,10 +199,12 @@ public class Surface extends SG {
 //            float wx = cx + dx;
 //            float wy = cy + dy;
             
-            float wx = (float)(cx + mpctX * visX*2.0)/2.0f;
-            float wy = (float)(cy + mpctY * visY*2.0)/2.0f;
+            float wx = cx + (float)(mpctX * visX*2.0)/2.0f;
+            float wy = cy + (float)(mpctY * visY*2.0)/2.0f;
             
             pointer.world.set(wx, wy, 0);
+            
+            handleTouch(pointer);
             
             time.update();
         }
@@ -202,6 +212,9 @@ public class Surface extends SG {
         gl.glFlush();
         g.getContext().release();
 
+    }
+    
+    protected void handleTouch(Pointer p) {
     }
 
     protected void updateSpace(GL2 gl) {

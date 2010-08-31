@@ -5,7 +5,9 @@
 
 package automenta.spacegraph.shape;
 
-import automenta.spacegraph.math.linalg.Vec3f;
+import automenta.spacegraph.control.Pointer;
+import automenta.spacegraph.control.Touchable;
+import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec4f;
 import javax.media.opengl.GL2;
 
@@ -13,7 +15,7 @@ import javax.media.opengl.GL2;
  *
  * @author seh
  */
-public class Rect extends Spatial implements Drawable {
+public class Rect extends Spatial implements Drawable, Touchable {
 
     Vec4f backgroundColor = new Vec4f(0.5f, 0.5f, 0.5f, 1.0f);
 
@@ -98,5 +100,31 @@ public class Rect extends Spatial implements Drawable {
         scale(sx, sy, 1.0f);
         return this;
     }
+
+    @Override
+    public boolean isTouchable() {
+        return true;
+    }
+
+    public static boolean CircleIntersection(float cx, float cy, float radius, float px, float py) {
+        double d = (px - cx)*(px - cx) + (py - cy)*(py - cy);
+        return (d < radius*radius);
+    }
+    
+    @Override
+    public boolean intersects(Vec2f p) {
+        float radius = (float)Math.max(size.x(), size.y());
+        if (CircleIntersection(this.center.x(), this.center.y(), radius, p.x(), p.y())) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    @Override
+    public void onTouchChange(Pointer pointer, Vec2f p, boolean touched) {
+        
+    }
+    
     
 }

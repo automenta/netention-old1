@@ -35,6 +35,7 @@ public abstract class SG implements GLEventListener, MouseMotionListener, MouseL
     public final Map<KeyStates, Boolean> keyStates = new HashMap(2);
 
     public SG() {
+        super();
         keyStates.put(KeyStates.CONTROL, false);
         keyStates.put(KeyStates.ALT, false);
     }
