@@ -5,6 +5,8 @@
 package automenta.spacegraph.layer;
 
 import automenta.spacegraph.Surface;
+import automenta.spacegraph.control.Pointer;
+import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.shape.Drawable;
 import javax.media.opengl.GL2;
 
@@ -15,6 +17,10 @@ import javax.media.opengl.GL2;
 public class PointerLayer implements Drawable {
 
     private final Surface canvas;
+    final Vec3f color = new Vec3f();
+    
+    final Vec3f red = new Vec3f(1f, 0, 0);
+    final Vec3f green  = new Vec3f(0, 1f, 0);
    
     public PointerLayer(Surface canvas) {
         super();
@@ -26,19 +32,32 @@ public class PointerLayer implements Drawable {
         //gl.glLoadIdentity();
         //gl.glMatrixMode(GL2ES1.GL_PROJECTION);
         //gl.glLoadIdentity();
-        gl.glOrtho(-1, 1, -1, 1, -1, 1);
+        
+        drawPointer(gl, canvas.getPointer());
+        //TODO handle multiple pointers
+        
+    }
 
+    protected void drawPointer(GL2 gl, Pointer pointer) {
+        gl.glOrtho(-1, 1, -1, 1, -1, 1);
 
         int numSteps = 20;
         double increment = Math.PI / numSteps;
         double radius = 4;
 
-        float x = canvas.getPointer().world.x();
-        float y = canvas.getPointer().world.y();
+        float x = pointer.world.x();
+        float y = pointer.world.y();
 
+        if (pointer.buttons[0]) {
+            color.lerp(green, 0.9f);
+        }
+         else {
+            color.lerp(red, 0.9f);
+         }
+        
         gl.glBegin(GL2.GL_LINES);
         for (int i = numSteps - 1; i >= 0; i--) {
-            gl.glColor3f(0.9f, 0.5f, 0.5f);
+            gl.glColor3f(color.x(), color.y(), color.z());
             gl.glVertex3d(x + radius * Math.cos(i * increment),
                 y + radius * Math.sin(i * increment),
                 0);

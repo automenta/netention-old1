@@ -11,8 +11,8 @@ import automenta.spacegraph.math.linalg.Vec2f;
  *
  * @author me
  */
-public interface Touchable {
-    public boolean isTouchable();
-    public boolean intersects(Vec2f world);
-    public void onTouchChange(Pointer pointer, Vec2f world, boolean touched);
+public interface Draggable {
+    public void onDragStart(Pointer pointer, Vec2f worldStart);
+    public void onDragging(Pointer pointer, Vec2f world);
+    public void onDragEnd(Pointer pointer, Vec2f worldEnd);
 }

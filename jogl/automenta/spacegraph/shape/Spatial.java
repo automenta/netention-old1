@@ -34,11 +34,12 @@ class Spatial {
         return this;
     }
 
-    public void move(float dx, float dy, float dz) {
+    public Spatial move(float dx, float dy, float dz) {
         float cx = getCenter().x();
         float cy = getCenter().y();
         float cz = getCenter().z();
         getCenter().set(cx + dx, cy + dy, cz + dz);
+        return this;
     }
 
     public Vec3f getCenter() {
@@ -64,14 +65,15 @@ class Spatial {
 //        transform.setRotation(getRotation());
 //        gl.glLoadMatrixf(transform.data, 0);
 
-        gl.glRotatef(getRotation().x(), 1, 0, 0);
-        gl.glRotatef(getRotation().y(), 0, 1, 0);
-        gl.glRotatef(getRotation().z(), 0, 0, 1);
 
         gl.glTranslatef(getCenter().x(), getCenter().y(), getCenter().z());
 
-        gl.glScalef(getSize().x(), getSize().y(), getSize().z());
 
+        gl.glRotatef((float)Math.toDegrees( getRotation().x() ), 1, 0, 0);
+        gl.glRotatef((float)Math.toDegrees( getRotation().y() ), 0, 1, 0);
+        gl.glRotatef((float)Math.toDegrees( getRotation().z() ), 0, 0, 1);
+
+        gl.glScalef(getSize().x(), getSize().y(), getSize().z());
 
     }
 

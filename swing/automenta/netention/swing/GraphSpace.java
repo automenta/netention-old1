@@ -5,7 +5,6 @@
 package automenta.netention.swing;
 
 import automenta.spacegraph.DefaultSurface;
-import automenta.spacegraph.control.FractalControl;
 import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.math.linalg.Vec4f;
@@ -15,15 +14,13 @@ import automenta.spacegraph.shape.WideIcon;
 import com.sun.opengl.util.awt.TextRenderer;
 import com.syncleus.dann.graph.DirectedEdge;
 import com.syncleus.dann.graph.Graph;
-import com.syncleus.dann.graph.drawing.hyperassociativemap.HyperassociativeMap;
+import com.syncleus.dann.graph.drawing.GraphDrawer;
 import com.syncleus.dann.math.Vector;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.media.opengl.GL2;
@@ -32,7 +29,7 @@ import javax.media.opengl.GL2;
  *
  * @author seh
  */
-public class GraphCanvas<N, E extends DirectedEdge<N>> extends DefaultSurface {
+public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
 
     private float textScaleFactor;
     float xAng = 0;
@@ -44,17 +41,17 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends DefaultSurface {
     private Vec3f downPointPos;
     private Vec3f downPointTarget;
     private Vec2f downPixel;
-    public final HyperassociativeMap<Graph<N, E>, N> hmap;
     private TextRenderer tr;
-
+    private GraphDrawer<Graph<N,E>,N> layout;
+    
     protected final Map<E, Curve> edgeLines = new HashMap<E, Curve>();
     
-    public GraphCanvas(Graph<N, E> graph, int dimensions) {
+    public GraphSpace(Graph<N, E> graph, GraphDrawer<Graph<N, E>, N> initialLayout) {
         super();
 
-        this.sg = graph;
-
-        hmap = new HyperassociativeMap(sg, dimensions, 0.05, false);
+        setLayout(initialLayout);
+        
+        this.sg = graph;       
         
         //tr = TextRect.newTextRenderer(new Font("Arial", Font.PLAIN, 72));
 
@@ -67,7 +64,7 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends DefaultSurface {
             Rect aBox = boxes.get(e.getSourceNode());
             Rect bBox = boxes.get(e.getDestinationNode());
             if ((aBox == null) || (bBox == null)) {
-                Logger.getLogger(GraphCanvas.class.toString()).severe("could not find boxes for edge: " + e);
+                Logger.getLogger(GraphSpace.class.toString()).severe("could not find boxes for edge: " + e);
                 continue;
             }
 
@@ -91,6 +88,10 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends DefaultSurface {
 
 
     }
+    
+    public void setLayout(GraphDrawer<Graph<N,E>,N> newLayout) {
+        this.layout = newLayout;        
+    }
 
     public Rect newNodeRect(N n) {
         WideIcon box = new WideIcon(n.toString(), getColor(n), getColor(n));
@@ -99,29 +100,6 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends DefaultSurface {
 
     public Vec4f getColor(N n) {
         return new Vec4f(Color.getHSBColor((float) Math.random(), 0.75f, 1.0f));
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        super.keyReleased(e);
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            //hmap.randomizeAllCoordinates();
-            randomizeHyperassociativeMap(hmap, 4.0);
-        }
-    }
-
-    public void randomizeHyperassociativeMap(HyperassociativeMap h, double f) {
-        List<N> l = new LinkedList<N>(h.getCoordinates().keySet());
-        for (N n : l) {
-            //synchronized (h.getCoordinates()) {
-            Vector v = (Vector)h.getCoordinates().get(n);
-            for (int i = 1; i <= v.getDimensions(); i++) {
-                double c = (Math.random() * 2.0 - 1.0) * f;
-                v.setCoordinate(c, i);
-            }
-            //put(n, h.randomCoordinates(h.getDimensions()));
-            //}
-        }
     }
 
     public void mouseMoved(MouseEvent e)    {
@@ -163,11 +141,12 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends DefaultSurface {
     @Override
     protected void updateSpace(GL2 gl) {
         float m = 3.0f;
-
-        hmap.align();
-
+        
+        if (layout.isAlignable())
+            layout.align();
+        
         for (N s : sg.getNodes()) {
-            Vector v = hmap.getCoordinates().get(s);
+            Vector v = layout.getCoordinates().get(s);
             Rect b = boxes.get(s);
             if (v.getDimensions() == 1) {
                 float x = (float) (v.getCoordinate(1) * m);

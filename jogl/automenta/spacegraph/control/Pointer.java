@@ -10,5 +10,8 @@ public class Pointer {
     public final Vec2f pixel = new Vec2f(0, 0);
     public final Vec3f world = new Vec3f(0, 0, 0);
     public final Set<Touchable> touching = new HashSet();
-    
+    public boolean[] buttons = new boolean[3];
+
+    public final Vec3f dragStartworld = new Vec3f(0, 0, 0);
+    public boolean dragging = false;
 }

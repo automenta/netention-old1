@@ -6,6 +6,7 @@ package automenta.netention.swing;
 
 import automenta.netention.Link;
 import automenta.netention.Node;
+import automenta.netention.graph.MyHyperassociativeMap;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.node.TimePoint;
 import automenta.netention.plugin.finance.FinanceGrapher;
@@ -47,6 +48,7 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         SwingWindow sw = new SwingWindow(new RunFinanceGraph().newPanel(), 400, 400, true);
 
     }
+    private MyHyperassociativeMap layout;
 
     public JPanel newPanel() {
         ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
@@ -68,10 +70,12 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
 
         FinanceGrapher.run(businesses, target, 2009, 2010, false);
 
-        int numDimensions = 2;
+        int numDimensions = 3;
 
         System.out.println(target.getNodes().size() + " : " + target.getEdges().size());
-        final GraphCanvas graphCanvas = new GraphCanvas(target, numDimensions) {
+        
+        layout = new MyHyperassociativeMap(target, numDimensions, 0.01, false);
+        final GraphSpace graphCanvas = new GraphSpace(target, layout) {
 
             @Override
             public Rect newNodeRect(Object n) {
@@ -128,24 +132,24 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(j, BorderLayout.CENTER);
 
-        JButton pb = new JButton("-");
+        JButton pb = new JButton("+");
         pb.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                double n = graphCanvas.hmap.getEquilibriumDistance() * 1.1;
-                graphCanvas.hmap.resetLearning();
-                graphCanvas.hmap.setEquilibriumDistance(n);
+                double n = layout.getEquilibriumDistance() * 1.1;
+                layout.resetLearning();
+                layout.setEquilibriumDistance(n);
             }
         });
-        JButton mb = new JButton("+");
+        JButton mb = new JButton("-");
         mb.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                double n = graphCanvas.hmap.getEquilibriumDistance() * 0.9;
-                graphCanvas.hmap.resetLearning();
-                graphCanvas.hmap.setEquilibriumDistance(n);
+                double n = layout.getEquilibriumDistance() * 0.9;
+                layout.resetLearning();
+                layout.setEquilibriumDistance(n);
             }
         });
 

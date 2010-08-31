@@ -7,14 +7,11 @@ package automenta.spacegraph;
 import automenta.spacegraph.control.Camera;
 import automenta.spacegraph.control.Pointer;
 import automenta.spacegraph.control.Repeat;
-import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.demo.jogl.FPSCounter;
 import automenta.spacegraph.demo.jogl.SystemTime;
 import automenta.spacegraph.demo.jogl.Time;
-import com.sun.opengl.util.BufferUtil;
 import java.awt.event.MouseEvent;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
@@ -154,20 +151,21 @@ abstract public class Surface extends SG {
 
             float vx = visX/2.0f;
             float vy = visY/2.0f;
-            float tiltAngle = (float)Math.atan2(getCamera().camUp.y(), getCamera().camUp.x());
             
-            Vec2f dwY = new Vec2f(
-             visR * (float)Math.cos(tiltAngle),
-             visR * (float)Math.sin(tiltAngle));
-            Vec2f dwX = new Vec2f(
-             visR * (float)Math.cos(tiltAngle - Math.PI/2.0),
-             visR * (float)Math.sin(tiltAngle - Math.PI/2.0));
-             dwY.normalize();
-             dwX.normalize();
+            //float tiltAngle = (float)Math.atan2(getCamera().camUp.y(), getCamera().camUp.x());
             
-            Vec2f dw = new Vec2f(dwY);
-            dw.add(dwX);
-            dw.normalize();
+//            Vec2f dwY = new Vec2f(
+//             visR * (float)Math.cos(tiltAngle),
+//             visR * (float)Math.sin(tiltAngle));
+//            Vec2f dwX = new Vec2f(
+//             visR * (float)Math.cos(tiltAngle - Math.PI/2.0),
+//             visR * (float)Math.sin(tiltAngle - Math.PI/2.0));
+//             dwY.normalize();
+//             dwX.normalize();
+//            
+//            Vec2f dw = new Vec2f(dwY);
+//            dw.add(dwX);
+//            dw.normalize();
             
             //System.out.println("tiltAngle = " + tiltAngle + " dw=" + dw.x() + " , dw=" + dw.y() + ":::" + " dwx=" + dwX.x() + " , dwy=" + dwX.y()+ ":::" + " dwx=" + dwY.x() + " , dwy=" + dwY.y());
             
@@ -292,6 +290,22 @@ abstract public class Surface extends SG {
         super.mouseDragged(e);
         updateMouseLocation((float) e.getPoint().getX(), (float) e.getPoint().getY());
     }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        super.mousePressed(e);
+        int button = e.getButton();
+        pointer.buttons[button-1] = true;
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        super.mouseReleased(e);
+        int button = e.getButton();
+        pointer.buttons[button-1] = false;
+    }
+    
+    
 
     public Pointer getPointer() {
         return pointer;

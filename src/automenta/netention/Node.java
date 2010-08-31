@@ -58,9 +58,14 @@ public interface Node extends Serializable {
             return false;
         }
 
+    }
+    
+    public static class StringNode extends AbstractNode {
 
-
-
+        public StringNode(String id) {
+            super(id);
+        }
+        
     }
 
 }

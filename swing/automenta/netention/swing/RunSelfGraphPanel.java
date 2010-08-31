@@ -16,6 +16,7 @@ import automenta.spacegraph.impl.SGPanel;
 import com.syncleus.dann.graph.DirectedEdge;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
+import com.syncleus.dann.graph.drawing.hyperassociativemap.HyperassociativeMap;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -56,7 +57,7 @@ public class RunSelfGraphPanel  extends Surface implements Demo {
         MutableBidirectedGraph<Node,ValueEdge<Node, Link>> target = new MutableDirectedAdjacencyGraph(self.getGraph());
         MetadataGrapher.run(self, target, true, true, true, true);
 
-        JPanel j = new SGPanel(new GraphCanvas(target, 3));
+        JPanel j = new SGPanel(new GraphSpace(target, new HyperassociativeMap(target, 2)));
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(j, BorderLayout.CENTER);

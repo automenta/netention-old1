@@ -128,7 +128,6 @@ public class FractalControl implements MouseListener, MouseMotionListener, Mouse
 //        System.out.println(mz + "  " + nextZ);
 //        targetPos.setZ(nextZ);
 //        targetTarget.setZ(nextZ);
-        System.out.println("z delta: " + delta);
         targetPos.add(delta);
         targetTarget.add(delta);
         float minZ = surface.getNearF() + 0.25f;

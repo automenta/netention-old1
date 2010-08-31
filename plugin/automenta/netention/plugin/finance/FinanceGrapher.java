@@ -7,6 +7,7 @@ package automenta.netention.plugin.finance;
 
 import automenta.netention.Link;
 import automenta.netention.Node;
+import automenta.netention.Node.StringNode;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.link.In;
 import automenta.netention.link.Next;
@@ -32,6 +33,9 @@ public class FinanceGrapher {
         for (PublicBusiness pb : businesses) {
             target.add(pb);
             
+            float highestHigh = 0.0f;
+            BusinessPerformance highest = null;
+            
             BusinessPerformance lastBp = null;
             for (BusinessPerformance bp : pb.getPerformance()) {
                 int y = bp.start.getYear() + 1900;
@@ -39,6 +43,10 @@ public class FinanceGrapher {
                     continue;
                 
                 target.add(bp);
+                if (bp.high > highestHigh) {
+                    highestHigh = bp.high;
+                    highest = bp;
+                }
                 
                 if (lastBp != null) {
                     target.add(lastBp);
@@ -51,6 +59,12 @@ public class FinanceGrapher {
 
                 perfs.put(bp.start, bp);
                 lastBp = bp;
+            }
+            
+            if (highest!=null) {
+                StringNode high = new StringNode(pb.getID() + ".High");
+                target.add(high);
+                target.add(new ValueEdge(new Next(), highest, high));
             }
         }
 

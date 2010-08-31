@@ -9,9 +9,10 @@ import automenta.netention.Detail;
 import automenta.netention.Link;
 import automenta.netention.Node;
 import automenta.netention.Self;
+import automenta.netention.graph.MyHyperassociativeMap;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.linker.MetadataGrapher;
-import automenta.netention.swing.GraphCanvas;
+import automenta.netention.swing.GraphSpace;
 import automenta.spacegraph.impl.SGPanel;
 import automenta.spacegraph.math.linalg.Vec3f;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
@@ -45,7 +46,7 @@ public class GraphPanel extends JPanel implements IndexView {
         MutableBidirectedGraph<Node,ValueEdge<Node, Link>> target = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>(self.getGraph());
         MetadataGrapher.run(self, target, true, true, true, true);
 
-        GraphCanvas gc = new GraphCanvas(target, 3);
+        GraphSpace gc = new GraphSpace(target, new MyHyperassociativeMap(target, 3, 0.5, true));
         gc.setBackground(new Vec3f(0.2f, 0.2f, 0.2f));
         
 

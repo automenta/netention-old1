@@ -7,6 +7,7 @@ package automenta.spacegraph.demo.surface;
 
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.spacegraph.DefaultSurface;
+import automenta.spacegraph.SG;
 import automenta.spacegraph.Surface;
 import automenta.spacegraph.control.FractalControl;
 import automenta.spacegraph.impl.SGPanel;
@@ -21,6 +22,22 @@ import javax.swing.JTextField;
  */
 abstract public class AbstractSurfaceDemo extends DefaultSurface implements Demo {
 
+    public static JPanel newPanel(Surface space) {
+        JPanel j = new JPanel(new BorderLayout());
+        {
+            SGPanel sdc = new SGPanel(space);
+
+            new FractalControl(sdc);
+
+            final ControlRigPanel crp = new ControlRigPanel(space, 0.25f);
+            new Thread(crp).start();
+
+            j.add(sdc, BorderLayout.CENTER);
+            j.add(crp, BorderLayout.SOUTH);
+        }
+        return j;
+    }
+    
         @Override
     public JPanel newPanel() {
         JPanel j = new JPanel(new BorderLayout());
