@@ -10,10 +10,10 @@ import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.demo.jogl.FPSCounter;
 import automenta.spacegraph.demo.jogl.SystemTime;
 import automenta.spacegraph.demo.jogl.Time;
+import com.sun.opengl.util.BufferUtil;
 import java.awt.event.MouseEvent;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.LinkedList;
-import java.util.List;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.glu.GLU;
@@ -34,17 +34,19 @@ public class Surface extends SG {
     }
 
     public static class Pointer {
-        public final Vec2f pixel = new Vec2f(0, 0);
-    }
 
-    float nearF = 5f;
-    float farF = 100.0f;
+        public final Vec2f pixel = new Vec2f(0, 0);
+        public final Vec3f world = new Vec3f(0, 0, 0);
+    }
+    float nearF = 3f;
+    float farF = 50.0f;
     private GLU glu = new GLU();
     protected final Time time = new SystemTime();
     private FPSCounter fps;
     private Camera camera = new Camera();
     private Pointer pointer = new Pointer();
-
+    float focus = 45.0f;
+    boolean showFPS = true;
     Space2D space;
 
     public Surface() {
@@ -70,6 +72,10 @@ public class Surface extends SG {
 
     public void init(GLAutoDrawable g) {
         GL2 gl = g.getGL().getGL2();
+
+        gl.glEnable(gl.GL_DEPTH_TEST);
+        gl.glDepthRange(0, 1);
+
         gl.glShadeModel(GL2.GL_SMOOTH);
         gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glDepthFunc(GL2.GL_LEQUAL);
@@ -103,13 +109,18 @@ public class Surface extends SG {
         GL2 gl = g.getGL().getGL2();
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
-        glu.gluPerspective(15, (float) w / (float) h, nearF, farF);
+        glu.gluPerspective(focus, (float) w / (float) h, nearF, farF);
+
+        gl.glViewport(0, 0, w, h);
     }
+    
+    int[] viewport = new int[4];
 
     public void display(GLAutoDrawable g) {
         g.getContext().makeCurrent();
 
-        GL2 gl = (GL2) g.getGL();
+        GL2 gl = g.getGL().getGL2();
+
         GLU glu = new GLU();
 
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
@@ -119,16 +130,76 @@ public class Surface extends SG {
         gl.glLoadIdentity();
 
         glu.gluLookAt(getCamera().camPos.x(), getCamera().camPos.y(), getCamera().camPos.z(),
-            getCamera().camTarget.x(), getCamera().camTarget.y(), getCamera().camTarget.z(),
-            getCamera().camUp.x(), getCamera().camUp.y(), getCamera().camUp.z());
-
+                getCamera().camTarget.x(), getCamera().camTarget.y(), getCamera().camTarget.z(),
+                getCamera().camUp.x(), getCamera().camUp.y(), getCamera().camUp.z());
 
         drawSpace(gl);
 
-        fps.draw();
 
-        time.update();
+        if (showFPS) {
+            fps.draw();
+        }
 
+
+        gl.glGetIntegerv(gl.GL_VIEWPORT, viewport, 0);
+
+        //FOREACH pointer
+        {
+
+            //visible rectangle determination    
+            float visR = (float) ((Math.sin(Math.toRadians(focus) / 2.0) * getCamera().camPos.z()) / Math.sin(Math.PI / 2.0 - Math.toRadians(focus) / 2.0));
+            
+            System.out.println("focus: " + visR + " @ " + getCamera().camPos.z());
+            
+            float cx = getCamera().camPos.x();
+            float cy = getCamera().camPos.y();
+
+            float w = viewport[2];
+            float h = viewport[3];
+            
+            float aspect = (((float)h) / ((float)w));
+            
+            //TODO handle case where h > w           
+            float visY = visR*2.0f;
+            float visX = visR / aspect*2.0f;
+
+            float blX = cx - visX/2.0f;
+            float blY = cy - visY/2.0f;
+
+            float urX = cx + visX/2.0f;
+            float urY = cy + visY/2.0f;
+
+            float pixX = (pointer.pixel.x());
+            float pixY = (viewport[3] - pointer.pixel.y());
+            
+            float mpctX = (pixX / viewport[2])-0.5f;
+            float mpctY = (pixY / viewport[3])-0.5f;
+            
+            
+//            float dx = (blX + mpctX * visX) - cy;
+//            float dy = (blY + mpctY * visY) - cx;
+//
+//            System.out.println(mpctX + " % " + mpctY);
+//            System.out.println("  " + dx + " % " + dy);
+//            System.out.println("  " + cx + " , " + cy + " in " + blX + "," + blY  + " .. " + urX + " ," + urY);
+//
+//            //TODO rotate based on tilt
+//            float tiltAngle = (float)Math.atan2(getCamera().camUp.y(), getCamera().camUp.x());
+//            float dwx = dx * (float) Math.cos(tiltAngle - (float) Math.PI / 2.0f) - dy * (float) Math.sin(tiltAngle - (float) Math.PI / 2.0f);
+//            float dwy = dx * (float) Math.sin(tiltAngle - (float) Math.PI / 2.0f) + dy * (float) Math.cos(tiltAngle - (float) Math.PI / 2.0f);
+//                    
+//            float wx = cx + dx;
+//            float wy = cy + dy;
+            
+            float wx = (float)(cx + mpctX * visX*2.0)/2.0f;
+            float wy = (float)(cy + mpctY * visY*2.0)/2.0f;
+            
+            pointer.world.set(wx, wy, 0);
+            
+            time.update();
+        }
+
+        gl.glFlush();
         g.getContext().release();
 
     }
@@ -147,7 +218,9 @@ public class Surface extends SG {
     protected void drawSpace(GL2 gl) {
         updateSpace(gl);
 
-        space.draw(gl);
+        if (space != null) {
+            space.draw(gl);
+        }
 
 
     }
@@ -190,9 +263,9 @@ public class Surface extends SG {
         return camera;
     }
 
-
     protected void updateMouseLocation(float nx, float ny) {
         pointer.pixel.set(nx, ny);
+
     }
 
     @Override

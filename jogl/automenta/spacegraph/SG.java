@@ -8,8 +8,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.media.opengl.GLEventListener;
 
 public abstract class SG implements GLEventListener, MouseMotionListener, MouseListener, KeyListener, MouseWheelListener {
@@ -22,13 +24,22 @@ public abstract class SG implements GLEventListener, MouseMotionListener, MouseL
         /** Indicates that a repaint should be scheduled later. */
         public void repaint();
     }
-    
     protected double t = 0;
     protected List<Repeat> repeats = new LinkedList();
-
     protected SGListener sgListener;
     private boolean doShutdown = true;
 
+    public static enum KeyStates {
+        CONTROL, ALT
+    }
+    public final Map<KeyStates, Boolean> keyStates = new HashMap(2);
+
+    public SG() {
+        keyStates.put(KeyStates.CONTROL, false);
+        keyStates.put(KeyStates.ALT, false);
+    }
+
+    
     public void setSGListener(SGListener listener) {
         this.sgListener = listener;
     }
@@ -42,6 +53,7 @@ public abstract class SG implements GLEventListener, MouseMotionListener, MouseL
             sgListener.shutdownDemo();
         }
     }
+
     public void mouseDragged(MouseEvent e) {
     }
 
@@ -67,9 +79,19 @@ public abstract class SG implements GLEventListener, MouseMotionListener, MouseL
     }
 
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+            keyStates.put(KeyStates.CONTROL, true);
+        } else if (e.getKeyCode() == KeyEvent.VK_ALT) {
+            keyStates.put(KeyStates.ALT, true);
+        }
     }
 
     public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+            keyStates.put(KeyStates.CONTROL, false);
+        } else if (e.getKeyCode() == KeyEvent.VK_ALT) {
+            keyStates.put(KeyStates.ALT, false);
+        }
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -79,9 +101,8 @@ public abstract class SG implements GLEventListener, MouseMotionListener, MouseL
         repeats.add(r);
         return r;
     }
+
     public boolean remove(Repeat r) {
         return repeats.remove(r);
     }
-
-
 }

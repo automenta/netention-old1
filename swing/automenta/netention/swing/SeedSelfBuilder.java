@@ -4,34 +4,41 @@ import automenta.netention.Mode;
 import automenta.netention.Pattern;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
-import automenta.netention.value.bool.BoolProp;
-import automenta.netention.value.integer.IntProp;
 import automenta.netention.value.real.RealProp;
 import automenta.netention.value.string.StringProp;
-import automenta.netention.value.bool.BoolEquals;
 import automenta.netention.value.bool.BoolIs;
-import automenta.netention.value.integer.IntegerEquals;
 import automenta.netention.value.integer.IntegerIs;
-import automenta.netention.value.real.RealEquals;
 import automenta.netention.value.real.RealIs;
 import automenta.netention.value.set.SelectionProp;
 import automenta.netention.value.string.StringEquals;
 import automenta.netention.value.string.StringIs;
+import automenta.netention.value.time.TimePointProp;
+import automenta.netention.value.uri.URIProp;
 
 public class SeedSelfBuilder {
 
     public SeedSelfBuilder() {
     }
-
+    
     public void build(MemorySelf s) {
-        s.addPattern(new Pattern("Built").
+        Pattern thing = s.addPattern(new Pattern("Thing").
+                        setIconURL("media://tango32/categories/preferences-system.png").
+                        setDescription(""));
+        {
+            s.addProperties(thing, 
+                    new StringProp("tag", "Tag", 0, -1).setDescription("tag, category, genre"),
+                    new URIProp("link", "Link", 0, -1).setDescription("tag, category, genre")
+                );
+        }
+
+        Pattern built = s.addPattern(new Pattern("Built").
                         setIconURL("media://tango32/categories/preferences-system.png").
                         setDescription("Something that is built or manufactured"));
         {
-            s.addProperties("Built",
+            s.addProperties(built,
                     new StringProp("manufacturer", "Manufacturer"),
                     new StringProp("serialNumber", "Serial Number"),
-                    new /*TimePoint*/StringProp("builtWhen", "When Built"),
+                    new TimePointProp("builtWhen", "When Built"),
                     new SelectionProp("condition", "Condition", "New", "Used")
                     );
         }
@@ -40,10 +47,10 @@ public class SeedSelfBuilder {
         {
             s.addProperties("Mobile",
                     new StringProp("currentLocation", "Current Location"),
-                    new StringProp("nextLocation", "Next Location"),
-                    new IntProp("numWheels", "Number of Wheels"),
-                    new RealProp("wheelRadius", "Wheel Radius"),
-                    new BoolProp("hasKickStand", "Has Kickstand")
+                    new StringProp("nextLocation", "Next Location")
+                    //new IntProp("numWheels", "Number of Wheels"),
+                    //new RealProp("wheelRadius", "Wheel Radius"),
+                    //new BoolProp("hasKickStand", "Has Kickstand")
                     );
         }
 
@@ -134,19 +141,19 @@ public class SeedSelfBuilder {
             d1.addProperty("hasKickStand", new BoolIs(true));
             //d1.addProperty("anotherObject", new NodeIs(d2.getID()));
             {
-                d11.addProperty("numWheels", new IntegerIs(2));
+                //d11.addProperty("numWheels", new IntegerIs(2));
                 d11.addProperty("manufacturer", new StringIs("myself"));
-                d11.addProperty("wheelRadius", new RealIs(16.0));
-                d11.addProperty("hasKickStand", new BoolIs(true));
+                //d11.addProperty("wheelRadius", new RealIs(16.0));
+                //d11.addProperty("hasKickStand", new BoolIs(true));
                 //d11.addProperty("anotherObject", new NodeIs(d2.getID()));
             }
 
         }
         {
-            d2.addProperty("numWheels", new IntegerEquals(4));
+            //d2.addProperty("numWheels", new IntegerEquals(4));
             d2.addProperty("manufacturer", new StringEquals("myself"));
-            d2.addProperty("wheelRadius", new RealEquals(16.0));
-            d2.addProperty("hasKickStand", new BoolEquals(true));
+            //d2.addProperty("wheelRadius", new RealEquals(16.0));
+            //d2.addProperty("hasKickStand", new BoolEquals(true));
             //d2.addProperty("anotherObject", new NodeEquals(d1.getID()));
         }
         {

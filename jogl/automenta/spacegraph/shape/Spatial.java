@@ -29,8 +29,9 @@ class Spatial {
         this.rotation = rotation;
     }
 
-    public void scale(float sx, float sy, float sz) {
+    public Spatial scale(float sx, float sy, float sz) {
         getSize().set(sx, sy, sz);
+        return this;
     }
 
     public void move(float dx, float dy, float dz) {

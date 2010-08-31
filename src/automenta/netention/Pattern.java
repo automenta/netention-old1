@@ -17,9 +17,12 @@ public class Pattern extends HashMap<String, Double> implements Serializable, No
     public final String id;
     private String description;
     private String iconURL;
+    private final String[] extending;
 
-    public Pattern(String id) {
+    public Pattern(String id, String... extending) {
+        super();
         this.id = id;
+        this.extending = extending;
     }
 
     public Pattern setDescription(String description) {
@@ -59,6 +62,8 @@ public class Pattern extends HashMap<String, Double> implements Serializable, No
         return id;
     }
 
-    
+    public String[] getExtending() {
+        return extending;
+    }   
 
 }

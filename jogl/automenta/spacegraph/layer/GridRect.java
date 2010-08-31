@@ -20,12 +20,14 @@ public class GridRect extends Rect {
     float dx = 0.1f;
     float dy = 0.1f;
 
-    public GridRect() {
+    public GridRect(float sx, float sy) {
         super();
+        scale(sx, sy, 1.0f);
         color(0,0,0);
         setFilled(false);
     }
     
+       
     @Override public void draw(GL2 gl) {
         super.draw(gl);
 

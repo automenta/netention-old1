@@ -5,6 +5,7 @@
 package automenta.spacegraph.shape;
 
 import automenta.spacegraph.math.linalg.Vec3f;
+import automenta.spacegraph.math.linalg.Vec4f;
 import com.sun.opengl.util.awt.TextRenderer;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
@@ -20,7 +21,7 @@ public class TextRect extends Rect {
     private float textScaleFactor;
     private String text;
     private boolean useVertexArrays = false;
-    private Vec3f textColor = new Vec3f(1f,1f,1f);
+    private Vec4f textColor = new Vec4f(1f,1f,1f, 1f);
 
     public TextRect(String initialText) {
         super();
@@ -42,7 +43,7 @@ public class TextRect extends Rect {
         //super.draw(gl);
 
         if (textRenderer == null) {
-            textRenderer = new TextRenderer(new Font("SansSerif", Font.PLAIN, 72));
+            textRenderer = new TextRenderer(new Font("Arial", Font.PLAIN, 72));
         }
 
         textRenderer.setSmoothing(false);
@@ -90,7 +91,7 @@ public class TextRect extends Rect {
 
     }
 
-    public void setTextColor(Vec3f color) {
+    public void setTextColor(Vec4f color) {
         this.textColor = color;
     }
 }

@@ -25,6 +25,11 @@ public class StringProp extends Property {
 	public StringProp(String id, String name) {
 		super(id, name);
 	}
+	public StringProp(String id, String name, int cardMin, int cardMax) {
+        this(id, name);
+        setCardinalityMin(cardMin);
+        setCardinalityMax(cardMax);        
+    }
 
 	public StringProp(String id, String name, List<String> exampleValues) {
 		this(id, name);

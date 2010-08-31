@@ -6,6 +6,7 @@
 package automenta.spacegraph.shape;
 
 import automenta.spacegraph.math.linalg.Vec3f;
+import automenta.spacegraph.math.linalg.Vec4f;
 import javax.media.opengl.GL2;
 
 /**
@@ -17,7 +18,7 @@ public class WideIcon extends Rect {
     private final TextRect textRect;
     int MAX_LABEL_LENGTH = 32;
     
-    public WideIcon(String label, Vec3f backgroundColor, Vec3f textColor) {
+    public WideIcon(String label, Vec4f backgroundColor, Vec4f textColor) {
         super();
 
         setBackgroundColor(backgroundColor);
@@ -42,7 +43,7 @@ public class WideIcon extends Rect {
 
     }
 
-    private void setTextColor(Vec3f textColor) {
+    private void setTextColor(Vec4f textColor) {
         textRect.setTextColor(textColor);
     }
 

@@ -4,8 +4,9 @@
  */
 package automenta.spacegraph.demo;
 
-import automenta.spacegraph.Surface;
-import automenta.spacegraph.impl.SGWindow;
+import automenta.netention.swing.util.SwingWindow;
+import automenta.spacegraph.DefaultSurface;
+import automenta.spacegraph.impl.SGPanel;
 import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.shape.TextRect;
 import java.awt.event.KeyEvent;
@@ -16,11 +17,11 @@ import javax.media.opengl.GL2;
  *
  * @author seh
  */
-public class DemoShapeTextRect extends Surface {
+public class DemoShapeTextRect extends DefaultSurface {
 
     float xAng = 0;
     float yAng = 0;
-    private final TextRect box;
+    private TextRect box;
 
     public DemoShapeTextRect() {
         super();
@@ -31,7 +32,7 @@ public class DemoShapeTextRect extends Surface {
 //    "Duis consectetuer leo quis elit. Suspendisse pretium nunc ac dolor. Quisque eleifend fringilla nisl. Suspendisse potenti. Duis vel ipsum at enim tincidunt consectetuer. Aliquam tempor justo nec metus. Nunc ac velit id nibh consequat vulputate. Cras vel dolor eu massa lacinia volutpat. Curabitur nibh nisi, auctor et, tincidunt eget, molestie vel, neque. Sed semper viverra neque. Nullam rhoncus hendrerit libero. Nulla adipiscing. Fusce pede nibh, lacinia a, malesuada a, dictum nec, pede. Etiam ut lorem. Donec quis massa vitae est pharetra mattis.",
 //    "Nullam dui. Morbi nulla quam, imperdiet iaculis, consectetuer a, porttitor eu, sem. Donec id ipsum vitae nisi viverra porta. In hac habitasse platea dictumst. In ligula libero, dapibus eleifend, eleifend vel, accumsan sit amet, felis. Morbi tortor. Donec mattis ultricies arcu. Ut eget leo. Sed vel quam at ipsum sodales semper. Curabitur tincidunt quam id odio. Quisque porta, magna vel nonummy pulvinar, ligula tellus fringilla tellus, ut pharetra turpis velit ac eros. Cras eu enim vel mi suscipit malesuada. Phasellus ut orci. Aenean vitae turpis vitae lectus malesuada aliquet."
 
-        box = add(new TextRect(t));
+        box = this.add(new TextRect(t));
     }
 
     @Override
@@ -73,6 +74,6 @@ public class DemoShapeTextRect extends Surface {
     }
 
     public static void main(String[] args) {
-        new SGWindow("DemoSGCanvas", new DemoShapeTextRect());
+        new SwingWindow(new SGPanel(new DemoShapeTextRect()), 600, 400, true);
     }
 }

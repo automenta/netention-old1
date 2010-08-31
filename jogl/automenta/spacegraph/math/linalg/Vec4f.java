@@ -39,6 +39,8 @@
 
 package automenta.spacegraph.math.linalg;
 
+import java.awt.Color;
+
 /** 4-element single-precision vector */
 
 public class Vec4f {
@@ -49,6 +51,13 @@ public class Vec4f {
 
   public Vec4f() {}
 
+  public Vec4f(Color c) {
+    this();
+    float[] f = new float[4];
+    c.getRGBComponents(f);
+    set(f[0], f[1], f[2], f[3]);            
+  }
+  
   public Vec4f(Vec4f arg) {
     set(arg);
   }

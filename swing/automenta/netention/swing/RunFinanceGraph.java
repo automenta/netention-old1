@@ -14,9 +14,11 @@ import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
 import automenta.netention.plugin.finance.PublicBusiness.IntervalType;
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
-import automenta.spacegraph.Surface;
+import automenta.spacegraph.DefaultSurface;
+import automenta.spacegraph.control.FractalControl;
 import automenta.spacegraph.impl.SGPanel;
-import automenta.spacegraph.math.linalg.Vec3f;
+import automenta.spacegraph.layer.GridRect;
+import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
 import com.syncleus.dann.graph.DirectedEdge;
@@ -37,9 +39,7 @@ import javolution.context.ConcurrentContext;
  *
  * @author seh
  */
-public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends Surface implements Demo {
-
-
+public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurface implements Demo {
 
     public static void main(String[] args) {
 
@@ -51,7 +51,7 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends Surface impl
     public JPanel newPanel() {
         ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
 
-        MutableBidirectedGraph<Node,ValueEdge<Node, Link>> target = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>();
+        MutableBidirectedGraph<Node, ValueEdge<Node, Link>> target = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>();
 
         List<PublicBusiness> businesses = new LinkedList();
         businesses.add(new PublicBusiness("GOOG"));
@@ -62,27 +62,28 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends Surface impl
         businesses.add(new PublicBusiness("INTC"));
         businesses.add(new PublicBusiness("NVDA"));
 
-        for (PublicBusiness pb : businesses)
+        for (PublicBusiness pb : businesses) {
             pb.refreshLatestPerformance(IntervalType.Monthly);
+        }
 
         FinanceGrapher.run(businesses, target, 2009, 2010, false);
 
         int numDimensions = 2;
 
-        System.out.println(target.getNodes().size() + " : " + target.getEdges().size() );
+        System.out.println(target.getNodes().size() + " : " + target.getEdges().size());
         final GraphCanvas graphCanvas = new GraphCanvas(target, numDimensions) {
 
             @Override
             public Rect newNodeRect(Object n) {
                 if (n instanceof BusinessPerformance) {
                     BusinessPerformance bp = (BusinessPerformance) n;
-                    WideIcon i = new WideIcon("" /*bp.toString()*/, getBPColor(bp), new Vec3f(Color.WHITE));
+                    WideIcon i = new WideIcon("" /*bp.toString()*/, getBPColor(bp), new Vec4f(Color.WHITE));
                     float s = getBPSize(bp);
                     i.getSize().set(s, s, s);
                     return i;
                 } else if (n instanceof TimePoint) {
                     TimePoint ti = (TimePoint) n;
-                    WideIcon i = new WideIcon("" + ti.date.getTime(), new Vec3f(Color.BLUE), new Vec3f(Color.WHITE));
+                    WideIcon i = new WideIcon("" /*+ ti.date.getTime()*/, new Vec4f(Color.BLUE), new Vec4f(Color.WHITE));
                     return i;
                 } else {
                     return super.newNodeRect(n);
@@ -92,7 +93,7 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends Surface impl
             @Override
             protected void updateRect(Object n, Rect r) {
                 if (n instanceof TimePoint) {
-                    r.setBackgroundColor(new Vec3f(Color.BLUE));
+                    r.setBackgroundColor(new Vec4f(Color.BLUE));
                     r.getSize().set(0.2F, 0.2F, 0.2F);
                 } else if (n instanceof BusinessPerformance) {
                 } else {
@@ -107,25 +108,31 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends Surface impl
                 return s;
             }
 
-            public Vec3f getBPColor(BusinessPerformance bp) {
+            public Vec4f getBPColor(BusinessPerformance bp) {
                 float lowest = bp.getBusiness().getLow();
                 float highest = bp.getBusiness().getHigh();
                 float r = (bp.high - lowest) / (highest - lowest);
                 float g = 0.1F;
                 float b = 0.1F;
-                Vec3f v = new Vec3f(r, g, b);
+                Vec4f v = new Vec4f(r, g, b, 1.0f);
                 return v;
             }
         };
 
         SGPanel j = new SGPanel(graphCanvas);
 
+        new FractalControl(j);
+
+        graphCanvas.add(new GridRect(6, 6));
+
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(j, BorderLayout.CENTER);
 
         JButton pb = new JButton("-");
         pb.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 double n = graphCanvas.hmap.getEquilibriumDistance() * 1.1;
                 graphCanvas.hmap.resetLearning();
                 graphCanvas.hmap.setEquilibriumDistance(n);
@@ -133,7 +140,9 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>>  extends Surface impl
         });
         JButton mb = new JButton("+");
         mb.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 double n = graphCanvas.hmap.getEquilibriumDistance() * 0.9;
                 graphCanvas.hmap.resetLearning();
                 graphCanvas.hmap.setEquilibriumDistance(n);

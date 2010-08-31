@@ -125,10 +125,10 @@ public class MemorySelf implements Self, Serializable {
         return IteratorUtils.chainedIterator(iList);
     }
 
-    public boolean addPattern(Pattern p) {
+    public Pattern addPattern(Pattern p) {
         //TODO do not allow adding existing pattern
         patterns.put(p.getID(), p);
-        return true;
+        return p;
     }
 
     @Override
@@ -258,6 +258,10 @@ public class MemorySelf implements Self, Serializable {
         
         if (whenFinished!=null)
             whenFinished.run();
+    }
+    
+    public void addProperties(Pattern p, Property... properties) {
+        addProperties(p.getID(), properties);        
     }
 
     public void addProperties(String pattern, Property... properties) {

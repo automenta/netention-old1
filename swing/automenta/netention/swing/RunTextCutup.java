@@ -9,8 +9,11 @@ import automenta.netention.swing.util.SwingWindow;
 import com.syncleus.dann.math.statistics.SimpleMarkovChain;
 import com.syncleus.dann.math.statistics.SimpleMarkovChainEvidence;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -41,44 +45,65 @@ public class RunTextCutup extends JPanel implements Demo {
     private final JTextArea outputArea;
     private Map<String, Integer> knownCount;
     private Set<String> known;
-    int maxKnown = 10;
-    int order = 2;
-    double orderWeights[] = { 1, 0.5, 0.25, 0.15, 0.05, 0.01 };
+    //int maxKnown = 10;
+    //int order = 2;
+    //double orderWeights[] = { 1, 0.5, 0.25, 0.15, 0.05, 0.01 };
 
+    final int initialMaxKnown = 1024;
+    Font textFont = new Font("Arial", Font.PLAIN, 24);
+    
     public RunTextCutup() {
         super(new BorderLayout(4, 4));
 
         inputArea = new JTextArea();
         inputArea.setLineWrap(true);
         inputArea.setWrapStyleWord(true);
+        inputArea.setFont(textFont);
 
         outputArea = new JTextArea();
         outputArea.setLineWrap(true);
         outputArea.setWrapStyleWord(true);
+        outputArea.setFont(textFont);
 
-        JPanel menuPanel = new JPanel(new FlowLayout());
+        JPanel menuPanel = new JPanel(new GridBagLayout());
         {
-            final JTextField knownField = new JTextField(Integer.toString(maxKnown));
-            menuPanel.add(knownField);
+            GridBagConstraints gc = new GridBagConstraints();
+            gc.gridx = 1;
+            gc.gridy = 1;
+            gc.fill = gc.VERTICAL;
+            gc.weightx = 0;
+            gc.weighty = 1.0;
+            gc.insets = new Insets(0,4,0,4);
 
-            final JTextField orderField = new JTextField(Integer.toString(order));
-            menuPanel.add(orderField);
+            final JTextField knownField = new JTextField(Integer.toString(initialMaxKnown));
+            knownField.setColumns(6);
+            menuPanel.add(knownField, gc);
 
+            gc.gridx++;
 
+            final JComboBox orderField = new JComboBox();
+            orderField.addItem("1st-Order*");
+            orderField.addItem("2nd-Order");
+            orderField.addItem("3rd-Order");
+            orderField.addItem("4th-Order");
+            menuPanel.add(orderField, gc);
+
+            gc.gridx++;
+            
             JButton run = new JButton("Run");
             run.addActionListener(new ActionListener() {
 
                 @Override public void actionPerformed(ActionEvent e) {
-                    order = Integer.decode(orderField.getText());
-                    maxKnown = Integer.decode(knownField.getText());
+                    final int order = orderField.getSelectedIndex() + 1;
+                    final int maxSymbols = Integer.decode(knownField.getText());
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override public void run() {
-                            RunTextCutup.this.run();
+                            RunTextCutup.this.run(maxSymbols, order);
                         }
                     });
                 }
             });
-            menuPanel.add(run);
+            menuPanel.add(run, gc);
         }
 
         JPanel center = new JPanel(new GridLayout(2, 1));
@@ -86,7 +111,7 @@ public class RunTextCutup extends JPanel implements Demo {
         center.add(new JScrollPane(outputArea));
 
         add(center, BorderLayout.CENTER);
-        add(menuPanel, BorderLayout.NORTH);
+        add(menuPanel, BorderLayout.SOUTH);
 
 
     }
@@ -134,20 +159,15 @@ public class RunTextCutup extends JPanel implements Demo {
         for (char c : w.toCharArray()) {
             if (Character.isLetterOrDigit(c)) {
                 return false;
-
-
             }
         }
         return true;
-
-
     }
 
-    protected void run() {
+    protected void run(int maxSymbols, int order) {
         SimpleMarkovChainEvidence<String> sme = new SimpleMarkovChainEvidence<String>(true, order);
 
         knownCount = new HashMap();
-
 
         List<String> tokens = getTokens();
         for (String s : tokens) {
@@ -193,11 +213,8 @@ public class RunTextCutup extends JPanel implements Demo {
         });
 
 
-        int n = Math.min(sortedKnown.size(), maxKnown);
+        int n = Math.min(sortedKnown.size(), maxSymbols);
         known = new HashSet(sortedKnown.subList(0, n));
-
-        System.out.println("Known symbols: " + known);
-
 
         long learnStart = System.nanoTime();
         List<String> seq = getSequence(tokens);
@@ -221,8 +238,6 @@ public class RunTextCutup extends JPanel implements Demo {
             
             //System.out.println(mc.getTransitionProbabilityMatrix());
             System.out.println("#" + mc.getStates().size());
-
-
 
             for (int i = 0; i < 700; i++) {
                 String nextSymbol = mc.generateTransition();
@@ -251,38 +266,27 @@ public class RunTextCutup extends JPanel implements Demo {
     public double getStrength(String symbol) {
         int count = knownCount.get(symbol);
 
-
         double sizeBoost = symbol.length() > 4 ? 2.0 : 1.0;
 
-
         return count * sizeBoost;
-
-
     }
 
     @Override
     public JPanel newPanel() {
         return this;
-
-
     }
 
     @Override
     public String getName() {
         return "Text Cut-Up";
-
-
     }
 
     @Override
     public String getDescription() {
         return "..";
-
-
     }
 
     public static void main(String[] args) {
-
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override

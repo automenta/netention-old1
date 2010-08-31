@@ -5,8 +5,10 @@
 package automenta.netention.swing;
 
 import automenta.spacegraph.DefaultSurface;
+import automenta.spacegraph.control.FractalControl;
 import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec3f;
+import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Curve;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
@@ -52,8 +54,8 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends DefaultSurface {
 
         this.sg = graph;
 
-        hmap = new HyperassociativeMap(sg, dimensions, 0.01, false);
-
+        hmap = new HyperassociativeMap(sg, dimensions, 0.05, false);
+        
         //tr = TextRect.newTextRenderer(new Font("Arial", Font.PLAIN, 72));
 
         for (N s : sg.getNodes()) {
@@ -95,8 +97,8 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends DefaultSurface {
         return box;
     }
 
-    public Vec3f getColor(N n) {
-        return new Vec3f().fromColor(Color.getHSBColor((float) Math.random(), 0.75f, 1.0f));
+    public Vec4f getColor(N n) {
+        return new Vec4f(Color.getHSBColor((float) Math.random(), 0.75f, 1.0f));
     }
 
     @Override
@@ -183,8 +185,9 @@ public class GraphCanvas<N, E extends DirectedEdge<N>> extends DefaultSurface {
             updateRect(s, b);
         }
 
-        getCamera().camPos.lerp(targetPos, 0.95f);
-        getCamera().camTarget.lerp(targetTarget, 0.95f);
+        super.updateSpace(gl);
+//        getCamera().camPos.lerp(targetPos, 0.95f);
+//        getCamera().camTarget.lerp(targetTarget, 0.95f);
     }
 
     protected void updateRect(N s, Rect r) {

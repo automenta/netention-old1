@@ -33,18 +33,18 @@ public class PointerLayer implements Drawable {
         double increment = Math.PI / numSteps;
         double radius = 4;
 
-        float x = canvas.getPointer().pixel.x()/500.0f;
-        float y = canvas.getPointer().pixel.y()/500.0f;
+        float x = canvas.getPointer().world.x();
+        float y = canvas.getPointer().world.y();
 
         gl.glBegin(GL2.GL_LINES);
         for (int i = numSteps - 1; i >= 0; i--) {
             gl.glColor3f(0.9f, 0.5f, 0.5f);
             gl.glVertex3d(x + radius * Math.cos(i * increment),
                 y + radius * Math.sin(i * increment),
-                -5);
+                0);
             gl.glVertex3d(x + -1.0 * radius * Math.cos(i * increment),
                 y + -1.0 * radius * Math.sin(i * increment),
-                -5);
+                0);
         }
         gl.glEnd();
     }

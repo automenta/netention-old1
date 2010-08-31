@@ -60,8 +60,9 @@ abstract public class Property implements Serializable {
 		this.cardinalityMin = cardinalityMin;
 	}
 	
-	public void setDescription(String description) {
+	public Property setDescription(String description) {
 		this.desc = description;
+        return this;
 	}
 
 

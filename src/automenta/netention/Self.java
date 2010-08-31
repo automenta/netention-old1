@@ -33,7 +33,7 @@ public interface Self {
 
     /** gets available patterns that may be added to a detail */
     public Collection<String> getAvailablePatterns(Detail d);
-    public boolean addPattern(Pattern p);
+    public Pattern addPattern(Pattern p);
     public boolean removePattern(Pattern pattern);
 
     /** gets available properties that may be added to a detail */

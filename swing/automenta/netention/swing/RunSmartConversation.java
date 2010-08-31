@@ -54,7 +54,7 @@ public class RunSmartConversation {
             if (status.getInReplyToStatusId() != -1) {
                 replyTo = "twitter: " + status.getInReplyToStatusId();
             }
-            con.addMessage("twitter:" + status.getId(), status.getUser().getScreenName(), status.getText(), retweet, replyTo);
+            //con.addMessage("twitter:" + status.getId(), status.getUser().getScreenName(), status.getText(), retweet, replyTo);
         }
     }
 

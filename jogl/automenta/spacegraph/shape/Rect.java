@@ -6,6 +6,7 @@
 package automenta.spacegraph.shape;
 
 import automenta.spacegraph.math.linalg.Vec3f;
+import automenta.spacegraph.math.linalg.Vec4f;
 import javax.media.opengl.GL2;
 
 /**
@@ -14,12 +15,17 @@ import javax.media.opengl.GL2;
  */
 public class Rect extends Spatial implements Drawable {
 
-    Vec3f backgroundColor = new Vec3f(0.5f, 0.5f, 0.5f);
+    Vec4f backgroundColor = new Vec4f(0.5f, 0.5f, 0.5f, 1.0f);
 
     boolean filled = true;
 
     public Rect() {
         super();
+    }
+    
+    public Rect tilt(float newTilt) {
+        rotation.setZ(newTilt);
+        return this;
     }
 
     public void setFilled(boolean filled) {
@@ -31,19 +37,23 @@ public class Rect extends Spatial implements Drawable {
     }
 
     public Rect color(float r, float g, float b) {
-        return color(new Vec3f(r, g, b));
+        return color(r, g, b, 1.0f);
     }
 
-    public Rect color(Vec3f c) {
+    public Rect color(float r, float g, float b, float a) {
+        return color(new Vec4f(r, g, b, a));
+    }
+
+    public Rect color(Vec4f c) {
         setBackgroundColor(c);
         return this;
     }
 
-    public void setBackgroundColor(Vec3f backgroundColor) {
+    public void setBackgroundColor(Vec4f backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
 
-    public Vec3f getBackgroundColor() {
+    public Vec4f getBackgroundColor() {
         return backgroundColor;
     }
     
@@ -57,10 +67,10 @@ public class Rect extends Spatial implements Drawable {
 
             final float w = 0.5f;
             final float h = 0.5f;
-
+            
             // Six faces of cube
             // Top face
-            gl.glColor3f(backgroundColor.x(), backgroundColor.y(), backgroundColor.z());
+            gl.glColor4f(backgroundColor.x(), backgroundColor.y(), backgroundColor.z(), backgroundColor.w());
             gl.glBegin(GL2.GL_QUADS);
             {
                 //Front
@@ -83,4 +93,10 @@ public class Rect extends Spatial implements Drawable {
     protected void drawFront(GL2 gl) {
 
     }
+
+    public Rect scale(float sx, float sy) {
+        scale(sx, sy, 1.0f);
+        return this;
+    }
+    
 }
