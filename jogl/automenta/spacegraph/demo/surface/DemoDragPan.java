@@ -11,6 +11,7 @@ import automenta.spacegraph.layer.PointerLayer;
 import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Rect;
+import automenta.spacegraph.shape.TextRect;
 import java.awt.Color;
 
 /**
@@ -35,7 +36,20 @@ public class DemoDragPan extends AbstractSurfaceDemo {
 
         add(new GridRect(6, 6));
         
-        add(new Rect().color(0.1f, 0.2f, 0.6f, 0.5f));
+        add(new TextRect("Abc") {
+
+            @Override
+            public void onTouchChange(Pointer pointer, Vec2f p, boolean touched) {
+                if (touched) {
+                    setText("Xyz");
+                }
+                else {
+                    setText("Abc");
+                }
+                
+            }
+            
+        }.color(0.1f, 0.2f, 0.6f, 0.5f));
 
         /* add rectangles, testing:
                 --position

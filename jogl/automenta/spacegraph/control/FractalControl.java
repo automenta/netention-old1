@@ -21,22 +21,25 @@ import java.awt.event.MouseWheelListener;
  */
 public class FractalControl implements MouseListener, MouseMotionListener, MouseWheelListener, Repeat {
 
-    private Vec2f downPixel;
-    private Vec3f downPointPos;
-    private Vec3f downPointTarget;
+    private Vec2f downPixel = new Vec2f();
+    private Vec2f downWorld = new Vec2f();
+    private Vec3f downPointPos = new Vec3f();
+    private Vec3f downPointTarget = new Vec3f();
     private Vec3f targetPos = new Vec3f(0, 0, 10);
     private Vec3f targetTarget = new Vec3f(0, 0, 0);
     private Vec3f targetUp = new Vec3f(0, 1, 0);
     private final Surface surface;
     float camLerp = 0.95f;
     float tiltLerp = 0.75f;
-    float panSpeed = 0.01f;
-    float wheelDZ = 4.0f;
+    float panSpeed = 2.0f;
+    float wheelDZ = 0.5f;
     float tiltAngle = (float) Math.PI / 2.0f;
     float tiltSpeed = 0.002f;
 
     public FractalControl(SGPanel panel) {
         super();
+        targetPos.set(panel.getSurface().getCamera().camPos);
+        targetTarget.set(panel.getSurface().getCamera().camTarget);
         this.surface = panel.getSurface();
         surface.add(this);
         panel.getCanvas().addMouseListener(this);
@@ -60,9 +63,10 @@ public class FractalControl implements MouseListener, MouseMotionListener, Mouse
 
     @Override
     public void mousePressed(MouseEvent e) {
-        downPixel = new Vec2f(e.getX(), e.getY());
-        downPointPos = new Vec3f(targetPos);
-        downPointTarget = new Vec3f(targetTarget);
+        downPixel.set((float)e.getX(), (float)e.getY());
+        downPointPos.set(targetPos);
+        downPointTarget.set(targetTarget);
+        downWorld.set(surface.getPointer().world.x(), surface.getPointer().world.y());
     }
 
     @Override
@@ -79,11 +83,11 @@ public class FractalControl implements MouseListener, MouseMotionListener, Mouse
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        float xAng = e.getX();
-        float yAng = e.getY();
+        float xAng = surface.getPointer().world.x();
+        float yAng = surface.getPointer().world.y();
 
-        float dx = -(xAng - downPixel.x());
-        float dy = yAng - downPixel.y();
+        float dx = xAng - downWorld.x();
+        float dy = yAng - downWorld.y();
 
         if (surface.keyStates.get(KeyStates.CONTROL)) {
             tiltAngle += dy* tiltSpeed;
@@ -95,7 +99,7 @@ public class FractalControl implements MouseListener, MouseMotionListener, Mouse
 
             Vec3f delta = new Vec3f(nx, ny, 0);
 
-            delta.scale(getPanSpeed());
+            delta.scale(-getPanSpeed());
 
             targetPos.set(downPointPos);
             targetTarget.set(downPointTarget);
@@ -118,8 +122,18 @@ public class FractalControl implements MouseListener, MouseMotionListener, Mouse
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        Vec3f delta = new Vec3f(0, 0, e.getWheelRotation() * getWheelDZ());
+        Vec3f delta = new Vec3f(0, 0,  (float)e.getWheelRotation() * getWheelDZ());
+//        float mz = (float)(1.0 + ((float)e.getWheelRotation()) * getWheelDZ());
+//        float nextZ = targetPos.z() * mz;
+//        System.out.println(mz + "  " + nextZ);
+//        targetPos.setZ(nextZ);
+//        targetTarget.setZ(nextZ);
+        System.out.println("z delta: " + delta);
         targetPos.add(delta);
         targetTarget.add(delta);
+        float minZ = surface.getNearF() + 0.25f;
+        targetPos.setZ( Math.max(targetPos.z(), minZ) );
+        targetTarget.setZ( Math.max(targetTarget.z(), minZ-1.0f) );
+
     }
 }

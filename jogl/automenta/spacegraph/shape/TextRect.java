@@ -33,6 +33,10 @@ public class TextRect extends Rect {
         this.textRenderer = textRenderer;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+    
     public static TextRenderer newTextRenderer(Font font) {
         TextRenderer textRenderer = new TextRenderer(font);
         return textRenderer;

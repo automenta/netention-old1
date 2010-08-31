@@ -27,8 +27,8 @@ import javax.media.opengl.glu.GLU;
 abstract public class Surface extends SG {
 
     private Vec3f background = new Vec3f(0, 0, 0);
-    float nearF = 3f;
-    float farF = 50.0f;
+    float nearF = 1.5f;
+    float farF = 40.0f;
     private GLU glu = new GLU();
     protected final Time time = new SystemTime();
     private FPSCounter fps;
@@ -299,5 +299,12 @@ abstract public class Surface extends SG {
 
     public void setBackground(Vec3f c) {
         this.background = c;
+    }
+
+    public float getNearF() {
+        return nearF;
+    }
+    public float getFarF() {
+        return farF;
     }
 }
