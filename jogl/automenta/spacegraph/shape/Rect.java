@@ -13,6 +13,7 @@ import javax.media.opengl.GL2;
 
 /**
  *
+ * TODO disinherit 'Touchable'
  * @author seh
  */
 public class Rect extends Spatial implements Drawable, Touchable {

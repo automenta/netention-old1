@@ -5,12 +5,12 @@
 
 package automenta.spacegraph.control;
 
-import automenta.spacegraph.math.linalg.Vec2f;
-
 /**
  *
  * @author me
  */
 public interface Pressable {
     public void onPressChange(Pointer pointer, boolean pressed);
+
+    public boolean isPressable();
 }

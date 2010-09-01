@@ -48,6 +48,11 @@ public class Button extends Rect implements Pressable {
         }
     }
 
+    @Override
+    public boolean isPressable() {
+        return true;
+    }
+    
     public boolean isPressed() {
         return pressed;
     }

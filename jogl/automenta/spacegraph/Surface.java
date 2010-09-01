@@ -303,7 +303,8 @@ abstract public class Surface extends SG {
             for (Touchable t : pointer.touching) {
                 if (t instanceof Pressable) {
                     Pressable p = (Pressable)t;
-                    p.onPressChange(pointer, true);
+                    if (p.isPressable())
+                        p.onPressChange(pointer, true);
                 }
             }
         }
@@ -320,7 +321,8 @@ abstract public class Surface extends SG {
             for (Touchable t : pointer.touching) {
                 if (t instanceof Pressable) {
                     Pressable p = (Pressable)t;
-                    p.onPressChange(pointer, false);
+                    if (p.isPressable())
+                        p.onPressChange(pointer, false);
                 }
             }
         }
