@@ -6,7 +6,9 @@ package automenta.spacegraph;
 
 import automenta.spacegraph.control.Camera;
 import automenta.spacegraph.control.Pointer;
+import automenta.spacegraph.control.Pressable;
 import automenta.spacegraph.control.Repeat;
+import automenta.spacegraph.control.Touchable;
 import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.demo.jogl.FPSCounter;
 import automenta.spacegraph.demo.jogl.SystemTime;
@@ -236,39 +238,39 @@ abstract public class Surface extends SG {
 
     }
 
-    public void processHits(int hits, IntBuffer buffer) {
-        System.out.println("---------------------------------");
-        System.out.println(" HITS: " + hits);
-        int offset = 0;
-        int names;
-        float z1, z2;
-        for (int i = 0; i < hits; i++) {
-            System.out.println("- - - - - - - - - - - -");
-            System.out.println(" hit: " + (i + 1));
-            names = buffer.get(offset);
-            offset++;
-            z1 = (float) buffer.get(offset) / 0x7fffffff;
-            offset++;
-            z2 = (float) buffer.get(offset) / 0x7fffffff;
-            offset++;
-            System.out.println(" number of names: " + names);
-            System.out.println(" z1: " + z1);
-            System.out.println(" z2: " + z2);
-            System.out.println(" names: ");
-
-            for (int j = 0; j < names; j++) {
-                System.out.print("       " + buffer.get(offset));
-                if (j == (names - 1)) {
-                    System.out.println("<-");
-                } else {
-                    System.out.println();
-                }
-                offset++;
-            }
-            System.out.println("- - - - - - - - - - - -");
-        }
-        System.out.println("---------------------------------");
-    }
+//    public void processHits(int hits, IntBuffer buffer) {
+//        System.out.println("---------------------------------");
+//        System.out.println(" HITS: " + hits);
+//        int offset = 0;
+//        int names;
+//        float z1, z2;
+//        for (int i = 0; i < hits; i++) {
+//            System.out.println("- - - - - - - - - - - -");
+//            System.out.println(" hit: " + (i + 1));
+//            names = buffer.get(offset);
+//            offset++;
+//            z1 = (float) buffer.get(offset) / 0x7fffffff;
+//            offset++;
+//            z2 = (float) buffer.get(offset) / 0x7fffffff;
+//            offset++;
+//            System.out.println(" number of names: " + names);
+//            System.out.println(" z1: " + z1);
+//            System.out.println(" z2: " + z2);
+//            System.out.println(" names: ");
+//
+//            for (int j = 0; j < names; j++) {
+//                System.out.print("       " + buffer.get(offset));
+//                if (j == (names - 1)) {
+//                    System.out.println("<-");
+//                } else {
+//                    System.out.println();
+//                }
+//                offset++;
+//            }
+//            System.out.println("- - - - - - - - - - - -");
+//        }
+//        System.out.println("---------------------------------");
+//    }
 
     public Camera getCamera() {
         return camera;
@@ -296,6 +298,16 @@ abstract public class Surface extends SG {
         super.mousePressed(e);
         int button = e.getButton();
         pointer.buttons[button-1] = true;
+        
+        if (button == 1) {
+            for (Touchable t : pointer.touching) {
+                if (t instanceof Pressable) {
+                    Pressable p = (Pressable)t;
+                    p.onPressChange(pointer, true);
+                }
+            }
+        }
+            
     }
 
     @Override
@@ -303,6 +315,15 @@ abstract public class Surface extends SG {
         super.mouseReleased(e);
         int button = e.getButton();
         pointer.buttons[button-1] = false;
+
+        if (button == 1) {
+            for (Touchable t : pointer.touching) {
+                if (t instanceof Pressable) {
+                    Pressable p = (Pressable)t;
+                    p.onPressChange(pointer, false);
+                }
+            }
+        }
     }
     
     

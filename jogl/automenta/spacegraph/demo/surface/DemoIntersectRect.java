@@ -7,8 +7,8 @@ package automenta.spacegraph.demo.surface;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.control.Pointer;
 import automenta.spacegraph.impl.SGPanel;
-import automenta.spacegraph.layer.GridRect;
-import automenta.spacegraph.layer.PointerLayer;
+import automenta.spacegraph.ui.GridRect;
+import automenta.spacegraph.ui.PointerLayer;
 import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Rect;
@@ -40,7 +40,7 @@ public class DemoIntersectRect extends AbstractSurfaceDemo {
         add(new TextRect("Abc") {
 
             @Override
-            public void onTouchChange(Pointer pointer, Vec2f p, boolean touched) {
+            public void onTouchChange(Pointer pointer, boolean touched) {
                 if (touched) {
                     setText("Xyz");
                 }
@@ -69,7 +69,7 @@ public class DemoIntersectRect extends AbstractSurfaceDemo {
             Rect r2 = new Rect() {
 
                 @Override
-                public void onTouchChange(Pointer pointer, Vec2f p, boolean touched) {
+                public void onTouchChange(Pointer pointer, boolean touched) {
                     color(touched ? new Vec4f(Color.MAGENTA) : new Vec4f(Color.ORANGE));
                 }
                 

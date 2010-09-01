@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package automenta.spacegraph.layer;
+package automenta.spacegraph.ui;
 
 import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.shape.Rect;

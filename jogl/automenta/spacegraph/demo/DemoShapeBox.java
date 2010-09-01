@@ -7,7 +7,7 @@ package automenta.spacegraph.demo;
 import automenta.spacegraph.DefaultSurface;
 import automenta.spacegraph.impl.SGWindow;
 import automenta.spacegraph.math.linalg.Vec3f;
-import automenta.spacegraph.layer.PointerLayer;
+import automenta.spacegraph.ui.PointerLayer;
 import automenta.spacegraph.shape.Box;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;

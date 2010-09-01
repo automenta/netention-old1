@@ -14,5 +14,5 @@ import automenta.spacegraph.math.linalg.Vec2f;
 public interface Touchable {
     public boolean isTouchable();
     public boolean intersects(Vec2f world);
-    public void onTouchChange(Pointer pointer, Vec2f world, boolean touched);
+    public void onTouchChange(Pointer pointer, boolean touched);
 }

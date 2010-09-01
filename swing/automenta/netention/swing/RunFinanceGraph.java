@@ -18,7 +18,7 @@ import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.DefaultSurface;
 import automenta.spacegraph.control.FractalControl;
 import automenta.spacegraph.impl.SGPanel;
-import automenta.spacegraph.layer.GridRect;
+import automenta.spacegraph.ui.GridRect;
 import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;

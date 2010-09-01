@@ -17,7 +17,7 @@ import javax.media.opengl.GL2;
  */
 public class Rect extends Spatial implements Drawable, Touchable {
 
-    Vec4f backgroundColor = new Vec4f(0.5f, 0.5f, 0.5f, 1.0f);
+    private Vec4f backgroundColor = new Vec4f(0.5f, 0.5f, 0.5f, 1.0f);
     boolean filled = true;
     final private Vec2f a = new Vec2f();
     final private Vec2f b = new Vec2f();
@@ -82,7 +82,8 @@ public class Rect extends Spatial implements Drawable, Touchable {
 
             // Six faces of cube
             // Top face
-            gl.glColor4f(backgroundColor.x(), backgroundColor.y(), backgroundColor.z(), backgroundColor.w());
+            Vec4f bc = getBackgroundColor();
+            gl.glColor4f(bc.x(), bc.y(), bc.z(), bc.w());
             gl.glBegin(GL2.GL_QUADS);
             {
                 //Front
@@ -126,11 +127,11 @@ public class Rect extends Spatial implements Drawable, Touchable {
         return true;
     }
 
-    @Deprecated
-    public static boolean CircleIntersection(float cx, float cy, float radius, float px, float py) {
-        double d = (px - cx) * (px - cx) + (py - cy) * (py - cy);
-        return (d < radius * radius);
-    }
+//    @Deprecated
+//    public static boolean CircleIntersection(float cx, float cy, float radius, float px, float py) {
+//        double d = (px - cx) * (px - cx) + (py - cy) * (py - cy);
+//        return (d < radius * radius);
+//    }
 
     public void updateGeometry() {
         float ux = (float) (size.x() * Math.cos(rotation.z()))/2.0f;
@@ -159,7 +160,7 @@ public class Rect extends Spatial implements Drawable, Touchable {
     }
 
     @Override
-    public void onTouchChange(Pointer pointer, Vec2f p, boolean touched) {
+    public void onTouchChange(Pointer pointer, boolean touched) {
     }
 
 //    public boolean is_inside_triangle(Float x, Float y, Float x1, Float y1, Float x2, Float y2, Float x3, Float y3) {

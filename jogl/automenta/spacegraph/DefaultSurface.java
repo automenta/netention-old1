@@ -40,7 +40,7 @@ public class DefaultSurface extends Surface {
     protected synchronized void handleTouch(Pointer p) {
         super.handleTouch(p);
 
-        Set<Touchable> touching = new HashSet();
+        Set<Touchable> touchingNow = new HashSet();
 
         final Vec2f v = new Vec2f(p.world.x(), p.world.y());
         for (Drawable d : defaultSpace.getLayers()) {
@@ -48,31 +48,30 @@ public class DefaultSurface extends Surface {
                 Touchable t = (Touchable) d;
                 if (t.isTouchable()) {
                     if (t.intersects(v)) {
-                        touching.add(t);
+                        touchingNow.add(t);
                     }
                 }
             }
         }
         
-        for (Touchable t : touching) {
+        for (Touchable t : touchingNow) {
             if (!p.touching.contains(t)) {
-                t.onTouchChange(p, v, true);
+                t.onTouchChange(p, true);
                 p.touching.add(t);
             }
         }
         
         List<Touchable> toRemove = new LinkedList();
         for (Touchable t : p.touching) {
-            if (!touching.contains(t)) {
-                t.onTouchChange(p, v, false);
+            if (!touchingNow.contains(t)) {
+                t.onTouchChange(p, false);
                 toRemove.add(t);
             } else {
-                t.onTouchChange(p, v, true);                
+                t.onTouchChange(p, true);                
             }
         }
         for (Touchable t : toRemove) {
             p.touching.remove(t);
         }
-
     }
 }

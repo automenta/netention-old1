@@ -12,5 +12,5 @@ import automenta.spacegraph.math.linalg.Vec2f;
  * @author me
  */
 public interface Pressable {
-    public void onPressChange(Pointer pointer, Vec2f world, boolean pressed);
+    public void onPressChange(Pointer pointer, boolean pressed);
 }

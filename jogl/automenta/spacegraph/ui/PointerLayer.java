@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.spacegraph.layer;
+package automenta.spacegraph.ui;
 
 import automenta.spacegraph.Surface;
 import automenta.spacegraph.control.Pointer;
