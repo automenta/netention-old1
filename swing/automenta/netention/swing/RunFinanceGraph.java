@@ -46,7 +46,7 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
     public static void main(String[] args) {
 
 
-        SwingWindow sw = new SwingWindow(new RunFinanceGraph().newPanel(), 400, 400, true);
+        SwingWindow sw = new SwingWindow(new RunFinanceGraph().newPanel(), 800, 600, true);
 
     }
     private MyHyperassociativeMap layout;
@@ -61,9 +61,9 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         businesses.add(new PublicBusiness("YHOO"));
         businesses.add(new PublicBusiness("MSFT"));
         businesses.add(new PublicBusiness("IBM"));
-        businesses.add(new PublicBusiness("AAPL"));
-        businesses.add(new PublicBusiness("INTC"));
-        businesses.add(new PublicBusiness("NVDA"));
+        //businesses.add(new PublicBusiness("AAPL"));
+        //businesses.add(new PublicBusiness("INTC"));
+        //businesses.add(new PublicBusiness("NVDA"));
 
         for (PublicBusiness pb : businesses) {
             pb.refreshLatestPerformance(IntervalType.Monthly);

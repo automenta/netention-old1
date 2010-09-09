@@ -11,15 +11,13 @@ import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Curve;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
+import automenta.spacegraph.ui.Window;
 import com.sun.opengl.util.awt.TextRenderer;
 import com.syncleus.dann.graph.DirectedEdge;
 import com.syncleus.dann.graph.Graph;
 import com.syncleus.dann.graph.drawing.GraphDrawer;
 import com.syncleus.dann.math.Vector;
 import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -95,6 +93,7 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
 
     public Rect newNodeRect(N n) {
         WideIcon box = new WideIcon(n.toString(), getColor(n), getColor(n));
+        //Window box = new Window();
         return box;
     }
 
@@ -138,6 +137,20 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
     protected void updateSpace(GL2 gl) {
         float m = 3.0f;
         
+//        for (N s : sg.getNodes()) {
+//            Vector v = layout.getCoordinates().get(s);
+//            Rect r = boxes.get(s);
+//            float x = r.getCenter().x() , y = r.getCenter().y(), z = r.getCenter().z();
+//            if (v.getCoordinate(1) != x*m) {
+//                System.out.println("discrep: " + v.getCoordinate(1) + " : " + x);
+//            }
+//            v.setCoordinate(x/m, 1);
+//            if (v.getDimensions() > 1)
+//                v.setCoordinate(y/m, 2);
+//            if (v.getDimensions() > 2)
+//                v.setCoordinate(z/m, 3);
+//        }
+               
         if (layout.isAlignable())
             layout.align();
         

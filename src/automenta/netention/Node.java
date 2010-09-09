@@ -65,6 +65,9 @@ public interface Node extends Serializable {
         public StringNode(String id) {
             super(id);
         }
+        @Override public String toString() {
+            return getName();
+        }
         
     }
 

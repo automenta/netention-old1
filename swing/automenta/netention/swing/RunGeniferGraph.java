@@ -10,7 +10,6 @@ import automenta.netention.Node.StringNode;
 import automenta.netention.graph.MyHyperassociativeMap;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.link.Next;
-import automenta.netention.node.TimePoint;
 import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
@@ -19,15 +18,16 @@ import automenta.spacegraph.control.FractalControl;
 import automenta.spacegraph.impl.SGPanel;
 import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Rect;
-import automenta.spacegraph.shape.WideIcon;
 import automenta.spacegraph.ui.GridRect;
 import automenta.spacegraph.ui.PointerLayer;
 import com.syncleus.dann.graph.DirectedEdge;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
 import genifer.Fact;
+import genifer.Formula;
 import genifer.Genifer;
 import genifer.GeniferLisp;
+import genifer.Rule;
 import genifer.Sexp;
 import genifer.SimpleMemory;
 import java.awt.BorderLayout;
@@ -40,8 +40,6 @@ import javax.swing.JPanel;
 import javolution.context.ConcurrentContext;
 import org.armedbear.lisp.Cons;
 import org.armedbear.lisp.LispObject;
-import org.armedbear.lisp.Operator;
-import org.armedbear.lisp.Symbol;
 
 /**
  *
@@ -54,63 +52,120 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
 
     }
     private MyHyperassociativeMap layout;
+    int depth = 4;
+    int numDimensions = 3;
+
+    public static class FactNode extends StringNode {
+
+        public final Fact fact;
+
+        public FactNode(Fact f) {
+            super(f.toString());
+            this.fact = f;
+        }
+
+        public double getProbability() {
+            return fact.truth.getProbability();
+        }
+    }
+
+    public static class RuleNode extends StringNode {
+
+        public final Rule rule;
+
+        public RuleNode(Rule r) {
+            super(r.toString());
+            this.rule = r;
+        }
+
+        public double getW() {
+            return rule.getW();
+        }
+    }
+
+    public static class GeniferGraph extends MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>> {
+
+        private final Genifer gen;
+
+        public GeniferGraph(Genifer gen, int maxLevels) {
+            super();
+            this.gen = gen;
+            update(maxLevels);
+        }
+
+        protected void update(int maxLevels) {
+            clear();
+            for (Fact f : gen.getMemory().getFacts()) {
+                updateNode(f, maxLevels - 1);
+            }
+            for (Rule rule : gen.getMemory().getRules()) {
+                updateNode(rule, maxLevels - 1);
+            }
+        }
+
+        protected void updateNode(Rule r, int i) {
+            if (i == 0) {
+                return;
+            }
+
+
+            Formula formula = r.formula;
+            if (formula instanceof Sexp) {
+                Sexp s = (Sexp) formula;
+                Node parent = new RuleNode(r);
+                add(parent);
+                updateLispObject(parent, s.cons.car, i - 1);
+                updateLispObject(parent, s.cons.cdr, i - 1);
+            }
+
+        }
+
+        protected void updateNode(Fact f, int i) {
+            if (i == 0) {
+                return;
+            }
+
+            Formula formula = f.formula;
+            if (formula instanceof Sexp) {
+                Sexp s = (Sexp) formula;
+                Node parent = new FactNode(f);
+                add(parent);
+                updateLispObject(parent, s.cons.car, i - 1);
+                updateLispObject(parent, s.cons.cdr, i - 1);
+            }
+
+        }
+
+        protected void updateLispObject(Node parent, LispObject l, int i) {
+            if (i == 0) {
+                return;
+            }
+            if (l == null) {
+                return;
+            }
+
+            Node lNode = getNode(l);
+            add(lNode);
+            add(new ValueEdge<Node, Link>(new Next(), parent, lNode));
+
+            if (l instanceof Cons) {
+                Cons c = (Cons) l;
+                updateLispObject(lNode, c.car, i - 1);
+                updateLispObject(lNode, c.cdr, i - 1);
+            }
+        }
+
+        private Node getNode(LispObject l) {
+            if (l instanceof Cons) {
+                return new StringNode("cons-" + l.hashCode());
+            }
+
+            return new StringNode(l.writeToString());
+        }
+    }
 
     public MutableBidirectedGraph getGeniferGraph(Genifer gen, int maxLevels) {
-        MutableBidirectedGraph<Node, ValueEdge<Node, Link>> g = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>();
-        for (Fact f : gen.getMemory().getFacts()) {
-            updateGeniferGraph(g, gen, f, maxLevels - 1);
-        }
-        return g;
-    }
-
-    protected void updateGeniferGraph(MutableBidirectedGraph<Node, ValueEdge<Node, Link>> g, Genifer gen, Fact f, int maxLevels) {
-        Node n = new StringNode(f.toString());
-        g.add(n);
-        if (f.formula instanceof Sexp) {
-            Sexp s = (Sexp) f.formula;
-            Cons c = s.cons;
-            updateGeniferGraph(g, gen, c, n, maxLevels - 1);
-
-        }
-    }
-
-    protected void updateGeniferGraph(MutableBidirectedGraph<Node, ValueEdge<Node, Link>> g, Genifer gen, LispObject o, Node parent, int maxLevels) {
-        if (maxLevels == 0)
-            return;
-        
-        if (o instanceof Cons) {
-            Cons c = (Cons) o;
-            LispObject car = c.car;
-            {
-                String label = car.toString();
-                StringNode carString = new StringNode(label);
-                g.add(carString);
-                g.add(new ValueEdge<Node, Link>(new Next(), parent, carString));
-                updateGeniferGraph(g, gen, car, carString, maxLevels - 1);
-            }
-            LispObject cdr = c.cdr;
-            {
-                String label = cdr.toString();
-                StringNode cdrString = new StringNode(label);
-                g.add(cdrString);
-                g.add(new ValueEdge<Node, Link>(new Next(), parent, cdrString));
-                updateGeniferGraph(g, gen, cdr, cdrString, maxLevels - 1);
-            }
-        } else if (o instanceof Symbol) {
-            Symbol a = (Symbol)o;
-            StringNode oString = new StringNode(a.getName());
-            g.add(oString);
-            g.add(new ValueEdge<Node, Link>(new Next(), parent, oString));
-        } else if (o instanceof Operator) {
-            Operator a = (Operator)o;
-            StringNode oString = new StringNode(o.toString());
-            g.add(oString);
-            g.add(new ValueEdge<Node, Link>(new Next(), parent, oString));
-        } else {
-            StringNode oString = new StringNode(o.toString());
-            g.add(oString);
-            g.add(new ValueEdge<Node, Link>(new Next(), parent, oString));
-        }
+        return new GeniferGraph(gen, maxLevels);
     }
 
     public JPanel newPanel() {
@@ -119,9 +174,8 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         GeniferLisp genifer = new GeniferLisp(new SimpleMemory());
         genifer.execute("INIT-TEST-MEM", genifer.getMemory());
 
-        MutableBidirectedGraph<Node, ValueEdge<Node, Link>> target = getGeniferGraph(genifer, 0);
+        MutableBidirectedGraph<Node, ValueEdge<Node, Link>> target = getGeniferGraph(genifer, depth);
 
-        int numDimensions = 3;
 
         System.out.println(target.getNodes().size() + " : " + target.getEdges().size());
 
@@ -130,26 +184,22 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
 
             @Override
             public Rect newNodeRect(Object n) {
-                if (n instanceof BusinessPerformance) {
-                    BusinessPerformance bp = (BusinessPerformance) n;
-                    WideIcon i = new WideIcon("" /*bp.toString()*/, getBPColor(bp), new Vec4f(Color.WHITE));
-                    float s = getBPSize(bp);
-                    i.getSize().set(s, s, s);
-                    return i;
-                } else if (n instanceof TimePoint) {
-                    TimePoint ti = (TimePoint) n;
-                    WideIcon i = new WideIcon("" /*+ ti.date.getTime()*/, new Vec4f(Color.BLUE), new Vec4f(Color.WHITE));
-                    return i;
-                } else {
-                    return super.newNodeRect(n);
-                }
+                return super.newNodeRect(n);
             }
 
             @Override
             protected void updateRect(Object n, Rect r) {
-                if (n instanceof TimePoint) {
-                    r.setBackgroundColor(new Vec4f(Color.BLUE));
-                    r.getSize().set(0.2F, 0.2F, 0.2F);
+                if (n instanceof FactNode) {
+                    FactNode f = (FactNode) n;
+                    float w = (float) f.getProbability() + 0.5f;
+                    r.setBackgroundColor(new Vec4f(w / 2f, w, w / 4f, 0.75f));
+                    r.scale(w, w);
+                } else if (n instanceof RuleNode) {
+                    RuleNode f = (RuleNode) n;
+                    float w = (float) f.getW() / 100.0f + 0.5f;
+                    r.setBackgroundColor(new Vec4f(w, w / 2f, w / 4f, 0.75f));
+                    r.scale(w, w);
+
                 } else {
                     super.updateRect(n, r);
                 }
