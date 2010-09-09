@@ -4,8 +4,6 @@
  */
 package automenta.spacegraph.shape;
 
-import automenta.spacegraph.control.Pointer;
-import automenta.spacegraph.control.Touchable;
 import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec4f;
 import java.awt.geom.Path2D;
@@ -13,10 +11,9 @@ import javax.media.opengl.GL2;
 
 /**
  *
- * TODO disinherit 'Touchable'
  * @author seh
  */
-public class Rect extends Spatial implements Drawable, Touchable {
+public class Rect extends Spatial implements Drawable {
 
     private Vec4f backgroundColor = new Vec4f(0.5f, 0.5f, 0.5f, 1.0f);
     boolean filled = true;
@@ -107,12 +104,24 @@ public class Rect extends Spatial implements Drawable, Touchable {
     protected void drawFront(GL2 gl) {
     }
 
-    public Rect scale(float sx, float sy) {
-        scale(sx, sy, 1.0f);
+    @Override
+    public Rect scale(float sx, float sy, float sz) {
+        super.scale(sx, sy, sz);
         updateGeometry();
         return this;
     }
 
+    public Rect scale(float sx, float sy) {
+        scale(sx, sy, 1.0f);
+        return this;
+    }
+
+    @Override public Rect moveTo(float dx, float dy, float dz) {
+        super.moveTo(dx, dy, dz);
+        updateGeometry();
+        return this;
+    }
+    
     public Rect move(float x, float y, float z) {
         super.move(x, y, z);
         updateGeometry();
@@ -123,23 +132,18 @@ public class Rect extends Spatial implements Drawable, Touchable {
         return move(x, y, 0);
     }
 
-    @Override
-    public boolean isTouchable() {
-        return true;
-    }
 
 //    @Deprecated
 //    public static boolean CircleIntersection(float cx, float cy, float radius, float px, float py) {
 //        double d = (px - cx) * (px - cx) + (py - cy) * (py - cy);
 //        return (d < radius * radius);
 //    }
-
     public void updateGeometry() {
-        float ux = (float) (size.x() * Math.cos(rotation.z()))/2.0f;
-        float uy = (float) (size.x() * Math.sin(rotation.z()))/2.0f;
+        float ux = (float) (size.x() * Math.cos(rotation.z())) / 2.0f;
+        float uy = (float) (size.x() * Math.sin(rotation.z())) / 2.0f;
 
-        float vx = (float) (size.y() * Math.cos(rotation.z() + Math.PI / 2.0))/2.0f;
-        float vy = (float) (size.y() * Math.sin(rotation.z() + Math.PI / 2.0))/2.0f;
+        float vx = (float) (size.y() * Math.cos(rotation.z() + Math.PI / 2.0)) / 2.0f;
+        float vy = (float) (size.y() * Math.sin(rotation.z() + Math.PI / 2.0)) / 2.0f;
 
         a.set(center.x() + ux + vx, center.y() + uy + vy);
         b.set(center.x() - ux + vx, center.y() - uy + vy);
@@ -150,18 +154,11 @@ public class Rect extends Spatial implements Drawable, Touchable {
         shapePath.moveTo(a.x(), a.y());
         shapePath.lineTo(b.x(), b.y());
         shapePath.lineTo(c.x(), c.y());
-        shapePath.lineTo(d.x(), d.y());       
+        shapePath.lineTo(d.x(), d.y());
     }
 
-    
-
-    @Override
     public boolean intersects(Vec2f p) {
         return (shapePath.contains(p.x(), p.y()));
-    }
-
-    @Override
-    public void onTouchChange(Pointer pointer, boolean touched) {
     }
 
 //    public boolean is_inside_triangle(Float x, Float y, Float x1, Float y1, Float x2, Float y2, Float x3, Float y3) {
@@ -203,5 +200,4 @@ public class Rect extends Spatial implements Drawable, Touchable {
 //        // Check if point is in triangle
 //        return (u > 0) && (v > 0) && (u + v < 1);
 //    }
-
 }

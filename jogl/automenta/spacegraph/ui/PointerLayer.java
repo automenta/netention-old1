@@ -21,6 +21,8 @@ public class PointerLayer implements Drawable {
     
     final Vec3f red = new Vec3f(1f, 0, 0);
     final Vec3f green  = new Vec3f(0, 1f, 0);
+    
+    float alpha = 0.75f;
    
     public PointerLayer(Surface canvas) {
         super();
@@ -57,7 +59,7 @@ public class PointerLayer implements Drawable {
         
         gl.glBegin(GL2.GL_LINES);
         for (int i = numSteps - 1; i >= 0; i--) {
-            gl.glColor3f(color.x(), color.y(), color.z());
+            gl.glColor4f(color.x(), color.y(), color.z(), alpha);
             gl.glVertex3d(x + radius * Math.cos(i * increment),
                 y + radius * Math.sin(i * increment),
                 0);

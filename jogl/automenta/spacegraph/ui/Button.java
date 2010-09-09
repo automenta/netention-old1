@@ -6,7 +6,7 @@ package automenta.spacegraph.ui;
 
 import automenta.spacegraph.control.Pointer;
 import automenta.spacegraph.control.Pressable;
-import automenta.spacegraph.math.linalg.Vec2f;
+import automenta.spacegraph.control.Touchable;
 import automenta.spacegraph.shape.Rect;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,8 +15,9 @@ import java.util.List;
  *
  * @author me
  */
-public class Button extends Rect implements Pressable {
+public class Button extends Rect implements Pressable,  Touchable {
 
+    private boolean touchable = true;
     private boolean pressed = false;
     private boolean touched = false;
 
@@ -28,9 +29,15 @@ public class Button extends Rect implements Pressable {
 
     @Override
     public void onTouchChange(Pointer pointer, boolean touched) {
-        super.onTouchChange(pointer, touched);
         this.touched = touched;
     }
+
+    @Override
+    public boolean isTouchable() {
+        return touchable;
+    }
+    
+    
 
     
     @Override

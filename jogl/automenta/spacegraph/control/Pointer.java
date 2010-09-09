@@ -14,4 +14,11 @@ public class Pointer {
 
     public final Vec3f dragStartworld = new Vec3f(0, 0, 0);
     public boolean dragging = false;
+
+    public Touchable getSmallestTouched() {
+        //TODO actually implement it, but for now just return the first entry in 'touching'
+        if (touching.isEmpty())
+            return null;
+        return touching.iterator().next();
+    }
 }

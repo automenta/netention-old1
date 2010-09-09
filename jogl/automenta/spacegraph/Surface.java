@@ -344,4 +344,8 @@ abstract public class Surface extends SG {
     public float getFarF() {
         return farF;
     }
+
+    public float getFocus() {
+        return focus;
+    }
 }

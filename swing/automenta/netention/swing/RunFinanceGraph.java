@@ -22,6 +22,7 @@ import automenta.spacegraph.ui.GridRect;
 import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
+import automenta.spacegraph.ui.PointerLayer;
 import com.syncleus.dann.graph.DirectedEdge;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
@@ -70,11 +71,11 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
 
         FinanceGrapher.run(businesses, target, 2009, 2010, false);
 
-        int numDimensions = 3;
+        int numDimensions = 2;
 
         System.out.println(target.getNodes().size() + " : " + target.getEdges().size());
         
-        layout = new MyHyperassociativeMap(target, numDimensions, 0.01, false);
+        layout = new MyHyperassociativeMap(target, numDimensions, 0.01, true);
         final GraphSpace graphCanvas = new GraphSpace(target, layout) {
 
             @Override
@@ -118,7 +119,7 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
                 float r = (bp.high - lowest) / (highest - lowest);
                 float g = 0.1F;
                 float b = 0.1F;
-                Vec4f v = new Vec4f(r, g, b, 1.0f);
+                Vec4f v = new Vec4f(r, g, b, 0.75f);
                 return v;
             }
         };
@@ -126,6 +127,7 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         SGPanel j = new SGPanel(graphCanvas);
 
         new FractalControl(j);
+        new PointerLayer(this);
 
         graphCanvas.add(new GridRect(6, 6));
 

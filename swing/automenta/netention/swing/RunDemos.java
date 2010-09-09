@@ -5,7 +5,7 @@
 package automenta.netention.swing;
 
 import automenta.netention.swing.util.SwingWindow;
-import automenta.spacegraph.demo.surface.DemoDragPan;
+import automenta.spacegraph.j2.DemoRectTilt;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -112,7 +112,7 @@ public class RunDemos extends JPanel {
         //demos.add(new RunSpikingGraph());
         demos.add(new RunDialogPanel());
         //demos.add(new RunGraphMix());
-        demos.add(new DemoDragPan());
+        demos.add(new DemoRectTilt());
         //        demos.add(new Demo("Self Browser", "..") {
         //            @Override public JPanel newPanel() {
         //                return RunSelfBrowser.newPanel();

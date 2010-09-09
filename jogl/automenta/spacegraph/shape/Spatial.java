@@ -33,6 +33,11 @@ class Spatial {
         getSize().set(sx, sy, sz);
         return this;
     }
+    
+    public Spatial moveTo(float dx, float dy, float dz) {
+        getCenter().set(dx, dy, dz);        
+        return this;
+    }
 
     public Spatial move(float dx, float dy, float dz) {
         float cx = getCenter().x();

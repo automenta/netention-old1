@@ -75,9 +75,9 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
                 @Override
                 public void draw(GL2 gl) {
                     super.draw(gl);
-                    curveLabel.getCenter().set(
+                    curveLabel.move(
                         ctrlPoints[3], ctrlPoints[4], ctrlPoints[5]);
-                    curveLabel.getSize().set(0.1f, 0.1f, 0.1f);
+                    curveLabel.scale(0.1f, 0.1f, 0.1f);
                     //curveLabel.draw(gl);
                 }
             };
@@ -102,41 +102,37 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
         return new Vec4f(Color.getHSBColor((float) Math.random(), 0.75f, 1.0f));
     }
 
-    public void mouseMoved(MouseEvent e)    {
-        super.mouseMoved(e);
-    }
+//    @Override
+//    public void mousePressed(MouseEvent e) {
+//        super.mousePressed(e);
+//        downPixel = new Vec2f(e.getX(), e.getY());
+//        downPointPos = new Vec3f(targetPos);
+//        downPointTarget = new Vec3f(targetTarget);
+//    }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        super.mousePressed(e);
-        downPixel = new Vec2f(e.getX(), e.getY());
-        downPointPos = new Vec3f(targetPos);
-        downPointTarget = new Vec3f(targetTarget);
-    }
+//    @Override
+//    public void mouseWheelMoved(MouseWheelEvent e) {
+//        super.mouseWheelMoved(e);
+//
+//        Vec3f delta = new Vec3f(0, 0, e.getWheelRotation() * 4.0f);
+//        targetPos.add(delta);
+//        targetTarget.add(delta);
+//    }
 
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        super.mouseWheelMoved(e);
-
-        Vec3f delta = new Vec3f(0, 0, e.getWheelRotation() * 4.0f);
-        targetPos.add(delta);
-        targetTarget.add(delta);
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        super.mouseDragged(e);
-        xAng = e.getX();
-        yAng = e.getY();
-
-        Vec3f delta = new Vec3f(-(xAng - downPixel.x()), yAng - downPixel.y(), 0);
-        delta.scale(0.01f);
-
-        targetPos.set(downPointPos);
-        targetTarget.set(downPointTarget);
-        targetPos.add(delta);
-        targetTarget.add(delta);
-    }
+//    @Override
+//    public void mouseDragged(MouseEvent e) {
+//        super.mouseDragged(e);
+//        xAng = e.getX();
+//        yAng = e.getY();
+//
+//        Vec3f delta = new Vec3f(-(xAng - downPixel.x()), yAng - downPixel.y(), 0);
+//        delta.scale(0.01f);
+//
+//        targetPos.set(downPointPos);
+//        targetTarget.set(downPointTarget);
+//        targetPos.add(delta);
+//        targetTarget.add(delta);
+//    }
 
     @Override
     protected void updateSpace(GL2 gl) {
@@ -150,16 +146,16 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
             Rect b = boxes.get(s);
             if (v.getDimensions() == 1) {
                 float x = (float) (v.getCoordinate(1) * m);
-                b.getCenter().set(0, x, 0);
+                b.moveTo(0, x, 0);
             } else if (v.getDimensions() == 2) {
                 float x = (float) (v.getCoordinate(1) * m);
                 float y = (float) (v.getCoordinate(2) * m);
-                b.getCenter().set(x, y, 0);
+                b.moveTo(x, y, 0);
             } else if (v.getDimensions() == 3) {
                 float x = (float) (v.getCoordinate(1) * m);
                 float y = (float) (v.getCoordinate(2) * m);
                 float z = (float) (v.getCoordinate(3) * m);
-                b.getCenter().set(x, y, z);
+                b.moveTo(x, y, z);
             }
             updateRect(s, b);
         }
@@ -170,21 +166,9 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
     }
 
     protected void updateRect(N s, Rect r) {
-        r.getSize().set(0.5f, 0.5f, 0.5f);
+        r.scale(0.5f, 0.5f, 0.5f);
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        super.keyPressed(e);
-//        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-//            targetPos.add(new Vec3f(-0.1f, 0, 0));
-//            targetTarget.add(new Vec3f(-0.1f, 0, 0));
-//        }
-//        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-//            targetPos.add(new Vec3f(0.1f, 0, 0));
-//            targetTarget.add(new Vec3f(0.1f, 0, 0));
-//        }
-    }
 
 //    public static void main(String[] args) {
 //
