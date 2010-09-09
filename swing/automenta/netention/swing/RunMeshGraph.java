@@ -6,20 +6,19 @@ package automenta.netention.swing;
 
 import automenta.netention.Link;
 import automenta.netention.Node;
+import automenta.netention.Node.StringNode;
 import automenta.netention.graph.NotifyingDirectedGraph;
 import automenta.netention.graph.SeHHyperassociativeMap;
 import automenta.netention.graph.ValueEdge;
+import automenta.netention.link.Next;
 import automenta.netention.node.TimePoint;
-import automenta.netention.plugin.finance.FinanceGrapher;
-import automenta.netention.plugin.finance.PublicBusiness;
 import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
-import automenta.netention.plugin.finance.PublicBusiness.IntervalType;
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.DefaultSurface;
 import automenta.spacegraph.control.FractalControl;
 import automenta.spacegraph.impl.SGPanel;
-import automenta.spacegraph.ui.GridRect;
+import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
@@ -30,10 +29,6 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javolution.context.ConcurrentContext;
@@ -42,64 +37,71 @@ import javolution.context.ConcurrentContext;
  *
  * @author seh
  */
-public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurface implements Demo {
+public class RunMeshGraph<N, E extends DirectedEdge<N>> extends DefaultSurface implements Demo {
 
     public static void main(String[] args) {
-
-
-        SwingWindow sw = new SwingWindow(new RunFinanceGraph().newPanel(), 800, 600, true);
-
+           SwingWindow sw = new SwingWindow(new RunMeshGraph().newPanel(), 800, 600, true);
     }
+    
     private SeHHyperassociativeMap layout;
 
-    public JPanel newPanel() {
-        //ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
-
-        final NotifyingDirectedGraph<Node, ValueEdge<Node, Link>> target = new NotifyingDirectedGraph<Node, ValueEdge<Node, Link>>();
-
-        final List<PublicBusiness> businesses = new LinkedList();
+    public static class MeshGraph extends NotifyingDirectedGraph<Node, ValueEdge<Node, Link>> {
+        public Node[][] nodes;
+        private final int width;
+        private final int height;
         
-        new Thread(new Runnable() {
+        public MeshGraph(int width, int height, float connectivity) {
+            super();
 
-            protected void delay(long ms) {
-                try {
-                    Thread.sleep(ms);
-                } catch (InterruptedException ex) {
+            this.width = width;
+            this.height = height;
+            
+            nodes = new Node[width][];
+            for (int h = 0; h < width; h++) {
+                nodes[h] = new Node[height];
+            }
+
+            for (int w = 0; w < width; w++) {
+                for (int h = 0; h < height; h++) {
+                    Node n = new StringNode(w + "_" + h);
+                    add(n);
+                    nodes[w][h] = n;
                 }
             }
-            
-            protected void addBusiness(String name) {
-                businesses.add(new PublicBusiness(name));
-                FinanceGrapher.run(businesses, target, 2009, 2010, false);
-                for (PublicBusiness pb : businesses) {
-                    pb.refreshLatestPerformance(IntervalType.Monthly);
-                }                
+            for (int w = 0; w < width; w++) {
+                for (int h = 0; h < height; h++) {
+                    
+                    if ((w > 0) && (Math.random() < connectivity))
+                        add(new ValueEdge<Node, Link>(new Next(), nodes[w-1][h], nodes[w][h]));
+                    if ((w < width-1) && (Math.random() < connectivity))
+                        add(new ValueEdge<Node, Link>(new Next(), nodes[w+1][h], nodes[w][h]));
+                    if ((h > 0) && (Math.random() < connectivity))
+                        add(new ValueEdge<Node, Link>(new Next(), nodes[w][h-1], nodes[w][h]));
+                    if ((h < height-1) && (Math.random() < connectivity))
+                        add(new ValueEdge<Node, Link>(new Next(), nodes[w][h+1], nodes[w][h]));
+                }
             }
-            @Override            
-            public void run() {
-                addBusiness("GOOG");
-                delay(4000);
-                addBusiness("YHOO");
-                delay(4000);                                               
-                addBusiness("MSFT");
-                delay(4000);                                               
-                addBusiness("IBM");
-                delay(4000);                                               
-                
-                //businesses.add(new PublicBusiness("AAPL"));
-                //businesses.add(new PublicBusiness("INTC"));
-                //businesses.add(new PublicBusiness("NVDA"));
-            }
-            
-        }).start();
+        }
+    }
 
+    
+    public JPanel newPanel() {
+        ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
+
+        MeshGraph target = new MeshGraph(8,8, 0.8f);
 
 
         int numDimensions = 3;
 
         System.out.println(target.getNodes().size() + " : " + target.getEdges().size());
+
+        layout = new SeHHyperassociativeMap(target, numDimensions, 0.25, true);
+        float r = 1.5f;
+        layout.anchor(target.nodes[0][0], new Vec3f(-r,-r,0));
+        layout.anchor(target.nodes[target.width-1][0], new Vec3f(r,-r,0));
+        //layout.anchor(target.nodes[0][target.height-1], new Vec3f(-r,r,0));
+        //layout.anchor(target.nodes[target.width-1][target.height-1], new Vec3f(r,r,0));
         
-        layout = new SeHHyperassociativeMap(target, numDimensions, 0.01, true);
         final GraphSpace graphCanvas = new GraphSpace(target, layout) {
 
             @Override
@@ -152,8 +154,6 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
 
         new FractalControl(j);
         new PointerLayer(this);
-
-        graphCanvas.add(new GridRect(6, 6));
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(j, BorderLayout.CENTER);

@@ -4,6 +4,8 @@
  */
 package automenta.netention.swing;
 
+import automenta.netention.graph.NotifyingDirectedGraph;
+import automenta.netention.graph.NotifyingDirectedGraph.GraphListener;
 import automenta.spacegraph.DefaultSurface;
 import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec3f;
@@ -11,7 +13,6 @@ import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Curve;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
-import automenta.spacegraph.ui.Window;
 import com.sun.opengl.util.awt.TextRenderer;
 import com.syncleus.dann.graph.DirectedEdge;
 import com.syncleus.dann.graph.Graph;
@@ -19,7 +20,9 @@ import com.syncleus.dann.graph.drawing.GraphDrawer;
 import com.syncleus.dann.math.Vector;
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.logging.Logger;
 import javax.media.opengl.GL2;
 
@@ -27,7 +30,7 @@ import javax.media.opengl.GL2;
  *
  * @author seh
  */
-public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
+public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface implements GraphListener<N, E> {
 
     private float textScaleFactor;
     float xAng = 0;
@@ -40,61 +43,79 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
     private Vec3f downPointTarget;
     private Vec2f downPixel;
     private TextRenderer tr;
-    private GraphDrawer<Graph<N,E>,N> layout;
-    
+    private GraphDrawer<Graph<N, E>, N> layout;
+    private WeakHashMap<N, Vec3f> pos = new WeakHashMap<N, Vec3f>();
     protected final Map<E, Curve> edgeLines = new HashMap<E, Curve>();
-    
-    public GraphSpace(Graph<N, E> graph, GraphDrawer<Graph<N, E>, N> initialLayout) {
+    private double defaultMomentum = 0.1;
+
+    @Override
+    public void onEdgeAdded(E e) {
+        Rect aBox = boxes.get(e.getSourceNode());
+        Rect bBox = boxes.get(e.getDestinationNode());
+        if ((aBox == null) || (bBox == null)) {
+            Logger.getLogger(GraphSpace.class.toString()).severe("could not find boxes for edge: " + e);
+        }
+
+        final WideIcon curveLabel = new WideIcon(e.toString(), getColor(null), getColor(null));
+
+        Curve c = new Curve(aBox, bBox, 2) {
+
+            @Override
+            public void draw(GL2 gl) {
+                super.draw(gl);
+                curveLabel.move(
+                        ctrlPoints[3], ctrlPoints[4], ctrlPoints[5]);
+                curveLabel.scale(0.1f, 0.1f, 0.1f);
+                //curveLabel.draw(gl);
+            }
+        };
+
+        edgeLines.put(e, c);
+        add(c);
+    }
+
+    @Override
+    public void onEdgeRemoved(E e) {
+        Curve c = edgeLines.remove(e);
+        remove(c);
+    }
+
+    @Override
+    public void onNodeAdded(N s) {
+        Rect box = newNodeRect(s);
+        boxes.put(s, box);
+        add(box);
+    }
+
+    @Override
+    public void onNodeRemoved(N n) {
+        Rect box = boxes.remove(n);
+        remove(box);
+    }
+
+    public GraphSpace(NotifyingDirectedGraph<N, E> graph, GraphDrawer<Graph<N, E>, N> initialLayout) {
         super();
 
         setLayout(initialLayout);
-        
-        this.sg = graph;       
-        
-        //tr = TextRect.newTextRenderer(new Font("Arial", Font.PLAIN, 72));
 
-        for (N s : sg.getNodes()) {
-            Rect box = newNodeRect(s);
-            boxes.put(s, box);
-            this.add(box);
-        }
-        for (E e : sg.getEdges()) {
-            Rect aBox = boxes.get(e.getSourceNode());
-            Rect bBox = boxes.get(e.getDestinationNode());
-            if ((aBox == null) || (bBox == null)) {
-                Logger.getLogger(GraphSpace.class.toString()).severe("could not find boxes for edge: " + e);
-                continue;
-            }
+        this.sg = graph;
 
-            final WideIcon curveLabel = new WideIcon(e.toString(), getColor(null), getColor(null));
-
-            Curve c = new Curve(aBox, bBox, 2) {
-
-                @Override
-                public void draw(GL2 gl) {
-                    super.draw(gl);
-                    curveLabel.move(
-                        ctrlPoints[3], ctrlPoints[4], ctrlPoints[5]);
-                    curveLabel.scale(0.1f, 0.1f, 0.1f);
-                    //curveLabel.draw(gl);
-                }
-            };
-
-            edgeLines.put(e, c);
-            add(c);
-        }
-
+        graph.addListener(this);
 
     }
-    
-    public void setLayout(GraphDrawer<Graph<N,E>,N> newLayout) {
-        this.layout = newLayout;        
+
+    public void setLayout(GraphDrawer<Graph<N, E>, N> newLayout) {
+        this.layout = newLayout;
     }
 
     public Rect newNodeRect(N n) {
         WideIcon box = new WideIcon(n.toString(), getColor(n), getColor(n));
         //Window box = new Window();
         return box;
+    }
+
+    public double getMomentum(N n) {
+        return defaultMomentum;
     }
 
     public Vec4f getColor(N n) {
@@ -108,7 +129,6 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
 //        downPointPos = new Vec3f(targetPos);
 //        downPointTarget = new Vec3f(targetTarget);
 //    }
-
 //    @Override
 //    public void mouseWheelMoved(MouseWheelEvent e) {
 //        super.mouseWheelMoved(e);
@@ -117,7 +137,6 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
 //        targetPos.add(delta);
 //        targetTarget.add(delta);
 //    }
-
 //    @Override
 //    public void mouseDragged(MouseEvent e) {
 //        super.mouseDragged(e);
@@ -132,11 +151,10 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
 //        targetPos.add(delta);
 //        targetTarget.add(delta);
 //    }
-
     @Override
     protected void updateSpace(GL2 gl) {
         float m = 3.0f;
-        
+
 //        for (N s : sg.getNodes()) {
 //            Vector v = layout.getCoordinates().get(s);
 //            Rect r = boxes.get(s);
@@ -150,27 +168,54 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
 //            if (v.getDimensions() > 2)
 //                v.setCoordinate(z/m, 3);
 //        }
-               
-        if (layout.isAlignable())
+
+        if (layout.isAlignable()) {
             layout.align();
-        
-        for (N s : sg.getNodes()) {
-            Vector v = layout.getCoordinates().get(s);
-            Rect b = boxes.get(s);
-            if (v.getDimensions() == 1) {
-                float x = (float) (v.getCoordinate(1) * m);
-                b.moveTo(0, x, 0);
-            } else if (v.getDimensions() == 2) {
-                float x = (float) (v.getCoordinate(1) * m);
-                float y = (float) (v.getCoordinate(2) * m);
-                b.moveTo(x, y, 0);
-            } else if (v.getDimensions() == 3) {
-                float x = (float) (v.getCoordinate(1) * m);
-                float y = (float) (v.getCoordinate(2) * m);
-                float z = (float) (v.getCoordinate(3) * m);
-                b.moveTo(x, y, z);
+        }
+
+        if (layout.getCoordinates() != null) {
+            //TODO constructing a new linkedlist here is hackish
+            for (N s : new LinkedList<N>(sg.getNodes())) {
+                Vector v = layout.getCoordinates().get(s);
+                if (v == null) {
+                    continue;
+                }
+
+                Rect b = boxes.get(s);
+                if (pos.get(s) == null) {
+                    pos.put(s, new Vec3f(b.getCenter().x(), b.getCenter().y(), b.getCenter().z()));
+                }
+                float nx, ny, nz;
+                if (v.getDimensions() == 1) {
+                    float x = (float) (v.getCoordinate(1) * m);
+                    nx = 0;
+                    ny = x;
+                    nz = 0;
+                } else if (v.getDimensions() == 2) {
+                    float x = (float) (v.getCoordinate(1) * m);
+                    float y = (float) (v.getCoordinate(2) * m);
+                    nx = x;
+                    ny = y;
+                    nz = 0;
+                } else if (v.getDimensions() == 3) {
+                    float x = (float) (v.getCoordinate(1) * m);
+                    float y = (float) (v.getCoordinate(2) * m);
+                    float z = (float) (v.getCoordinate(3) * m);
+                    nx = x;
+                    ny = y;
+                    nz = z;
+                } else {
+                    nx = ny = nz = 0;
+                }
+                float momentum = (float) getMomentum(s);
+
+                float tnx = nx * (1.0f - momentum) + pos.get(s).x() * momentum;
+                float tny = ny * (1.0f - momentum) + pos.get(s).y() * momentum;
+                float tnz = nz * (1.0f - momentum) + pos.get(s).z() * momentum;
+                b.moveTo(tnx, tny, tnz);
+
+                updateRect(s, b);
             }
-            updateRect(s, b);
         }
 
         super.updateSpace(gl);
@@ -181,8 +226,6 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
     protected void updateRect(N s, Rect r) {
         r.scale(0.5f, 0.5f, 0.5f);
     }
-
-
 //    public static void main(String[] args) {
 //
 //        ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
@@ -200,5 +243,4 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface {
 //
 //        new SGWindow("DemoSGCanvas", new GraphCanvas(target, 3));
 //    }
-    
 }

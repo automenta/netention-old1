@@ -22,6 +22,7 @@ package automenta.netention.graph;
  *  Philadelphia, PA 19148                                                     *
  *                                                                             *
  ******************************************************************************/
+import automenta.spacegraph.math.linalg.Vec3f;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
@@ -33,7 +34,12 @@ import com.syncleus.dann.graph.topological.Topography;
 import com.syncleus.dann.math.Vector;
 import org.apache.log4j.Logger;
 
-public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDrawer<G, N> {
+/**
+ * TODO verify that anchor functionality works
+ * @param <G>
+ * @param <N>
+ */
+public class SeHHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDrawer<G, N> {
 
     private static final double REPULSIVE_WEAKNESS = 2.0;
     private static final double ATTRACTION_STRENGTH = 4.0;
@@ -57,22 +63,46 @@ public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDra
     private double maxMovement = DEFAULT_MAX_MOVEMENT;
     private double totalMovement = DEFAULT_TOTAL_MOVEMENT;
     private double acceptableDistanceFactor = DEFAULT_ACCEPTABLE_DISTANCE_FACTOR;
+    private Map<N, Vector> anchors = new WeakHashMap();
+
+    public void anchor(N n, Vec3f vf) {
+        Vector v = new Vector(vf.x(), vf.y(), vf.z());
+        anchors.put(n, v);
+    }
+
+    public void unAnchor(N n) {
+        anchors.remove(n);
+    }
+
+    /**
+     * TODO use a parameterized randomization function
+     * @return
+     */
+    private Vector newRandomPosition() {
+        Vector v = new Vector(getDimensions());
+        for (int i = 1; i <= getDimensions(); i++) {
+            v.setCoordinate(Math.random(), i);
+        }
+        return v;
+    }
 
     private class Align implements Callable<Vector> {
 
         private final N node;
+        private final List<N> nodesToProcess;
 
-        public Align(final N backingNode) {
+        public Align(final N backingNode, List<N> nodesToProcess) {
             this.node = backingNode;
+            this.nodesToProcess = nodesToProcess;
         }
 
         @Override
         public Vector call() {
-            return align(this.node);
+            return align(this.node, nodesToProcess);
         }
     }
 
-    public MyHyperassociativeMap(final G ourGraph, final int ourDimensions, final double ourEquilibriumDistance, final boolean shouldUseWeights, final ExecutorService ourThreadExecutor) {
+    public SeHHyperassociativeMap(final G ourGraph, final int ourDimensions, final double ourEquilibriumDistance, final boolean shouldUseWeights, final ExecutorService ourThreadExecutor) {
         if (ourGraph == null) {
             throw new IllegalArgumentException("Graph can not be null");
         }
@@ -92,7 +122,7 @@ public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDra
         }
     }
 
-    public MyHyperassociativeMap(final G ourGraph, final int ourDimensions, final double ourEquilibriumDistance, final boolean shouldUseWeights) {
+    public SeHHyperassociativeMap(final G ourGraph, final int ourDimensions, final double ourEquilibriumDistance, final boolean shouldUseWeights) {
         this(ourGraph, ourDimensions, ourEquilibriumDistance, shouldUseWeights, null);
     }
 
@@ -145,10 +175,19 @@ public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDra
 
     @Override
     public void align() {
+        if (graph.getNodes() == null) {
+            return;
+        }
+        List<N> nodesToProcess = new LinkedList(graph.getNodes());
+        if (nodesToProcess.isEmpty()) {
+            return;
+        }
+
         //refresh all nodes
         if (!this.coordinates.keySet().equals(this.graph.getNodes())) {
             final Map<N, Vector> newCoordinates = new HashMap<N, Vector>();
-            for (final N node : this.graph.getNodes()) {
+
+            for (final N node : nodesToProcess) {
                 if (this.coordinates.containsKey(node)) {
                     newCoordinates.put(node, this.coordinates.get(node));
                 } else {
@@ -163,7 +202,7 @@ public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDra
         Vector center;
         if (this.threadExecutor != null) {
             //align all nodes in parallel
-            final List<Future<Vector>> futures = this.submitFutureAligns();
+            final List<Future<Vector>> futures = this.submitFutureAligns(nodesToProcess);
 
             //wait for all nodes to finish aligning and calculate new sum of all the points
             try {
@@ -173,7 +212,7 @@ public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDra
                 throw new UnexpectedInterruptedException("Unexpected interuption. Get should block indefinately", caught);
             }
         } else {
-            center = this.processLocally();
+            center = this.processLocally(nodesToProcess);
         }
 
         LOGGER.debug("maxMove: " + this.maxMovement + ", Average Move: " + this.getAverageMovement());
@@ -186,6 +225,18 @@ public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDra
         }
 
         this.recenterNodes(center);
+
+        for (N node : anchors.keySet()) {
+            //TODO make a Vector.set(Vector v) method
+            getCoordinates().get(node).setCoordinate(anchors.get(node).getCoordinate(1), 1);
+            if (getDimensions() > 1) {
+                getCoordinates().get(node).setCoordinate(anchors.get(node).getCoordinate(2), 2);
+            }
+            if (getDimensions() > 2) {
+                getCoordinates().get(node).setCoordinate(anchors.get(node).getCoordinate(3), 3);
+            }
+        }
+
     }
 
     @Override
@@ -199,8 +250,16 @@ public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDra
     }
 
     private void recenterNodes(final Vector center) {
-        for (final N node : this.graph.getNodes()) {
-            this.coordinates.put(node, this.coordinates.get(node).calculateRelativeTo(center));
+        if ((graph.getNodes() == null) || (this.coordinates == null)) {
+            return;
+        }
+
+        for (final N node : new LinkedList<N>(this.graph.getNodes())) {
+            //TODO this is hackish
+            try {
+                this.coordinates.put(node, this.coordinates.get(node).calculateRelativeTo(center));
+            } catch (NullPointerException e) {
+            }
         }
     }
 
@@ -221,71 +280,94 @@ public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDra
         return neighbors;
     }
 
-    private Vector align(final N nodeToAlign) {
+    private Vector align(final N nodeToAlign, List<N> nodesToProcess) {
         //calculate equilibrium with neighbors
         final Vector location = this.coordinates.get(nodeToAlign);
         final Map<N, Double> neighbors = this.getNeighbors(nodeToAlign);
 
-        Vector compositeVector = new Vector(location.getDimensions());
-        for (final Entry<N, Double> neighborEntry : neighbors.entrySet()) {
-            final N neighbor = neighborEntry.getKey();
-            final double associationEquilibriumDistance = neighborEntry.getValue();
+        {
+            Vector compositeVector = new Vector(location.getDimensions());
+            for (final Entry<N, Double> neighborEntry : neighbors.entrySet()) {
+                final N neighbor = neighborEntry.getKey();
+                final double associationEquilibriumDistance = neighborEntry.getValue();
 
-            Vector neighborVector = this.coordinates.get(neighbor).calculateRelativeTo(location);
-            if (Math.abs(neighborVector.getDistance()) > associationEquilibriumDistance) {
-                double newDistance = Math.pow(Math.abs(neighborVector.getDistance()) - associationEquilibriumDistance, ATTRACTION_STRENGTH);
-                if (Math.abs(newDistance) > Math.abs(Math.abs(neighborVector.getDistance()) - associationEquilibriumDistance)) {
-                    newDistance = Math.copySign(Math.abs(Math.abs(neighborVector.getDistance()) - associationEquilibriumDistance), newDistance);
+                Vector neighborVector;
+                //TODO this is hackish..
+                try {
+                    neighborVector = this.coordinates.get(neighbor).calculateRelativeTo(location);
+                } catch (NullPointerException e) {
+                    continue;
                 }
-                newDistance *= this.learningRate;
-                neighborVector = neighborVector.setDistance(Math.signum(neighborVector.getDistance()) * newDistance);
-            } else {
-                double newDistance = -equilibriumDistance * atanh((associationEquilibriumDistance - Math.abs(neighborVector.getDistance())) / associationEquilibriumDistance);
-                if (Math.abs(newDistance) > Math.abs(associationEquilibriumDistance - Math.abs(neighborVector.getDistance()))) {
-                    newDistance = -equilibriumDistance * (associationEquilibriumDistance - Math.abs(neighborVector.getDistance()));
+
+                if (Math.abs(neighborVector.getDistance()) > associationEquilibriumDistance) {
+                    double newDistance = Math.pow(Math.abs(neighborVector.getDistance()) - associationEquilibriumDistance, ATTRACTION_STRENGTH);
+                    if (Math.abs(newDistance) > Math.abs(Math.abs(neighborVector.getDistance()) - associationEquilibriumDistance)) {
+                        newDistance = Math.copySign(Math.abs(Math.abs(neighborVector.getDistance()) - associationEquilibriumDistance), newDistance);
+                    }
+                    newDistance *= this.learningRate;
+                    neighborVector = neighborVector.setDistance(Math.signum(neighborVector.getDistance()) * newDistance);
+                } else {
+                    double newDistance = -equilibriumDistance * atanh((associationEquilibriumDistance - Math.abs(neighborVector.getDistance())) / associationEquilibriumDistance);
+                    if (Math.abs(newDistance) > Math.abs(associationEquilibriumDistance - Math.abs(neighborVector.getDistance()))) {
+                        newDistance = -equilibriumDistance * (associationEquilibriumDistance - Math.abs(neighborVector.getDistance()));
+                    }
+                    newDistance *= this.learningRate;
+                    neighborVector = neighborVector.setDistance(Math.signum(neighborVector.getDistance()) * newDistance);
                 }
-                newDistance *= this.learningRate;
-                neighborVector = neighborVector.setDistance(Math.signum(neighborVector.getDistance()) * newDistance);
+                compositeVector = compositeVector.add(neighborVector);
             }
-            compositeVector = compositeVector.add(neighborVector);
-        }
-        //calculate repulsion with all non-neighbors
-        for (final N node : this.graph.getNodes()) {
-            if ((!neighbors.containsKey(node)) && (node != nodeToAlign) && (!this.graph.getAdjacentNodes(node).contains(nodeToAlign))) {
-                Vector nodeVector = this.coordinates.get(node).calculateRelativeTo(location);
-                double newDistance = -equilibriumDistance / Math.pow(nodeVector.getDistance(), REPULSIVE_WEAKNESS);
-                if (Math.abs(newDistance) > Math.abs(this.equilibriumDistance)) {
-                    newDistance = Math.copySign(this.equilibriumDistance, newDistance);
+            //calculate repulsion with all non-neighbors
+            for (final N node : nodesToProcess) {
+                //TODO this is hackish
+                try {
+                    if ((!neighbors.containsKey(node)) && (node != nodeToAlign) && (!this.graph.getAdjacentNodes(node).contains(nodeToAlign))) {
+                        Vector nodeVector;
+                        if (coordinates.get(node) == null) {
+                            nodeVector = this.newRandomPosition();
+                        } else {
+                            nodeVector = this.coordinates.get(node).calculateRelativeTo(location);
+                        }
+                        double newDistance = -equilibriumDistance / Math.pow(nodeVector.getDistance(), REPULSIVE_WEAKNESS);
+                        if (Math.abs(newDistance) > Math.abs(this.equilibriumDistance)) {
+                            newDistance = Math.copySign(this.equilibriumDistance, newDistance);
+                        }
+                        newDistance *= this.learningRate;
+                        nodeVector = nodeVector.setDistance(newDistance);
+                        compositeVector = compositeVector.add(nodeVector);
+                    }
+                } catch (NullPointerException e) {
                 }
-                newDistance *= this.learningRate;
-                nodeVector = nodeVector.setDistance(newDistance);
-                compositeVector = compositeVector.add(nodeVector);
-            }
-        }
-        Vector newLocation = location.add(compositeVector);
-        final Vector oldLocation = this.coordinates.get(nodeToAlign);
-        double moveDistance = Math.abs(newLocation.calculateRelativeTo(oldLocation).getDistance());
-        if (moveDistance > this.equilibriumDistance * this.acceptableDistanceFactor) {
-            final double newLearningRate = ((this.equilibriumDistance * this.acceptableDistanceFactor) / moveDistance);
-            if (newLearningRate < this.learningRate) {
-                this.learningRate = newLearningRate;
-                LOGGER.debug("learning rate: " + this.learningRate);
-            } else {
-                this.learningRate *= LEARNING_RATE_INCREASE_FACTOR;
-                LOGGER.debug("learning rate: " + this.learningRate);
             }
 
-            newLocation = oldLocation;
-            moveDistance = DEFAULT_TOTAL_MOVEMENT;
-        }
+            Vector newLocation = location.add(compositeVector);
+            final Vector oldLocation = this.coordinates.get(nodeToAlign);
+            double moveDistance = Math.abs(newLocation.calculateRelativeTo(oldLocation).getDistance());
+            if (moveDistance > this.equilibriumDistance * this.acceptableDistanceFactor) {
+                final double newLearningRate = ((this.equilibriumDistance * this.acceptableDistanceFactor) / moveDistance);
+                if (newLearningRate < this.learningRate) {
+                    this.learningRate = newLearningRate;
+                    LOGGER.debug("learning rate: " + this.learningRate);
+                } else {
+                    this.learningRate *= LEARNING_RATE_INCREASE_FACTOR;
+                    LOGGER.debug("learning rate: " + this.learningRate);
+                }
 
-        if (moveDistance > this.maxMovement) {
-            this.maxMovement = moveDistance;
-        }
-        this.totalMovement += moveDistance;
+                newLocation = oldLocation;
+                moveDistance = DEFAULT_TOTAL_MOVEMENT;
+            }
 
-        this.coordinates.put(nodeToAlign, newLocation);
-        return newLocation;
+            if (moveDistance > this.maxMovement) {
+                this.maxMovement = moveDistance;
+            }
+            this.totalMovement += moveDistance;
+
+            if (!anchors.containsKey(nodeToAlign)) {
+                this.coordinates.put(nodeToAlign, newLocation);
+            }
+
+
+            return newLocation;
+        }
     }
 
     /**
@@ -310,18 +392,20 @@ public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDra
         return oneHalf * Math.log(Math.abs((value + 1.0) / (1.0 - value)));
     }
 
-    private List<Future<Vector>> submitFutureAligns() {
+    private List<Future<Vector>> submitFutureAligns(final List<N> nodesToProcess) {
         final ArrayList<Future<Vector>> futures = new ArrayList<Future<Vector>>();
         for (final N node : this.graph.getNodes()) {
-            futures.add(this.threadExecutor.submit(new Align(node)));
+            futures.add(this.threadExecutor.submit(new Align(node, nodesToProcess)));
         }
         return futures;
     }
 
-    private Vector processLocally() {
+    private Vector processLocally(List<N> nodesToProcess) {
         Vector pointSum = new Vector(this.dimensions);
-        for (final N node : this.graph.getNodes()) {
-            final Vector newPoint = this.align(node);
+        //List<N> nodesToProcess = new LinkedList(graph.getNodes())
+
+        for (final N node : nodesToProcess) {
+            Vector newPoint = this.align(node, nodesToProcess);
             for (int dimensionIndex = 1; dimensionIndex <= this.dimensions; dimensionIndex++) {
                 pointSum = pointSum.setCoordinate(pointSum.getCoordinate(dimensionIndex) + newPoint.getCoordinate(dimensionIndex), dimensionIndex);
             }
@@ -334,41 +418,70 @@ public class MyHyperassociativeMap<G extends Graph<N, ?>, N> implements GraphDra
             this.learningRate *= LEARNING_RATE_PROCESSING_ADJUSTMENT;
             LOGGER.debug("learning rate: " + this.learningRate + ", acceptableDistanceFactor: " + this.acceptableDistanceFactor);
         }
+
+
+
+
         return pointSum;
     }
 
     private Vector waitAndProcessFutures(final List<Future<Vector>> futures) throws InterruptedException {
         //wait for all nodes to finish aligning and calculate new center point
         Vector pointSum = new Vector(this.dimensions);
+
+
         try {
             for (final Future<Vector> future : futures) {
                 final Vector newPoint = future.get();
-                for (int dimensionIndex = 1; dimensionIndex <= this.dimensions; dimensionIndex++) {
+
+
+                for (int dimensionIndex = 1; dimensionIndex
+                        <= this.dimensions; dimensionIndex++) {
                     pointSum = pointSum.setCoordinate(pointSum.getCoordinate(dimensionIndex) + newPoint.getCoordinate(dimensionIndex), dimensionIndex);
+
+
                 }
             }
         } catch (ExecutionException caught) {
             LOGGER.error("Align had an unexpected problem executing.", caught);
+
+
             throw new UnexpectedDannError("Unexpected execution exception. Get should block indefinitely", caught);
+
+
         }
         if (this.learningRate * LEARNING_RATE_PROCESSING_ADJUSTMENT < DEFAULT_LEARNING_RATE) {
             final double acceptableDistanceAdjustment = 0.1;
+
+
             if (this.getAverageMovement() < (this.equilibriumDistance * this.acceptableDistanceFactor * acceptableDistanceAdjustment)) {
                 this.acceptableDistanceFactor = this.maxMovement * 2.0;
+
+
             }
             this.learningRate *= LEARNING_RATE_PROCESSING_ADJUSTMENT;
             LOGGER.debug("learning rate: " + this.learningRate + ", acceptableDistanceFactor: " + this.acceptableDistanceFactor);
+
+
         }
         return pointSum;
+
+
     }
 
     public void randomize(double uniformDimensionLength) {
         List<N> l = new LinkedList<N>(getCoordinates().keySet());
+
+
         for (N n : l) {
             Vector v = (Vector) getCoordinates().get(n);
-            for (int i = 1; i <= v.getDimensions(); i++) {
+
+
+            for (int i = 1; i
+                    <= v.getDimensions(); i++) {
                 double c = (Math.random() * 2.0 - 1.0) * uniformDimensionLength;
                 v.setCoordinate(c, i);
+
             }
         }
     }

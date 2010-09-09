@@ -7,7 +7,8 @@ package automenta.netention.swing;
 import automenta.netention.Link;
 import automenta.netention.Node;
 import automenta.netention.Node.StringNode;
-import automenta.netention.graph.MyHyperassociativeMap;
+import automenta.netention.graph.NotifyingDirectedGraph;
+import automenta.netention.graph.SeHHyperassociativeMap;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.link.Next;
 import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
@@ -21,8 +22,6 @@ import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.ui.GridRect;
 import automenta.spacegraph.ui.PointerLayer;
 import com.syncleus.dann.graph.DirectedEdge;
-import com.syncleus.dann.graph.MutableBidirectedGraph;
-import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
 import genifer.Fact;
 import genifer.Formula;
 import genifer.Genifer;
@@ -31,7 +30,6 @@ import genifer.Rule;
 import genifer.Sexp;
 import genifer.SimpleMemory;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,7 +49,7 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         SwingWindow sw = new SwingWindow(new RunGeniferGraph().newPanel(), 800, 600, true);
 
     }
-    private MyHyperassociativeMap layout;
+    private SeHHyperassociativeMap layout;
     int depth = 4;
     int numDimensions = 3;
 
@@ -83,7 +81,7 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         }
     }
 
-    public static class GeniferGraph extends MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>> {
+    public static class GeniferGraph extends NotifyingDirectedGraph<Node, ValueEdge<Node, Link>> {
 
         private final Genifer gen;
 
@@ -164,7 +162,7 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         }
     }
 
-    public MutableBidirectedGraph getGeniferGraph(Genifer gen, int maxLevels) {
+    public NotifyingDirectedGraph getGeniferGraph(Genifer gen, int maxLevels) {
         return new GeniferGraph(gen, maxLevels);
     }
 
@@ -174,12 +172,12 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         GeniferLisp genifer = new GeniferLisp(new SimpleMemory());
         genifer.execute("INIT-TEST-MEM", genifer.getMemory());
 
-        MutableBidirectedGraph<Node, ValueEdge<Node, Link>> target = getGeniferGraph(genifer, depth);
+        NotifyingDirectedGraph<Node, ValueEdge<Node, Link>> target = getGeniferGraph(genifer, depth);
 
 
         System.out.println(target.getNodes().size() + " : " + target.getEdges().size());
 
-        layout = new MyHyperassociativeMap(target, numDimensions, 0.15, true);
+        layout = new SeHHyperassociativeMap(target, numDimensions, 0.15, true);
         final GraphSpace graphCanvas = new GraphSpace(target, layout) {
 
             @Override

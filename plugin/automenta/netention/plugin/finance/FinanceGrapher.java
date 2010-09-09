@@ -8,12 +8,12 @@ package automenta.netention.plugin.finance;
 import automenta.netention.Link;
 import automenta.netention.Node;
 import automenta.netention.Node.StringNode;
+import automenta.netention.graph.NotifyingDirectedGraph;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.link.In;
 import automenta.netention.link.Next;
 import automenta.netention.node.TimePoint;
 import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
-import com.syncleus.dann.graph.MutableBidirectedGraph;
 import java.util.Collection;
 import java.util.Date;
 import org.apache.commons.collections15.MultiMap;
@@ -26,7 +26,7 @@ import org.apache.commons.collections15.multimap.MultiHashMap;
 public class FinanceGrapher {
 
 
-    public static void run(Collection<PublicBusiness> businesses, MutableBidirectedGraph<Node,ValueEdge<Node, Link>> target, int yearFrom, int yearTo, boolean connectAllPointsToBusiness) {
+    public static void run(Collection<PublicBusiness> businesses, NotifyingDirectedGraph<Node,ValueEdge<Node, Link>> target, int yearFrom, int yearTo, boolean connectAllPointsToBusiness) {
         MultiMap<Date,BusinessPerformance> perfs = new MultiHashMap();
 
 

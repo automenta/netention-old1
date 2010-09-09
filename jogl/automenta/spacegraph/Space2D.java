@@ -2,13 +2,14 @@ package automenta.spacegraph;
 
 import automenta.spacegraph.shape.Drawable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
 public class Space2D implements Drawable {
 
-    List<Drawable> layers = new ArrayList();
+     List<Drawable> drawables = new ArrayList<Drawable>();
 
     public Space2D() {
         super();
@@ -16,11 +17,11 @@ public class Space2D implements Drawable {
 
     public Space2D(Drawable layer) {
         this();
-        layers.add(layer);
+        drawables.add(layer);
     }
 
     public List<Drawable> getLayers() {
-        return layers;
+        return drawables;
     }
 
     @Override
@@ -32,23 +33,31 @@ public class Space2D implements Drawable {
         //gl.glColor4f(1.0f, 1.0f, 1.0f, 0.5f);					// Full Brightness.  50% Alpha (new )
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);					// Set The Blending Function For Translucency (new )
 
-        for (Drawable d : layers) {
-            //gl.glPushName(id++);
-            d.draw(gl);
-            //gl.glPopName();
+        synchronized (drawables) {
+            for (Drawable d : drawables) {
+                //gl.glPushName(id++);
+                d.draw(gl);
+                //gl.glPopName();
+            }
         }
     }
 
     public void removeAll() {
-        layers.clear();
+        synchronized (drawables) {
+            drawables.clear();
+        }
     }
 
     public <D extends Drawable> D add(D d) {
-        layers.add(d);
+        synchronized (drawables) {
+            drawables.add(d);
+        }
         return d;
     }
 
     public boolean remove(Drawable d) {
-        return layers.add(d);
+        synchronized (drawables) {
+            return drawables.add(d);
+        }
     }
 }

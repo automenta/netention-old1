@@ -18,6 +18,7 @@ import automenta.netention.link.HasProperty;
 import automenta.netention.link.PatternOf;
 import automenta.netention.node.Creator;
 import automenta.netention.node.PropertyNode;
+import com.syncleus.dann.graph.MutableAdjacencyGraph;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import java.util.Iterator;
 
@@ -27,7 +28,7 @@ import java.util.Iterator;
  */
 public class MetadataGrapher {
 
-    public static void run(Self s, MutableBidirectedGraph<Node, ValueEdge<Node, Link>> target, boolean creators, boolean mode, boolean patterns, boolean properties) {
+    public static void run(Self s, MutableAdjacencyGraph<Node, ValueEdge<Node, Link>> target, boolean creators, boolean mode, boolean patterns, boolean properties) {
         Iterator<Node> i = s.iterateDetails();
         while (i.hasNext()) {
             Node n = i.next();

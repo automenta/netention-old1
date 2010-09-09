@@ -14,7 +14,7 @@ import automenta.spacegraph.demo.jogl.FPSCounter;
 import automenta.spacegraph.demo.jogl.SystemTime;
 import automenta.spacegraph.demo.jogl.Time;
 import java.awt.event.MouseEvent;
-import java.nio.IntBuffer;
+import java.nio.FloatBuffer;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.glu.GLU;
@@ -61,23 +61,26 @@ abstract public class Surface extends SG {
     public void init(GLAutoDrawable g) {
         GL2 gl = g.getGL().getGL2();
 
-        gl.glEnable(gl.GL_DEPTH_TEST);
-        gl.glDepthRange(0, 1);
+        //Blending
+        {
+            gl.glEnable(gl.GL_DEPTH_TEST);
+            gl.glDepthRange(0, 1);
 
-        gl.glShadeModel(GL2.GL_SMOOTH);
-        gl.glEnable(GL2.GL_DEPTH_TEST);
-        gl.glDepthFunc(GL2.GL_LEQUAL);
-        gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
+            gl.glShadeModel(GL2.GL_SMOOTH);
+            gl.glEnable(GL2.GL_DEPTH_TEST);
+            gl.glDepthFunc(GL2.GL_LEQUAL);
+            gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
+        }
 
         //Lighting, see nehe.gamedev.net/data/lessons/lesson.asp?lesson=07
         {
-//            FloatBuffer lightAmbient = FloatBuffer.wrap(new float[] { 0.5f, 0.5f, 0.5f, 1.0f } );
+//            FloatBuffer lightAmbient = FloatBuffer.wrap(new float[] { 0.5f, 0.5f, 0.5f, 0.5f } );
 //            gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightAmbient);				// Setup The Ambient Light
 //
-//            FloatBuffer lightDiffuse = FloatBuffer.wrap(new float[] { 1f, 1f, 1f, 1f } );
+//            FloatBuffer lightDiffuse = FloatBuffer.wrap(new float[] { 0.5f, 0.5f, 0.5f, 1f } );
 //            gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightDiffuse);				// Setup The Diffuse Light
-//
-//            FloatBuffer lightPosition = FloatBuffer.wrap(new float[] { 0f, 0f, 20f, 1f } ); //Leave the last number at 1.0f. This tells OpenGL the designated coordinates are the position of the light source. More about this in a later tutorial.
+//            
+//            FloatBuffer lightPosition = FloatBuffer.wrap(new float[] { 0f, 0f, 50f, 1f } ); //Leave the last number at 1.0f. This tells OpenGL the designated coordinates are the position of the light source. More about this in a later tutorial.
 //            gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lightPosition);			// Position The Light
 //            gl.glEnable(GL2.GL_LIGHT1);							// Enable Light One
 //            gl.glEnable(GL2.GL_LIGHTING);

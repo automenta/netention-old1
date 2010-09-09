@@ -43,12 +43,14 @@ public class DefaultSurface extends Surface {
         Set<Touchable> touchingNow = new HashSet();
 
         final Vec2f v = new Vec2f(p.world.x(), p.world.y());
-        for (Drawable d : defaultSpace.getLayers()) {
-            if (d instanceof Touchable) {
-                Touchable t = (Touchable) d;
-                if (t.isTouchable()) {
-                    if (t.intersects(v)) {
-                        touchingNow.add(t);
+        synchronized (defaultSpace.getLayers()) {
+            for (Drawable d : defaultSpace.getLayers()) {
+                if (d instanceof Touchable) {
+                    Touchable t = (Touchable) d;
+                    if (t.isTouchable()) {
+                        if (t.intersects(v)) {
+                            touchingNow.add(t);
+                        }
                     }
                 }
             }
