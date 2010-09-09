@@ -32,11 +32,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javolution.context.ConcurrentContext;
 
 /**
  *
@@ -53,6 +50,7 @@ public class RunFinanceGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
     private SeHHyperassociativeMap layout;
 
     public JPanel newPanel() {
+        //Use 1 processor for this demo
         //ConcurrentContext.setConcurrency(Runtime.getRuntime().availableProcessors());
 
         final NotifyingDirectedGraph<Node, ValueEdge<Node, Link>> target = new NotifyingDirectedGraph<Node, ValueEdge<Node, Link>>();

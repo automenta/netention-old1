@@ -22,8 +22,17 @@ public class PointerLayer implements Drawable {
     final Vec3f red = new Vec3f(1f, 0, 0);
     final Vec3f green  = new Vec3f(0, 1f, 0);
     
+    float minPointerSize = 0.2f;
     float alpha = 0.75f;
-   
+    final Vec3f lastPos = new Vec3f();
+    final Vec3f speed = new Vec3f();
+    float radius = 0.5f;
+    float radiusMomentum = 0.9f;
+    float phase = 0;
+    float accelerationMagnification = 1.5f;
+    float deltaPhase = 0.01f;
+    int numSteps = 16;
+    
     public PointerLayer(Surface canvas) {
         super();
         this.canvas = canvas;
@@ -41,12 +50,20 @@ public class PointerLayer implements Drawable {
     }
 
     protected void drawPointer(GL2 gl, Pointer pointer) {
+        speed.set(pointer.world);
+        speed.sub(lastPos);
+        lastPos.set(pointer.world);
+        
         gl.glOrtho(-1, 1, -1, 1, -1, 1);
 
-        int numSteps = 20;
         double increment = Math.PI / numSteps;
-        double radius = 4;
+        float nextRadius = accelerationMagnification * speed.length() + minPointerSize;
+        
+        //TODO adjust for 'z' height
+        radius = nextRadius * (1.0f - radiusMomentum) + radius * (radiusMomentum);
 
+        phase += deltaPhase;
+        
         float x = pointer.world.x();
         float y = pointer.world.y();
 
@@ -60,11 +77,11 @@ public class PointerLayer implements Drawable {
         gl.glBegin(GL2.GL_LINES);
         for (int i = numSteps - 1; i >= 0; i--) {
             gl.glColor4f(color.x(), color.y(), color.z(), alpha);
-            gl.glVertex3d(x + radius * Math.cos(i * increment),
-                y + radius * Math.sin(i * increment),
+            gl.glVertex3d(x + radius * Math.cos(phase + i * increment),
+                y + radius * Math.sin(phase + i * increment),
                 0);
-            gl.glVertex3d(x + -1.0 * radius * Math.cos(i * increment),
-                y + -1.0 * radius * Math.sin(i * increment),
+            gl.glVertex3d(x + -1.0 * radius * Math.cos(phase + i * increment),
+                y + -1.0 * radius * Math.sin(phase + i * increment),
                 0);
         }
         gl.glEnd();

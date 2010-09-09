@@ -6,7 +6,9 @@ package automenta.spacegraph.j2;
 
 import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.shape.Curve;
+import automenta.spacegraph.shape.util.RectLayout;
 import automenta.spacegraph.ui.GridRect;
+import automenta.spacegraph.ui.Panel;
 import automenta.spacegraph.ui.PointerLayer;
 import automenta.spacegraph.ui.Window;
 
@@ -25,7 +27,7 @@ public class DemoWindow extends AbstractSurfaceDemo {
     public String getDescription() {
         return "Window";
     }
-
+    
     public DemoWindow() {
         super();
 
@@ -42,6 +44,14 @@ public class DemoWindow extends AbstractSurfaceDemo {
         c.setColor(0.5f, 0.5f, 0.5f);
         add(c);
         add(new PointerLayer(this));
+        
+        new RectLayout(this).withRectInScale(w1, new Panel(), -0.25f, -0.25f, 0.25f, 0.25f);
+        new RectLayout(this).withRectInScale(w1, new Panel(), -0.25f, 0.25f, 0.25f, 0.25f);
+        new RectLayout(this).withRectInScale(w1, new Panel(), 0.25f, 0.25f, 0.25f, 0.25f);
+        
+        //Panel p = new Panel(new InRect(w1, -0.25f, -0.25f), new ScaleRect(w1, 0.25f, 0.25f));
+        
+        //add(p);
     }
 
     public static void main(String[] args) {

@@ -5,6 +5,7 @@
 package automenta.spacegraph.shape;
 
 import automenta.spacegraph.math.linalg.Vec2f;
+import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.math.linalg.Vec4f;
 import java.awt.geom.Path2D;
 import javax.media.opengl.GL2;
@@ -25,10 +26,14 @@ public class Rect extends Spatial implements Drawable {
 
     public Rect() {
         super();
-
         updateGeometry();
     }
 
+    public Rect(Vec3f pos, Vec3f scale) {
+        super(pos, scale);
+        updateGeometry();
+    }
+    
     public Rect tilt(float newTilt) {
         rotation.setZ(newTilt);
         updateGeometry();
@@ -159,6 +164,15 @@ public class Rect extends Spatial implements Drawable {
 
     public boolean intersects(Vec2f p) {
         return (shapePath.contains(p.x(), p.y()));
+    }
+
+    public void setCenter(Vec3f newCenter) {
+        this.center = newCenter;
+        updateGeometry();
+    }
+    public void setScale(Vec3f newScale) {
+        this.size = newScale;
+        updateGeometry();
     }
 
 //    public boolean is_inside_triangle(Float x, Float y, Float x1, Float y1, Float x2, Float y2, Float x3, Float y3) {

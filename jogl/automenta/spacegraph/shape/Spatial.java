@@ -21,6 +21,9 @@ class Spatial {
         this(new Vec3f(0,0,0), new Vec3f(1,1,1), new Vec3f(0,0,0));
     }
 
+    public Spatial(Vec3f center, Vec3f size) {
+        this(center, size, new Vec3f(0,0,0));        
+    }
 
     public Spatial(Vec3f center, Vec3f size, Vec3f rotation) {
         super();
