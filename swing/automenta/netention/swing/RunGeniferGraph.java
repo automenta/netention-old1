@@ -4,40 +4,33 @@
  */
 package automenta.netention.swing;
 
+import automenta.netention.plugin.genifer.GeniferGraph;
 import automenta.netention.Link;
 import automenta.netention.Node;
 import automenta.netention.Node.StringNode;
 import automenta.netention.graph.NotifyingDirectedGraph;
-import automenta.netention.graph.SeHHyperassociativeMap;
 import automenta.netention.graph.ValueEdge;
-import automenta.netention.link.Next;
-import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
+import automenta.netention.plugin.jung.JungGraph;
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.DefaultSurface;
 import automenta.spacegraph.control.FractalControl;
+import automenta.spacegraph.dimensional.JungGraphDrawer;
 import automenta.spacegraph.impl.SGPanel;
 import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.ui.GridRect;
 import automenta.spacegraph.ui.PointerLayer;
 import com.syncleus.dann.graph.DirectedEdge;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import genifer.Fact;
-import genifer.Formula;
 import genifer.Genifer;
 import genifer.GeniferLisp;
 import genifer.Rule;
-import genifer.Sexp;
 import genifer.SimpleMemory;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javolution.context.ConcurrentContext;
-import org.armedbear.lisp.Cons;
-import org.armedbear.lisp.LispObject;
 
 /**
  *
@@ -49,9 +42,8 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         SwingWindow sw = new SwingWindow(new RunGeniferGraph().newPanel(), 800, 600, true);
 
     }
-    private SeHHyperassociativeMap layout;
-    int depth = 4;
-    int numDimensions = 3;
+    int depth = 4; //no more than 4 or 5
+    int numDimensions = 2;
 
     public static class FactNode extends StringNode {
 
@@ -81,87 +73,6 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         }
     }
 
-    public static class GeniferGraph extends NotifyingDirectedGraph<Node, ValueEdge<Node, Link>> {
-
-        private final Genifer gen;
-
-        public GeniferGraph(Genifer gen, int maxLevels) {
-            super();
-            this.gen = gen;
-            update(maxLevels);
-        }
-
-        protected void update(int maxLevels) {
-            clear();
-            for (Fact f : gen.getMemory().getFacts()) {
-                updateNode(f, maxLevels - 1);
-            }
-            for (Rule rule : gen.getMemory().getRules()) {
-                updateNode(rule, maxLevels - 1);
-            }
-        }
-
-        protected void updateNode(Rule r, int i) {
-            if (i == 0) {
-                return;
-            }
-
-
-            Formula formula = r.formula;
-            if (formula instanceof Sexp) {
-                Sexp s = (Sexp) formula;
-                Node parent = new RuleNode(r);
-                add(parent);
-                updateLispObject(parent, s.cons.car, i - 1);
-                updateLispObject(parent, s.cons.cdr, i - 1);
-            }
-
-        }
-
-        protected void updateNode(Fact f, int i) {
-            if (i == 0) {
-                return;
-            }
-
-            Formula formula = f.formula;
-            if (formula instanceof Sexp) {
-                Sexp s = (Sexp) formula;
-                Node parent = new FactNode(f);
-                add(parent);
-                updateLispObject(parent, s.cons.car, i - 1);
-                updateLispObject(parent, s.cons.cdr, i - 1);
-            }
-
-        }
-
-        protected void updateLispObject(Node parent, LispObject l, int i) {
-            if (i == 0) {
-                return;
-            }
-            if (l == null) {
-                return;
-            }
-
-            Node lNode = getNode(l);
-            add(lNode);
-            add(new ValueEdge<Node, Link>(new Next(), parent, lNode));
-
-            if (l instanceof Cons) {
-                Cons c = (Cons) l;
-                updateLispObject(lNode, c.car, i - 1);
-                updateLispObject(lNode, c.cdr, i - 1);
-            }
-        }
-
-        private Node getNode(LispObject l) {
-            if (l instanceof Cons) {
-                return new StringNode("cons-" + l.hashCode());
-            }
-
-            return new StringNode(l.writeToString());
-        }
-    }
-
     public NotifyingDirectedGraph getGeniferGraph(Genifer gen, int maxLevels) {
         return new GeniferGraph(gen, maxLevels);
     }
@@ -176,8 +87,17 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
 
 
         System.out.println(target.getNodes().size() + " : " + target.getEdges().size());
-
-        layout = new SeHHyperassociativeMap(target, numDimensions, 0.15, true);
+        //layout = new SeHHyperassociativeMap(target, numDimensions, 0.15, true);
+        //final JungGraphDrawer layout = new JungGraphDrawer(target, new ISOMLayout(new JungGraph(target)), 6, 6);
+        //final JungGraphDrawer layout = new JungGraphDrawer(target, new  SpringLayout(new JungGraph(target)), 12, 12);
+        //final JungGraphDrawer layout = new JungGraphDrawer(target, new  SpringLayout2(new JungGraph(target)), 12, 12);
+        //final JungGraphDrawer layout = new JungGraphDrawer(target, new  FRLayout2(new JungGraph(target)), 12, 12);
+        
+        FRLayout fr = new FRLayout(new JungGraph(target));
+        fr.setAttractionMultiplier(30.0f);
+        fr.setRepulsionMultiplier(0.1f);
+        final JungGraphDrawer layout = new JungGraphDrawer(target, fr, 18, 12);
+        
         final GraphSpace graphCanvas = new GraphSpace(target, layout) {
 
             @Override
@@ -203,22 +123,7 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
                 }
             }
 
-            public float getBPSize(BusinessPerformance bp) {
-                float lowest = bp.getBusiness().getLow();
-                float highest = bp.getBusiness().getHigh();
-                float s = 0.05F + 0.25F * (bp.high - lowest) / (highest - lowest);
-                return s;
-            }
-
-            public Vec4f getBPColor(BusinessPerformance bp) {
-                float lowest = bp.getBusiness().getLow();
-                float highest = bp.getBusiness().getHigh();
-                float r = (bp.high - lowest) / (highest - lowest);
-                float g = 0.1F;
-                float b = 0.1F;
-                Vec4f v = new Vec4f(r, g, b, 1.0f);
-                return v;
-            }
+ 
         };
 
         SGPanel j = new SGPanel(graphCanvas);
@@ -231,32 +136,32 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(j, BorderLayout.CENTER);
 
-        JButton pb = new JButton("+");
-        pb.addActionListener(new ActionListener() {
+//        JButton pb = new JButton("+");
+//        pb.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                double n = layout.getEquilibriumDistance() * 1.1;
+//                layout.resetLearning();
+//                layout.setEquilibriumDistance(n);
+//            }
+//        });
+//        JButton mb = new JButton("-");
+//        mb.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                double n = layout.getEquilibriumDistance() * 0.9;
+//                layout.resetLearning();
+//                layout.setEquilibriumDistance(n);
+//            }
+//        });
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                double n = layout.getEquilibriumDistance() * 1.1;
-                layout.resetLearning();
-                layout.setEquilibriumDistance(n);
-            }
-        });
-        JButton mb = new JButton("-");
-        mb.addActionListener(new ActionListener() {
+        //JPanel px = new JPanel(new FlowLayout());
+//        px.add(mb);
+//        px.add(pb);
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                double n = layout.getEquilibriumDistance() * 0.9;
-                layout.resetLearning();
-                layout.setEquilibriumDistance(n);
-            }
-        });
-
-        JPanel px = new JPanel(new FlowLayout());
-        px.add(mb);
-        px.add(pb);
-
-        panel.add(px, BorderLayout.SOUTH);
+        //panel.add(px, BorderLayout.SOUTH);
 
         return panel;
     }

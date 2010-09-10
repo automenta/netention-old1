@@ -8,28 +8,25 @@ import automenta.netention.Link;
 import automenta.netention.Node;
 import automenta.netention.Node.StringNode;
 import automenta.netention.graph.NotifyingDirectedGraph;
-import automenta.netention.graph.SeHHyperassociativeMap;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.link.Next;
 import automenta.netention.node.TimePoint;
 import automenta.netention.plugin.finance.PublicBusiness.BusinessPerformance;
+import automenta.netention.plugin.jung.JungGraph;
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.DefaultSurface;
 import automenta.spacegraph.control.FractalControl;
+import automenta.spacegraph.dimensional.JungGraphDrawer;
 import automenta.spacegraph.impl.SGPanel;
-import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
 import automenta.spacegraph.ui.PointerLayer;
 import com.syncleus.dann.graph.DirectedEdge;
+import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javolution.context.ConcurrentContext;
 
@@ -43,8 +40,6 @@ public class RunMeshGraph<N, E extends DirectedEdge<N>> extends DefaultSurface i
            SwingWindow sw = new SwingWindow(new RunMeshGraph().newPanel(), 800, 600, true);
     }
     
-    private SeHHyperassociativeMap layout;
-
     public static class MeshGraph extends NotifyingDirectedGraph<Node, ValueEdge<Node, Link>> {
         public Node[][] nodes;
         private final int width;
@@ -95,13 +90,14 @@ public class RunMeshGraph<N, E extends DirectedEdge<N>> extends DefaultSurface i
 
         System.out.println(target.getNodes().size() + " : " + target.getEdges().size());
 
-        layout = new SeHHyperassociativeMap(target, numDimensions, 0.25, true);
+        //layout = new SeHHyperassociativeMap(target, numDimensions, 0.25, true);
         float r = 1.5f;
-        layout.anchor(target.nodes[0][0], new Vec3f(-r,-r,0));
-        layout.anchor(target.nodes[target.width-1][0], new Vec3f(r,-r,0));
-        //layout.anchor(target.nodes[0][target.height-1], new Vec3f(-r,r,0));
-        //layout.anchor(target.nodes[target.width-1][target.height-1], new Vec3f(r,r,0));
+        //layout.anchor(target.nodes[0][0], new Vec3f(-r,-r,0));
+        //layout.anchor(target.nodes[target.width-1][0], new Vec3f(r,-r,0));
+        ////layout.anchor(target.nodes[0][target.height-1], new Vec3f(-r,r,0));
+        ////layout.anchor(target.nodes[target.width-1][target.height-1], new Vec3f(r,r,0));
         
+        final JungGraphDrawer layout = new JungGraphDrawer(target, new ISOMLayout(new JungGraph(target)), 4, 4);
         final GraphSpace graphCanvas = new GraphSpace(target, layout) {
 
             @Override
@@ -157,33 +153,33 @@ public class RunMeshGraph<N, E extends DirectedEdge<N>> extends DefaultSurface i
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(j, BorderLayout.CENTER);
+//
+//        JButton pb = new JButton("+");
+//        pb.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                double n = layout.getEquilibriumDistance() * 1.1;
+//                layout.resetLearning();
+//                layout.setEquilibriumDistance(n);
+//            }
+//        });
+//        JButton mb = new JButton("-");
+//        mb.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                double n = layout.getEquilibriumDistance() * 0.9;
+//                layout.resetLearning();
+//                layout.setEquilibriumDistance(n);
+//            }
+//        });
+//
+//        JPanel px = new JPanel(new FlowLayout());
+//        px.add(mb);
+//        px.add(pb);
 
-        JButton pb = new JButton("+");
-        pb.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                double n = layout.getEquilibriumDistance() * 1.1;
-                layout.resetLearning();
-                layout.setEquilibriumDistance(n);
-            }
-        });
-        JButton mb = new JButton("-");
-        mb.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                double n = layout.getEquilibriumDistance() * 0.9;
-                layout.resetLearning();
-                layout.setEquilibriumDistance(n);
-            }
-        });
-
-        JPanel px = new JPanel(new FlowLayout());
-        px.add(mb);
-        px.add(pb);
-
-        panel.add(px, BorderLayout.SOUTH);
+//        panel.add(px, BorderLayout.SOUTH);
 
         return panel;
     }

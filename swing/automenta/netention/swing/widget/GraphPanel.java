@@ -43,17 +43,17 @@ public class GraphPanel extends JPanel implements IndexView {
     public void refresh() {
         removeAll();
         
-        MutableBidirectedGraph<Node,ValueEdge<Node, Link>> target = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>(self.getGraph());
-        MetadataGrapher.run(self, target, true, true, true, true);
-
-        GraphSpace gc = new GraphSpace(target, new SeHHyperassociativeMap(target, 3, 0.5, true));
-        gc.setBackground(new Vec3f(0.2f, 0.2f, 0.2f));
+//        MutableBidirectedGraph<Node,ValueEdge<Node, Link>> target = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>(self.getGraph());
+//        MetadataGrapher.run(self, target, true, true, true, true);
+//
+//        GraphSpace gc = new GraphSpace(target, new SeHHyperassociativeMap(target, 3, 0.5, true));
+//        gc.setBackground(new Vec3f(0.2f, 0.2f, 0.2f));
         
 
-        JPanel j = new SGPanel(gc);
-        add(j, BorderLayout.CENTER);
+//        JPanel j = new SGPanel(gc);
+//        add(j, BorderLayout.CENTER);
 
-        j.setMinimumSize(new Dimension(minWidth,minWidth));
+        //j.setMinimumSize(new Dimension(minWidth,minWidth));
         setMinimumSize(new Dimension(minWidth,minWidth));
 
         updateUI();

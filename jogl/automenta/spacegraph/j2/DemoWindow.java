@@ -36,22 +36,22 @@ public class DemoWindow extends AbstractSurfaceDemo {
         Window w1 = new Window();
         w1.scale(4, 3).moveTo(1, 1, 0);
         add(w1);
+        
         Window w2 = new Window();
         w2.scale(2, 1).moveTo(-1, -1, 0);
         add(w2);
+        
         Curve c = new Curve(w1, w2, 2);
         c.setLineWidth(6);
         c.setColor(0.5f, 0.5f, 0.5f);
         add(c);
-        add(new PointerLayer(this));
-        
+                
         new RectLayout(this).withRectInScale(w1, new Panel(), -0.25f, -0.25f, 0.25f, 0.25f);
         new RectLayout(this).withRectInScale(w1, new Panel(), -0.25f, 0.25f, 0.25f, 0.25f);
         new RectLayout(this).withRectInScale(w1, new Panel(), 0.25f, 0.25f, 0.25f, 0.25f);
         
-        //Panel p = new Panel(new InRect(w1, -0.25f, -0.25f), new ScaleRect(w1, 0.25f, 0.25f));
-        
-        //add(p);
+        add(new PointerLayer(this));
+
     }
 
     public static void main(String[] args) {

@@ -119,7 +119,7 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface imp
     }
 
     public Vec4f getColor(N n) {
-        return new Vec4f(Color.getHSBColor((float) Math.random(), 0.75f, 1.0f));
+        return new Vec4f(Color.getHSBColor((float) Math.random()*0.1f + 0.7f, 0.75f, 1.0f));
     }
 
 //    @Override
