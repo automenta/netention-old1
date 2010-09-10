@@ -13,7 +13,7 @@ import automenta.netention.graph.SeHHyperassociativeMap;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.linker.MetadataGrapher;
 import automenta.netention.swing.GraphSpace;
-import automenta.spacegraph.impl.SGPanel;
+import automenta.spacegraph.video.SGPanel;
 import automenta.spacegraph.math.linalg.Vec3f;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;

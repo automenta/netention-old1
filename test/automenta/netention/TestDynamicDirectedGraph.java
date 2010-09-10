@@ -5,10 +5,6 @@
 
 package automenta.netention;
 
-import automenta.netention.graph.DynamicDirectedGraph;
-import automenta.netention.graph.ValueEdge;
-import com.syncleus.dann.graph.ImmutableDirectedEdge;
-import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
 import junit.framework.TestCase;
 
 /**

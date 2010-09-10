@@ -6,11 +6,14 @@ package automenta.netention.swing;
 
 import automenta.netention.graph.NotifyingDirectedGraph;
 import automenta.netention.graph.NotifyingDirectedGraph.GraphListener;
-import automenta.spacegraph.DefaultSurface;
+import automenta.spacegraph.Surface;
+import automenta.spacegraph.control.Pointer;
+import automenta.spacegraph.control.Touchable;
 import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Curve;
+import automenta.spacegraph.shape.Drawable;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.shape.WideIcon;
 import com.sun.opengl.util.awt.TextRenderer;
@@ -20,8 +23,11 @@ import com.syncleus.dann.graph.drawing.GraphDrawer;
 import com.syncleus.dann.math.Vector;
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.logging.Logger;
 import javax.media.opengl.GL2;
@@ -30,7 +36,7 @@ import javax.media.opengl.GL2;
  *
  * @author seh
  */
-public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface implements GraphListener<N, E> {
+public class GraphSpace<N, E extends DirectedEdge<N>> extends Surface implements GraphListener<N, E> {
 
     private float textScaleFactor;
     float xAng = 0;
@@ -212,7 +218,7 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface imp
                 float tnx = nx * (1.0f - momentum) + pos.get(s).x() * momentum;
                 float tny = ny * (1.0f - momentum) + pos.get(s).y() * momentum;
                 float tnz = nz * (1.0f - momentum) + pos.get(s).z() * momentum;
-                b.moveTo(tnx, tny, tnz);
+                b.center(tnx, tny, tnz);
 
                 updateRect(s, b);
             }
@@ -225,6 +231,44 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface imp
 
     protected void updateRect(N s, Rect r) {
         r.scale(0.5f, 0.5f, 0.5f);
+    }
+
+
+    @Override
+    protected synchronized void handleTouch(Pointer p) {
+        super.handleTouch(p);
+        Set<Touchable> touchingNow = new HashSet();
+        final Vec2f v = new Vec2f(p.world.x(), p.world.y());
+        synchronized (getSpace().getDrawables()) {
+            for (Drawable d : getSpace().getDrawables()) {
+                if (d instanceof Touchable) {
+                    Touchable t = (Touchable) d;
+                    if (t.isTouchable()) {
+                        if (t.intersects(v)) {
+                            touchingNow.add(t);
+                        }
+                    }
+                }
+            }
+        }
+        for (Touchable t : touchingNow) {
+            if (!p.touching.contains(t)) {
+                t.onTouchChange(p, true);
+                p.touching.add(t);
+            }
+        }
+        List<Touchable> toRemove = new LinkedList();
+        for (Touchable t : p.touching) {
+            if (!touchingNow.contains(t)) {
+                t.onTouchChange(p, false);
+                toRemove.add(t);
+            } else {
+                t.onTouchChange(p, true);
+            }
+        }
+        for (Touchable t : toRemove) {
+            p.touching.remove(t);
+        }
     }
 //    public static void main(String[] args) {
 //

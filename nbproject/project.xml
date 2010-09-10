@@ -5,11 +5,12 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>automenta.netention2</name>
             <source-roots>
+                <root id="src.demo.dir"/>
                 <root id="src.plugin.dir"/>
-                <root id="src.jogl.dir"/>
-                <root id="src.echo3.dir"/>
+                <root id="src.spacegraph.dir"/>
+                <root id="src.web.dir"/>
                 <root id="src.swing.dir"/>
-                <root id="src.dir" name="src"/>
+                <root id="src.netention.dir"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir" name="test"/>

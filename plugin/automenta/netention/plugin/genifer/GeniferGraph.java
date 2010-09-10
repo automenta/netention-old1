@@ -6,7 +6,6 @@ import automenta.netention.Node.StringNode;
 import automenta.netention.graph.NotifyingDirectedGraph;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.link.Next;
-import automenta.netention.swing.RunGeniferGraph;
 import genifer.Fact;
 import genifer.Formula;
 import genifer.Genifer;
@@ -19,6 +18,35 @@ public class GeniferGraph extends NotifyingDirectedGraph<Node, ValueEdge<Node, L
 
     private final Genifer gen;
 
+
+    public static class FactNode extends StringNode {
+
+        public final Fact fact;
+
+        public FactNode(Fact f) {
+            super(f.toString());
+            this.fact = f;
+        }
+
+        public double getProbability() {
+            return fact.truth.getProbability();
+        }
+    }
+
+    public static class RuleNode extends StringNode {
+
+        public final Rule rule;
+
+        public RuleNode(Rule r) {
+            super(r.toString());
+            this.rule = r;
+        }
+
+        public double getW() {
+            return rule.getW();
+        }
+    }
+    
     public GeniferGraph(Genifer gen, int maxLevels) {
         super();
         this.gen = gen;
@@ -42,7 +70,7 @@ public class GeniferGraph extends NotifyingDirectedGraph<Node, ValueEdge<Node, L
         Formula formula = r.formula;
         if (formula instanceof Sexp) {
             Sexp s = (Sexp) formula;
-            Node parent = new RunGeniferGraph.RuleNode(r);
+            Node parent = new RuleNode(r);
             add(parent);
             updateLispObject(parent, s.cons.car, i - 1);
             updateLispObject(parent, s.cons.cdr, i - 1);
@@ -56,7 +84,7 @@ public class GeniferGraph extends NotifyingDirectedGraph<Node, ValueEdge<Node, L
         Formula formula = f.formula;
         if (formula instanceof Sexp) {
             Sexp s = (Sexp) formula;
-            Node parent = new RunGeniferGraph.FactNode(f);
+            Node parent = new FactNode(f);
             add(parent);
             updateLispObject(parent, s.cons.car, i - 1);
             updateLispObject(parent, s.cons.cdr, i - 1);
