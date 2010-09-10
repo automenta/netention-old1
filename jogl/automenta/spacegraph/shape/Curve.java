@@ -22,6 +22,11 @@ public class Curve extends Spatial implements Drawable {
     private float cr, cg, cb;
     //private final TextRect labelRect;
 
+    public Curve(Rect aRect, Rect bRect, int degree, float lineWidth) {
+        this(aRect, bRect, degree);
+        setLineWidth(lineWidth);
+    }
+
     public Curve(Rect aRect, Rect bRect, int degree) {
         super();
         this.aRect = aRect;

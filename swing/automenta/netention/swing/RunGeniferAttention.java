@@ -4,6 +4,7 @@
  */
 package automenta.netention.swing;
 
+import automenta.netention.ScalarMap;
 import automenta.netention.plugin.genifer.GeniferGraph;
 import automenta.netention.Link;
 import automenta.netention.Node;
@@ -11,25 +12,29 @@ import automenta.netention.Node.StringNode;
 import automenta.netention.graph.NotifyingDirectedGraph;
 import automenta.netention.graph.SeHHyperassociativeMap;
 import automenta.netention.graph.ValueEdge;
-import automenta.netention.plugin.jung.JungGraph;
 import automenta.netention.swing.RunDemos.Demo;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.spacegraph.DefaultSurface;
 import automenta.spacegraph.control.FractalControl;
-import automenta.spacegraph.dimensional.JungGraphDrawer;
 import automenta.spacegraph.impl.SGPanel;
 import automenta.spacegraph.math.linalg.Vec4f;
 import automenta.spacegraph.shape.Rect;
 import automenta.spacegraph.ui.GridRect;
 import automenta.spacegraph.ui.PointerLayer;
 import com.syncleus.dann.graph.DirectedEdge;
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import com.syncleus.dann.graph.Graph;
 import genifer.Fact;
 import genifer.Genifer;
 import genifer.GeniferLisp;
 import genifer.Rule;
 import genifer.SimpleMemory;
 import java.awt.BorderLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.JPanel;
 import javolution.context.ConcurrentContext;
 
@@ -37,14 +42,14 @@ import javolution.context.ConcurrentContext;
  *
  * @author me
  */
-public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurface implements Demo {
+public class RunGeniferAttention<N, E extends DirectedEdge<N>> extends DefaultSurface implements Demo {
+
+    int depth = 4; //no more than 4 or 5
+    int numDimensions = 3;
 
     public static void main(String[] args) {
-        SwingWindow sw = new SwingWindow(new RunGeniferGraph().newPanel(), 800, 600, true);
-
+        SwingWindow sw = new SwingWindow(new RunGeniferAttention().newPanel(), 800, 600, true);
     }
-    int depth = 4; //no more than 4 or 5
-    int numDimensions = 2;
 
     public static class FactNode extends StringNode {
 
@@ -88,45 +93,68 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
 
 
         System.out.println(target.getNodes().size() + " : " + target.getEdges().size());
-        SeHHyperassociativeMap layout = new SeHHyperassociativeMap(target, numDimensions, 0.15, true);
-        //final JungGraphDrawer layout = new JungGraphDrawer(target, new ISOMLayout(new JungGraph(target)), 6, 6);
-        //final JungGraphDrawer layout = new JungGraphDrawer(target, new  SpringLayout(new JungGraph(target)), 12, 12);
-        //final JungGraphDrawer layout = new JungGraphDrawer(target, new  SpringLayout2(new JungGraph(target)), 12, 12);
-        //final JungGraphDrawer layout = new JungGraphDrawer(target, new  FRLayout2(new JungGraph(target)), 12, 12);
-        
-//        FRLayout fr = new FRLayout(new JungGraph(target));
-//        fr.setAttractionMultiplier(30.0f);
-//        fr.setRepulsionMultiplier(0.1f);
-//        final JungGraphDrawer layout = new JungGraphDrawer(target, fr, 18, 12);
-        
-        final GraphSpace graphCanvas = new GraphSpace(target, layout) {
+        final SeHHyperassociativeMap layout = new SeHHyperassociativeMap(target, numDimensions, 0.1, true);
+
+        final ScalarMap<Node> attention = new ScalarMap();
+
+        final GraphSpace<Node, ValueEdge<Node, Link>> graphCanvas = new GraphSpace<Node, ValueEdge<Node, Link>>(target, layout) {
 
             @Override
-            public Rect newNodeRect(Object n) {
+            public Rect newNodeRect(Node n) {
                 return super.newNodeRect(n);
             }
 
             @Override
-            protected void updateRect(Object n, Rect r) {
+            protected void updateRect(Node n, Rect r) {
+                float a = 0.1f;
+                if (attention.get(n) != null) {
+                    a = 0.1f + Math.min(attention.get(n).floatValue(), 0.9f);
+                } else {
+                    a = 0.1f;
+                }
+
                 if (n instanceof FactNode) {
                     FactNode f = (FactNode) n;
-                    float w = (float) f.getProbability() + 0.5f;
-                    r.setBackgroundColor(new Vec4f(w / 2f, w, w / 4f, 0.75f));
+                    float w = (float) f.getProbability() + 0.5f + a;
+                    r.setBackgroundColor(new Vec4f(a / 2f, a, a / 4f, 0.75f));
                     r.scale(w, w);
                 } else if (n instanceof RuleNode) {
                     RuleNode f = (RuleNode) n;
-                    float w = (float) f.getW() / 100.0f + 0.5f;
-                    r.setBackgroundColor(new Vec4f(w, w / 2f, w / 4f, 0.75f));
+                    float w = (float) f.getW() / 100.0f + 0.5f + a;
+                    r.setBackgroundColor(new Vec4f(a, a / 2f, a / 4f, 0.75f));
                     r.scale(w, w);
-
                 } else {
+                    float w = (float) 0.5f + a;
+                    r.setBackgroundColor(new Vec4f(a, a / 2f, a / 2f, 0.75f));
+                    r.scale(w, w);
                     super.updateRect(n, r);
                 }
             }
-
- 
         };
+        
+        for (Node n : target.getNodes())
+            attention.set(n, 0.1);
 
+        new Thread(new Runnable() {
+
+            protected void delay(long ms) {
+                try {
+                    Thread.sleep(ms);
+                } catch (InterruptedException ex) {
+                }
+            }
+            
+            @Override            
+            public void run() {
+                while (true) {
+                    delay(15);
+                    attention.spikeRandomly(0.7);
+                    attention.multiply(0.99);
+                }                
+            }
+            
+        }).start();
+        
         SGPanel j = new SGPanel(graphCanvas);
 
         new FractalControl(j);
@@ -137,6 +165,24 @@ public class RunGeniferGraph<N, E extends DirectedEdge<N>> extends DefaultSurfac
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(j, BorderLayout.CENTER);
 
+        j.getCanvas().addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                System.out.println("keys");
+                layout.reset();
+                layout.randomize(2.0);
+            }
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+            
+        });
         return panel;
     }
 

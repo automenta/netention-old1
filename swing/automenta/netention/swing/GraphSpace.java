@@ -58,7 +58,7 @@ public class GraphSpace<N, E extends DirectedEdge<N>> extends DefaultSurface imp
 
         final WideIcon curveLabel = new WideIcon(e.toString(), getColor(null), getColor(null));
 
-        Curve c = new Curve(aBox, bBox, 2) {
+        Curve c = new Curve(aBox, bBox, 4, 3) {
 
             @Override
             public void draw(GL2 gl) {
