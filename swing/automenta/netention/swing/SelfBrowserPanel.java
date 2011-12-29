@@ -10,13 +10,16 @@ import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
+import automenta.netention.survive.Environment;
 import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.widget.DetailEditPanel;
-import automenta.netention.swing.widget.GraphPanel;
 import automenta.netention.swing.widget.NewPropertyPanel;
 import automenta.netention.swing.widget.PatternEditPanel;
 import automenta.netention.swing.widget.IndexView;
+import automenta.netention.swing.widget.Map2DPanel;
 import automenta.netention.swing.widget.WhatTreePanel;
+import automenta.netention.swing.widget.net.GnutellaStatusBar;
+import automenta.netention.swing.widget.survive.DefineSurvivalPanel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,6 +47,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
  * Displays a list of one's Details and a tabbed viewer of them 
  */
 public class SelfBrowserPanel extends JPanel {
+    final Environment environment;
+    
 
     private final JSplitPane content;
     private IndexView indexView;
@@ -67,11 +72,15 @@ public class SelfBrowserPanel extends JPanel {
         private final JRadioButtonMenuItem when;
         private final JRadioButtonMenuItem recent;
         private final JRadioButtonMenuItem frequent;
+        private final JRadioButtonMenuItem survivalMap;
 
         public ViewMenu() {
             super();
             setToolTipText("Views");
 
+            survivalMap = new JRadioButtonMenuItem("Survival Map", Icons.getIcon("what"));
+            survivalMap.addActionListener(this);
+            
             what = new JRadioButtonMenuItem("What", Icons.getIcon("what"));
             what.addActionListener(this);
             who = new JRadioButtonMenuItem("Who", Icons.getIcon("who"));
@@ -86,6 +95,7 @@ public class SelfBrowserPanel extends JPanel {
             frequent = new JRadioButtonMenuItem("Frequent", Icons.getIcon("frequent"));
             frequent.addActionListener(this);
 
+            add(survivalMap);
             add(what);
             add(who);
             add(where);
@@ -100,6 +110,7 @@ public class SelfBrowserPanel extends JPanel {
             group.add(when);
             group.add(recent);
             group.add(frequent);
+            group.add(survivalMap);
 
             setIcon(what.getIcon());
             what.setSelected(true);
@@ -122,7 +133,10 @@ public class SelfBrowserPanel extends JPanel {
                 
             } else if (frequent.isSelected()) {
                 setIcon(frequent.getIcon());
-                viewFrequent();
+                //viewFrequent();
+            }
+            else if (survivalMap.isSelected()) {
+                viewSurvival();
             }
 
         }
@@ -131,10 +145,11 @@ public class SelfBrowserPanel extends JPanel {
 //        viewMenu.setToolTipText("Views");
     }
 
-    public SelfBrowserPanel(final MemorySelf self) {
+    public SelfBrowserPanel(final MemorySelf self, final Environment e) {
         super(new BorderLayout());
 
         this.self = self;
+        this.environment = e;
 
         JMenuBar menubar = new JMenuBar();
 
@@ -211,6 +226,8 @@ public class SelfBrowserPanel extends JPanel {
 
         add(content, BorderLayout.CENTER);
 
+        add(new GnutellaStatusBar(), BorderLayout.SOUTH);
+        
         updateUI();
     }
 
@@ -349,17 +366,18 @@ public class SelfBrowserPanel extends JPanel {
         refreshView();
 
         content.setLeftComponent(new JScrollPane((JPanel) indexView));
+        content.setRightComponent(contentTabs);
         updateUI();
     }
 
-    /** TODO the code in this method is not actually frequent, but the JOGL Graph view */
-    protected void viewFrequent() {
-        indexView = new GraphPanel(self);
-        refreshView();
-
-        content.setLeftComponent((JPanel)indexView);
-        updateUI();
-    }
+//    /** TODO the code in this method is not actually frequent, but the JOGL Graph view */
+//    protected void viewFrequent() {
+//        indexView = new GraphPanel(self);
+//        refreshView();
+//
+//        content.setLeftComponent((JPanel)indexView);
+//        updateUI();
+//    }
 
     protected void viewWho() {
         content.setLeftComponent(new JPanel());
@@ -368,6 +386,15 @@ public class SelfBrowserPanel extends JPanel {
 
     protected void viewWhere() {
         content.setLeftComponent(new JPanel());
+        updateUI();
+    }
+    
+    protected void viewSurvival() {
+        Map2DPanel map = new Map2DPanel();
+        
+        content.setRightComponent(new JScrollPane(map));
+        
+        content.setLeftComponent(new DefineSurvivalPanel(map, environment));
         updateUI();
     }
 }

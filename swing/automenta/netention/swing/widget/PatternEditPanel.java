@@ -50,7 +50,7 @@ abstract public class PatternEditPanel extends JPanel {
 
             //JPanel left = new JPanel(new GridLayout(2, 1));
 
-            Double v = pattern.get(pr.getID());
+            Double v = pattern.properties.get(pr.getID());
             double value = v != null ? v : 0.0;
             JHyperLink lsl = new JHyperLink(pr.getName() + " (" + pr.getClass().getSimpleName() + ")", pr.getID(), 1f);
             lsl.setIcon(Icons.getIcon("property"));
@@ -162,11 +162,11 @@ abstract public class PatternEditPanel extends JPanel {
         //save description
         pattern.setDescription(desc.getText());
         //save property strengths
-        pattern.clear();
+        pattern.properties.clear();
         for (String p : propStrengths.keySet()) {
             double v = ((double) propStrengths.get(p).getValue()) / 100.0;
             if (v > 0.0) {
-                pattern.put(p, v);
+                pattern.properties.put(p, v);
             }
         }
         //TODO save property descriptions

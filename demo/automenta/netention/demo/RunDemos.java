@@ -4,15 +4,10 @@
  */
 package automenta.netention.demo;
 
-import automenta.netention.demo.Demo;
+
 import automenta.netention.swing.util.SwingWindow;
-import automenta.netention.demo.spacegraph.DemoRectTilt;
 import automenta.netention.demo.swing.RunAbout;
 import automenta.netention.demo.swing.RunDetailEdit;
-import automenta.netention.demo.swing.RunDialogPanel;
-import automenta.netention.demo.swing.RunFinanceGraph;
-import automenta.netention.demo.swing.RunSelfBrowser;
-import automenta.netention.demo.swing.RunSelfGraphPanel;
 import automenta.netention.demo.swing.RunTextCutup;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -28,7 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  *
@@ -106,12 +100,12 @@ public class RunDemos extends JPanel {
         demos.add(new RunTextCutup());
         demos.add(new RunSelfBrowser());
         demos.add(new RunDetailEdit());
-        demos.add(new RunFinanceGraph());
-        demos.add(new RunSelfGraphPanel());
+        //demos.add(new RunFinanceGraph());
+        //demos.add(new RunSelfGraphPanel());
         //demos.add(new RunSpikingGraph());
-        demos.add(new RunDialogPanel());
+        //demos.add(new RunDialogPanel());
         //demos.add(new RunGraphMix());
-        demos.add(new DemoRectTilt());
+        //demos.add(new DemoRectTilt());
         //        demos.add(new Demo("Self Browser", "..") {
         //            @Override public JPanel newPanel() {
         //                return RunSelfBrowser.newPanel();
@@ -138,7 +132,7 @@ public class RunDemos extends JPanel {
                     //UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
                     //UIManager.setLookAndFeel(new SubstanceMistAquaLookAndFeel());
 
-                    UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                    //UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
                 } catch (Exception ex) {
                     System.err.println(ex);
                 }

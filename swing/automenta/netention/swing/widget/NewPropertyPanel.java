@@ -50,7 +50,7 @@ abstract public class NewPropertyPanel extends AbstractNewPanel {
         }
 
         if (p!=null) {
-            self.addProperty(p);
+            self.addProperty(p, null);
             afterCreated(p);
         }
     }

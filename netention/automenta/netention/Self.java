@@ -10,6 +10,7 @@ import com.syncleus.dann.graph.MutableBidirectedGraph;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A session managed by a certain user/agent.
@@ -40,7 +41,8 @@ public interface Self {
     public Map<Property, Double> getAvailableProperties(Detail d, String... patternID);
     public boolean acceptsAnotherProperty(Detail d, String propid);
 
-    public boolean addProperty(Property p, String... patterns);
+    public boolean addProperty(Property p, Collection<String> patterns);
+    
     public Property getProperty(String propertyID);
 
     /** signals that certain details have changed, causing the system to update the links for them */
@@ -49,5 +51,7 @@ public interface Self {
     public void link(Linker l);
 
     public void clearGraph();
+
+    public Pattern getPattern(String toString);
 
 }

@@ -84,6 +84,10 @@ public class MemorySelf implements Self, Serializable {
         return properties.get(propertyID);
     }
 
+    public Pattern getPattern(String patternID) {
+        return patterns.get(patternID);
+    }
+    
     public Map<String, Pattern> getPatterns() {
         return patterns;
     }
@@ -137,15 +141,28 @@ public class MemorySelf implements Self, Serializable {
         return true;
     }
     
-    public boolean addProperty(Property p, String... patterns) {
+    @Deprecated public boolean addProperty(Property p, String... patterns) {
         //TODO do not allow adding existing pattern
         properties.put(p.getID(), p);
         for (String patid : patterns) {
             Pattern pat = getPatterns().get(patid);
             if (pat!=null) {
-                pat.put(p.getID(), 1.0);
+                pat.properties.put(p.getID(), 1.0);
             }
         }
+        return true;
+    }
+    
+    public boolean addProperty(Property p, Collection<String> patterns) {
+        //TODO do not allow adding existing pattern
+        properties.put(p.getID(), p);
+        if (patterns!=null) 
+            for (String patid : patterns) {
+                Pattern pat = getPatterns().get(patid);
+                if (pat!=null) {
+                    pat.properties.put(p.getID(), 1.0);
+                }
+            }
         return true;
     }
 
@@ -180,10 +197,10 @@ public class MemorySelf implements Self, Serializable {
         for (String pid : patternID) {
             Pattern pat = patterns.get(pid);
             if (pat != null) {
-                for (String propid : pat.keySet()) {
+                for (String propid : pat.properties.keySet()) {
                     Property prop = properties.get(propid);
                     if (!containsProperty(d, prop)) {
-                        Double propStrength = pat.get(propid);
+                        Double propStrength = pat.properties.get(propid);
                         a.put(prop, propStrength);
                     }
                 }

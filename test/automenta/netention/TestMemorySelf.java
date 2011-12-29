@@ -5,7 +5,6 @@
 
 package automenta.netention;
 
-import automenta.netention.graph.SimpleDynamicDirectedGraph;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
@@ -36,11 +35,11 @@ public class TestMemorySelf extends TestCase {
         //add patterns
         {
             Pattern p1 = new Pattern("pat1");
-            p1.put("prop1", 1.0);
+            p1.properties.put("prop1", 1.0);
             s.addPattern(p1);
 
             Pattern p2 = new Pattern("pat2");
-            p2.put("prop2", 0.7);
+            p2.properties.put("prop2", 0.7);
             s.addPattern(p2);
         }
 

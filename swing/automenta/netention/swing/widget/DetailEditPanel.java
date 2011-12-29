@@ -181,10 +181,10 @@ abstract public class DetailEditPanel extends JPanel {
                 final Pattern p = self.getPatterns().get(pid);
                 JMenu j = new JMenu(p.getID());
                 j.setIcon(Icons.getPatternIcon(p));
-                int numItems = 0, numExists = 0, totalItems = p.keySet().size();
+                int numItems = 0, numExists = 0, totalItems = p.properties.keySet().size();
 
                 if (isEditable()) {
-                    for (String propid : p.keySet()) {
+                    for (String propid : p.properties.keySet()) {
                         final Property prop = self.getProperty(propid);
                         if (self.acceptsAnotherProperty(detail, propid)) {
                             JMenuItem ji = new JMenuItem(prop.getName());

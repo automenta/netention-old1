@@ -7,22 +7,27 @@ package automenta.netention;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * a pattern associates with a weighted set of properties (by ID)
  * @author seh
  */
-public class Pattern extends HashMap<String, Double> implements Serializable, Node {
+public class Pattern implements Serializable, Node {
 
-    public final String id;
+    public final String id;    
+    private String name;
     private String description;
     private String iconURL;
-    private final String[] extending;
+    public final Set<String> parents = new HashSet();
+    public final HashMap<String, Double> properties = new HashMap(); 
 
-    public Pattern(String id, String... extending) {
+    public Pattern(String id, String... superPatterns) {
         super();
         this.id = id;
-        this.extending = extending;
+        this.name = id;
+        for (String p : superPatterns) parents.add(p);
     }
 
     public Pattern setDescription(String description) {
@@ -57,13 +62,22 @@ public class Pattern extends HashMap<String, Double> implements Serializable, No
         return iconURL;
     }
 
-    @Override
-    public String getName() {
-        return id;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String[] getExtending() {
-        return extending;
-    }   
+    
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public Set<String> getParents() {
+        return parents;
+    }
+    
+    public void addParent(String patternID) {
+        parents.add(patternID);
+    }
 
 }

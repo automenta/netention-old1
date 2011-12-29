@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.java.j2seproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>automenta.netention2</name>
+            <name>netention-p2p</name>
             <source-roots>
                 <root id="src.demo.dir"/>
                 <root id="src.plugin.dir"/>

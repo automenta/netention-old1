@@ -9,7 +9,7 @@ import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.demo.Demo;
 import automenta.netention.demo.Demo;
-import automenta.netention.swing.SeedSelfBuilder;
+import automenta.netention.demo.SeedSelfBuilder;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;
