@@ -63,9 +63,6 @@ public class GnutellaStatusBar extends JPanel implements ConnectedHostsListener 
         connection.addListener(this);
         //connection.getSearchMonitorSession(new TestReceiver());
         connection.start();
-
-        //TODO this is temporary until we can add hosts via GUI
-        connection.addConnection("localhost", 30056);
         
     }
     
