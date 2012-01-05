@@ -4,7 +4,7 @@
  */
 package automenta.netention.swing.widget.email;
 
-import automenta.netention.email.EMailConnection;
+import automenta.netention.email.EMailChannel;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -25,10 +25,10 @@ public class ConnectDialog extends JDialog {
     
     // Password text field.
     private JPasswordField passwordField;
-    private final EMailConnection connection;
+    private final EMailChannel connection;
     
     // Constructor for dialog.
-    public ConnectDialog(EMailConnection targetConnection, Frame parent) {
+    public ConnectDialog(EMailChannel targetConnection, Frame parent) {
         // Call super constructor, specifying that dialog is modal.
         super(parent, true);
         

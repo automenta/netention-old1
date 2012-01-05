@@ -4,7 +4,7 @@
  */
 package automenta.netention.swing.widget.email;
 
-import automenta.netention.email.EMailConnection;
+import automenta.netention.email.EMailChannel;
 import automenta.netention.impl.MemorySelf;
 import java.awt.*;
 import java.awt.event.*;
@@ -40,7 +40,7 @@ public class EmailPanel extends JFrame {
     private boolean deleting;
     
     private final MemorySelf self;
-    private EMailConnection emc;
+    private EMailChannel emc;
     
     
     // Constructor for E-mail Client.
@@ -254,8 +254,14 @@ public class EmailPanel extends JFrame {
     }
     
     // Connect to e-mail server.
-    public void connect(Properties props) throws Exception {
-        this.emc = new EMailConnection(System.getProperty("user.home") + "/.netention.email");
+    public void connect() throws Exception {
+        Properties props = System.getProperties();
+        props.setProperty("mail.store.protocol", "imaps");
+        props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.setProperty("mail.imap.socketFactory.fallback", "false");
+        
+
+        this.emc = new EMailChannel(System.getProperty("user.home") + "/.netention.email");
         
         // Display connect dialog.
         ConnectDialog dialog = new ConnectDialog(emc, this);
@@ -351,18 +357,13 @@ public class EmailPanel extends JFrame {
     }
     
     public static void main(String[] args) throws Exception {
-        Properties props = System.getProperties();
-        props.setProperty("mail.store.protocol", "imaps");
-        props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        props.setProperty("mail.imap.socketFactory.fallback", "false");
-        
         MemorySelf self = new MemorySelf();
         
         EmailPanel client = new EmailPanel(self);
         client.show();
         
         // Display connect dialog.
-        client.connect(props);
+        client.connect();
     }
 }
 

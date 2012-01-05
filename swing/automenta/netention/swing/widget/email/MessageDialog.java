@@ -4,7 +4,7 @@
  */
 package automenta.netention.swing.widget.email;
 
-import automenta.netention.email.EMailConnection;
+import automenta.netention.email.EMailChannel;
 import java.awt.*;
 import java.awt.event.*;
 import javax.mail.*;
@@ -29,7 +29,7 @@ public class MessageDialog extends JDialog {
     private boolean cancelled;
     
     // Constructor for dialog.
-    public MessageDialog(EMailConnection emc, Frame parent, int type, Message message)
+    public MessageDialog(EMailChannel emc, Frame parent, int type, Message message)
     throws Exception {
         // Call super constructor, specifying that dialog is modal.
         super(parent, true);

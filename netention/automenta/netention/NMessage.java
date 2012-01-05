@@ -14,14 +14,17 @@ import java.util.Date;
  */
 public class NMessage implements Serializable {
     
-    String id;
-    String from;
-    String to;
-    Date when;
-    String subject;
-    String content;
-    String tags;
+    public String id;
+    public String from;
+    public String to;
+    public Date when;
+    public String subject;
+    public String content;
+    public String tags;
 
+    public NMessage() {
+    }
+    
     public NMessage(String id, String from, String to, Date when, String subject, String content, String tags) {
         this.id = id;
         this.from = from;
@@ -68,6 +71,12 @@ public class NMessage implements Serializable {
     public void setFrom(String from) {
         this.from = from;
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 
     
 

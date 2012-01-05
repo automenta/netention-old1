@@ -29,17 +29,18 @@ import javax.mail.internet.MimeMessage;
  *
  * @author seh
  */
-public class EMailConnection implements Serializable {
+public class EMailChannel implements Serializable {
 
     public String server;
     public String smtpServer;
     public String username;
     public String password;
-    int GMAIL_SMTP_PORT = 465;
-    private Session session;
-    private Store store;
+    
+    static final int GMAIL_SMTP_PORT = 465;
+    transient private Session session;
+    transient private Store store;
 
-    public EMailConnection() {
+    public EMailChannel() {
         setDefaults();
     }
 
@@ -50,48 +51,6 @@ public class EMailConnection implements Serializable {
         password = "";
     }
 
-    public EMailConnection(final String filename) {
-
-        try {
-            EMailConnection ec = load(filename);
-            copyFrom(ec);
-        } catch (Exception e) {
-            setDefaults();
-        }
-
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    save(filename);
-                } catch (Exception ex) {
-                    System.err.println(ex);
-                    ex.printStackTrace();
-                }
-            }
-        }));
-    }
-
-    public void copyFrom(EMailConnection e) {
-        setUsername(e.username);
-        setPassword(e.password);
-        setSmtpServer(e.smtpServer);
-        setServer(e.server);
-    }
-
-    public static EMailConnection load(String filename) throws IOException {
-        FileReader fr = new FileReader(filename);
-        EMailConnection ec = new JSONDeserializer<EMailConnection>().use(EMailConnection.class.toString(), EMailConnection.class).deserialize(fr);
-        fr.close();
-        return ec;
-    }
-
-    public void save(String filename) throws IOException {
-        FileWriter fw = new FileWriter(new File(filename));
-        new JSONSerializer().serialize(this, fw);
-        fw.close();
-    }
 
     public void setServer(String s) {
         this.server = s;
@@ -196,6 +155,7 @@ public class EMailConnection implements Serializable {
         // Retrieve message headers for each message in folder.
         FetchProfile profile = new FetchProfile();
         profile.add(FetchProfile.Item.ENVELOPE);
+        profile.add(FetchProfile.Item.CONTENT_INFO);
         folder.fetch(messages, profile);
         return messages;
 
