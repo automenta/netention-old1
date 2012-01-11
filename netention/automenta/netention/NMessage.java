@@ -7,6 +7,8 @@ package automenta.netention;
 import flexjson.JSONSerializer;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -20,19 +22,20 @@ public class NMessage implements Serializable {
     public Date when;
     public String subject;
     public String content;
-    public String tags;
+    public Set<String> tags;
+    private String image;
 
     public NMessage() {
     }
     
-    public NMessage(String id, String from, String to, Date when, String subject, String content, String tags) {
+    public NMessage(String id, String from, String to, Date when, String subject, String content) {
         this.id = id;
         this.from = from;
         this.to = to;
         this.when = when;
         this.subject = subject;
         this.content = content;
-        this.tags = tags;
+        this.tags = new HashSet();
     }
 
     public String getContent() {
@@ -61,10 +64,10 @@ public class NMessage implements Serializable {
 
     @Override
     public String toString() {
-        return new JSONSerializer().serialize(this).toString();
+        return new JSONSerializer().include("tags").serialize(this).toString();
     }
 
-    public String getTags() {
+    public Set<String> getTags() {
         return tags;
     }
 
@@ -77,10 +80,34 @@ public class NMessage implements Serializable {
         return id.hashCode();
     }
 
+    public void addTag(String p) {
+        tags.add(p);
+    }
 
-    
+    public void setTo(String to) {
+        this.to = to;
+    }
 
-    
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setWhen(Date when) {
+        this.when = when;
+    }
+
+    /** image url */
+    public String getImage() {
+        return this.image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
     
     
     

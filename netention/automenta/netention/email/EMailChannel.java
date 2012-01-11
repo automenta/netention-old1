@@ -4,13 +4,8 @@
  */
 package automenta.netention.email;
 
+import automenta.netention.NMessage;
 import automenta.netention.swing.widget.email.MessageDialog;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Properties;
@@ -89,6 +84,26 @@ public class EMailChannel implements Serializable {
         return getServer() + ", " + getUsername() + ", " + getSmtpServer();
     }
 
+    public void sendMessage(NMessage m) throws Exception {
+        ensureConnected();
+        
+        // Create a new message with values from dialog.
+        MimeMessage newMessage = new MimeMessage(session);
+        newMessage.setFrom(new InternetAddress(m.getFrom()));
+
+        newMessage.setSubject(m.getSubject());
+        newMessage.setSentDate(m.getWhen());
+        newMessage.setContent(m.getContent(), "text/html");
+        
+        final Address[] recipientAddresses = InternetAddress.parse(m.getTo());
+        newMessage.setRecipients(Message.RecipientType.TO, recipientAddresses);
+
+        Transport transport = session.getTransport("smtps");
+        transport.connect(getSmtpServer(), GMAIL_SMTP_PORT, getUsername(), getPassword());
+        transport.sendMessage(newMessage, recipientAddresses);
+        transport.close();
+    }
+    
     // Send the specified message.
     public void sendMessage(int type, Message message) throws Exception {
         // Display message dialog to get message values.
@@ -116,6 +131,25 @@ public class EMailChannel implements Serializable {
         transport.sendMessage(newMessage, recipientAddresses);
         transport.close();
     }
+    
+    public void ensureConnected() throws Exception {
+        if (session == null) {
+            Properties props = System.getProperties();
+            props.setProperty("mail.store.protocol", "imaps");
+            props.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            props.setProperty("mail.imap.socketFactory.fallback", "false");
+            props.put("mail.smtp.host", getSmtpServer());
+            session = Session.getDefaultInstance(props, null);
+            store = session.getStore("imaps");
+            try {
+                store.connect(getServer(), getUsername(), getPassword());
+            } catch (MessagingException e) {
+                e.printStackTrace();
+                System.exit(2);
+            }
+        }
+    }
+
 
     public synchronized void connect(Properties props) throws Exception {
         String username = getUsername();

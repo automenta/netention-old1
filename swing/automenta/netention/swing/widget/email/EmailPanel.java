@@ -253,6 +253,7 @@ public class EmailPanel extends JFrame {
         splitPane.setDividerLocation(.5);
     }
     
+    
     // Connect to e-mail server.
     public void connect() throws Exception {
         Properties props = System.getProperties();
@@ -264,7 +265,7 @@ public class EmailPanel extends JFrame {
         this.emc = new EMailChannel(System.getProperty("user.home") + "/.netention.email");
         
         // Display connect dialog.
-        ConnectDialog dialog = new ConnectDialog(emc, this);
+        EMailParametersDialog dialog = new EMailParametersDialog(emc, this);
         dialog.show();
         
 //        // Build connection URL from connect dialog settings.

@@ -168,7 +168,7 @@ public class RunDetailEdit implements Demo {
             public void run() {
                 JPanel p = new RunDetailEdit().newPanel();
 
-                SwingWindow window = new SwingWindow(p, 900, 800, true);
+                SwingWindow window = new SwingWindow(p, 1400, 800, true);
             }
         });
 

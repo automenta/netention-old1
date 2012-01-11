@@ -11,7 +11,7 @@ import javax.swing.*;
 
 /* This class displays a dialog for entering e-mail
    server connection settings. */
-public class ConnectDialog extends JDialog {
+public class EMailParametersDialog extends JDialog {
     
     // These are the e-mail server types.
     private static final String[] TYPES = {/*"pop3",*/ "imap"};
@@ -28,14 +28,14 @@ public class ConnectDialog extends JDialog {
     private final EMailChannel connection;
     
     // Constructor for dialog.
-    public ConnectDialog(EMailChannel targetConnection, Frame parent) {
+    public EMailParametersDialog(EMailChannel targetConnection, Frame parent) {
         // Call super constructor, specifying that dialog is modal.
         super(parent, true);
         
         this.connection = targetConnection;
         
         // Set dialog title.
-        setTitle("Connect");
+        setTitle("EMail");
         
         // Handle closing events.
         addWindowListener(new WindowAdapter() {
@@ -124,7 +124,7 @@ public class ConnectDialog extends JDialog {
         
         // Setup buttons panel.
         JPanel buttonsPanel = new JPanel();
-        JButton connectButton = new JButton("Connect");
+        JButton connectButton = new JButton("Save");
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 actionConnect();

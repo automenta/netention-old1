@@ -4,7 +4,11 @@
  */
 package automenta.netention.swing.widget.email;
 
+import automenta.netention.Channel;
 import automenta.netention.NMessage;
+import automenta.netention.craigslist.CraigslistChannel;
+import automenta.netention.email.EMailChannel;
+import automenta.netention.rss.RSSChannel;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import flexjson.JSONDeserializer;
@@ -27,10 +31,14 @@ import java.util.Map;
  */
 public class MessageIndex implements Serializable {
 
+    public List<String> addresses = new LinkedList();
+    public List<String> feeds = new LinkedList();
     
     public List<NMessage> messages = new LinkedList();
     
     transient Map<String, NMessage> byId = new HashMap();
+    
+    public EMailChannel emailChannel = new EMailChannel();
     
     
     public MessageIndex() {
@@ -72,7 +80,7 @@ public class MessageIndex implements Serializable {
 
     public void save(String filename) throws IOException {
         FileWriter fw = new FileWriter(new File(filename));
-        new JSONSerializer().include("messages").deepSerialize(this, fw);
+        new JSONSerializer().include("messages", "addressess", "feeds").deepSerialize(this, fw);        
         fw.close();
     }
 
@@ -108,5 +116,39 @@ public class MessageIndex implements Serializable {
             add(n);
         }
     }
+
+    public List<String> getAddresses() {
+        return addresses;
+    }
+
+    public List<String> getFeeds() {
+        return feeds;
+    }
+
+    Iterable<Channel> getChannels() {
+        List<Channel> l = new LinkedList();
+        for (String s : getFeeds()) {
+            if (s.contains(".craigslist.org/")) //TODO this is a hack and needs more precise
+                l.add(new CraigslistChannel(s));
+            else
+                l.add(new RSSChannel(s));
+        }
+        return l;
+    }
+
+    void send(NMessage message) {
+        if (message.getTo().contains("@")) { //email
+            try {
+                message.setFrom(emailChannel.username);
+                emailChannel.sendMessage(message);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        else {
+            System.err.println("Unrecognized address type: " + message.getTo());
+        }
+    }
+    
     
 }
