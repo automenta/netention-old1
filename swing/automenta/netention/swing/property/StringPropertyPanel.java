@@ -20,7 +20,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
     public StringPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
         super(s, d, v, editable);
 
-        if (getMode() == Mode.Real) {
+        if (getMode() != Mode.Imaginary) {
 
             addOption(new PropertyOption<StringIs>("is") {
 
@@ -82,7 +82,8 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-        } else if (getMode() == Mode.Imaginary) {
+        } 
+        if (getMode() != Mode.Real) {
             addOption(new PropertyOption<StringEquals>("exactly") {
 
                 //private TextBox eqBox;

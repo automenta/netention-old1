@@ -27,7 +27,7 @@ public class IntPropertyPanel extends PropertyOptionPanel {
     public IntPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
         super(s, d, v, editable);
 
-        if (getMode() == Mode.Real) {
+        if (getMode() != Mode.Imaginary) {
             addOption(new PropertyOption<IntegerIs>("is") {
 
                 private JTextField isBox;
@@ -59,7 +59,8 @@ public class IntPropertyPanel extends PropertyOptionPanel {
                 }
             });
 
-        } else if (getMode() == Mode.Imaginary) {
+        } 
+        if (getMode() != Mode.Real) {
 
             addOption(new PropertyOption<IntegerEquals>("exactly") {
 

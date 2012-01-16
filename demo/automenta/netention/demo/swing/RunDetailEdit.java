@@ -5,9 +5,9 @@
 package automenta.netention.demo.swing;
 
 import automenta.netention.PropertyValue;
+import automenta.netention.craigslist.OodleBuilder;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
-import automenta.netention.demo.Demo;
 import automenta.netention.demo.Demo;
 import automenta.netention.demo.SeedSelfBuilder;
 import automenta.netention.swing.SelfBrowserPanel;
@@ -20,12 +20,10 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
 /**
@@ -50,7 +48,14 @@ public class RunDetailEdit implements Demo {
         final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
 
         MemorySelf self = new MemorySelf("me", "Me");
+        
         new SeedSelfBuilder().build(self);
+        try {
+            new OodleBuilder().build(self);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
         logger.log(Level.INFO, "Loaded Seed Self");
 
         final MemorySelf mSelf = self;
@@ -90,16 +95,6 @@ public class RunDetailEdit implements Demo {
                 views.setDetail(getDetail(ep.getJSON()));
             }
 
-            @Override
-            protected JComponent getLinePanel(PropertyValue pv) {
-                JComponent c = super.getLinePanel(pv);
-                JPanel p = new JPanel(new BorderLayout());
-                p.setOpaque(true);
-                p.setBackground(getColor(pv, 0.2f, 1.0f));
-                p.setBorder(new LineBorder(getColor(pv, 0.2f, 0.8f), 2));
-                p.add(c, BorderLayout.CENTER);
-                return p;
-            }
         };
 
         JPanel p = new JPanel(new GridLayout(1, 2));

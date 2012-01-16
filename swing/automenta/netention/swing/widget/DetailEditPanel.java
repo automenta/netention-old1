@@ -173,7 +173,31 @@ abstract public class DetailEditPanel extends JPanel {
             addButton(imaginaryButton);
 
 
+            if (isEditable()) {
+                JMenu t = new JMenu(/*"It's a..."*/);
+                t.setIcon(Icons.getIcon("addPattern"));
+                t.setToolTipText(itsATooltip);
+                for (String pid : self.getAvailablePatterns(detail)) {
+                    final Pattern p = self.getPatterns().get(pid);
+                    JMenuItem ti = new JMenuItem(p.getID());
+                    ti.setIcon(Icons.getPatternIcon(p));
+                    ti.addActionListener(new ActionListener() {
 
+                        @Override public void actionPerformed(ActionEvent e) {
+                            SwingUtilities.invokeLater(new Runnable() {
+
+                                @Override public void run() {
+                                    addPattern(p);
+                                }
+                            });
+                        }
+                    });
+                    t.add(ti);
+                }
+                add(t);
+            }
+
+            
 //            if (detail.getPatterns().size()!=0)
 //                add(new JSeparator(JSeparator.VERTICAL));
 
@@ -238,29 +262,6 @@ abstract public class DetailEditPanel extends JPanel {
                 add(j);
 
 
-            }
-            if (isEditable()) {
-                JMenu t = new JMenu(/*"It's a..."*/);
-                t.setIcon(Icons.getIcon("addPattern"));
-                t.setToolTipText(itsATooltip);
-                for (String pid : self.getAvailablePatterns(detail)) {
-                    final Pattern p = self.getPatterns().get(pid);
-                    JMenuItem ti = new JMenuItem(p.getID());
-                    ti.setIcon(Icons.getPatternIcon(p));
-                    ti.addActionListener(new ActionListener() {
-
-                        @Override public void actionPerformed(ActionEvent e) {
-                            SwingUtilities.invokeLater(new Runnable() {
-
-                                @Override public void run() {
-                                    addPattern(p);
-                                }
-                            });
-                        }
-                    });
-                    t.add(ti);
-                }
-                add(t);
             }
 
         }
@@ -653,9 +654,6 @@ abstract public class DetailEditPanel extends JPanel {
     synchronized protected void addPattern(Pattern p) {
         updateDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
 
-        if ((detail.getPatterns().size() == 0) && (detail.getMode() == Mode.Unknown)) {
-            chooseInitialMode();
-        }
         detail.getPatterns().add(p.getID());
         patternChanged();
         refreshUI();
