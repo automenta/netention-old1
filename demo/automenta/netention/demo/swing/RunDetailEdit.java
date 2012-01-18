@@ -10,6 +10,7 @@ import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.demo.Demo;
 import automenta.netention.demo.SeedSelfBuilder;
+import automenta.netention.ieml.IEMLBuilder;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;
@@ -24,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
 /**
@@ -43,24 +45,25 @@ public class RunDetailEdit implements Demo {
     }
 
 
-
-    public JPanel newPanel() {
-        final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
-
+    public static MemorySelf getAnonymousSelf() {
         MemorySelf self = new MemorySelf("me", "Me");
-        
+       
         new SeedSelfBuilder().build(self);
         try {
             new OodleBuilder().build(self);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        new IEMLBuilder().build(self);
         
-        logger.log(Level.INFO, "Loaded Seed Self");
+        return self;        
+    }
 
-        final MemorySelf mSelf = self;
+    public JPanel newPanel() {
 
-        final MemoryDetail d = new MemoryDetail("X");
+        final MemorySelf mSelf = getAnonymousSelf();
+
+        final MemoryDetail d = new MemoryDetail("Untitled");
         mSelf.addDetail(d);
 
         final EncodingPanel ep = new EncodingPanel(d);
@@ -154,7 +157,8 @@ public class RunDetailEdit implements Demo {
         return Color.getHSBColor(h, s, b);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 
         SwingUtilities.invokeLater(new Runnable() {

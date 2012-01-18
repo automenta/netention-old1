@@ -22,7 +22,7 @@ public class SelectionPropertyPanel extends PropertyOptionPanel {
 
         this.prop = sp;
 
-        if (getMode() == Mode.Real) {
+        if (getMode() != Mode.Imaginary) {
 
             addOption(new PropertyOption<SelectionIs>("is") {
 
@@ -61,8 +61,8 @@ public class SelectionPropertyPanel extends PropertyOptionPanel {
                     return p;
                 }
             });
-
-        } else if (getMode() == Mode.Imaginary) {
+        }
+        if (getMode() != Mode.Real) {
             addOption(new PropertyOption<SelectionEquals>("exactly") {
 
                 JComboBox rta = new JComboBox();

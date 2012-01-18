@@ -66,7 +66,7 @@ public class WhatTreePanel extends JPanel implements IndexView {
                 Pattern pat = self.getPatterns().get(p);
                 DefaultMutableTreeNode pNode;
                 if (pat != null) {
-                    pNode = new DefaultMutableTreeNode(pat);
+                    pNode = new DefaultMutableTreeNode(pat);                    
                 } else {
                     pNode = new DefaultMutableTreeNode(p);
                 }
@@ -106,6 +106,12 @@ public class WhatTreePanel extends JPanel implements IndexView {
 
                 Object nodeObj = ((DefaultMutableTreeNode) value).getUserObject();
 
+                if (value instanceof Pattern) {
+                    Pattern p = (Pattern)value;
+                    setText(p.getName());
+                    setToolTipText(p.getID());                    
+                }
+                        
                 // check whatever you need to on the node user object
                 setIcon(getObjectIcon(nodeObj));
 

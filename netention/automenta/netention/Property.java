@@ -1,6 +1,8 @@
 package automenta.netention;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 abstract public class Property implements Serializable {
 
@@ -9,6 +11,7 @@ abstract public class Property implements Serializable {
     private String name;
     private int cardinalityMax = 1;
     private int cardinalityMin = 0;
+    private List<String> suggestions = new LinkedList();
 
     public Property() {
         super();
@@ -69,4 +72,15 @@ abstract public class Property implements Serializable {
         this.desc = description;
         return this;
     }
+
+    public void addSuggestion(String s) {
+        if (!suggestions.contains(s))
+            suggestions.add(s);
+    }
+
+    public List<String> getSuggestions() {
+        return suggestions;
+    }
+    
+    
 }

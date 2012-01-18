@@ -199,7 +199,8 @@ public class MemorySelf implements Self, Serializable {
             if (pat != null) {
                 for (String propid : pat.properties.keySet()) {
                     Property prop = properties.get(propid);
-                    if (!containsProperty(d, prop)) {
+                    if (acceptsAnotherProperty(d, propid)) {
+                    //if (!containsProperty(d, prop)) {
                         Double propStrength = pat.properties.get(propid);
                         a.put(prop, propStrength);
                     }
@@ -256,6 +257,10 @@ public class MemorySelf implements Self, Serializable {
     @Override
     public boolean acceptsAnotherProperty(Detail d, String propid) {
         int existing = 0;
+        Property p = getProperty(propid);
+        if (p.getCardinalityMax() == -1)
+            return true;
+        
         for (PropertyValue v : d.getProperties()) {
             if (v.getProperty().equals(propid)) {
                 existing++;
@@ -263,7 +268,7 @@ public class MemorySelf implements Self, Serializable {
         }
 
         //TODO consider the property's cardinality properties
-        if (existing == 1)
+        if (existing >= p.getCardinalityMax())
             return false;
 
         return true;
@@ -291,6 +296,16 @@ public class MemorySelf implements Self, Serializable {
         if (plugins == null)
             plugins = new LinkedList();
         plugins.add(p);
+    }
+
+    @Override
+    public Collection<String> getSubPatterns(final String pid) {
+        List<String> s = new LinkedList();
+        for (final Pattern p : getPatterns().values()) {
+            if (p.getParents().contains(pid))
+                s.add(p.id);
+        }
+        return s;
     }
 
 }

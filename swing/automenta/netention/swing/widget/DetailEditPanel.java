@@ -27,6 +27,7 @@ import automenta.netention.value.integer.IntProp;
 import automenta.netention.value.real.RealProp;
 import automenta.netention.value.set.SelectionProp;
 import automenta.netention.value.string.StringProp;
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -36,9 +37,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -51,6 +54,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
@@ -80,6 +84,9 @@ abstract public class DetailEditPanel extends JPanel {
     final static String realOrImaginary = "Real details describe things that actually exist. \nImaginary details describe hypothetical or desired things.";
     boolean deletable;
     public final JPanel bottomBar;
+    private final JPanel links;
+    private final JSplitPane mainSplit;
+
 
     protected class LinkPanel extends JPanel {
 
@@ -125,6 +132,26 @@ abstract public class DetailEditPanel extends JPanel {
         }
     }
 
+    private void buildAvailablePropertiesMenu(JMenu b) {
+        String[] lp = new String[detail.getPatterns().size()];
+        detail.getPatterns().toArray(lp);
+        
+        for (final Property p : self.getAvailableProperties(detail, lp).keySet()) {
+            JMenuItem j = new JMenuItem(p.getName());
+            j.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override public void run() {
+                            addProperty(p);
+                        }                        
+                    });
+                }                
+            });
+            b.add(j);
+        }
+    }
+    
     protected class DetailMenuBar extends JMenuBar {
 
         float menuFontScale = 1.25f;
@@ -177,23 +204,8 @@ abstract public class DetailEditPanel extends JPanel {
                 JMenu t = new JMenu(/*"It's a..."*/);
                 t.setIcon(Icons.getIcon("addPattern"));
                 t.setToolTipText(itsATooltip);
-                for (String pid : self.getAvailablePatterns(detail)) {
-                    final Pattern p = self.getPatterns().get(pid);
-                    JMenuItem ti = new JMenuItem(p.getID());
-                    ti.setIcon(Icons.getPatternIcon(p));
-                    ti.addActionListener(new ActionListener() {
-
-                        @Override public void actionPerformed(ActionEvent e) {
-                            SwingUtilities.invokeLater(new Runnable() {
-
-                                @Override public void run() {
-                                    addPattern(p);
-                                }
-                            });
-                        }
-                    });
-                    t.add(ti);
-                }
+                
+                buildPatternMenu(t);
                 add(t);
             }
 
@@ -287,6 +299,90 @@ abstract public class DetailEditPanel extends JPanel {
             c.setFont(new Font("Monospace", Font.PLAIN, (int) (c.getFont().getSize2D() * menuFontScale)));
             add(c);
         }
+
+        
+        public void buildPatternMenu(final JMenu t, final String pid, final JMenu parent) {
+            final Pattern p = self.getPatterns().get(pid);
+
+            JMenuItem ti = new JMenuItem(p.getName());
+            ti.setEnabled(!detail.getPatterns().contains(pid));
+            ti.setIcon(Icons.getPatternIcon(p));
+            ti.addActionListener(new ActionListener() {
+
+                @Override public void actionPerformed(ActionEvent e) {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override public void run() {
+                            addPattern(p);
+                        }
+                    });
+                }
+            });
+            
+            Collection<String> children = self.getSubPatterns(pid);
+            if (children.size() > 0) {
+                JMenu ji = new JMenu(p.getName());
+                ji.setIcon(Icons.getPatternIcon(p));
+
+                ji.add(ti);
+                ji.addSeparator();
+                
+                if (parent!=null) {
+                    parent.add(ji);
+                }
+                else {
+                    t.add(ji);
+                }
+                
+                for (String s : children) {
+                    buildPatternMenu(t, s, ji);
+                }
+            }
+            else {
+                if (parent!=null) {
+                    parent.add(ti);
+                }
+                else {
+                    t.add(ti);
+                }
+                
+            }
+            
+            
+            
+            
+        }
+        
+        public void buildPatternMenu(JMenu t) {
+                
+            List<String> roots = new LinkedList();
+            for (Pattern p : self.getPatterns().values()) {
+                if (p.getParents().isEmpty())
+                    roots.add(p.id);
+            }
+            
+            for (String pid : roots) {
+                buildPatternMenu(t, pid, null);
+            }
+            
+//                for (String pid : self.getAvailablePatterns(detail)) {
+//                    final Pattern p = self.getPatterns().get(pid);
+//                    JMenuItem ti = new JMenuItem(p.getID());
+//                    ti.setIcon(Icons.getPatternIcon(p));
+//                    ti.addActionListener(new ActionListener() {
+//
+//                        @Override public void actionPerformed(ActionEvent e) {
+//                            SwingUtilities.invokeLater(new Runnable() {
+//
+//                                @Override public void run() {
+//                                    addPattern(p);
+//                                }
+//                            });
+//                        }
+//                    });
+//                    t.add(ti);
+//                }
+        }
     }
 
     public DetailEditPanel(Self s, Detail d, boolean editable) {
@@ -347,8 +443,14 @@ abstract public class DetailEditPanel extends JPanel {
 
 
         sentences = new JPanel(new GridBagLayout());
-
-        add(new JScrollPane(sentences), gc);
+        links = new JPanel(new GridBagLayout());
+        
+        mainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        mainSplit.setTopComponent(new JScrollPane(sentences));
+        mainSplit.setBottomComponent(new JScrollPane(links));
+        mainSplit.setDividerLocation(0.5f);
+        
+        add(mainSplit, gc);
 
         {
             bottomBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -417,6 +519,7 @@ abstract public class DetailEditPanel extends JPanel {
 
         }
 
+        
         setDetail(d);
 
     }
@@ -489,18 +592,18 @@ abstract public class DetailEditPanel extends JPanel {
     protected void setDetailName(String s) {
         detail.setName(s);
     }
-
+    
     public void setDetail(Detail d) {
         this.detail = d;
         sentences.removeAll();
-
+        links.removeAll();
 
         menuBar.refresh();
 
         final GridBagConstraints gc = new GridBagConstraints();
 
-        if (d.getPatterns().size() == 0) {
-        } else {
+        //if (d.getPatterns().size() == 0) {
+        //} else {
 
             sentences.setAlignmentY(TOP_ALIGNMENT);
 
@@ -550,6 +653,7 @@ abstract public class DetailEditPanel extends JPanel {
                 JComponent nextLine = getLinePanel(pv);
                 if (nextLine instanceof PropertyOptionPanel) {
                     PropertyOptionPanel pop = (PropertyOptionPanel) nextLine;
+                    
                     final Property property = self.getProperty(pv.getProperty());
 
                     if (isEditable()) {
@@ -567,25 +671,53 @@ abstract public class DetailEditPanel extends JPanel {
 
                         pop.setPopup(popup);
                     }
-
                     optionPanels.add(pop);
+                    nextLine = stylePropertyPanel(pop);
                 }
 
                 sentences.add(nextLine, gc);
             }
 
+            if (isEditable()) {
+
+                JPanel addPropertyPanel = new JPanel(new BorderLayout());
+                {
+                    JMenuBar bb = new JMenuBar();
+                    
+                    JMenu b = new JMenu();
+                    b.setIcon(Icons.getIcon("addPattern"));
+                    b.setToolTipText("Add Property");
+                    buildAvailablePropertiesMenu(b);
+                    
+                    bb.add(b);
+
+                    addPropertyPanel.add(bb);
+                }
+                gc.gridy++;
+                sentences.add(addPropertyPanel, gc);
+            }
+            
+
+            
             self.updateLinks(new Runnable() {
 
                 @Override
                 public void run() {
                     Set<ValueEdge<Node, Link>> ae = self.getGraph().getAdjacentEdges(detail);
+                    GridBagConstraints gc = new GridBagConstraints();
+                    gc.gridy = 0;
 
                     if (ae != null) {
                         for (ValueEdge<Node, Link> e : ae) {
                             gc.gridy++;
-                            sentences.add(new LinkPanel(e), gc);
+                            links.add(new LinkPanel(e), gc);
                         }
                     }
+                    
+                    gc.gridy++;
+                    gc.fill = gc.VERTICAL;
+                    gc.weighty = 1.0;
+                    links.add(Box.createVerticalBox(), gc);
 
                     updateUI();
                 }
@@ -596,7 +728,7 @@ abstract public class DetailEditPanel extends JPanel {
             gc.fill = gc.VERTICAL;
             gc.weighty = 1.0;
             sentences.add(Box.createVerticalBox(), gc);
-        }
+        //}
 
         //headerIcon.setIcon(Icons.getDetailIcon(self, d));
 
@@ -604,6 +736,11 @@ abstract public class DetailEditPanel extends JPanel {
 
     }
 
+    public JComponent stylePropertyPanel(PropertyOptionPanel p) {
+        p.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+        return p;
+    }
+    
     protected JComponent getLinePanel(PropertyValue pv) {
         Property prop = self.getProperty(pv.getProperty());
         if (prop instanceof IntProp) {
@@ -652,11 +789,13 @@ abstract public class DetailEditPanel extends JPanel {
     }
 
     synchronized protected void addPattern(Pattern p) {
-        updateDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
 
-        detail.getPatterns().add(p.getID());
-        patternChanged();
-        refreshUI();
+        if (!detail.getPatterns().contains(p.getID())) {
+            updateDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
+            detail.getPatterns().add(p.getID());
+            patternChanged();
+            refreshUI();
+        }
     }
 
     synchronized protected void removePattern(Pattern p) {

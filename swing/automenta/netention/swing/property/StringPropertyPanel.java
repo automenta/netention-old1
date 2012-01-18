@@ -10,6 +10,10 @@ import automenta.netention.value.string.StringContains;
 import automenta.netention.value.string.StringEquals;
 import automenta.netention.value.string.StringIs;
 import automenta.netention.value.string.StringNotContains;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -26,7 +30,8 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
                 //private SuggestBox isBox;
                 //private RichTextArea rta;
-                JTextField rta = new JTextField();
+                //JTextField rta = new JTextField();
+                JComboBox rta = getComboBox();
 
                 @Override public boolean accepts(Value v) {
                     return v.getClass().equals(StringIs.class);
@@ -37,7 +42,8 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                 }
 
                 @Override public StringIs widgetToValue(StringIs r) {
-                    r.setValue(rta.getText());
+                    r.setValue(rta.getSelectedItem().toString());
+                    
                     //				if (rta !=null) {
                     //					r.setValue( rta.getText() );
                     //				}
@@ -52,10 +58,10 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                     setReal();
 
                     JPanel p = new TransparentFlowPanel();
-                    rta.setText(value.getString());
-                    rta.setColumns(stringCols);
+                    rta.setSelectedItem(value.getString());                            
                     p.add(rta);
 
+                    addSuggestButtons(p, rta);
 
                     //StringVar sv = (StringVar) getPropertyData();
 
@@ -112,6 +118,8 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                     eqBox.setText(value.getString());
                     p.add(eqBox);
 
+                    //addSuggestButtons(p, rta);
+                    
                     return p;
                 }
             });
@@ -143,6 +151,8 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                     eqBox.setText(value.getString());
                     p.add(eqBox);
 
+                    //addSuggestButtons(p);
+                    
                     return p;
                 }
             });
@@ -174,6 +184,8 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                     eqBox.setText(value.getString());
                     p.add(eqBox);
 
+                    //addSuggestButtons(p);
+                    
                     return p;
                 }
             });
@@ -181,5 +193,26 @@ public class StringPropertyPanel extends PropertyOptionPanel {
 
         refresh();
 
+    }
+    
+    public void addSuggestButtons(JPanel p, final JComboBox jp) {
+        JButton remember = new JButton("->");
+        remember.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getProperty().addSuggestion(jp.getSelectedItem().toString());
+            }            
+        });
+        remember.setToolTipText("Remember");
+        p.add(remember);
+        
+        
+        
+    }
+    
+    public JComboBox getComboBox() {
+        JComboBox jb = new JComboBox();
+        jb.setEditable(true);
+        return jb;
     }
 }

@@ -4,18 +4,14 @@
  */
 package automenta.netention.demo;
 
+import automenta.netention.craigslist.OodleBuilder;
 import automenta.netention.impl.MemorySelf;
-import automenta.netention.demo.Demo;
-import automenta.netention.demo.Demo;
-import automenta.netention.demo.SeedEnvironment;
-import automenta.netention.demo.SeedSelfBuilder;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.util.SwingWindow;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  *
@@ -38,6 +34,11 @@ public class RunSelfBrowser implements Demo {
             System.out.println("unable to load " + filePath + " : " + ex);
             self = new MemorySelf("me", "Me");
             new SeedSelfBuilder().build(self);
+            try {
+                new OodleBuilder().build(self);
+            } catch (Exception ex2) {
+                ex2.printStackTrace();
+            }
             logger.log(Level.INFO, "Loaded Seed Self");
         }
         //self.addPlugin(new Twitter());
