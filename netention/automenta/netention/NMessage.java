@@ -4,8 +4,9 @@
  */
 package automenta.netention;
 
+import automenta.netention.impl.MemoryDetail;
+import automenta.netention.value.string.StringIs;
 import flexjson.JSONSerializer;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,52 +15,66 @@ import java.util.Set;
  *
  * @author seh
  */
-public class NMessage implements Serializable {
+public class NMessage extends MemoryDetail /*implements Serializable*/ {
     
-    public String id;
-    public String from;
-    public String to;
-    public Date when;
-    public String subject;
-    public String content;
-    public Set<String> tags;
-    private String image;
+//    public String id;
+//    public String from;
+//    public String to;
+//    public Date when;
+//    public String subject;
+//    public String content;
+//    public Set<String> tags;
+//    private String image;
 
     public NMessage() {
     }
     
     public NMessage(String id, String from, String to, Date when, String subject, String content) {
-        this.id = id;
-        this.from = from;
-        this.to = to;
-        this.when = when;
-        this.subject = subject;
-        this.content = content;
-        this.tags = new HashSet();
+        super(id, Mode.Real, "message" );
+        
+        setFrom(from);
+        setTo(to);
+        setWhen(when);
+        setSubject(subject);
+        setContent(content);
     }
 
+    public String getStringValue(String propID) {
+        StringIs p = getValue(StringIs.class, propID);
+        if (p!=null)
+            return p.getString();
+        else
+            return "";
+    }
+    
+    public synchronized void setStringValue(String propID, String v) {
+        removeAllValues(propID);
+        addValue(propID, new StringIs(v));
+    }
+    
     public String getContent() {
-        return content;
+        return getStringValue("message.content");
     }
 
     public String getFrom() {
-        return from;
-    }
-
-    public String getId() {
-        return id;
+        return getStringValue("message.from");
     }
 
     public String getSubject() {
-        return subject;
+        return getStringValue("message.subject");
     }
 
     public String getTo() {
-        return to;
+        return getStringValue("message.to");
     }
 
     public Date getWhen() {
-        return when;
+        return new Date(getStringValue("message.when"));
+    }
+
+    /** image url */
+    public String getImage() {
+        return getStringValue("message.image");
     }
 
     @Override
@@ -68,47 +83,58 @@ public class NMessage implements Serializable {
     }
 
     public Set<String> getTags() {
-        return tags;
+        return decodeTagString(getStringValue("message.tags"));
     }
 
     public void setFrom(String from) {
-        this.from = from;
+        setStringValue("message.from", from);
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return getID().hashCode();
     }
 
     public void addTag(String p) {
-        tags.add(p);
+        Set<String> s = getTags();
+        s.add(p);
+        setStringValue("message.tags", encodeTagString(s));
     }
 
     public void setTo(String to) {
-        this.to = to;
+        setStringValue("message.to", to);
     }
 
     public void setContent(String content) {
-        this.content = content;
+        setStringValue("message.content", content);
     }
 
     public void setSubject(String subject) {
-        this.subject = subject;
+        setStringValue("message.subject", subject);
     }
 
     public void setWhen(Date when) {
-        this.when = when;
-    }
-
-    /** image url */
-    public String getImage() {
-        return this.image;
+        setStringValue("message.when", when.toString());
     }
 
     public void setImage(String image) {
-        this.image = image;
+        setStringValue("message.image", image);
     }
-    
-    
+
+    public static Set<String> decodeTagString(String stringValue) {
+        String[] s = stringValue.split(",");
+        Set<String> a = new HashSet();
+        for (String x : s)
+            a.add(x);
+        return a;
+    }
+
+    public static String encodeTagString(Set<String> s) {
+        String x = "";
+        for (String p : s)
+            x += p + ",";
+        return x;
+    }
+     
     
 }
