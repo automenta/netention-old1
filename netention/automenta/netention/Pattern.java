@@ -6,6 +6,7 @@
 package automenta.netention;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,11 +23,13 @@ public class Pattern implements Serializable, Node {
     private String iconURL;
     public final Set<String> parents = new HashSet();
     public final HashMap<String, Double> properties = new HashMap(); 
+    private Date when;
 
     public Pattern(String id, String... superPatterns) {
         super();
         this.id = id;
         this.name = id;
+        this.when = new Date();
         for (String p : superPatterns) parents.add(p);
     }
 
@@ -80,4 +83,10 @@ public class Pattern implements Serializable, Node {
         parents.add(patternID);
     }
 
+    @Override
+    public Date getWhen() {
+        return when;
+    }
+
+    
 }

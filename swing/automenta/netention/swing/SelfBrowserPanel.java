@@ -6,8 +6,10 @@ package automenta.netention.swing;
 
 import automenta.netention.Detail;
 import automenta.netention.Mode;
+import automenta.netention.NMessage;
 import automenta.netention.Pattern;
 import automenta.netention.Property;
+import automenta.netention.craigslist.CraigslistChannel;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.survive.Environment;
@@ -18,6 +20,7 @@ import automenta.netention.swing.widget.PatternEditPanel;
 import automenta.netention.swing.widget.IndexView;
 import automenta.netention.swing.widget.Map2DPanel;
 import automenta.netention.swing.widget.WhatTreePanel;
+import automenta.netention.swing.widget.WhenPanel;
 import automenta.netention.swing.widget.net.GnutellaStatusBar;
 import automenta.netention.swing.widget.survive.DefineSurvivalPanel;
 import java.awt.BorderLayout;
@@ -89,7 +92,7 @@ public class SelfBrowserPanel extends JPanel {
             where.addActionListener(this);
             
             when = new JRadioButtonMenuItem("When", Icons.getIcon("when"));
-            //when.addActionListener(this);
+            when.addActionListener(this);
             recent = new JRadioButtonMenuItem("Recent", Icons.getIcon("recent"));
             //when.addActionListener(this);
             frequent = new JRadioButtonMenuItem("Frequent", Icons.getIcon("frequent"));
@@ -112,8 +115,8 @@ public class SelfBrowserPanel extends JPanel {
             group.add(frequent);
             group.add(survivalMap);
 
-            setIcon(what.getIcon());
-            what.setSelected(true);
+            setIcon(when.getIcon());
+            when.setSelected(true);
         }
 
         @Override
@@ -128,7 +131,8 @@ public class SelfBrowserPanel extends JPanel {
                 setIcon(where.getIcon());
                 viewWhere();
             } else if (when.isSelected()) {
-                
+                setIcon(when.getIcon());
+                viewWhen();
             } else if (recent.isSelected()) {
                 
             } else if (frequent.isSelected()) {
@@ -167,6 +171,22 @@ public class SelfBrowserPanel extends JPanel {
             });
             newMenu.add(newDetail);
 
+            newMenu.addSeparator();
+            
+            JMenuItem cl = new JMenuItem("Craigslist...");
+            cl.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    for (NMessage m : new CraigslistChannel("pittsburgh", "eng").getMessages()) {
+                        self.addDetail(m);
+                    }
+                    refreshView();
+                    updateUI();
+                }                
+            });
+            newMenu.add(cl);
+            
+            
             newMenu.addSeparator();
 
             JMenuItem newPattern = new JMenuItem("Pattern...");
@@ -214,7 +234,7 @@ public class SelfBrowserPanel extends JPanel {
 
         content = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-        viewWhat();
+        viewWhen();
 
         //contentPanel = new JPanel(new BorderLayout());
         //contentPanel.setBorder(new EmptyBorder(contentMargin, contentMargin, contentMargin, contentMargin));
@@ -231,6 +251,10 @@ public class SelfBrowserPanel extends JPanel {
         updateUI();
     }
 
+    public void removeTabs() {
+        contentTabs.removeAll();
+    }
+    
     public void addTab(JComponent c, String title) {
         int index = contentTabs.getTabCount();
         if (title.length() > maxTabTitleLength) {
@@ -297,6 +321,18 @@ public class SelfBrowserPanel extends JPanel {
             w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
 
                 @Override public void valueChanged(TreeSelectionEvent e) {
+                    removeTabs();
+                    DefaultMutableTreeNode selected = (DefaultMutableTreeNode) w.getTree().getSelectionPath().getLastPathComponent();
+                    addTab(selected.getUserObject());
+                }
+            });
+        }
+        else if (indexView instanceof WhenPanel) {
+            final WhenPanel w = ((WhenPanel) indexView);
+            w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+
+                @Override public void valueChanged(TreeSelectionEvent e) {
+                    removeTabs();
                     DefaultMutableTreeNode selected = (DefaultMutableTreeNode) w.getTree().getSelectionPath().getLastPathComponent();
                     addTab(selected.getUserObject());
                 }
@@ -370,6 +406,14 @@ public class SelfBrowserPanel extends JPanel {
         updateUI();
     }
 
+    protected void viewWhen() {
+        indexView = new WhenPanel(self);
+        refreshView();
+
+        content.setLeftComponent(new JScrollPane((JPanel) indexView));
+        content.setRightComponent(contentTabs);
+        updateUI();        
+    }
 //    /** TODO the code in this method is not actually frequent, but the JOGL Graph view */
 //    protected void viewFrequent() {
 //        indexView = new GraphPanel(self);

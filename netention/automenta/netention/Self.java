@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package automenta.netention;
 
 import automenta.netention.graph.ValueEdge;
@@ -9,9 +5,7 @@ import automenta.netention.linker.Linker;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A session managed by a certain user/agent.
@@ -23,7 +17,9 @@ public interface Self {
     public Map<String, Property> getProperties();
 
     public boolean addDetail(Detail d);
+    
     public Detail getDetail(String id);
+    
     public Iterator<Node> iterateDetails();
     //public Map<String, Detail> getDetails();
 
@@ -32,10 +28,11 @@ public interface Self {
 
     public MutableBidirectedGraph<Node, ValueEdge<Node, Link>> getGraph();
 
-
     /** gets available patterns that may be added to a detail */
     public Collection<String> getAvailablePatterns(Detail d);
+    
     public Pattern addPattern(Pattern p);
+    
     public boolean removePattern(Pattern pattern);
 
     //gets all properties including from a pattern's hierarchy (superclass properties)
@@ -43,6 +40,7 @@ public interface Self {
 
     /** gets available properties that may be added to a detail */
     public Map<Property, Double> getAvailableProperties(Detail d, String... patternID);
+    
     public boolean acceptsAnotherProperty(Detail d, String propid);
 
     public boolean addProperty(Property p, Collection<String> patterns);

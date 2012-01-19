@@ -1,6 +1,7 @@
 package automenta.netention;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /** analogous to an RDF resource */
 public interface Node extends Serializable {
@@ -10,10 +11,14 @@ public interface Node extends Serializable {
 
     public String getName();
     
+    public Date getWhen();
+    
     public static abstract class AbstractNode implements Node {
 
         private String id;
         private String name;
+        
+        protected Date when;
 
 
         public AbstractNode(String id) {
@@ -25,6 +30,7 @@ public interface Node extends Serializable {
 
             this.id = id;
             this.name = name;
+            when = new Date();
         }
 
         /** universally unique ID */
@@ -36,6 +42,12 @@ public interface Node extends Serializable {
             return name;
         }
 
+        @Override
+        public Date getWhen() {
+            return when;
+        }
+
+        
         public void setName(String nextName) {
             this.name = nextName;
         }

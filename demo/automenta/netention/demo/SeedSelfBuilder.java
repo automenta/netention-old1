@@ -1,6 +1,7 @@
 package automenta.netention.demo;
 
 import automenta.netention.Mode;
+import automenta.netention.NMessage;
 import automenta.netention.Pattern;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
@@ -19,36 +20,31 @@ public class SeedSelfBuilder {
 
     public SeedSelfBuilder() {
     }
-    
+
     public void build(MemorySelf s) {
-        Pattern thing = s.addPattern(new Pattern("Thing").
-                        setIconURL("media://tango32/categories/preferences-system.png").
-                        setDescription(""));
+        Pattern thing = s.addPattern(new Pattern("Thing").setIconURL("media://tango32/categories/preferences-system.png").
+                setDescription(""));
         {
-            s.addProperties(thing, 
+            s.addProperties(thing,
                     new StringProp("tag", "Tag", 0, -1).setDescription("tag, category, genre"),
-                    new URIProp("link", "Link", 0, -1).setDescription("tag, category, genre")
-                );
+                    new URIProp("link", "Link", 0, -1).setDescription("tag, category, genre"));
         }
 
-        Pattern built = s.addPattern(new Pattern("Built").
-                        setIconURL("media://tango32/categories/preferences-system.png").
-                        setDescription("Something that is built or manufactured"));
+        Pattern built = s.addPattern(new Pattern("Built").setIconURL("media://tango32/categories/preferences-system.png").
+                setDescription("Something that is built or manufactured"));
         {
             s.addProperties(built,
                     new StringProp("manufacturer", "Manufacturer"),
                     new StringProp("serialNumber", "Serial Number"),
                     new TimePointProp("builtWhen", "When Built"),
-                    new SelectionProp("condition", "Condition", "New", "Used")
-                    );
+                    new SelectionProp("condition", "Condition", "New", "Used"));
         }
 
         s.addPattern(new Pattern("Mobile").setIconURL("media://tango32/places/start-here.png"));
         {
             s.addProperties("Mobile",
                     new StringProp("currentLocation", "Current Location"),
-                    new StringProp("nextLocation", "Next Location")
-                    //new IntProp("numWheels", "Number of Wheels"),
+                    new StringProp("nextLocation", "Next Location") //new IntProp("numWheels", "Number of Wheels"),
                     //new RealProp("wheelRadius", "Wheel Radius"),
                     //new BoolProp("hasKickStand", "Has Kickstand")
                     );
@@ -57,83 +53,62 @@ public class SeedSelfBuilder {
         s.addPattern(new Pattern("Person").setIconURL("media://tango32/apps/system-users.png"));
         {
             s.addProperties("Person",
-                new StringProp("fullName", "Full Name"),
-                new StringProp("biography", "Biography"),
-                new StringProp("emailAddress", "E-Mail"),
-                new StringProp("webAddress", "Website"),
-                new StringProp("birthdate", "Birthdate"),
-                new SelectionProp("gender", "Gender", "male", "female", "other"),
-                new SelectionProp("speaks", "Spoken Language", "English", "Spanish", "Arabic", "Cantonese", "French", "German", "Japanese", "Other")
-                );
+                    new StringProp("fullName", "Full Name"),
+                    new StringProp("biography", "Biography"),
+                    new StringProp("emailAddress", "E-Mail"),
+                    new StringProp("webAddress", "Website"),
+                    new StringProp("birthdate", "Birthdate"),
+                    new SelectionProp("gender", "Gender", "male", "female", "other"),
+                    new SelectionProp("speaks", "Spoken Language", "English", "Spanish", "Arabic", "Cantonese", "French", "German", "Japanese", "Other"));
         }
 
         s.addPattern(new Pattern("Project").setIconURL("media://tango32/mimetypes/x-office-presentation.png"));
         {
             s.addProperties("Project",
-                new StringProp("purpose", "Purpose"),
-                new StringProp("goal", "Goal"),
-                new StringProp("member", "Member")
-                );
+                    new StringProp("purpose", "Purpose"),
+                    new StringProp("goal", "Goal"),
+                    new StringProp("member", "Member"));
         }
 
         s.addPattern(new Pattern("Event").setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
         {
             s.addProperties("Event",
-                new StringProp("startTime", "Start Time"),
-                new StringProp("endTime", "End Time"),
-                new StringProp("location", "Location")
-                );
-        }
-        s.addPattern(new Pattern("Ingestion").setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
-        {
-            s.addProperties("Ingestion",
-                new SelectionProp("ingestionType", "Type", "Food", "Beverage", "Other"),
-                new StringProp("ingestionType", "Type"),
-                new RealProp("ingestionMass", "Volume")
-                );
-        }
-        
-        s.addPattern(new Pattern("Excretion").setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
-        {
-            s.addProperties("Excretion",
-                new SelectionProp("excretionType", "Type", "Urine", "Feces", "Other"),
-                new RealProp("excretionMass", "Mass"),
-                new RealProp("excretionVolume", "Volume")
-                );
+                    new StringProp("startTime", "Start Time"),
+                    new StringProp("endTime", "End Time"),
+                    new StringProp("location", "Location"));
         }
 
-        s.addPattern(new Pattern("Media").setIconURL("media://tango32/categories/applications-multimedia.png"));
         {
-            s.addProperties("Media",
-                new StringProp("url", "URL")
-                );
-        }
+            Pattern body = s.addPattern(new Pattern("Bodily"));
 
-        s.addPattern(new Pattern("Message").setIconURL("media://tango32/apps/internet-mail.png"));
-        {
-            s.addProperty(new StringProp("recipient", "Recipient"), "Message");
-        }
-
-
-        
-        s.addPattern(new Pattern("Business").setIconURL("media://tango32/apps/internet-mail.png"));
-        {
-            s.addProperties("Business",
-                new StringProp("stockticker", "Stock Ticker")
-                );            
-        }
-
-        s.addPattern(new Pattern("Psych").setIconURL("media://tango32/apps/internet-mail.png"));
-        {
-            StringProp sp = new StringProp("emotion", "Emotion");
+            s.addPattern(new Pattern("Ingestion", body.id).setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
             {
-                //http://simple.wikipedia.org/wiki/List_of_emotions
-                
-                
-                /*Robert Plutchik's theory
+                s.addProperties("Ingestion",
+                        new SelectionProp("ingestionType", "Type", "Food", "Beverage", "Other"),
+                        new StringProp("ingestionType", "Type"),
+                        new RealProp("ingestionMass", "Volume"));
+            }
 
-                This says that the basic eight emotions are:
+            s.addPattern(new Pattern("Excretion", body.id).setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
+            {
+                s.addProperties("Excretion",
+                        new SelectionProp("excretionType", "Type", "Urine", "Feces", "Other"),
+                        new RealProp("excretionMass", "Mass"),
+                        new RealProp("excretionVolume", "Volume"));
+            }
 
+            s.addPattern(new Pattern("Injury", body.id));
+            //s.addPattern(new Pattern("Psych").setIconURL("media://tango32/apps/internet-mail.png"));
+            {
+                StringProp sp = new StringProp("emotion", "Emotion");
+                {
+                    //http://simple.wikipedia.org/wiki/List_of_emotions
+
+
+                    /*Robert Plutchik's theory
+                    
+                    This says that the basic eight emotions are:
+                    
                     Fear → feeling afraid. Other words are terror (strong fear), shock, phobia (fear of one thing)
                     Anger → feeling angry. A stronger word is rage. One can be angry with oneself or with others
                     Sorrow → feeling sad. Other words are sadness, grief (a stronger feeling, for example when someone has died) or depression (feeling sad for a long time). Some people think depression is a different emotion.
@@ -142,52 +117,77 @@ public class SeedSelfBuilder {
                     Acceptance → accepting a situation
                     Expectation → feeling about something which is going to happen
                     Surprise → how one feels when something happens quickly or when someone did not think it would happen
-                 */
-            
-                sp.addSuggestion("joy");
-                sp.addSuggestion("fear");
-                sp.addSuggestion("anger");
-                sp.addSuggestion("sorrow");
-                sp.addSuggestion("disgust");
-                sp.addSuggestion("acceptance");
-                sp.addSuggestion("expectation");
-                sp.addSuggestion("surprise");
-                
-                //http://changingminds.org/explanations/emotions/basic%20emotions.htm
+                     */
+
+                    sp.addSuggestion("joy");
+                    sp.addSuggestion("fear");
+                    sp.addSuggestion("anger");
+                    sp.addSuggestion("sorrow");
+                    sp.addSuggestion("disgust");
+                    sp.addSuggestion("acceptance");
+                    sp.addSuggestion("expectation");
+                    sp.addSuggestion("surprise");
+
+                    //http://changingminds.org/explanations/emotions/basic%20emotions.htm
                 /* Plutchik 	Acceptance, anger, anticipation, disgust, joy, fear, sadness, surprise
-                Arnold 	Anger, aversion, courage, dejection, desire, despair, fear, hate, hope, love, sadness
-                Ekman, Friesen, and Ellsworth 	Anger, disgust, fear, joy, sadness, surprise
-                Frijda 	Desire, happiness, interest, surprise, wonder, sorrow
-                Gray 	Rage and terror, anxiety, joy
-                Izard 	Anger, contempt, disgust, distress, fear, guilt, interest, joy, shame, surprise
-                James 	Fear, grief, love, rage
-                McDougall 	Anger, disgust, elation, fear, subjection, tender-emotion, wonder
-                Mowrer 	Pain, pleasure
-                Oatley and Johnson-Laird 	Anger, disgust, anxiety, happiness, sadness
-                Panksepp 	Expectancy, fear, rage, panic
-                Tomkins 	Anger, interest, contempt, disgust, distress, fear, joy, shame, surprise
-                Watson 	Fear, love, rage
-                Weiner and Graham 	Happiness, sadness 
-                        */
-            
-                //Anger, aversion, courage, dejection, desire, despair, fear, hate, hope, love, sadness
-                sp.addSuggestion("anger");
-                sp.addSuggestion("aversion");
-                sp.addSuggestion("courage");
-                sp.addSuggestion("dejection");
-                sp.addSuggestion("desire");
-                sp.addSuggestion("despair");
-                sp.addSuggestion("fear");
-                sp.addSuggestion("hate");
-                sp.addSuggestion("hope");
-                sp.addSuggestion("love");
-                sp.addSuggestion("sadness");
-                
+                    Arnold 	Anger, aversion, courage, dejection, desire, despair, fear, hate, hope, love, sadness
+                    Ekman, Friesen, and Ellsworth 	Anger, disgust, fear, joy, sadness, surprise
+                    Frijda 	Desire, happiness, interest, surprise, wonder, sorrow
+                    Gray 	Rage and terror, anxiety, joy
+                    Izard 	Anger, contempt, disgust, distress, fear, guilt, interest, joy, shame, surprise
+                    James 	Fear, grief, love, rage
+                    McDougall 	Anger, disgust, elation, fear, subjection, tender-emotion, wonder
+                    Mowrer 	Pain, pleasure
+                    Oatley and Johnson-Laird 	Anger, disgust, anxiety, happiness, sadness
+                    Panksepp 	Expectancy, fear, rage, panic
+                    Tomkins 	Anger, interest, contempt, disgust, distress, fear, joy, shame, surprise
+                    Watson 	Fear, love, rage
+                    Weiner and Graham 	Happiness, sadness 
+                     */
+
+                    //Anger, aversion, courage, dejection, desire, despair, fear, hate, hope, love, sadness
+                    sp.addSuggestion("anger");
+                    sp.addSuggestion("aversion");
+                    sp.addSuggestion("courage");
+                    sp.addSuggestion("dejection");
+                    sp.addSuggestion("desire");
+                    sp.addSuggestion("despair");
+                    sp.addSuggestion("fear");
+                    sp.addSuggestion("hate");
+                    sp.addSuggestion("hope");
+                    sp.addSuggestion("love");
+                    sp.addSuggestion("sadness");
+
+                }
+                sp.setCardinalityMax(-1);
+
+                s.addProperties(body.id, sp);
             }
-            sp.setCardinalityMax(-1);
-            
-            s.addProperties("Psych", sp);
+
         }
+
+        s.addPattern(new Pattern("Media").setIconURL("media://tango32/categories/applications-multimedia.png"));
+        {
+            s.addProperties("Media",
+                    new StringProp("url", "URL"));
+        }
+
+        s.addPattern(new Pattern("message").setIconURL("media://tango32/apps/internet-mail.png")).setName("Message");
+        {
+            s.addProperty(new StringProp(NMessage.to, "Recipient"), "message");
+            s.addProperty(new StringProp(NMessage.from, "Author"), "message");
+            s.addProperty(new StringProp(NMessage.content, "Content"), "message");
+            s.addProperty(new StringProp(NMessage.subject, "Subject"), "message");
+        }
+
+
+
+        s.addPattern(new Pattern("Business").setIconURL("media://tango32/apps/internet-mail.png"));
+        {
+            s.addProperties("Business",
+                    new StringProp("stockticker", "Stock Ticker"));
+        }
+
 
         MemoryDetail d1 = new MemoryDetail("Red Bike", Mode.Real, "Built", "Mobile");
         MemoryDetail d11 = new MemoryDetail("Blue Bike", Mode.Real, "Built");
@@ -223,7 +223,6 @@ public class SeedSelfBuilder {
         s.addDetail(d3);
     }
 }
-
 //<schema>
 //
 //	<pattern id="Owned" name="Owned">

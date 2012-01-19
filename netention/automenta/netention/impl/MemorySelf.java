@@ -24,6 +24,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,6 +40,7 @@ import org.apache.commons.collections15.IteratorUtils;
  * @author seh
  */
 public class MemorySelf implements Self, Serializable {
+
 
     private String id, name;
 
@@ -325,6 +328,21 @@ public class MemorySelf implements Self, Serializable {
                 s.add(p.id);
         }
         return s;
+    }
+    
+    public static List<Node> getDetailsByTime(Iterator<Node> iterateDetails, final boolean ascend) {
+        List<Node> il = IteratorUtils.toList(iterateDetails);
+        Collections.sort(il, new Comparator<Node>() {
+            @Override
+            public int compare(final Node o1, final Node o2) {
+                final boolean b = o1.getWhen().before(o2.getWhen());
+                if (!ascend)
+                    return b ? 1 : -1;
+                else
+                    return b ? -1 : 1;
+            }            
+        });
+        return il;
     }
 
 }

@@ -16,6 +16,10 @@ import java.util.Set;
  * @author seh
  */
 public class NMessage extends MemoryDetail /*implements Serializable*/ {
+    public static final String to = "message.to";
+    public static final String from = "message.from";
+    public static final String subject = "message.subject";
+    public static final String content = "message.content";
     
 //    public String id;
 //    public String from;
@@ -53,21 +57,22 @@ public class NMessage extends MemoryDetail /*implements Serializable*/ {
     }
     
     public String getContent() {
-        return getStringValue("message.content");
+        return getStringValue(content);
     }
 
     public String getFrom() {
-        return getStringValue("message.from");
+        return getStringValue(from);
     }
 
     public String getSubject() {
-        return getStringValue("message.subject");
+        return getStringValue(subject);
     }
 
     public String getTo() {
-        return getStringValue("message.to");
+        return getStringValue(to);
     }
 
+    @Override
     public Date getWhen() {
         return new Date(getStringValue("message.when"));
     }
@@ -87,7 +92,7 @@ public class NMessage extends MemoryDetail /*implements Serializable*/ {
     }
 
     public void setFrom(String from) {
-        setStringValue("message.from", from);
+        setStringValue(this.from, from);
     }
 
     @Override
@@ -102,15 +107,15 @@ public class NMessage extends MemoryDetail /*implements Serializable*/ {
     }
 
     public void setTo(String to) {
-        setStringValue("message.to", to);
+        setStringValue(this.to, to);
     }
 
     public void setContent(String content) {
-        setStringValue("message.content", content);
+        setStringValue(this.content, content);
     }
 
     public void setSubject(String subject) {
-        setStringValue("message.subject", subject);
+        setStringValue(this.subject, subject);
     }
 
     public void setWhen(Date when) {

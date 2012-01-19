@@ -62,7 +62,7 @@ public class CraigslistChannel extends RSSChannel {
                 String k = p.substring(0, e);
                 String v = p.substring(e + 1, p.length());
 
-                System.out.println(k + " = " + v);
+                //System.out.println(k + " = " + v);
 
                 n.addTag("#" + k);
                 n.addTag(v);

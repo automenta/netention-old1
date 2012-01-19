@@ -56,7 +56,11 @@ public class MemoryDetail implements Detail {
         this.mode = newMode;
     }
 
-
+    @Override
+    public Date getWhen() {
+        return whenModified;
+    }
+    
     @Override
     public Mode getMode() {
         return mode;
