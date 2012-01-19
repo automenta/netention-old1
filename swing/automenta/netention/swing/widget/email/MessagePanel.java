@@ -517,8 +517,8 @@ public class MessagePanel extends JPanel {
             if (m.getImage()!=null) {
                 s += "<img src='" + m.getImage() + "'/>";
             }
-            if (m.getId().length() > 0)
-                s += "ID: " + linkify(m.getId()) + "<br/>";
+            if (m.getID().length() > 0)
+                s += "ID: " + linkify(m.getID()) + "<br/>";
             if (m.getTags().size() > 0)
                 s += "Tags: " + m.getTags() + "<br/>";
             if (m.getFrom().length() > 0) 

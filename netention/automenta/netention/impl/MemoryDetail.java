@@ -143,6 +143,16 @@ public class MemoryDetail implements Detail {
     }
 
 
+    public void removeAllValues(String propID) {
+        List<PropertyValue> toRemove = new LinkedList();
+        
+        for (PropertyValue v : values) {
+            if (v.getProperty().equals(propID))
+                toRemove.add(v);
+        }
+        
+        values.removeAll(toRemove);
+    }
     
 
 }

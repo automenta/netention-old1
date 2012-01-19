@@ -262,7 +262,7 @@ public class EmailPanel extends JFrame {
         props.setProperty("mail.imap.socketFactory.fallback", "false");
         
 
-        this.emc = new EMailChannel(System.getProperty("user.home") + "/.netention.email");
+        this.emc = new EMailChannel();
         
         // Display connect dialog.
         EMailParametersDialog dialog = new EMailParametersDialog(emc, this);

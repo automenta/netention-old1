@@ -12,16 +12,16 @@ import javax.mail.Message;
  *
  * @author seh
  */
-public class NEMailMessage extends NMessage {
+public class NEMailMessage /*extends NMessage*/ {
 
-    public NEMailMessage(Message m) throws Exception  {
-        super(Arrays.asList(m.getFrom()).toString() + " " + m.getMessageNumber(),                 
-                Arrays.asList(m.getFrom()).toString(), 
-                Arrays.asList(m.getAllRecipients()).toString(), 
-                m.getSentDate(), 
-                m.getSubject(), 
-                m.getContent().toString(), "");
-    }
+//    public NEMailMessage(Message m) throws Exception  {
+//        super(Arrays.asList(m.getFrom()).toString() + " " + m.getMessageNumber(),                 
+//                Arrays.asList(m.getFrom()).toString(), 
+//                Arrays.asList(m.getAllRecipients()).toString(), 
+//                m.getSentDate(), 
+//                m.getSubject(), 
+//                m.getContent().toString(), "");
+//    }
     
     
 }

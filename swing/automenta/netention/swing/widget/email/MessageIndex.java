@@ -85,7 +85,7 @@ public class MessageIndex implements Serializable {
     }
 
     protected void index(final NMessage m) {
-        byId.put(m.getId(), m);        
+        byId.put(m.getID(), m);        
     }
     
     public void add(final NMessage m) {
