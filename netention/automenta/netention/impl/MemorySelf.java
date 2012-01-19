@@ -192,12 +192,31 @@ public class MemorySelf implements Self, Serializable {
         return patterns;
     }
 
+    public void getProperties(Pattern p, Collection<String> c) {     
+        for (String s : p.properties.keySet()) {
+            c.add(s);
+        }
+        
+        for (String pid : p.getParents()) {
+            getProperties(getPattern(pid), c);
+        }
+        
+    }
+    
+    public Collection<String> getProperties(Pattern p) {     
+        List<String> l = new LinkedList();
+        
+        getProperties(p, l);
+                
+        return l;
+    }
+    
     public Map<Property, Double> getAvailableProperties(Detail d, String... patternID) {
         Map<Property, Double> a = new HashMap();
         for (String pid : patternID) {
             Pattern pat = patterns.get(pid);
             if (pat != null) {
-                for (String propid : pat.properties.keySet()) {
+                for (String propid : getProperties(pat)) {
                     Property prop = properties.get(propid);
                     if (acceptsAnotherProperty(d, propid)) {
                     //if (!containsProperty(d, prop)) {
@@ -212,7 +231,7 @@ public class MemorySelf implements Self, Serializable {
     }
 
     public boolean containsProperty(Detail d, Property p) {
-        for (PropertyValue pv : d.getProperties()) {
+        for (PropertyValue pv : d.getValues()) {
             if (p.getID().equals(pv.getProperty())) {
                 return true;
             }
@@ -261,7 +280,7 @@ public class MemorySelf implements Self, Serializable {
         if (p.getCardinalityMax() == -1)
             return true;
         
-        for (PropertyValue v : d.getProperties()) {
+        for (PropertyValue v : d.getValues()) {
             if (v.getProperty().equals(propid)) {
                 existing++;
             }

@@ -58,7 +58,7 @@ public class MetadataGrapher {
                 }
 
                 if (properties) {
-                    for (PropertyValue p : d.getProperties()) {
+                    for (PropertyValue p : d.getValues()) {
                         final PropertyNode pn = new PropertyNode(p);
                         target.add(pn);
                         target.add(new ValueEdge(new HasProperty(), d, pn));

@@ -125,9 +125,68 @@ public class SeedSelfBuilder {
 
         s.addPattern(new Pattern("Psych").setIconURL("media://tango32/apps/internet-mail.png"));
         {
-            s.addProperties("Psych",
-                new StringProp("emotion", "Emotion")
-                );
+            StringProp sp = new StringProp("emotion", "Emotion");
+            {
+                //http://simple.wikipedia.org/wiki/List_of_emotions
+                
+                
+                /*Robert Plutchik's theory
+
+                This says that the basic eight emotions are:
+
+                    Fear → feeling afraid. Other words are terror (strong fear), shock, phobia (fear of one thing)
+                    Anger → feeling angry. A stronger word is rage. One can be angry with oneself or with others
+                    Sorrow → feeling sad. Other words are sadness, grief (a stronger feeling, for example when someone has died) or depression (feeling sad for a long time). Some people think depression is a different emotion.
+                    Joy → feeling happy. Other words are happiness, glee (when something good happens to someone. or something bad happens to someone else), gladness.
+                    Disgust → feeling something is wrong or dirty
+                    Acceptance → accepting a situation
+                    Expectation → feeling about something which is going to happen
+                    Surprise → how one feels when something happens quickly or when someone did not think it would happen
+                 */
+            
+                sp.addSuggestion("joy");
+                sp.addSuggestion("fear");
+                sp.addSuggestion("anger");
+                sp.addSuggestion("sorrow");
+                sp.addSuggestion("disgust");
+                sp.addSuggestion("acceptance");
+                sp.addSuggestion("expectation");
+                sp.addSuggestion("surprise");
+                
+                //http://changingminds.org/explanations/emotions/basic%20emotions.htm
+                /* Plutchik 	Acceptance, anger, anticipation, disgust, joy, fear, sadness, surprise
+                Arnold 	Anger, aversion, courage, dejection, desire, despair, fear, hate, hope, love, sadness
+                Ekman, Friesen, and Ellsworth 	Anger, disgust, fear, joy, sadness, surprise
+                Frijda 	Desire, happiness, interest, surprise, wonder, sorrow
+                Gray 	Rage and terror, anxiety, joy
+                Izard 	Anger, contempt, disgust, distress, fear, guilt, interest, joy, shame, surprise
+                James 	Fear, grief, love, rage
+                McDougall 	Anger, disgust, elation, fear, subjection, tender-emotion, wonder
+                Mowrer 	Pain, pleasure
+                Oatley and Johnson-Laird 	Anger, disgust, anxiety, happiness, sadness
+                Panksepp 	Expectancy, fear, rage, panic
+                Tomkins 	Anger, interest, contempt, disgust, distress, fear, joy, shame, surprise
+                Watson 	Fear, love, rage
+                Weiner and Graham 	Happiness, sadness 
+                        */
+            
+                //Anger, aversion, courage, dejection, desire, despair, fear, hate, hope, love, sadness
+                sp.addSuggestion("anger");
+                sp.addSuggestion("aversion");
+                sp.addSuggestion("courage");
+                sp.addSuggestion("dejection");
+                sp.addSuggestion("desire");
+                sp.addSuggestion("despair");
+                sp.addSuggestion("fear");
+                sp.addSuggestion("hate");
+                sp.addSuggestion("hope");
+                sp.addSuggestion("love");
+                sp.addSuggestion("sadness");
+                
+            }
+            sp.setCardinalityMax(-1);
+            
+            s.addProperties("Psych", sp);
         }
 
         MemoryDetail d1 = new MemoryDetail("Red Bike", Mode.Real, "Built", "Mobile");
@@ -135,14 +194,14 @@ public class SeedSelfBuilder {
         MemoryDetail d2 = new MemoryDetail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");
         MemoryDetail d3 = new MemoryDetail("What is Netention?", Mode.Real, "Message");
         {
-            d1.addProperty("numWheels", new IntegerIs(4));
-            d1.addProperty("manufacturer", new StringIs("myself"));
-            d1.addProperty("wheelRadius", new RealIs(16.0));
-            d1.addProperty("hasKickStand", new BoolIs(true));
+            d1.addValue("numWheels", new IntegerIs(4));
+            d1.addValue("manufacturer", new StringIs("myself"));
+            d1.addValue("wheelRadius", new RealIs(16.0));
+            d1.addValue("hasKickStand", new BoolIs(true));
             //d1.addProperty("anotherObject", new NodeIs(d2.getID()));
             {
                 //d11.addProperty("numWheels", new IntegerIs(2));
-                d11.addProperty("manufacturer", new StringIs("myself"));
+                d11.addValue("manufacturer", new StringIs("myself"));
                 //d11.addProperty("wheelRadius", new RealIs(16.0));
                 //d11.addProperty("hasKickStand", new BoolIs(true));
                 //d11.addProperty("anotherObject", new NodeIs(d2.getID()));
@@ -151,7 +210,7 @@ public class SeedSelfBuilder {
         }
         {
             //d2.addProperty("numWheels", new IntegerEquals(4));
-            d2.addProperty("manufacturer", new StringEquals("myself"));
+            d2.addValue("manufacturer", new StringEquals("myself"));
             //d2.addProperty("wheelRadius", new RealEquals(16.0));
             //d2.addProperty("hasKickStand", new BoolEquals(true));
             //d2.addProperty("anotherObject", new NodeEquals(d1.getID()));

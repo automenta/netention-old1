@@ -148,7 +148,7 @@ public class RunDetailEdit implements Demo {
         MemoryDetail md = new JSONDeserializer<MemoryDetail>().deserialize(json);
         System.out.println(md.getName());
         System.out.println(md.getPatterns());
-        System.out.println(md.getProperties());
+        System.out.println(md.getValues());
         return md;
     }
 

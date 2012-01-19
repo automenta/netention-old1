@@ -175,7 +175,13 @@ abstract public class DetailEditPanel extends JPanel {
                     }
                 }
             });
+            
+            
             final JToggleButton imaginaryButton = new JToggleButton(" ? ");
+            
+            realButton.setSelected(detail.getMode() == Mode.Real);
+            imaginaryButton.setSelected(detail.getMode() == Mode.Imaginary);
+
             imaginaryButton.setToolTipText("Imaginary");
             imaginaryButton.addActionListener(new ActionListener() {
 
@@ -187,14 +193,10 @@ abstract public class DetailEditPanel extends JPanel {
                     }
                 }
             });
-            if (detail.getMode() == Mode.Real) {
-                realButton.setSelected(true);
-            } else if (detail.getMode() == Mode.Imaginary) {
-                imaginaryButton.setSelected(true);
-            }
 
             realButton.setEnabled(isEditable());
             imaginaryButton.setEnabled(isEditable());
+            
 
             addButton(realButton);
             addButton(imaginaryButton);
@@ -208,6 +210,7 @@ abstract public class DetailEditPanel extends JPanel {
                 buildPatternMenu(t);
                 add(t);
             }
+            
 
             
 //            if (detail.getPatterns().size()!=0)
@@ -215,12 +218,16 @@ abstract public class DetailEditPanel extends JPanel {
 
             for (String pid : detail.getPatterns()) {
                 final Pattern p = self.getPatterns().get(pid);
-                JMenu j = new JMenu(p.getID());
+                JMenu j = new JMenu(p.getName());
                 j.setIcon(Icons.getPatternIcon(p));
-                int numItems = 0, numExists = 0, totalItems = p.properties.keySet().size();
+                int numItems = 0, numExists = 0;
+                
+                Collection<String> cp = self.getProperties(p);
+                int totalItems = cp.size();
 
                 if (isEditable()) {
-                    for (String propid : p.properties.keySet()) {
+                    
+                    for (String propid : cp) {
                         final Property prop = self.getProperty(propid);
                         if (self.acceptsAnotherProperty(detail, propid)) {
                             JMenuItem ji = new JMenuItem(prop.getName());
@@ -393,7 +400,7 @@ abstract public class DetailEditPanel extends JPanel {
         super(new GridBagLayout());
 
         this.self = s;
-
+        
         setEditable(editable);
 
         int b = 4;
@@ -543,17 +550,17 @@ abstract public class DetailEditPanel extends JPanel {
             return true;
         }
 
-        if (detail.getProperties().size() > 0) {
+        if (detail.getValues().size() > 0) {
             if (nextMode == Mode.Unknown) {
                 if (detail.getPatterns().size() > 0) {
                     if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Change mode to Thought?  This will remove all properties.", "Change Mode", JOptionPane.YES_NO_OPTION)) {
-                        detail.getProperties().clear();
+                        detail.getValues().clear();
                         updateDetail();
                         refreshUI();
                         return true;
                     }
                 } else {
-                    detail.getProperties().clear();
+                    detail.getValues().clear();
                     updateDetail();
                     patternChanged();
                     refreshUI();
@@ -566,11 +573,11 @@ abstract public class DetailEditPanel extends JPanel {
                     detail.setMode(nextMode);
 
                     List<Property> existingProperties = new LinkedList();
-                    for (PropertyValue p : detail.getProperties()) {
+                    for (PropertyValue p : detail.getValues()) {
                         existingProperties.add(self.getProperty(p.getProperty()));
                     }
 
-                    detail.getProperties().clear();
+                    detail.getValues().clear();
                     for (Property p : existingProperties) {
                         addProperty(p);
                     }
@@ -648,7 +655,7 @@ abstract public class DetailEditPanel extends JPanel {
 
             gc.fill = gc.NONE;
 
-            for (final PropertyValue pv : detail.getProperties()) {
+            for (final PropertyValue pv : detail.getValues()) {
                 gc.gridy++;
                 JComponent nextLine = getLinePanel(pv);
                 if (nextLine instanceof PropertyOptionPanel) {
@@ -810,12 +817,12 @@ abstract public class DetailEditPanel extends JPanel {
     synchronized protected void addProperty(Property p) {
         PropertyValue pv = p.newDefaultValue(detail.getMode());
         pv.setProperty(p.getID());
-        detail.getProperties().add(pv);
+        detail.getValues().add(pv);
         refreshUI();
     }
 
     synchronized protected void removeProperty(PropertyValue pv) {
-        detail.getProperties().remove(pv);
+        detail.getValues().remove(pv);
         refreshUI();
     }
 

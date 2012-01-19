@@ -18,7 +18,7 @@ public interface RODetail extends Node {
 
     public Mode getMode();
 	public List<String> getPatterns();
-	public List<PropertyValue> getProperties();
+	public List<PropertyValue> getValues();
 
     public String getIconURL();
 

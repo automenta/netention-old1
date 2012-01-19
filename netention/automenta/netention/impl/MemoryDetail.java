@@ -22,7 +22,7 @@ public class MemoryDetail implements Detail {
     private String name;
     private Mode mode;
     private List<String> patterns = new LinkedList();
-    private List<PropertyValue> properties = new LinkedList();
+    private List<PropertyValue> values = new LinkedList();
     private String creator;
     private Date whenCreated;
     private Date whenModified;
@@ -68,8 +68,8 @@ public class MemoryDetail implements Detail {
     }
 
     @Override
-    public List<PropertyValue> getProperties() {
-        return properties;
+    public List<PropertyValue> getValues() {
+        return values;
     }
 
     @Override
@@ -82,9 +82,17 @@ public class MemoryDetail implements Detail {
         return name;
     }
 
-    public boolean addProperty(String propID, PropertyValue p) {
+    public <X extends PropertyValue> X getValue(Class<? extends X> c, String propID) {
+        for (PropertyValue pv : getValues())
+            if (pv.getProperty().equals(propID))
+                if (c.isAssignableFrom(pv.getClass()))
+                    return (X)pv;
+        return null;
+    }
+    
+    public boolean addValue(String propID, PropertyValue p) {
         p.setProperty(propID);
-        return getProperties().add(p);
+        return getValues().add(p);
     }
 
     //TODO impl

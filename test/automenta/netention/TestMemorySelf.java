@@ -53,13 +53,13 @@ public class TestMemorySelf extends TestCase {
             
             assertEquals(2, s.getAvailableProperties(ma, "pat1", "pat2").size());
 
-            ma.addProperty("prop1", new IntegerIs(0));
+            ma.addValue("prop1", new IntegerIs(0));
 
             //now that a property is added, it should be one less available
             assertEquals(1, s.getAvailableProperties(ma, "pat1", "pat2").size());
 
 
-            mb.addProperty("prop1", new IntegerEquals(0));
+            mb.addValue("prop1", new IntegerEquals(0));
         }
 
         //test linker

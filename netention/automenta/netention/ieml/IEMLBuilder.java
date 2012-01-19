@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package automenta.netention.ieml;
 
 import automenta.netention.Pattern;
@@ -14,13 +11,12 @@ import automenta.netention.value.set.SelectionProp;
  */
 public class IEMLBuilder {
 
-    public void build(MemorySelf ms) {
-        //http://www.ieml.org/english/events.html
+    public void build(MemorySelf self) {
 
-        Pattern ieml = new Pattern("IEML");
-        ms.addPattern(ieml);
+        Pattern ieml = self.addPattern(new Pattern("IEML"));
 
         {
+            //http://www.ieml.org/english/events.html
             /*
              * woreflect 	waact 	yknow 	owant 	ecan
             wuperceive 	wereconstitute 	uexpress 	acommit 	ido
@@ -38,7 +34,7 @@ public class IEMLBuilder {
                     "mutation of referent", "material mutation", "truth", "life", "space");
 
             p.setCardinalityMax(-1);
-            ms.addProperty(p, ieml.getID());
+            self.addProperty(p, ieml.getID());
         }
 
         {
@@ -100,7 +96,7 @@ public class IEMLBuilder {
                     "wei to renew the equipment");
 
             p.setCardinalityMax(-1);
-            ms.addProperty(p, ieml.getID());
+            self.addProperty(p, ieml.getID());
         }
         
         {
@@ -132,7 +128,7 @@ public class IEMLBuilder {
              "wewe to die"
              );
             p.setCardinalityMax(-1);
-            ms.addProperty(p, ieml.getID());
+            self.addProperty(p, ieml.getID());
         }
 
     }

@@ -63,13 +63,13 @@ public class DefaultHeuristicLinker extends HueristicLinker {
 	/**  compare A.Indefinite's -> B.Definite's satisfaction or dissatisfaction*/
 	public double getIndefiniteDefiniteComparison(Detail a, Detail b) {
 		//TODO use numIndefiniteProperties rather than numTotalProperties ??
-		double numProperties = a.getProperties().size();
+		double numProperties = a.getValues().size();
 
 		if (numProperties == 0.0)
 			return 0.0;
 		
 		double s = 0;  
-		for (PropertyValue aP : a.getProperties()) {
+		for (PropertyValue aP : a.getValues()) {
 			if (aP instanceof IndefiniteValue) {
 				IndefiniteValue iap = (IndefiniteValue) aP;
 				
@@ -93,7 +93,7 @@ public class DefaultHeuristicLinker extends HueristicLinker {
     
 	public Collection<PropertyValue> getProperties(Detail d, String property) {
 		List<PropertyValue> lpv = new LinkedList();
-		for (PropertyValue pv : d.getProperties()) {
+		for (PropertyValue pv : d.getValues()) {
 			if (pv.getProperty().equals(property))
 				lpv.add(pv);
 		}

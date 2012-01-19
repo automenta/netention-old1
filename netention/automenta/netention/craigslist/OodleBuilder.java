@@ -7,6 +7,7 @@ package automenta.netention.craigslist;
 import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.impl.MemorySelf;
+import automenta.netention.value.bool.BoolProp;
 import automenta.netention.value.set.SelectionProp;
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,7 +44,10 @@ public class OodleBuilder {
 
         
         //Build Type Hierarchy ---------------
-              
+        Pattern xx = new Pattern("housing");
+        xx.setName("Housing");
+        ms.addPattern(xx);              
+        
         for (int d = 1; d < 10; d++) {
             for (String s : cat.keySet()) {
                 String[] c = s.split("/");
@@ -67,7 +71,8 @@ public class OodleBuilder {
                         //System.out.println(s + " hasParent " + parent);
                         
                         p = new Pattern(s, parent);
-                        p.setName(cat.get(s));          
+                        p.setName(cat.get(s));     
+                        //System.out.println(p.getID() + " " + p.getName());
                     }
                     ms.addPattern(p);
                 }
@@ -109,7 +114,35 @@ public class OodleBuilder {
 
         }
         {
+            Pattern h = ms.getPattern("housing");
             
+            ms.addProperty(new BoolProp("amenities_ac", "Air Conditioning"), h.getID());
+            ms.addProperty(new BoolProp("amenities_alarm", "Alarm"), h.getID());
+            ms.addProperty(new BoolProp("amenities_basketball", "Basketball"), h.getID());
+            ms.addProperty(new BoolProp("amenities_cable_or_satellite", "Cable or Satellite"), h.getID());
+            ms.addProperty(new BoolProp("amenities_clubhouse", "Clubhouse"), h.getID());
+            ms.addProperty(new BoolProp("amenities_dishwasher", "Dishwasher"), h.getID());
+            ms.addProperty(new BoolProp("amenities_doorman", "Doorman"), h.getID());
+            ms.addProperty(new BoolProp("amenities_elevator", "Elevator"), h.getID());
+            ms.addProperty(new BoolProp("amenities_fireplace", "Fireplace"), h.getID());
+            ms.addProperty(new BoolProp("amenities_garbage_disposal", "Garbage Disposal"), h.getID());
+            ms.addProperty(new BoolProp("amenities_gated", "Gated"), h.getID());
+            ms.addProperty(new BoolProp("amenities_gym", "Gym"), h.getID());
+            ms.addProperty(new BoolProp("amenities_hot_tub", "Hot Tub"), h.getID());
+            ms.addProperty(new BoolProp("amenities_internet", "Internet"), h.getID());
+            ms.addProperty(new BoolProp("amenities_luxury", "Luxury"), h.getID());
+            ms.addProperty(new BoolProp("amenities_parking", "Parking"), h.getID());
+            ms.addProperty(new BoolProp("amenities_patio_deck", "Patio/Deck"), h.getID());
+            ms.addProperty(new BoolProp("amenities_playground", "Playground"), h.getID());
+            ms.addProperty(new BoolProp("amenities_pool", "Pool"), h.getID());
+            ms.addProperty(new BoolProp("amenities_refrigerator", "Refrigerator"), h.getID());
+            ms.addProperty(new BoolProp("amenities_storage", "Storage"), h.getID());
+            ms.addProperty(new BoolProp("amenities_tv", "TV"), h.getID());
+            ms.addProperty(new BoolProp("amenities_tennis", "Tennis"), h.getID());
+            ms.addProperty(new BoolProp("amenities_washer_dryer", "Washer Dryer"), h.getID());
+            ms.addProperty(new BoolProp("amenities_wood_floors", "Wood Floors"), h.getID());
+        
+
         }
     }
     

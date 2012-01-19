@@ -38,6 +38,9 @@ public interface Self {
     public Pattern addPattern(Pattern p);
     public boolean removePattern(Pattern pattern);
 
+    //gets all properties including from a pattern's hierarchy (superclass properties)
+    public Collection<String> getProperties(Pattern p);
+
     /** gets available properties that may be added to a detail */
     public Map<Property, Double> getAvailableProperties(Detail d, String... patternID);
     public boolean acceptsAnotherProperty(Detail d, String propid);

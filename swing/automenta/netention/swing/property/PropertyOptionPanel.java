@@ -127,15 +127,15 @@ abstract public class PropertyOptionPanel extends JPanel {
         return getDetail().getMode();
     }
 
-    protected void setReal() {
+    @Deprecated protected void setReal() {
         if (editable) {
-            getDetail().setMode(Mode.Real);
+            //getDetail().setMode(Mode.Real);
         }
     }
 
-    protected void setImaginary() {
+    @Deprecated protected void setImaginary() {
         if (editable) {
-            getDetail().setMode(Mode.Imaginary);
+            //getDetail().setMode(Mode.Imaginary);
         }
     }
 
