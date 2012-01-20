@@ -379,7 +379,7 @@ public class MessagePanel extends JPanel {
 
     }
 
-    public class EditMessagePanel extends JPanel {
+    @Deprecated public class EditMessagePanel extends JPanel {
         private final HTMLEditorPane editor;
         private final JTextField subject;
 

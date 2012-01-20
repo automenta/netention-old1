@@ -29,8 +29,10 @@ public class CraigslistChannel extends RSSChannel {
     /** parsing CLTAG's */
     public void onNewMessage(RssItemBean item, NMessage n) {
         try {
+            n.setName(item.getTitle());
             Document doc = Jsoup.connect(item.getLink()).get();
             Elements es = doc.select("a");
+            
             Iterator<Element> ii = es.iterator();
             while (ii.hasNext()) {
                 Element e = ii.next();

@@ -192,7 +192,7 @@ public class SeedSelfBuilder {
         MemoryDetail d1 = new MemoryDetail("Red Bike", Mode.Real, "Built", "Mobile");
         MemoryDetail d11 = new MemoryDetail("Blue Bike", Mode.Real, "Built");
         MemoryDetail d2 = new MemoryDetail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");
-        MemoryDetail d3 = new MemoryDetail("What is Netention?", Mode.Real, "Message");
+        MemoryDetail d3 = new MemoryDetail("What is Netention?", Mode.Real, "message");
         {
             d1.addValue("numWheels", new IntegerIs(4));
             d1.addValue("manufacturer", new StringIs("myself"));

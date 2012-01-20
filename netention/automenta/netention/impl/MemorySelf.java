@@ -18,6 +18,7 @@ import automenta.netention.linker.Linker;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
+import flexjson.JSONSerializer;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -40,6 +41,7 @@ import org.apache.commons.collections15.IteratorUtils;
  * @author seh
  */
 public class MemorySelf implements Self, Serializable {
+
 
 
     private String id, name;
@@ -343,6 +345,12 @@ public class MemorySelf implements Self, Serializable {
             }            
         });
         return il;
+    }
+    
+    public static String toJSON(Detail detail) {        
+            JSONSerializer serializer = new JSONSerializer();
+            serializer.prettyPrint(true);
+            return serializer.include("patterns", "values", "whenCreated", "whenModified").serialize(detail);
     }
 
 }

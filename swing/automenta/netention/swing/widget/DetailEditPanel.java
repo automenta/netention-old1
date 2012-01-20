@@ -14,6 +14,7 @@ import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
 import automenta.netention.graph.ValueEdge;
+import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.BoolPropertyPanel;
 import automenta.netention.swing.property.IntPropertyPanel;
@@ -22,6 +23,8 @@ import automenta.netention.swing.property.RealPropertyPanel;
 import automenta.netention.swing.property.SelectionPropertyPanel;
 import automenta.netention.swing.property.StringPropertyPanel;
 import automenta.netention.swing.util.JHyperLink;
+import automenta.netention.swing.util.SwingWindow;
+import automenta.netention.swing.widget.email.MessageEditPanel;
 import automenta.netention.value.bool.BoolProp;
 import automenta.netention.value.integer.IntProp;
 import automenta.netention.value.real.RealProp;
@@ -218,6 +221,7 @@ abstract public class DetailEditPanel extends JPanel {
 
             for (String pid : detail.getPatterns()) {
                 final Pattern p = self.getPatterns().get(pid);
+                
                 JMenu j = new JMenu(p.getName());
                 j.setIcon(Icons.getPatternIcon(p));
                 int numItems = 0, numExists = 0;
@@ -482,6 +486,24 @@ abstract public class DetailEditPanel extends JPanel {
                 bottomBar.add(deleteButton);
             }
 
+            {
+                final JButton sendButton = new JButton("Send");
+                sendButton.addActionListener(new ActionListener() {
+
+                    @Override public void actionPerformed(ActionEvent e) {
+                        SwingUtilities.invokeLater(new Runnable() {
+
+                            @Override public void run() {                                
+                                final String html = detailToHTML(detail);
+                                new SwingWindow(new MessageEditPanel(detail.getName(), html), 800, 600);
+                            }
+                        });
+                    }
+                });
+
+                bottomBar.add(sendButton);
+            }
+            
             if (isEditable()) {
                 final JButton updateButton = new JButton("Update");
                 updateButton.addActionListener(new ActionListener() {
@@ -513,6 +535,8 @@ abstract public class DetailEditPanel extends JPanel {
                 final JButton refreshButton = new JButton("Refresh");
                 bottomBar.add(refreshButton);
             }
+        
+        
 
             GridBagConstraints gcx = new GridBagConstraints();
             gcx.weightx = 1.0;
@@ -841,4 +865,16 @@ abstract public class DetailEditPanel extends JPanel {
     abstract protected void deleteThis();
 
     abstract protected void patternChanged();
+    
+    public static String detailToHTML(Detail d) {
+        StringBuffer x = new StringBuffer("<html>");
+        x.append("<h1>" + d.getName() + "</h1><br/>");
+        x.append("<b>" + d.getPatterns() + "</b><br/>");
+        for (PropertyValue pv : d.getValues()) {
+            x.append(pv.toString() + "<br/>");
+        }
+        x.append("<br/><pre>" + MemorySelf.toJSON(d) + "</pre>");
+        x.append("</html>");
+        return x.toString();
+    }
 }

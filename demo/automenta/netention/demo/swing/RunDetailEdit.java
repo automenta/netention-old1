@@ -137,9 +137,7 @@ public class RunDetailEdit implements Demo {
         }
 
         public void refresh() {
-            JSONSerializer serializer = new JSONSerializer();
-            String output = serializer.include("patterns", "values", "whenCreated", "whenModified").serialize(detail);
-            textArea.setText(output);
+            textArea.setText(MemorySelf.toJSON(detail));
         }
     }
 
