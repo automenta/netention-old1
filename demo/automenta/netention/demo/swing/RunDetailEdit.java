@@ -9,6 +9,7 @@ import automenta.netention.craigslist.OodleBuilder;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.demo.Demo;
+import automenta.netention.demo.RunSelfBrowser;
 import automenta.netention.demo.SeedSelfBuilder;
 import automenta.netention.ieml.IEMLBuilder;
 import automenta.netention.swing.SelfBrowserPanel;
@@ -44,24 +45,9 @@ public class RunDetailEdit implements Demo {
         return "Detail Editing";
     }
 
-
-    public static MemorySelf getAnonymousSelf() {
-        MemorySelf self = new MemorySelf("me", "Me");
-       
-        new SeedSelfBuilder().build(self);
-        try {
-            new OodleBuilder().build(self);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        new IEMLBuilder().build(self);
-        
-        return self;        
-    }
-
     public JPanel newPanel() {
 
-        final MemorySelf mSelf = getAnonymousSelf();
+        final MemorySelf mSelf = RunSelfBrowser.newDefaultSelf();
 
         final MemoryDetail d = new MemoryDetail("Untitled");
         mSelf.addDetail(d);

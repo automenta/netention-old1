@@ -38,7 +38,7 @@ public interface Self {
     //gets all properties including from a pattern's hierarchy (superclass properties)
     public Collection<String> getProperties(Pattern p);
 
-    /** gets available properties that may be added to a detail */
+    /** gets available properties that may be added to a detail.  if patternID == null or empty, uses patterns already present in 'd' */
     public Map<Property, Double> getAvailableProperties(Detail d, String... patternID);
     
     public boolean acceptsAnotherProperty(Detail d, String propid);

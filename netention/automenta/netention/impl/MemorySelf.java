@@ -217,8 +217,15 @@ public class MemorySelf implements Self, Serializable {
     }
     
     public Map<Property, Double> getAvailableProperties(Detail d, String... patternID) {
+        String[] lp = patternID;
+        if (lp.length == 0) lp = null;
+        if (lp == null) {
+            lp = new String[d.getPatterns().size()];
+            d.getPatterns().toArray(lp);            
+        }
+        
         Map<Property, Double> a = new HashMap();
-        for (String pid : patternID) {
+        for (String pid : lp) {
             Pattern pat = patterns.get(pid);
             if (pat != null) {
                 for (String propid : getProperties(pat)) {

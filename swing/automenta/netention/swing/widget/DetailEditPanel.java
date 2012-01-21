@@ -44,23 +44,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -136,10 +120,8 @@ abstract public class DetailEditPanel extends JPanel {
     }
 
     private void buildAvailablePropertiesMenu(JMenu b) {
-        String[] lp = new String[detail.getPatterns().size()];
-        detail.getPatterns().toArray(lp);
         
-        for (final Property p : self.getAvailableProperties(detail, lp).keySet()) {
+        for (final Property p : self.getAvailableProperties(detail, null).keySet()) {
             JMenuItem j = new JMenuItem(p.getName());
             j.addActionListener(new ActionListener() {
                 @Override
@@ -722,6 +704,26 @@ abstract public class DetailEditPanel extends JPanel {
                     
                     bb.add(b);
 
+                    JButton c = new JButton("...");
+                    c.setToolTipText("Complete All");
+                    c.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            JDialog jd = new JDialog();
+                            jd.setSize(600, 400);
+                            jd.getContentPane().add(new CompletePropertiesPanel(self, detail, new Runnable() {
+                                @Override
+                                public void run() {
+                                    setDetail(detail);
+                                    refreshUI();
+                                }                                
+                            }));
+                            jd.setVisible(true);
+                        }                        
+                    });
+                    
+                    bb.add(c);
+                    
                     addPropertyPanel.add(bb);
                 }
                 gc.gridy++;
@@ -771,8 +773,7 @@ abstract public class DetailEditPanel extends JPanel {
         p.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         return p;
     }
-    
-    protected JComponent getLinePanel(PropertyValue pv) {
+    public static JComponent getLinePanel(Self self, Detail detail, PropertyValue pv, boolean editable) {
         Property prop = self.getProperty(pv.getProperty());
         if (prop instanceof IntProp) {
             //Int must be tested before Real because it is a subclass of it
@@ -792,6 +793,10 @@ abstract public class DetailEditPanel extends JPanel {
 
         return new JLabel(pv.toString());
 
+    }
+    
+    protected JComponent getLinePanel(PropertyValue pv) {
+        return getLinePanel(self, detail, pv, editable);
     }
 
     protected void setEditable(boolean editable) {

@@ -5,6 +5,7 @@
 package automenta.netention.demo;
 
 import automenta.netention.craigslist.OodleBuilder;
+import automenta.netention.ieml.IEMLBuilder;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.util.SwingWindow;
@@ -19,26 +20,35 @@ import javax.swing.SwingUtilities;
  */
 public class RunSelfBrowser implements Demo {
 
+    public static MemorySelf newDefaultSelf() {
+        MemorySelf self = new MemorySelf("me", "Me");
+        
+        new SeedSelfBuilder().build(self);
+        
+        try {
+            new OodleBuilder().build(self);
+        } catch (Exception ex2) {
+            ex2.printStackTrace();
+        }
+        new IEMLBuilder().build(self);
+
+        return self;
+    }
+
     public JPanel newPanel() {
         final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
 
         final String filePath = "/tmp/netention1";
 
         //LOAD
-        MemorySelf self;
+        MemorySelf self = newDefaultSelf();
         try {
             self = MemorySelf.load(filePath);
             //self = JSONIO.load(filePath);
             logger.log(Level.INFO, "Loaded " + filePath);
         } catch (Exception ex) {
             System.out.println("unable to load " + filePath + " : " + ex);
-            self = new MemorySelf("me", "Me");
-            new SeedSelfBuilder().build(self);
-            try {
-                new OodleBuilder().build(self);
-            } catch (Exception ex2) {
-                ex2.printStackTrace();
-            }
+            self = newDefaultSelf();
             logger.log(Level.INFO, "Loaded Seed Self");
         }
         //self.addPlugin(new Twitter());
@@ -56,7 +66,6 @@ public class RunSelfBrowser implements Demo {
             public void run() {
 
                 SwingWindow window = new SwingWindow(new RunSelfBrowser().newPanel(), 900, 800, true) {
-
 //                    @Override
 //                    protected void onClosing() {
 //                        //SAVE ON EXIT
@@ -69,7 +78,6 @@ public class RunSelfBrowser implements Demo {
 //                            logger.log(Level.SEVERE, null, ex);
 //                        }
 //                    }
-                    
                 };
             }
         });
@@ -85,5 +93,4 @@ public class RunSelfBrowser implements Demo {
     public String getDescription() {
         return "";
     }
-
 }

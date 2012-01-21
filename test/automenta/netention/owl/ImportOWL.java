@@ -65,11 +65,12 @@ public class ImportOWL {
     private OWLOntology ontology;
 
     private PrintStream out;
+    private final Self self;
 
-    static Self self;
     
-    public ImportOWL(OWLOntologyManager manager, OWLReasonerFactory reasonerFactory)
+    public ImportOWL(Self self, OWLOntologyManager manager, OWLReasonerFactory reasonerFactory)
             throws OWLException, MalformedURLException {
+        this.self = self;
         this.reasonerFactory = reasonerFactory;
         out = System.out;
     }
@@ -262,7 +263,7 @@ public class ImportOWL {
     public static void main(String[] args) {
         
         try {
-           self = new MemorySelf();
+           MemorySelf self = new MemorySelf();
                      
            String reasonerFactoryClassName = "StructuralReasonerFactory";
 
@@ -279,7 +280,7 @@ public class ImportOWL {
            System.out.println("Format      : " + manager.getOntologyFormat(ontology));
 
            // / Create a new SimpleHierarchy object with the given reasoner.
-           ImportOWL simpleHierarchy = new ImportOWL(manager, new StructuralReasonerFactory());
+           ImportOWL simpleHierarchy = new ImportOWL(self, manager, new StructuralReasonerFactory());
 
            OWLClass clazz = manager.getOWLDataFactory().getOWLClass(OWLRDFVocabulary.OWL_THING.getIRI());
 
