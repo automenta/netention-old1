@@ -149,7 +149,8 @@ abstract public class PatternEditPanel extends JPanel {
         j.add(buttonPanel, BorderLayout.SOUTH);
 
 
-        for (Property pr : self.getProperties().values()) {
+        for (String spr : self.getProperties()) {
+            Property pr = self.getProperty(spr);
             PropertyEditPanel line = new PropertyEditPanel(pr);
             propPanel.add(line);
         }

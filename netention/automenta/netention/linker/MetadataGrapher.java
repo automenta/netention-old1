@@ -29,7 +29,7 @@ import java.util.Iterator;
 public class MetadataGrapher {
 
     public static void run(Self s, MutableAdjacencyGraph<Node, ValueEdge<Node, Link>> target, boolean creators, boolean mode, boolean patterns, boolean properties) {
-        Iterator<Node> i = s.iterateDetails();
+        Iterator<Node> i = s.iterateNodes();
         while (i.hasNext()) {
             Node n = i.next();
             if (n instanceof Detail) {
@@ -51,7 +51,7 @@ public class MetadataGrapher {
 
                 if (patterns) {
                     for (String p : d.getPatterns()) {
-                        final Pattern pa = s.getPatterns().get(p);
+                        final Pattern pa = s.getPattern(p);
                         target.add(pa);
                         target.add(new ValueEdge(new PatternOf(), d, pa));
                     }

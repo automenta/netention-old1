@@ -77,12 +77,20 @@ abstract public class Property implements Serializable {
         return cardinalityMin;
     }
 
-    public void setCardinalityMax(int cardinalityMax) {
+    public Property setCardinalityMax(int cardinalityMax) {
         this.cardinalityMax = cardinalityMax;
+        if (this.cardinalityMax!=-1)
+            if (this.cardinalityMin > cardinalityMax)
+                cardinalityMin = cardinalityMax;
+        return this;
     }
 
-    public void setCardinalityMin(int cardinalityMin) {
+    public Property setCardinalityMin(int cardinalityMin) {
         this.cardinalityMin = cardinalityMin;
+        if (this.cardinalityMax!=-1)
+            if (this.cardinalityMax < cardinalityMin)
+                cardinalityMax = cardinalityMin;
+        return this;
     }
 
     public Property setDescription(String description) {

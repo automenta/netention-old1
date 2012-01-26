@@ -5,13 +5,13 @@
 package automenta.netention.demo.swing;
 
 import automenta.netention.PropertyValue;
-import automenta.netention.craigslist.OodleBuilder;
+import automenta.netention.craigslist.AddOodlePatterns;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.demo.Demo;
 import automenta.netention.demo.RunSelfBrowser;
-import automenta.netention.demo.SeedSelfBuilder;
-import automenta.netention.ieml.IEMLBuilder;
+import automenta.netention.demo.AddDefaultPatterns;
+import automenta.netention.ieml.AddIEMLPatterns;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.DetailEditPanel;

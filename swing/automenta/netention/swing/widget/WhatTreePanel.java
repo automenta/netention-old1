@@ -45,11 +45,11 @@ public class WhatTreePanel extends JPanel implements IndexView {
 
 
             MultiHashMap<String, Detail> patterns = new MultiHashMap();
-            for (String p : self.getPatterns().keySet()) {
+            for (String p : self.getPatterns()) {
                 patterns.put(p, null);
             }
 
-            for (Node n : IteratorUtils.toList(self.iterateDetails())) {
+            for (Node n : IteratorUtils.toList(self.iterateNodes())) {
                 if (n instanceof Detail) {
                     Detail d = (Detail)n;
                     if (d.getPatterns().size() > 0) {
@@ -63,7 +63,7 @@ public class WhatTreePanel extends JPanel implements IndexView {
             }
 
             for (String p : patterns.keySet()) {
-                Pattern pat = self.getPatterns().get(p);
+                Pattern pat = self.getPattern(p);
                 DefaultMutableTreeNode pNode;
                 if (pat != null) {
                     pNode = new DefaultMutableTreeNode(pat);                    

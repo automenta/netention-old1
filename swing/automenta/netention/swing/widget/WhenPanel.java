@@ -45,7 +45,7 @@ public class WhenPanel extends JPanel implements IndexView {
             ((DefaultMutableTreeNode) root).removeAllChildren();
 
 
-            List<Node> d = MemorySelf.getDetailsByTime(self.iterateDetails(), false);
+            List<Node> d = MemorySelf.getDetailsByTime(self.iterateNodes(), false);
             
             for (Node n : d) {
                     DefaultMutableTreeNode pNode = new DefaultMutableTreeNode(n);

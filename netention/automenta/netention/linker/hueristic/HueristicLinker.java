@@ -25,7 +25,7 @@ abstract public class HueristicLinker implements Linker {
     }
 
     public BidirectedGraph<Node,ValueEdge<Node, Link>> run(Self self) {
-        return run(IteratorUtils.toList(self.iterateDetails()));
+        return run(IteratorUtils.toList(self.iterateNodes()));
     }
     
     public MutableBidirectedGraph<Node,ValueEdge<Node, Link>> run(Collection<Node> details) {

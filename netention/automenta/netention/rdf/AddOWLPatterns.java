@@ -51,14 +51,14 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  * Author: Sean Bechhofer<br> The University Of Manchester<br> Information
  * Management Group<br> Date: 17-03-2007<br> <br>
  */
-public class ImportOWL {
+public class AddOWLPatterns {
 
     //private static int INDENT = 4;
     private OWLReasonerFactory reasonerFactory;
     private OWLOntology ontology;
     private final Self self;
 
-    public ImportOWL(Self self, OWLOntologyManager manager, OWLReasonerFactory reasonerFactory)
+    public AddOWLPatterns(Self self, OWLOntologyManager manager, OWLReasonerFactory reasonerFactory)
             throws OWLException, MalformedURLException {
         this.self = self;
         this.reasonerFactory = reasonerFactory;
@@ -252,7 +252,7 @@ public class ImportOWL {
         }
     }
 
-    public static void load(String owlPath, Self self) {
+    public static void add(String owlPath, Self self) {
         try {
 
             String reasonerFactoryClassName = "StructuralReasonerFactory";
@@ -270,7 +270,7 @@ public class ImportOWL {
             //System.out.println("Format      : " + manager.getOntologyFormat(ontology));
 
             // / Create a new SimpleHierarchy object with the given reasoner.
-            ImportOWL i = new ImportOWL(self, manager, new StructuralReasonerFactory());
+            AddOWLPatterns i = new AddOWLPatterns(self, manager, new StructuralReasonerFactory());
 
             OWLClass clazz = manager.getOWLDataFactory().getOWLClass(OWLRDFVocabulary.OWL_THING.getIRI());
 
@@ -289,7 +289,7 @@ public class ImportOWL {
         //String owlPath = "schema/doap.owl";
         //String owlPath = "schema/cv.owl";
         String owlPath = "schema/biography.owl";
-        load(owlPath, new MemorySelf());
+        add(owlPath, new MemorySelf());
 
     }
 }

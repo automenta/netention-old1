@@ -51,6 +51,7 @@ abstract public class PropertyOptionPanel extends JPanel {
         typeLabel = new JLabel("");
 
         setValue(value);
+        setToolTipText(getProperty().getDescription());
 
     }
 
@@ -242,4 +243,14 @@ abstract public class PropertyOptionPanel extends JPanel {
 //    public JHyperLink getNameLabel() {
 //        return nameLabel;
 //    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public Self getSelf() {
+        return self;
+    }
+    
+    
 }

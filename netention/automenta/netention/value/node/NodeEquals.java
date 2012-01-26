@@ -3,21 +3,24 @@ package automenta.netention.value.node;
 import automenta.netention.IndefiniteValue;
 import automenta.netention.PropertyValue;
 
-
 public class NodeEquals extends PropertyValue implements IndefiniteValue {
 
-	private String id;
+    private String node;
 
-	public NodeEquals() {
-		super();
-	}
+    public NodeEquals() {
+        super();
+    }
 
-	public NodeEquals(String id) {
-		super();
-		this.id = id;
-	}
-	
-	public String getNode() {
-		return id;
-	}
+    public NodeEquals(String id) {
+        super();
+        this.node = id;
+    }
+
+    public String getNode() {
+        return node;
+    }
+
+    public void setValue(String id) {
+        this.node = id;
+    }
 }

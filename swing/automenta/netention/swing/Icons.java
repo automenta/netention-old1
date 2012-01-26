@@ -106,7 +106,7 @@ public class Icons {
         String p = d.getIconURL();
         if (p == null) {
             for (String pat : d.getPatterns()) {
-                Icon i = getPatternIcon(s.getPatterns().get(pat));
+                Icon i = getPatternIcon(s.getPattern(pat));
                 if (i != null) {
                     return i;
                 }

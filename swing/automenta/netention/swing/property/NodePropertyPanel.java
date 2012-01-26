@@ -1,105 +1,143 @@
 package automenta.netention.swing.property;
 
+import automenta.netention.Detail;
+import automenta.netention.Mode;
+import automenta.netention.Node;
+import automenta.netention.PropertyValue;
+import automenta.netention.Self;
+import automenta.netention.Value;
+import automenta.netention.swing.util.TransparentFlowPanel;
+import automenta.netention.value.node.NodeEquals;
+import automenta.netention.value.node.NodeIs;
+import automenta.netention.value.node.NodeProp;
+import java.util.Iterator;
+import java.util.Set;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 
-public class NodePropertyPanel {
-//    extends PropertyPanel {
-//	//TODO extend OptionPropertyPanel
-//	//TODO use http://google-web-toolkit.googlecode.com/svn/javadoc/1.6/com/google/gwt/user/client/ui/SuggestBox.html
-//
-//	final String[] nodeTypes = new String[] {
-//			"is",
-//			"will be",
-//			"will not be"
-//	};
-//	private ListBox typeSelect;
-//	private FlowPanel editPanel;
-//	private Value value;
-//	private PropertyTextBox isBox;
-//	private PropertyTextBox notEqualsBox;
-//	private PropertyTextBox equalsBox;
-//
-//	public NodePropertyPanel(String property) {
-//		super(property);
-//
-//		typeSelect = new ListBox();
-//		typeSelect.addStyleName("PropertySelect");
-//		for (String s : nodeTypes) {
-//			typeSelect.addItem(s);
-//		}
-//		typeSelect.addChangeHandler(new ChangeHandler() {
-//			@Override public void onChange(ChangeEvent event) {
-//				int x = typeSelect.getSelectedIndex();
-//				if (x == 0)				setValue(new NodeIs());
-//				else if (x == 1)		setValue(new NodeEquals());
-//				else if (x == 2)		setValue(new NodeNotEquals());
-//			}
-//		});
-//		add(typeSelect);
-//
-//		editPanel = new FlowPanel();
-//		add(editPanel);
-//
-//	}
-//
-//	public NodePropertyPanel(String prop, NodeIs v) {
-//		this(prop);
-//		setValue(v);
-//	}
-//
-//	public NodePropertyPanel(String prop, NodeEquals v) {
-//		this(prop);
-//		setValue(v);
-//	}
-//
-//	public NodePropertyPanel(String prop, NodeNotEquals v) {
-//		this(prop);
-//		setValue(v);
-//	}
-//
-//	protected void setValue(NodeNotEquals v) {
-//		setWillBe();
-//
-//		this.value = v;
-//
-//		typeSelect.setSelectedIndex(2);
-//
-//		editPanel.clear();
-//		notEqualsBox = new PropertyTextBox();
-//		notEqualsBox.setText( v.getNode() );
-//		editPanel.add(notEqualsBox);
-//
-//	}
-//
-//	protected void setValue(NodeEquals v) {
-//		setWillBe();
-//
-//		this.value = v;
-//
-//		typeSelect.setSelectedIndex(1);
-//
-//		editPanel.clear();
-//		equalsBox = new PropertyTextBox();
-//		equalsBox.setText( v.getNode() );
-//		editPanel.add(equalsBox);
-//
-//	}
-//
-//	protected void setValue(NodeIs v) {
-//		setIs();
-//
-//		this.value = v;
-//
-//		typeSelect.setSelectedIndex(0);
-//
-//		editPanel.clear();
-//		isBox = new PropertyTextBox();
-//		isBox.setText( v.getNode() );
-//		editPanel.add(isBox);
-//
-//	}
-//
-//	@Override public void widgetToValue() {
-//	}
-//
-//
+
+public class NodePropertyPanel extends PropertyOptionPanel {
+
+    public NodePropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
+        super(s, d, v, editable);
+        
+        if (getMode() != Mode.Imaginary) {
+
+            addOption(new PropertyOption<NodeIs>("is") {
+
+                JComboBox rta = getComboBox();
+
+                @Override public boolean accepts(Value v) {
+                    return v.getClass().equals(NodeIs.class);
+                }
+
+                @Override public NodeIs newDefaultValue() {
+                    return new NodeIs();
+                }
+
+                @Override public NodeIs widgetToValue(NodeIs r) {
+                    Object x = rta.getSelectedItem();
+                    if (x!=null) {
+                        if (x instanceof Detail)
+                            r.setValue(  ((Detail)x).getID() );
+                    }
+                    return r;
+                }
+
+                @Override public JPanel newEditPanel(NodeIs value) {
+                    setValue(value);
+                    setReal();
+
+                    JPanel p = new TransparentFlowPanel();
+                    rta.setSelectedItem(getSelf().getDetail(value.getNode()));
+                    p.add(rta);
+
+
+                    return p;
+                }
+            });
+
+        } 
+        if (getMode() != Mode.Real) {
+            addOption(new PropertyOption<NodeEquals>("exactly") {
+
+                JComboBox rta = getComboBox();
+
+                @Override public boolean accepts(Value v) {
+                    return v.getClass().equals(NodeEquals.class);
+                }
+
+                @Override public NodeEquals widgetToValue(NodeEquals r) {
+                    Object x = rta.getSelectedItem();
+                    if (x!=null) {
+                        if (x instanceof Detail)
+                            r.setValue(  ((Detail)x).getID() );
+                    }
+                    return r;
+                }
+
+                @Override public NodeEquals newDefaultValue() {
+                    return new NodeEquals();
+                }
+
+                @Override public JPanel newEditPanel(NodeEquals value) {
+                    setValue(value);
+                    setImaginary();
+
+                    JPanel p = new TransparentFlowPanel();
+                    rta.setSelectedItem(getSelf().getDetail(value.getNode()));
+                    p.add(rta);
+
+                    
+                    return p;
+                }
+            });
+
+        }
+
+        refresh();
+
+    }
+
+    public JComboBox getComboBox() {
+        JComboBox jb = new JComboBox();
+        jb.setEditable(isEditable());
+        
+        final NodeProp p = (NodeProp)getProperty();
+        final Set<String> ranges = p.getRanges();
+        
+        Iterator<Node> d = getSelf().iterateNodes();
+        while (d.hasNext()) {
+            Node n = d.next();
+            if (n instanceof Detail) {
+                Detail dd = (Detail)n;
+                
+                if (ranges.isEmpty())
+                    jb.addItem(dd);
+                else {
+                    boolean added = false;
+                    for (String r : ranges) {
+                        for (String dp : dd.getPatterns()) {
+                            if (r.equals(dp) || getSelf().isSuperPattern(r, dp)) {
+                                jb.addItem(dd);
+                                added = true;
+                                break;
+                            }
+                        }
+                        if (added)
+                            break;
+                    }
+                }
+                
+            }
+        }
+        
+        if (jb.getItemCount() == 0) {
+            jb.setEnabled(false);
+            jb.setToolTipText("No valid choices available.");
+        }
+        
+        return jb;
+    }
+    
 }

@@ -28,12 +28,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.apache.commons.collections15.IteratorUtils;
 
 /**
@@ -81,8 +79,8 @@ public class MemorySelf implements Self, Serializable {
         return name;
     }
 
-    public Map<String, Property> getProperties() {
-        return properties;
+    public Collection<String> getProperties() {
+        return properties.keySet();
     }
 
     public Property getProperty(String propertyID) {
@@ -93,8 +91,8 @@ public class MemorySelf implements Self, Serializable {
         return patterns.get(patternID);
     }
     
-    public Map<String, Pattern> getPatterns() {
-        return patterns;
+    public Collection<String> getPatterns() {
+        return Collections.unmodifiableCollection(patterns.keySet());
     }
 
     public MutableBidirectedGraph<Node, ValueEdge<Node, Link>> getGraph() {
@@ -120,7 +118,7 @@ public class MemorySelf implements Self, Serializable {
         return null;
     }
 
-    @Override public Iterator<Node> iterateDetails() {
+    @Override public Iterator<Node> iterateNodes() {
         List<Iterator<? extends Node>> iList = new LinkedList();
         iList.add(details.values().iterator());
         if (plugins!=null) {
@@ -146,11 +144,11 @@ public class MemorySelf implements Self, Serializable {
         return true;
     }
     
-    @Deprecated public boolean addProperty(Property p, String... patterns) {
+    public boolean addProperty(Property p, String... patterns) {
         //TODO do not allow adding existing pattern
         properties.put(p.getID(), p);
         for (String patid : patterns) {
-            Pattern pat = getPatterns().get(patid);
+            Pattern pat = getPattern(patid);
             if (pat!=null) {
                 pat.properties.put(p.getID(), 1.0);
             }
@@ -163,7 +161,7 @@ public class MemorySelf implements Self, Serializable {
         properties.put(p.getID(), p);
         if (patterns!=null) 
             for (String patid : patterns) {
-                Pattern pat = getPatterns().get(patid);
+                Pattern pat = getPattern(patid);
                 if (pat!=null) {
                     pat.properties.put(p.getID(), 1.0);
                 }
@@ -183,18 +181,6 @@ public class MemorySelf implements Self, Serializable {
 
     public boolean removeDetail(Detail d) {
         return details.remove(d.getID()) != null;
-    }
-
-    public Collection<String> getAvailablePatterns(Detail d) {
-        //TODO use dependency information to find all available patterns applicable for d
-        //for now, just use all patterns minus existing patterns in 'd'
-
-        Set<String> patterns = new HashSet<String>(getPatterns().keySet());
-        for (String p : d.getPatterns()) {
-            patterns.remove(p);
-        }        
-
-        return patterns;
     }
 
     public void getProperties(Pattern p, Collection<String> c) {     
@@ -258,7 +244,7 @@ public class MemorySelf implements Self, Serializable {
 
     @Override
     public void link(Linker l) {
-        MutableBidirectedGraph<Node, ValueEdge<Node, Link>> g = l.run(IteratorUtils.toList(iterateDetails()));
+        MutableBidirectedGraph<Node, ValueEdge<Node, Link>> g = l.run(IteratorUtils.toList(iterateNodes()));
         for (Node n : g.getNodes()) {
             graph.add(n);
         }
@@ -289,19 +275,24 @@ public class MemorySelf implements Self, Serializable {
         oos.close();
         return ms;
     }
-
-    @Override
-    public boolean acceptsAnotherProperty(Detail d, String propid) {
+    
+    public static int getPropertyCount(Detail d, String propid) {
         int existing = 0;
-        Property p = getProperty(propid);
-        if (p.getCardinalityMax() == -1)
-            return true;
-        
         for (PropertyValue v : d.getValues()) {
             if (v.getProperty().equals(propid)) {
                 existing++;
             }
         }
+        return existing;        
+    }
+
+    @Override
+    public boolean acceptsAnotherProperty(Detail d, String propid) {
+        Property p = getProperty(propid);
+        if (p.getCardinalityMax() == -1)
+            return true;
+
+        int existing = getPropertyCount(d, propid);        
 
         //TODO consider the property's cardinality properties
         if (existing >= p.getCardinalityMax())
@@ -309,6 +300,18 @@ public class MemorySelf implements Self, Serializable {
 
         return true;
     }
+    
+    @Override
+    public int moreValuesRequired(Detail d, String propid) {
+        Property p = getProperty(propid);
+        int existing = getPropertyCount(d, propid);        
+        int min = p.getCardinalityMin();
+        if (existing < p.getCardinalityMin()) {
+            return min - existing;
+        }
+        return 0;        
+    }
+    
 
     @Override public void updateLinks(Runnable whenFinished, Detail... details) {
         clearGraph();
@@ -337,7 +340,8 @@ public class MemorySelf implements Self, Serializable {
     @Override
     public Collection<String> getSubPatterns(final String pid) {
         List<String> s = new LinkedList();
-        for (final Pattern p : getPatterns().values()) {
+        for (final String sp : getPatterns()) {
+            final Pattern p = getPattern(sp);
             if (p.getParents().contains(pid))
                 s.add(p.id);
         }
@@ -380,4 +384,6 @@ public class MemorySelf implements Self, Serializable {
             return serializer.include("patterns", "values", "whenCreated", "whenModified").serialize(detail);
     }
 
+
+    
 }

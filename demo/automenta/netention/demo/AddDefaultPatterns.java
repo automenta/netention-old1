@@ -9,6 +9,7 @@ import automenta.netention.value.real.RealProp;
 import automenta.netention.value.string.StringProp;
 import automenta.netention.value.bool.BoolIs;
 import automenta.netention.value.integer.IntegerIs;
+import automenta.netention.value.node.NodeProp;
 import automenta.netention.value.real.RealIs;
 import automenta.netention.value.set.SelectionProp;
 import automenta.netention.value.string.StringEquals;
@@ -16,12 +17,13 @@ import automenta.netention.value.string.StringIs;
 import automenta.netention.value.time.TimePointProp;
 import automenta.netention.value.uri.URIProp;
 
-public class SeedSelfBuilder {
+public class AddDefaultPatterns {
+    public static String web = "Web";
 
-    public SeedSelfBuilder() {
+    public AddDefaultPatterns() {
     }
 
-    public void build(MemorySelf s) {
+    public void add(MemorySelf s) {
         Pattern thing = s.addPattern(new Pattern("http://www.w3.org/2002/07/owl#Thing").setName("Thing").setIconURL("media://tango32/categories/preferences-system.png").
                 setDescription(""));
         {
@@ -44,10 +46,8 @@ public class SeedSelfBuilder {
         {
             s.addProperties("Mobile",
                     new StringProp("currentLocation", "Current Location"),
-                    new StringProp("nextLocation", "Next Location") //new IntProp("numWheels", "Number of Wheels"),
-                    //new RealProp("wheelRadius", "Wheel Radius"),
-                    //new BoolProp("hasKickStand", "Has Kickstand")
-                    );
+                    new StringProp("nextLocation", "Next Location") 
+            );
         }
 
         s.addPattern(new Pattern("Person").setIconURL("media://tango32/apps/system-users.png"));
@@ -191,7 +191,22 @@ public class SeedSelfBuilder {
                     new StringProp("stockticker", "Stock Ticker"));
         }
 
+        Pattern valueFlow;
+        s.addPattern(valueFlow = new Pattern("ValueFlow").setName("Value Flow"));
+        {
+            s.addProperty(new NodeProp("FlowSource", "Source").setCardinalityMin(1), valueFlow.id);
+            s.addProperty(new NodeProp("FlowTarget", "Target").setCardinalityMin(1), valueFlow.id);
+        }
 
+        Pattern webPattern;
+        s.addPattern(webPattern = new Pattern(web).setName("Web"));
+        
+        
+        addDefaults(s);
+        
+    }
+    
+    @Deprecated public void addDefaults(MemorySelf s) {
         MemoryDetail d1 = new MemoryDetail("Red Bike", Mode.Real, "Built", "Mobile");
         MemoryDetail d11 = new MemoryDetail("Blue Bike", Mode.Real, "Built");
         MemoryDetail d2 = new MemoryDetail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");
@@ -224,6 +239,7 @@ public class SeedSelfBuilder {
         s.addDetail(d11);
         s.addDetail(d2);
         s.addDetail(d3);
+        
     }
 }
 //<schema>

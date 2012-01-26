@@ -21,10 +21,10 @@ import java.util.Map;
  *
  * @author seh
  */
-public class OodleBuilder {
+public class AddOodlePatterns {
 
 
-    public void build(MemorySelf ms) throws Exception {
+    public void add(MemorySelf ms) throws Exception {
         //http://developer.oodle.com/files/xml/oodle_categories.xml
         Map<String,String> cat = new HashMap();
 
@@ -150,7 +150,7 @@ public class OodleBuilder {
     }
     
     public static void main(String[] args) throws Exception {
-        new OodleBuilder().build(new MemorySelf());
+        new AddOodlePatterns().add(new MemorySelf());
         
     }
     

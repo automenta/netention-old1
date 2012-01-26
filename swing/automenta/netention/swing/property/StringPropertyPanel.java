@@ -212,7 +212,7 @@ public class StringPropertyPanel extends PropertyOptionPanel {
     
     public JComboBox getComboBox() {
         JComboBox jb = new JComboBox();
-        jb.setEditable(true);
+        jb.setEditable(isEditable());
         for (String s : getProperty().getSuggestions()) {
             jb.addItem(s);
         }

@@ -16,17 +16,13 @@ import automenta.netention.Self;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
-import automenta.netention.swing.property.BoolPropertyPanel;
-import automenta.netention.swing.property.IntPropertyPanel;
-import automenta.netention.swing.property.PropertyOptionPanel;
-import automenta.netention.swing.property.RealPropertyPanel;
-import automenta.netention.swing.property.SelectionPropertyPanel;
-import automenta.netention.swing.property.StringPropertyPanel;
+import automenta.netention.swing.property.*;
 import automenta.netention.swing.util.JHyperLink;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.email.MessageEditPanel;
 import automenta.netention.value.bool.BoolProp;
 import automenta.netention.value.integer.IntProp;
+import automenta.netention.value.node.NodeProp;
 import automenta.netention.value.real.RealProp;
 import automenta.netention.value.set.SelectionProp;
 import automenta.netention.value.string.StringProp;
@@ -203,7 +199,7 @@ abstract public class DetailEditPanel extends JPanel {
 //                add(new JSeparator(JSeparator.VERTICAL));
 
             for (String pid : detail.getPatterns()) {
-                final Pattern p = self.getPatterns().get(pid);
+                final Pattern p = self.getPattern(pid);
                 
                 JMenu j = new JMenu(p.getName());
                 j.setIcon(Icons.getPatternIcon(p));
@@ -297,7 +293,7 @@ abstract public class DetailEditPanel extends JPanel {
 
         
         public void buildPatternMenu(final JMenu t, final String pid, final JMenu parent) {
-            final Pattern p = self.getPatterns().get(pid);
+            final Pattern p = self.getPattern(pid);
 
             JMenuItem ti = new JMenuItem(p.getName());
             ti.setIcon(Icons.getPatternIcon(p));
@@ -355,7 +351,8 @@ abstract public class DetailEditPanel extends JPanel {
         public void buildPatternMenu(JMenu t) {
                 
             List<String> roots = new LinkedList();
-            for (Pattern p : self.getPatterns().values()) {
+            for (String sp : self.getPatterns()) {
+                Pattern p = self.getPattern(sp);
                 if (p.getParents().isEmpty())
                     roots.add(p.id);
             }
@@ -690,14 +687,38 @@ abstract public class DetailEditPanel extends JPanel {
                     if (isEditable()) {
                         JPopupMenu popup = new JPopupMenu();
                         JMenuItem removeItem = new JMenuItem("Remove");
-                        removeItem.addActionListener(new ActionListener() {
-
-                            @Override public void actionPerformed(ActionEvent e) {
-                                if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Remove " + property.getName() + "?", "Remove", JOptionPane.YES_NO_OPTION)) {
-                                    removeProperty(pv);
-                                }
+                        
+                        int minCard = property.getCardinalityMin();
+                        boolean required = false;
+                        if (minCard > 0) {
+                            if (MemorySelf.getPropertyCount(d, property.getID()) - 1 < minCard) {
+                                required = true;
                             }
-                        });
+                        }
+                            
+                        if (required) {
+                            removeItem.setEnabled(false);
+                            
+//                            removeItem.setText("Remove all " + property.getName() + " properties...");
+//                            removeItem.addActionListener(new ActionListener() {
+//
+//                                @Override public void actionPerformed(ActionEvent e) {
+//                                
+//                                    removePattern(property.get);
+//                                }
+//                            });
+                        }
+                        else {
+                            removeItem.addActionListener(new ActionListener() {
+
+                                @Override public void actionPerformed(ActionEvent e) {
+                                    if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Remove " + property.getName() + "?", "Remove", JOptionPane.YES_NO_OPTION)) {
+                                        removeProperty(pv);
+                                    }
+                                }
+                            });
+                        }
+                        
                         popup.add(removeItem);
 
                         pop.setPopup(popup);
@@ -804,10 +825,9 @@ abstract public class DetailEditPanel extends JPanel {
             return new SelectionPropertyPanel(self, detail, (SelectionProp) prop, pv, editable);
         } else if (prop instanceof BoolProp) {
             return new BoolPropertyPanel(self, detail, pv, editable);
+        } else if (prop instanceof NodeProp) {
+            return new NodePropertyPanel(self, detail, pv, editable);
         }
-//        } else if (prop instanceof NodeProp) {
-//            return new NodePropertyPanel(self, detail, pv, editable);
-//        }
 
         return new JLabel(pv.toString());
 
@@ -846,7 +866,16 @@ abstract public class DetailEditPanel extends JPanel {
 
         if (!detail.getPatterns().contains(p.getID())) {
             updateDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
+            
             detail.getPatterns().add(p.getID());
+            
+            for (String x : self.getProperties(p)) {
+                Property px = self.getProperty(x);
+                for (int i = 0; i < self.moreValuesRequired(detail, x); i++) {
+                    addProperty(px);
+                }
+            }
+            
             patternChanged();
             refreshUI();
         }

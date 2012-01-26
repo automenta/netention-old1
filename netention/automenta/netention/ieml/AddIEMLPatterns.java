@@ -9,9 +9,9 @@ import automenta.netention.value.set.SelectionProp;
  *
  * @author seh
  */
-public class IEMLBuilder {
+public class AddIEMLPatterns {
 
-    public void build(MemorySelf self) {
+    public void add(MemorySelf self) {
 
         Pattern ieml = self.addPattern(new Pattern("IEML"));
 

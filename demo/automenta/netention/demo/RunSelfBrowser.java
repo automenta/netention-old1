@@ -4,10 +4,11 @@
  */
 package automenta.netention.demo;
 
-import automenta.netention.craigslist.OodleBuilder;
-import automenta.netention.ieml.IEMLBuilder;
+import automenta.netention.craigslist.AddCraigslistPatterns;
+import automenta.netention.craigslist.AddOodlePatterns;
+import automenta.netention.ieml.AddIEMLPatterns;
 import automenta.netention.impl.MemorySelf;
-import automenta.netention.rdf.ImportOWL;
+import automenta.netention.rdf.AddOWLPatterns;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.util.SwingWindow;
 import java.util.logging.Level;
@@ -24,20 +25,23 @@ public class RunSelfBrowser implements Demo {
     public static MemorySelf newDefaultSelf() {
         MemorySelf self = new MemorySelf("me", "Me");
         
-        new SeedSelfBuilder().build(self);
+        new AddDefaultPatterns().add(self);
         
         try {
-            new OodleBuilder().build(self);
+            new AddOodlePatterns().add(self);
         } catch (Exception ex2) {
             ex2.printStackTrace();
         }
         
-        new IEMLBuilder().build(self);
+        new AddIEMLPatterns().add(self);
 
-        ImportOWL.load("schema/SUMO.owl", self);
+        //ImportOWL.load("schema/SUMO.owl", self);
+        AddOWLPatterns.add("schema/sumodlfull.owl", self);
         //ImportOWL.load("schema/foaf.owl", self);
         //ImportOWL.load("schema/biography.owl", self);
         //ImportOWL.load("schema/sweetAll.owl", self);
+        
+        new AddCraigslistPatterns().add(self);
         
         return self;
     }

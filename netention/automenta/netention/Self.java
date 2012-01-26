@@ -14,22 +14,19 @@ import java.util.Map;
 public interface Self {
 
     /** all available properties */
-    public Map<String, Property> getProperties();
+    public Collection<String> getProperties();
 
     public boolean addDetail(Detail d);
     
     public Detail getDetail(String id);
     
-    public Iterator<Node> iterateDetails();
-    //public Map<String, Detail> getDetails();
+    public Iterator<Node> iterateNodes();
 
     /** all available patterns */
-    public Map<String, Pattern> getPatterns();
+    public Collection<String> getPatterns();
 
     public MutableBidirectedGraph<Node, ValueEdge<Node, Link>> getGraph();
 
-    /** gets available patterns that may be added to a detail */
-    public Collection<String> getAvailablePatterns(Detail d);
     
     public Pattern addPattern(Pattern p);
     
@@ -42,7 +39,9 @@ public interface Self {
     public Map<Property, Double> getAvailableProperties(Detail d, String... patternID);
     
     public boolean acceptsAnotherProperty(Detail d, String propid);
+    public int moreValuesRequired(Detail d, String propid);
 
+    public boolean addProperty(Property p, String... patterns);
     public boolean addProperty(Property p, Collection<String> patterns);
     
     public Property getProperty(String propertyID);
@@ -59,5 +58,6 @@ public interface Self {
     public Collection<String> getSubPatterns(String pid);
 
     public boolean isSuperPattern(String possibleParent, String possibleChild);
+
 
 }

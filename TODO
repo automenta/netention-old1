@@ -1,5 +1,8 @@
 NodePropertyPanel
-	--with expandable read-only preview of target Node
+	--expandable embedded read-only preview of target Node
+
+StringPropertyValue 
+        --display big text area for long and HTML strings
 
 PropertyValue -> HTML renderers
 
@@ -10,6 +13,7 @@ Link Panel
 DetailEditPanel
 	--improve 'Send' functionality
 	--improve value prompt wizard
+        --font size select
 
 
 Pattern w/ Default Values = Template
@@ -26,5 +30,7 @@ Ontology statistics view: # of classes, # of instances, etc..
 
 Gnutella aggregation
 
+"Where" View
 
-
+OWL Import
+    --Ignore inheriting from "Thing" to set classes as top level patterns

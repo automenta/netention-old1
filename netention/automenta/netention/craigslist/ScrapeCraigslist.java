@@ -25,17 +25,18 @@ public class ScrapeCraigslist {
         Map<String,String> cityURL = new HashMap();
         Map<String,String> catURL = new HashMap();
         
-        scrapeCities("http://geo.craigslist.org/iso/us", cityURL, null);
-        scrapeCities("http://newyork.craigslist.org/", cityURL, catURL);
-        scrapeCities("http://sfbay.craigslist.org/", cityURL, catURL);
+        scrape("http://geo.craigslist.org/iso/us", cityURL, null);
+        scrape("http://newyork.craigslist.org/", cityURL, catURL);
+        scrape("http://sfbay.craigslist.org/", cityURL, catURL);
         
         System.out.println(cityURL);
         System.out.println(catURL);
         
-        
+        Craigslist cl = new Craigslist(cityURL, catURL);
+        cl.save();
     }
 
-    private static void scrapeCities(String u, Map<String,String> cities, Map<String,String> categories) throws IOException {
+    private static void scrape(String u, Map<String,String> cities, Map<String,String> categories) throws IOException {
         //http://geo.craigslist.org/iso/us
         
         Document d = Jsoup.parse(new URL(u), 1000);
@@ -51,6 +52,7 @@ public class ScrapeCraigslist {
                         if ((!link.contains("www.craigslist.org")) && (!link.contains("blog.craigslist.org"))) {
                             if (link.startsWith("http://")) {                        
                                 //System.out.println(text + " " + link);
+                                link = removeTrailingSlash(link);
                                 cities.put(text, link);
                             }
                         }
@@ -60,8 +62,10 @@ public class ScrapeCraigslist {
             
             if (categories!=null) {
                 if ((!link.startsWith("http://")) && (!link.startsWith("https://"))) {
-                    if ((!link.startsWith("/forums")) && (!link.startsWith("/cgi-bin")) && (!link.startsWith("cal/"))) {
+                    if ((!link.startsWith("/forums")) && (!link.startsWith("/cgi-bin")) && (!link.startsWith("cal/")) && (!link.contains("?"))) {
                         //System.out.println(text + " " + link);
+                        link = removeTrailingSlash(link);
+                        link = removeLeadingSlash(link);
                         categories.put(text, link);                    
                     }
                 }
@@ -69,12 +73,17 @@ public class ScrapeCraigslist {
         }
         
         
-        
-        
-        
     }
 
-    private static void scrapeCategories() {
+    private static String removeTrailingSlash(String link) {
+        if (link.endsWith("/"))
+            link = link.substring(0, link.length()-1);
+        return link;
+    }
+    private static String removeLeadingSlash(String link) {
+        if (link.startsWith("/"))
+            link = link.substring(1, link.length());
+        return link;
     }
     
 }
