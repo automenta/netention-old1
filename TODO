@@ -1,0 +1,30 @@
+NodePropertyPanel
+	--with expandable read-only preview of target Node
+
+PropertyValue -> HTML renderers
+
+Link Panel
+	--displays all "links" and "actions" relating to a specific node
+	--left aligned list?
+
+DetailEditPanel
+	--improve 'Send' functionality
+	--improve value prompt wizard
+
+
+Pattern w/ Default Values = Template
+
+Create Template from Detail (add as subclass of one or more of its existing parents)
+
+Improve "Import Craigslist" with checkboxes to select which categories and locations
+
+Add "Import RSS"
+	--Creates an RSS Detail
+	--Invokes 'Refresh RSS' on it
+
+Ontology statistics view: # of classes, # of instances, etc..
+
+Gnutella aggregation
+
+
+

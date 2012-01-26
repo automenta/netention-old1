@@ -22,4 +22,5 @@ public interface RODetail extends Node {
 
     public String getIconURL();
 
+    
 }

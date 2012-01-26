@@ -6,10 +6,7 @@
 package automenta.netention;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * a pattern associates with a weighted set of properties (by ID)
@@ -24,6 +21,8 @@ public class Pattern implements Serializable, Node {
     public final Set<String> parents = new HashSet();
     public final HashMap<String, Double> properties = new HashMap(); 
     private Date when;
+    private List<PropertyValue> defaultValues = new LinkedList();
+
 
     public Pattern(String id, String... superPatterns) {
         super();
@@ -65,8 +64,9 @@ public class Pattern implements Serializable, Node {
         return iconURL;
     }
 
-    public void setName(String name) {
+    public Pattern setName(String name) {
         this.name = name;
+        return this;
     }
 
     
@@ -88,5 +88,12 @@ public class Pattern implements Serializable, Node {
         return when;
     }
 
+    public List<PropertyValue> getDefaultValues() {
+        return defaultValues;
+    }
+
+    public void addDefaultValue(PropertyValue pv) {
+        defaultValues.add(pv);
+    }
     
 }

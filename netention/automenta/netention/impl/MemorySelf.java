@@ -199,11 +199,14 @@ public class MemorySelf implements Self, Serializable {
 
     public void getProperties(Pattern p, Collection<String> c) {     
         for (String s : p.properties.keySet()) {
-            c.add(s);
+            if (!c.contains(s))
+                c.add(s);
         }
         
         for (String pid : p.getParents()) {
-            getProperties(getPattern(pid), c);
+            Pattern xp = getPattern(pid);
+            if (xp!=null)
+                getProperties(xp, c);
         }
         
     }
@@ -218,7 +221,9 @@ public class MemorySelf implements Self, Serializable {
     
     public Map<Property, Double> getAvailableProperties(Detail d, String... patternID) {
         String[] lp = patternID;
-        if (lp.length == 0) lp = null;
+        if (lp!=null)
+            if (lp.length == 0)
+                    lp = null;
         if (lp == null) {
             lp = new String[d.getPatterns().size()];
             d.getPatterns().toArray(lp);            
@@ -338,6 +343,21 @@ public class MemorySelf implements Self, Serializable {
         }
         return s;
     }
+
+    @Override
+    public boolean isSuperPattern(final String possibleParent, final String possibleChild) {
+        final Pattern c = getPattern(possibleChild);
+        if (c!=null) {
+            for (final String a : c.getParents()) {
+                if (a.equals(possibleParent))
+                    return true;
+                if (isSuperPattern(possibleParent, a))
+                    return true;
+            }
+        }
+        return false;
+    }
+    
     
     public static List<Node> getDetailsByTime(Iterator<Node> iterateDetails, final boolean ascend) {
         List<Node> il = IteratorUtils.toList(iterateDetails);

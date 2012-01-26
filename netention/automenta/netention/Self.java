@@ -58,4 +58,6 @@ public interface Self {
 
     public Collection<String> getSubPatterns(String pid);
 
+    public boolean isSuperPattern(String possibleParent, String possibleChild);
+
 }

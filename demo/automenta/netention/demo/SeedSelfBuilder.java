@@ -22,7 +22,7 @@ public class SeedSelfBuilder {
     }
 
     public void build(MemorySelf s) {
-        Pattern thing = s.addPattern(new Pattern("Thing").setIconURL("media://tango32/categories/preferences-system.png").
+        Pattern thing = s.addPattern(new Pattern("http://www.w3.org/2002/07/owl#Thing").setName("Thing").setIconURL("media://tango32/categories/preferences-system.png").
                 setDescription(""));
         {
             s.addProperties(thing,
@@ -81,6 +81,9 @@ public class SeedSelfBuilder {
         {
             Pattern body = s.addPattern(new Pattern("Bodily"));
 
+            Pattern emotion;
+            s.addPattern(emotion = new Pattern("Emotion", body.id));
+            
             s.addPattern(new Pattern("Ingestion", body.id).setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
             {
                 s.addProperties("Ingestion",
@@ -161,7 +164,7 @@ public class SeedSelfBuilder {
                 }
                 sp.setCardinalityMax(-1);
 
-                s.addProperties(body.id, sp);
+                s.addProperties(emotion.id, sp);
             }
 
         }

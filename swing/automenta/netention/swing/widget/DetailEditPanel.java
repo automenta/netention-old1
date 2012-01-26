@@ -123,6 +123,7 @@ abstract public class DetailEditPanel extends JPanel {
         
         for (final Property p : self.getAvailableProperties(detail, null).keySet()) {
             JMenuItem j = new JMenuItem(p.getName());
+            j.setToolTipText(p.getID());
             j.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -238,7 +239,8 @@ abstract public class DetailEditPanel extends JPanel {
                     if (numItems > 0) {
                         j.addSeparator();
                     }
-                    JMenuItem remove = new JMenuItem("Remove " + p.getID());
+                    JMenuItem remove = new JMenuItem("Remove " + p.getName());
+                    remove.setToolTipText(p.getID());
                     remove.addActionListener(new ActionListener() {
 
                         @Override public void actionPerformed(ActionEvent e) {
@@ -298,25 +300,29 @@ abstract public class DetailEditPanel extends JPanel {
             final Pattern p = self.getPatterns().get(pid);
 
             JMenuItem ti = new JMenuItem(p.getName());
-            ti.setEnabled(!detail.getPatterns().contains(pid));
             ti.setIcon(Icons.getPatternIcon(p));
-            ti.addActionListener(new ActionListener() {
+            ti.setEnabled(willAcceptPattern(detail, pid));
+            ti.setToolTipText(p.getID());
+            if (ti.isEnabled()) {
+                ti.addActionListener(new ActionListener() {
 
-                @Override public void actionPerformed(ActionEvent e) {
-                    SwingUtilities.invokeLater(new Runnable() {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        SwingUtilities.invokeLater(new Runnable() {
 
-                        @Override public void run() {
-                            addPattern(p);
-                        }
-                    });
-                }
-            });
+                            @Override public void run() {
+                                addPattern(p);
+                            }
+                        });
+                    }
+                });
+            }
             
             Collection<String> children = self.getSubPatterns(pid);
             if (children.size() > 0) {
                 JMenu ji = new JMenu(p.getName());
                 ji.setIcon(Icons.getPatternIcon(p));
 
+                ti.setFont(ti.getFont().deriveFont(Font.BOLD));
                 ji.add(ti);
                 ji.addSeparator();
                 
@@ -375,6 +381,18 @@ abstract public class DetailEditPanel extends JPanel {
 //                    });
 //                    t.add(ti);
 //                }
+        }
+
+        private boolean willAcceptPattern(final Detail detail, final String pid) {
+            if (detail.getPatterns().contains(pid))
+                return false;
+            for (final String d : detail.getPatterns()) {
+                
+                //if pid is a superclass of d, return false
+                if (self.isSuperPattern(pid, d))
+                    return false;
+            }
+            return true;
         }
     }
 

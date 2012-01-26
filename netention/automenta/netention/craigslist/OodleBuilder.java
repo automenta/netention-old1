@@ -27,8 +27,11 @@ public class OodleBuilder {
     public void build(MemorySelf ms) throws Exception {
         //http://developer.oodle.com/files/xml/oodle_categories.xml
         Map<String,String> cat = new HashMap();
+
+        //URI uri = OodleBuilder.class.getResource("oodle_categories.xml").toURI();
+        File f = new File("schema/oodle_categories.xml");
         
-        BufferedReader br = new BufferedReader(new FileReader(new File(OodleBuilder.class.getResource("oodle_categories.xml").toURI())));
+        BufferedReader br = new BufferedReader(new FileReader(f));
         while (br.ready()) {
             String l = br.readLine();
             String[] p = l.split("\"");

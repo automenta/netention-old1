@@ -9,7 +9,6 @@ import automenta.netention.PropertyValue;
 public class NodeIs extends PropertyValue implements DefiniteValue<String> {
 
 	private String nodeID;
-	private String property;
 
 	public NodeIs() { 
 		super();

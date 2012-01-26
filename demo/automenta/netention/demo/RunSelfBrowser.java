@@ -7,6 +7,7 @@ package automenta.netention.demo;
 import automenta.netention.craigslist.OodleBuilder;
 import automenta.netention.ieml.IEMLBuilder;
 import automenta.netention.impl.MemorySelf;
+import automenta.netention.rdf.ImportOWL;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.util.SwingWindow;
 import java.util.logging.Level;
@@ -30,8 +31,14 @@ public class RunSelfBrowser implements Demo {
         } catch (Exception ex2) {
             ex2.printStackTrace();
         }
+        
         new IEMLBuilder().build(self);
 
+        ImportOWL.load("schema/SUMO.owl", self);
+        //ImportOWL.load("schema/foaf.owl", self);
+        //ImportOWL.load("schema/biography.owl", self);
+        //ImportOWL.load("schema/sweetAll.owl", self);
+        
         return self;
     }
 

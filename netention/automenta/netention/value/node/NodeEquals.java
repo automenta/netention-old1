@@ -1,9 +1,10 @@
 package automenta.netention.value.node;
 
+import automenta.netention.IndefiniteValue;
 import automenta.netention.PropertyValue;
 
 
-public class NodeEquals extends PropertyValue {
+public class NodeEquals extends PropertyValue implements IndefiniteValue {
 
 	private String id;
 

@@ -1,7 +1,5 @@
 package automenta.netention;
 
-import java.util.List;
-
 
 public interface Detail extends RODetail {
 
