@@ -8,12 +8,12 @@ Linker
     --fix linker to work with simple queries of craigslist data
 
 Link Panel
-    --displays all "links" and "actions" relating to a specific node
-    --left aligned list?
+    --enhance display ; add more information about the link
+    --allow navigation to link target (display in new window?)
 
 DetailEditPanel
 	--improve 'Send' functionality
-	--improve value prompt wizard
+	--improve prompt wizard
         --global font size adjust
         --fix bottom bar's buttons - they disappear if the window is too small. need scrollpane?
 
@@ -22,9 +22,10 @@ Pattern w/ Default Values = Template
 
 Create Template from Detail (add as subclass of one or more of its existing parents)
 
-Add "Import RSS"
-	--Creates an RSS Detail
+Add "RSS Channel" Pattern
+	--with action to refresh the RSS items
 	--Invokes 'Refresh RSS' on it
+        --add action to remove associated items (same for Craigslist channel)
 
 Ontology statistics view: # of classes, # of instances, etc..
 
@@ -50,3 +51,6 @@ Alphabetize Patterns Menu and Sub-menus
 OpenCalais / Zemanta Support
 
 Google Results
+
+Cache "Pattern Menu" in SelfBrowserPanel to avoid recreating it each time new detail is displayed
+    --may be useful in SelfBrowserPanel itself

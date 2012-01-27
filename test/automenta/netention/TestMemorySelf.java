@@ -64,7 +64,7 @@ public class TestMemorySelf extends TestCase {
 
         //test linker
         {
-            s.link(new DefaultHeuristicLinker());
+            s.link(new DefaultHeuristicLinker(s));
 //            SimpleDynamicDirectedGraph<Node, Link> g = s.getGraph();
 //            assertEquals(2, g.getNodes().size());
 //            assertEquals(1, g.getEdges().size());

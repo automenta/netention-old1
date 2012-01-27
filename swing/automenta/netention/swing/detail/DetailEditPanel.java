@@ -112,7 +112,7 @@ abstract public class DetailEditPanel extends JPanel {
 
     private int buildAvailablePropertiesMenu(JMenu b) {
         int count = 0;
-        for (final Property p : self.getAvailableProperties(detail, null).keySet()) {
+        for (final Property p : self.getAvailableProperties(detail).keySet()) {
             JMenuItem j = new JMenuItem(p.getName());
             j.setToolTipText(p.getID());
             j.addActionListener(new ActionListener() {
@@ -910,7 +910,7 @@ abstract public class DetailEditPanel extends JPanel {
     }
     
     public JComponent stylePropertyPanel(PropertyOptionPanel p) {
-        p.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+        p.setBorder(BorderFactory.createLoweredBevelBorder());
         return p;
     }
 
