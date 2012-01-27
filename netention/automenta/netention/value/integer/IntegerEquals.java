@@ -1,9 +1,10 @@
 package automenta.netention.value.integer;
 
+import automenta.netention.IndefiniteValue;
 import automenta.netention.PropertyValue;
 
 
-public class IntegerEquals extends PropertyValue {
+public class IntegerEquals extends PropertyValue  implements IndefiniteValue  {
 
 	private int value;
 

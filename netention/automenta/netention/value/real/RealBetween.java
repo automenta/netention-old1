@@ -1,9 +1,10 @@
 package automenta.netention.value.real;
 
+import automenta.netention.IndefiniteValue;
 import automenta.netention.PropertyValue;
 
 
-public class RealBetween extends PropertyValue {
+public class RealBetween extends PropertyValue  implements IndefiniteValue  {
 
 	private boolean inclusive;
 	private double min;

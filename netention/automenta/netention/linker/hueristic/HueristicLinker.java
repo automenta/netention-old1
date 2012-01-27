@@ -5,80 +5,87 @@ import automenta.netention.Link;
 import automenta.netention.Mode;
 import automenta.netention.Node;
 import automenta.netention.Self;
+import automenta.netention.graph.Pair;
 import automenta.netention.graph.ValueEdge;
-import java.util.HashSet;
-import java.util.Set;
 
 import automenta.netention.linker.Linker;
 import com.syncleus.dann.graph.BidirectedGraph;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.collections15.IteratorUtils;
 
 abstract public class HueristicLinker implements Linker {
 
-    private Set<Detail> nodes = new HashSet();
+    private Self self;
 
-    public HueristicLinker() {
+    public HueristicLinker(Self self) {
         super();
+        this.self = self;
     }
 
-    public BidirectedGraph<Node,ValueEdge<Node, Link>> run(Self self) {
+    public BidirectedGraph<Node, ValueEdge<Node, Link>> run() {
         return run(IteratorUtils.toList(self.iterateNodes()));
     }
-    
-    public MutableBidirectedGraph<Node,ValueEdge<Node, Link>> run(Collection<Node> details) {
-        MutableBidirectedGraph<Node,ValueEdge<Node, Link>> graph = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>();
-        for (Node nd : details) {
-            for (Node nn : details) {
+
+    public MutableBidirectedGraph<Node, ValueEdge<Node, Link>> run(final Collection<Node> details) {
+        final MutableBidirectedGraph<Node, ValueEdge<Node, Link>> graph = new MutableDirectedAdjacencyGraph<Node, ValueEdge<Node, Link>>();
+        
+        final Map<Pair<Node>, Link> similarity = new HashMap();
+        
+        for (final Node nd : details) {
+            for (final Node nn : details) {
                 if (nd == nn) {
                     continue;
                 }
 
-                if (!(nd instanceof Detail) && (nn instanceof Detail))
+                if (!(nd instanceof Detail) && (nn instanceof Detail)) {
                     continue;
+                }
 
-                Detail d = (Detail)nd;
-                Detail n = (Detail)nn;
+                final Detail d = (Detail) nd;
+                final Detail n = (Detail) nn;
+
+                Link simLink = similarity.get(new Pair<Node>(d, n));
+                                
+                if (simLink == null)  {
+                    simLink = compareSimilarity(d, n);
+                    if (simLink!=null) {
+                        similarity.put(new Pair<Node>(d, n), simLink);
+                        similarity.put(new Pair<Node>(n, d), simLink);
+                    }
+                }
 
                 if (d.getMode() == Mode.Real) {
                     if (n.getMode() == Mode.Imaginary) {
 
-                        Link link = compareSatisfying(n, d);
+                        Link link = compareSatisfying(d, n);
                         if (link != null) {
-                            //if (link.getStrength() > getStrengthThreshold()) {
-                                graph.add(d);
-                                graph.add(n);
-                                graph.add(new ValueEdge(link, d, n));
-                            //}
+                            addEdge(graph, new ValueEdge<Node, Link>(link, d, n));
                         }
                     }
                 }
+
             }
         }
         return graph;
 
     }
 
-//    private double getStrengthThreshold() {
-//        return 0.0;
-//    }
-
+    public void addEdge(MutableBidirectedGraph<Node, ValueEdge<Node, Link>> graph, ValueEdge<Node, Link> e) {
+        graph.add(e.getSourceNode());
+        graph.add(e.getDestinationNode());
+        graph.add(e);
+    }
+    
     abstract public Link compareSatisfying(Detail real, Detail imaginary);
+    
+    //Transitive function
+    abstract public Link compareSimilarity(Detail a, Detail b);
 
-    protected void addNode(Detail n) {
-        synchronized (nodes) {
-            nodes.add(n);
-        }
+    public Self getSelf() {
+        return self;
     }
-
-    protected boolean containsNode(Detail n) {
-        boolean b;
-        synchronized (nodes) {
-            b = nodes.contains(n);
-        }
-        return b;
-    }
-
 }

@@ -5,13 +5,14 @@
 
 package automenta.netention.value.bool;
 
+import automenta.netention.IndefiniteValue;
 import automenta.netention.PropertyValue;
 
 /**
  *
  * @author seh
  */
-public class BoolEquals extends PropertyValue {
+public class BoolEquals extends PropertyValue  implements IndefiniteValue  {
     private boolean value;
 
     public BoolEquals() {

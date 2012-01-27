@@ -1,9 +1,10 @@
 package automenta.netention.value.real;
 
+import automenta.netention.IndefiniteValue;
 import automenta.netention.PropertyValue;
 
 
-public class RealEquals extends PropertyValue {
+public class RealEquals extends PropertyValue  implements IndefiniteValue {
 
 	protected double value;
 

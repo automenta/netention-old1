@@ -176,12 +176,13 @@ public class AddDefaultPatterns {
                     new StringProp("url", "URL"));
         }
 
-        s.addPattern(new Pattern("message").setIconURL("media://tango32/apps/internet-mail.png")).setName("Message");
+        
+        s.addPattern(new Pattern(NMessage.MessagePattern).setIconURL("media://tango32/apps/internet-mail.png")).setName("Message");
         {
             s.addProperty(new StringProp(NMessage.to, "Recipient"), "message");
             s.addProperty(new StringProp(NMessage.from, "Author"), "message");
-            s.addProperty(new StringProp(NMessage.content, "Content"), "message");
             s.addProperty(new StringProp(NMessage.subject, "Subject"), "message");
+            s.addProperty(new StringProp(NMessage.content, "Content").setRich(true), "message");
         }
 
 

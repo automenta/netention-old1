@@ -37,10 +37,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -76,7 +73,7 @@ abstract public class DetailEditPanel extends JPanel {
         private final Node source;
         private final Node target;
 
-        private LinkPanel(ValueEdge<Node, Link> edge) {
+        private LinkPanel(ValueEdge<Node, Link> edge, double groupMin, double groupMax) {
             super(new FlowLayout(FlowLayout.LEFT));
 
             //Pair<Node> endpoints = self.getGraph().getEndpoints(edge);
@@ -89,7 +86,8 @@ abstract public class DetailEditPanel extends JPanel {
             if (link instanceof HasStrength) {
                 double strength = ((HasStrength) link).getStrength();
                 JProgressBar jp = new JProgressBar(0, 1000);
-                jp.setValue((int) (strength * 1000.0));
+                jp.setValue((int) ((strength / groupMax) * 1000.0));
+                jp.setToolTipText(Double.toString(strength));
                 add(jp);
             }
 
@@ -101,13 +99,11 @@ abstract public class DetailEditPanel extends JPanel {
             }
             add(la);
 
-//            JLabel s = new JLabel(((int) (link.getStrength() * 100.0)) + "%");
-//            add(s);
 
         }
 
         public Node getOther() {
-            if (source.equals(detail.getID())) {
+            if (source.getID().equals(detail.getID())) {
                 return target;
             }
             return source;
@@ -581,6 +577,7 @@ abstract public class DetailEditPanel extends JPanel {
                         public void run() {
                             updateButton.setEnabled(false);
                             saveToDetail();
+                            refreshLinks();
                             refreshBottomBar();
                             new Thread(new Runnable() {
 
@@ -684,7 +681,6 @@ abstract public class DetailEditPanel extends JPanel {
     public synchronized void setDetail(Detail d) {
         this.detail = d;
         sentences.removeAll();
-        links.removeAll();
 
         menuBar.refresh();
 
@@ -836,33 +832,6 @@ abstract public class DetailEditPanel extends JPanel {
             }
         }
 
-
-
-        self.updateLinks(new Runnable() {
-
-            @Override
-            public void run() {
-                Set<ValueEdge<Node, Link>> ae = self.getGraph().getAdjacentEdges(detail);
-                GridBagConstraints gc = new GridBagConstraints();
-                gc.gridy = 0;
-
-                if (ae != null) {
-                    for (ValueEdge<Node, Link> e : ae) {
-                        gc.gridy++;
-                        links.add(new LinkPanel(e), gc);
-                    }
-                }
-
-                gc.gridy++;
-                gc.fill = gc.VERTICAL;
-                gc.weighty = 1.0;
-                links.add(Box.createVerticalBox(), gc);
-
-                updateUI();
-            }
-        }, detail);
-
-
         gc.gridy++;
         gc.fill = gc.VERTICAL;
         gc.weighty = 1.0;
@@ -870,6 +839,8 @@ abstract public class DetailEditPanel extends JPanel {
         //}
 
         //headerIcon.setIcon(Icons.getDetailIcon(self, d));
+
+        refreshLinks();
 
         refreshBottomBar();
 
@@ -879,6 +850,65 @@ abstract public class DetailEditPanel extends JPanel {
 
     }
 
+    public void refreshLinks() {
+        links.removeAll();
+        self.updateLinks(new Runnable() {
+
+            @Override
+            public void run() {
+                Set<ValueEdge<Node, Link>> ae = self.getGraph().getAdjacentEdges(detail);
+                GridBagConstraints gc = new GridBagConstraints();
+                gc.gridy = 0;
+                
+                if (ae != null) {
+                    double minStrength = 0;
+                    double maxStrength = 0;
+                    int cc = 0;
+                    for (ValueEdge<Node, Link> e : ae) {
+                        Link l = e.getValue();
+                        if (l instanceof HasStrength) {
+                            double s = ((HasStrength)l).getStrength();
+                           
+                            if ((cc == 0) || (s > maxStrength)) maxStrength = s;
+                            if ((cc == 0) || (s < minStrength)) minStrength = s;
+                            
+                            cc++;
+                        }
+                                                    
+                    }
+                    
+                    //sort
+                    List<ValueEdge<Node, Link>> be = new ArrayList(ae);
+                    Collections.sort(be, new Comparator<ValueEdge<Node, Link>>() {
+                        @Override public int compare(final ValueEdge<Node, Link> a, final ValueEdge<Node, Link> b) {
+                            double as = 0;
+                            double bs = 0;
+                            if (a.getValue() instanceof HasStrength)
+                                as = ((HasStrength)a.getValue()).getStrength();
+                            if (b.getValue() instanceof HasStrength)
+                                bs = ((HasStrength)b.getValue()).getStrength();
+                            return Double.compare(bs, as);
+                        }                        
+                    });
+                    
+                    for (ValueEdge<Node, Link> e : be) {
+                        gc.gridy++;
+                        gc.anchor = GridBagConstraints.WEST;
+                        links.add(new LinkPanel(e, minStrength, maxStrength), gc);
+                    }
+                }
+
+                gc.gridy++;
+                gc.fill = gc.VERTICAL;
+                gc.weighty = 1.0;
+                links.add(Box.createVerticalBox(), gc);
+
+                links.updateUI();
+            }
+        }, detail);
+        
+    }
+    
     public JComponent stylePropertyPanel(PropertyOptionPanel p) {
         p.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         return p;

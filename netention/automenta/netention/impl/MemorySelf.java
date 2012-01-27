@@ -313,9 +313,9 @@ public class MemorySelf implements Self, Serializable {
     }
     
 
-    @Override public void updateLinks(Runnable whenFinished, Detail... details) {
+    @Override public synchronized void updateLinks(Runnable whenFinished, Detail... details) {
         clearGraph();
-        link(new DefaultHeuristicLinker());
+        link(new DefaultHeuristicLinker(this));
         
         if (whenFinished!=null)
             whenFinished.run();

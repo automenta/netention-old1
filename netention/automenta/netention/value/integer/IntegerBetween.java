@@ -1,10 +1,11 @@
 package automenta.netention.value.integer;
 
+import automenta.netention.IndefiniteValue;
 import automenta.netention.PropertyValue;
 
 
 
-public class IntegerBetween extends PropertyValue {
+public class IntegerBetween extends PropertyValue  implements IndefiniteValue {
 
 	private int min;
 	private int max;

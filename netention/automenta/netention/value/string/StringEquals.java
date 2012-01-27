@@ -1,8 +1,9 @@
 package automenta.netention.value.string;
 
+import automenta.netention.IndefiniteValue;
 import automenta.netention.PropertyValue;
 
-public class StringEquals extends PropertyValue {
+public class StringEquals extends PropertyValue implements IndefiniteValue {
 
 	private String string;
 

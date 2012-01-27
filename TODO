@@ -1,26 +1,26 @@
 NodePropertyPanel
 	--expandable embedded read-only preview of target Node
 
-StringPropertyValue 
-        --display big text area for long and HTML strings
 
 PropertyValue -> HTML renderers
 
+Linker
+    --fix linker to work with simple queries of craigslist data
+
 Link Panel
-	--displays all "links" and "actions" relating to a specific node
-	--left aligned list?
+    --displays all "links" and "actions" relating to a specific node
+    --left aligned list?
 
 DetailEditPanel
 	--improve 'Send' functionality
 	--improve value prompt wizard
         --global font size adjust
+        --fix bottom bar's buttons - they disappear if the window is too small. need scrollpane?
 
 
 Pattern w/ Default Values = Template
 
 Create Template from Detail (add as subclass of one or more of its existing parents)
-
-Improve "Import Craigslist" with checkboxes to select which categories and locations
 
 Add "Import RSS"
 	--Creates an RSS Detail
@@ -29,6 +29,11 @@ Add "Import RSS"
 Ontology statistics view: # of classes, # of instances, etc..
 
 Gnutella aggregation
+
+"When" View
+    --add filter (which can be re-used for other views)
+        keyword
+        list of all unique patterns and checkbox to indicate their visibility
 
 "Where" View
 
@@ -41,3 +46,7 @@ Global Threadpool for Long-running Asynchronous Tasks
 FindPatternPanel - Pattern and Property Search Dialog
 
 Alphabetize Patterns Menu and Sub-menus
+
+OpenCalais / Zemanta Support
+
+Google Results

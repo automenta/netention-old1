@@ -6,19 +6,16 @@ import automenta.netention.Mode;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
 import automenta.netention.Value;
-import automenta.netention.value.string.StringContains;
-import automenta.netention.value.string.StringEquals;
-import automenta.netention.value.string.StringIs;
-import automenta.netention.value.string.StringNotContains;
+import automenta.netention.value.string.*;
 import java.awt.event.*;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
+import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 
 public class StringPropertyPanel extends PropertyOptionPanel {
 
-    final static int stringCols = 16;
+    final static int stringCols = 40;
+    int richRows = 4;
+    int richCols = 80;
 
     public StringPropertyPanel(Self s, Detail d, PropertyValue v, boolean editable) {
         super(s, d, v, editable);
@@ -26,11 +23,13 @@ public class StringPropertyPanel extends PropertyOptionPanel {
         if (getMode() != Mode.Imaginary) {
 
             addOption(new PropertyOption<StringIs>("is") {
-
+                private JComboBox rta;
+                //private JTextArea tta; //TODO use JTextPane or HTMLEditor
+                private HTMLEditorPane hta;
+                
                 //private SuggestBox isBox;
                 //private RichTextArea rta;
                 //JTextField rta = new JTextField();
-                JComboBox rta = getComboBox();
 
                 @Override public boolean accepts(Value v) {
                     return v.getClass().equals(StringIs.class);
@@ -41,7 +40,10 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                 }
 
                 @Override public StringIs widgetToValue(StringIs r) {
-                    r.setValue(rta.getSelectedItem().toString());
+                    if (rta!=null)
+                        r.setValue(rta.getSelectedItem().toString());
+                    else if (hta!=null)
+                        r.setValue(hta.getText());
                     
                     //				if (rta !=null) {
                     //					r.setValue( rta.getText() );
@@ -57,31 +59,27 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                     setReal();
 
                     JPanel p = new TransparentFlowPanel();
-                    rta.setSelectedItem(value.getString());                            
-                    p.add(rta);
+                    
+                    if (((StringProp)getProperty()).isRich()) {
+//                        tta = new JTextArea(value.getString(), richRows, richCols);
+//                        tta.setLineWrap(true);
+//                        tta.setWrapStyleWord(true);
+//                        p.add(tta);
+                        
+                        hta = new HTMLEditorPane();
 
-                    addSuggestButtons(p, rta);
+                        hta.setText(value.getString());
+                        
+                        p.add(hta);
+                        
+                    }
+                    else {
+                        rta = getComboBox();                    
+                        rta.setSelectedItem(value.getString());                            
+                        p.add(rta);
+                        addSuggestButtons(p, rta);
+                    }
 
-                    //StringVar sv = (StringVar) getPropertyData();
-
-                    //				if (sv.isRich()) {
-                    //					rta = new RichTextArea();
-                    //					rta.setText(value.getValue());
-                    //					p.add(rta);
-                    //				}
-                    //				else {
-                    //					MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
-                    //
-                    //					if (sv.getExampleValues()!=null) {
-                    //						oracle.setDefaultSuggestionsFromText(sv.getExampleValues());
-                    //					}
-                    //
-                    //					isBox = new SuggestBox(oracle);
-                    //
-                    //					isBox.setText(value.getValue());
-                    //					p.add(isBox);
-
-                    //				}
 
                     return p;
                 }

@@ -5,13 +5,14 @@
 
 package automenta.netention.value.set;
 
+import automenta.netention.IndefiniteValue;
 import automenta.netention.PropertyValue;
 
 /**
  *
  * @author seh
  */
-public class SelectionEquals extends PropertyValue {
+public class SelectionEquals extends PropertyValue  implements IndefiniteValue  {
 
 	private String string;
 
