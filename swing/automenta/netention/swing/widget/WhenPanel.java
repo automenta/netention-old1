@@ -142,6 +142,8 @@ public class WhenPanel extends JPanel implements IndexView {
         tree.setRootVisible(false);
 
         add(tree, BorderLayout.CENTER);
+        
+        updateUI();
     }
 
     public JTree getTree() {

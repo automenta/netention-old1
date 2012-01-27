@@ -13,14 +13,25 @@ import javax.swing.JLabel;
  */
 public class JScaledLabel extends JLabel {
 
+    float originalFontSize;
+    
     public JScaledLabel(String s, float fontScale) {
         this(s, fontScale, 0);
     }
     
     public JScaledLabel(String s, float fontScale, int attrs) {
         super(s);
-        setFont(getFont().deriveFont((float)(getFont().getSize() * fontScale)).deriveFont(attrs));
+        originalFontSize = (float)getFont().getSize();
+        
+        setFont(getFont().deriveFont(attrs));
+        scaleFontSize(fontScale);
+        
     }
+    
+    public void scaleFontSize(float newScale) {
+        setFont(getFont().deriveFont(originalFontSize * newScale));
+    }
+    
 
 
 }

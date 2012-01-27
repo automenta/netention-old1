@@ -163,6 +163,7 @@ public class AddDefaultPatterns {
 
                 }
                 sp.setCardinalityMax(-1);
+                sp.setCardinalityMin(1);
 
                 s.addProperties(emotion.id, sp);
             }

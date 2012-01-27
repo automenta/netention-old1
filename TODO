@@ -13,7 +13,7 @@ Link Panel
 DetailEditPanel
 	--improve 'Send' functionality
 	--improve value prompt wizard
-        --font size select
+        --global font size adjust
 
 
 Pattern w/ Default Values = Template
@@ -34,3 +34,10 @@ Gnutella aggregation
 
 OWL Import
     --Ignore inheriting from "Thing" to set classes as top level patterns
+
+Global Threadpool for Long-running Asynchronous Tasks
+    --in Self?
+
+FindPatternPanel - Pattern and Property Search Dialog
+
+Alphabetize Patterns Menu and Sub-menus

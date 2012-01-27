@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.netention.swing.widget;
+package automenta.netention.swing.detail;
 
 import automenta.netention.Detail;
 import automenta.netention.Link;
@@ -18,8 +18,9 @@ import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.*;
 import automenta.netention.swing.util.JHyperLink;
+import automenta.netention.swing.util.JScaledTextArea;
 import automenta.netention.swing.util.SwingWindow;
-import automenta.netention.swing.widget.email.MessageEditPanel;
+import automenta.netention.swing.widget.CompletePropertiesPanel;
 import automenta.netention.value.bool.BoolProp;
 import automenta.netention.value.integer.IntProp;
 import automenta.netention.value.node.NodeProp;
@@ -44,15 +45,14 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 /**
- * Displays a detail and its links for view/edit
- *      Set Mode (real, imaginary)
- *      Add/Remove Patterns
- *      Add new Properties
- *      Remove existing Properties
+ * Displays a detail and its links for view/edit Set Mode (real, imaginary)
+ * Add/Remove Patterns Add new Properties Remove existing Properties
+ *
  * @author seh
  */
 abstract public class DetailEditPanel extends JPanel {
 
+    List<DetailAction> actions = new SwingDetailActions().getActions();
     public final JPanel sentences;
     private Detail detail;
     private final Self self;
@@ -61,7 +61,7 @@ abstract public class DetailEditPanel extends JPanel {
     private final DetailMenuBar menuBar;
     private List<PropertyOptionPanel> optionPanels = new LinkedList();
     long updateDelayMS = 650;
-    private JTextArea nameEdit;
+    private JScaledTextArea nameEdit;
     //Tooltips
     final static String itsATooltip = "Selects Patterns for this Detail";
     final static String realOrImaginary = "Real details describe things that actually exist. \nImaginary details describe hypothetical or desired things.";
@@ -69,7 +69,6 @@ abstract public class DetailEditPanel extends JPanel {
     public final JPanel bottomBar;
     private final JPanel links;
     private final JSplitPane mainSplit;
-
 
     protected class LinkPanel extends JPanel {
 
@@ -115,25 +114,30 @@ abstract public class DetailEditPanel extends JPanel {
         }
     }
 
-    private void buildAvailablePropertiesMenu(JMenu b) {
-        
+    private int buildAvailablePropertiesMenu(JMenu b) {
+        int count = 0;
         for (final Property p : self.getAvailableProperties(detail, null).keySet()) {
             JMenuItem j = new JMenuItem(p.getName());
             j.setToolTipText(p.getID());
             j.addActionListener(new ActionListener() {
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     SwingUtilities.invokeLater(new Runnable() {
-                        @Override public void run() {
+
+                        @Override
+                        public void run() {
                             addProperty(p);
-                        }                        
+                        }
                     });
-                }                
+                }
             });
             b.add(j);
+            count++;
         }
+        return count;
     }
-    
+
     protected class DetailMenuBar extends JMenuBar {
 
         float menuFontScale = 1.25f;
@@ -149,7 +153,8 @@ abstract public class DetailEditPanel extends JPanel {
             realButton.setToolTipText("Real");
             realButton.addActionListener(new ActionListener() {
 
-                @Override public void actionPerformed(ActionEvent e) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
                     if (detail.getMode() == Mode.Real) {
                         realButton.setSelected(true);   //undo the change since its already the same
                     } else if (!switchMode(Mode.Real)) {
@@ -157,17 +162,18 @@ abstract public class DetailEditPanel extends JPanel {
                     }
                 }
             });
-            
-            
+
+
             final JToggleButton imaginaryButton = new JToggleButton(" ? ");
-            
+
             realButton.setSelected(detail.getMode() == Mode.Real);
             imaginaryButton.setSelected(detail.getMode() == Mode.Imaginary);
 
             imaginaryButton.setToolTipText("Imaginary");
             imaginaryButton.addActionListener(new ActionListener() {
 
-                @Override public void actionPerformed(ActionEvent e) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
                     if (detail.getMode() == Mode.Imaginary) {
                         imaginaryButton.setSelected(true); //undo the change since its already the same
                     } else if (!switchMode(Mode.Imaginary)) {
@@ -178,48 +184,65 @@ abstract public class DetailEditPanel extends JPanel {
 
             realButton.setEnabled(isEditable());
             imaginaryButton.setEnabled(isEditable());
-            
+
 
             addButton(realButton);
             addButton(imaginaryButton);
 
 
             if (isEditable()) {
-                JMenu t = new JMenu(/*"It's a..."*/);
+                JMenu t = new JMenu(/*
+                         * "It's a..."
+                         */);
                 t.setIcon(Icons.getIcon("addPattern"));
                 t.setToolTipText(itsATooltip);
+
+                {
+                    JMenuItem findItem = new JMenuItem("Find...");
+                    findItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            new SwingWindow(new FindPatternPanel(), 500, 300).setTitle("Find Patterns or Properties...");
+                        }                        
+                    });
+                    t.add(findItem);
+
+                    t.addSeparator();
+                }
                 
                 buildPatternMenu(t);
                 add(t);
             }
-            
 
-            
+
+
 //            if (detail.getPatterns().size()!=0)
 //                add(new JSeparator(JSeparator.VERTICAL));
 
             for (String pid : detail.getPatterns()) {
                 final Pattern p = self.getPattern(pid);
-                
+
                 JMenu j = new JMenu(p.getName());
                 j.setIcon(Icons.getPatternIcon(p));
                 int numItems = 0, numExists = 0;
-                
+
                 Collection<String> cp = self.getProperties(p);
                 int totalItems = cp.size();
 
                 if (isEditable()) {
-                    
+
                     for (String propid : cp) {
                         final Property prop = self.getProperty(propid);
                         if (self.acceptsAnotherProperty(detail, propid)) {
                             JMenuItem ji = new JMenuItem(prop.getName());
                             ji.addActionListener(new ActionListener() {
 
-                                @Override public void actionPerformed(ActionEvent e) {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
                                     SwingUtilities.invokeLater(new Runnable() {
 
-                                        @Override public void run() {
+                                        @Override
+                                        public void run() {
                                             addProperty(prop);
                                         }
                                     });
@@ -235,11 +258,12 @@ abstract public class DetailEditPanel extends JPanel {
                     if (numItems > 0) {
                         j.addSeparator();
                     }
-                    JMenuItem remove = new JMenuItem("Remove " + p.getName());
+                    JMenuItem remove = new JMenuItem("Remove " + p.getName() + "...");
                     remove.setToolTipText(p.getID());
                     remove.addActionListener(new ActionListener() {
 
-                        @Override public void actionPerformed(ActionEvent e) {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
                             String extraMessage = "";
                             if (detail.getPatterns().size() == 1) {
                                 extraMessage = "\nThis will remove all properties since there will be no patterns remaining.";
@@ -248,7 +272,8 @@ abstract public class DetailEditPanel extends JPanel {
                             if (JOptionPane.showConfirmDialog(DetailEditPanel.this, "Remove " + p.getID() + " from this detail?" + extraMessage, "Remove", JOptionPane.OK_CANCEL_OPTION) == 0) {
                                 SwingUtilities.invokeLater(new Runnable() {
 
-                                    @Override public void run() {
+                                    @Override
+                                    public void run() {
                                         removePattern(p);
                                     }
                                 });
@@ -291,7 +316,6 @@ abstract public class DetailEditPanel extends JPanel {
             add(c);
         }
 
-        
         public void buildPatternMenu(final JMenu t, final String pid, final JMenu parent) {
             final Pattern p = self.getPattern(pid);
 
@@ -302,17 +326,19 @@ abstract public class DetailEditPanel extends JPanel {
             if (ti.isEnabled()) {
                 ti.addActionListener(new ActionListener() {
 
-                    @Override public void actionPerformed(ActionEvent e) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
                         SwingUtilities.invokeLater(new Runnable() {
 
-                            @Override public void run() {
+                            @Override
+                            public void run() {
                                 addPattern(p);
                             }
                         });
                     }
                 });
             }
-            
+
             Collection<String> children = self.getSubPatterns(pid);
             if (children.size() > 0) {
                 JMenu ji = new JMenu(p.getName());
@@ -321,46 +347,44 @@ abstract public class DetailEditPanel extends JPanel {
                 ti.setFont(ti.getFont().deriveFont(Font.BOLD));
                 ji.add(ti);
                 ji.addSeparator();
-                
-                if (parent!=null) {
+
+                if (parent != null) {
                     parent.add(ji);
-                }
-                else {
+                } else {
                     t.add(ji);
                 }
-                
+
                 for (String s : children) {
                     buildPatternMenu(t, s, ji);
                 }
-            }
-            else {
-                if (parent!=null) {
+            } else {
+                if (parent != null) {
                     parent.add(ti);
-                }
-                else {
+                } else {
                     t.add(ti);
                 }
-                
+
             }
-            
-            
-            
-            
+
+
+
+
         }
-        
+
         public void buildPatternMenu(JMenu t) {
-                
+
             List<String> roots = new LinkedList();
             for (String sp : self.getPatterns()) {
                 Pattern p = self.getPattern(sp);
-                if (p.getParents().isEmpty())
+                if (p.getParents().isEmpty()) {
                     roots.add(p.id);
+                }
             }
-            
+
             for (String pid : roots) {
                 buildPatternMenu(t, pid, null);
             }
-            
+
 //                for (String pid : self.getAvailablePatterns(detail)) {
 //                    final Pattern p = self.getPatterns().get(pid);
 //                    JMenuItem ti = new JMenuItem(p.getID());
@@ -381,13 +405,15 @@ abstract public class DetailEditPanel extends JPanel {
         }
 
         private boolean willAcceptPattern(final Detail detail, final String pid) {
-            if (detail.getPatterns().contains(pid))
+            if (detail.getPatterns().contains(pid)) {
                 return false;
+            }
             for (final String d : detail.getPatterns()) {
-                
+
                 //if pid is a superclass of d, return false
-                if (self.isSuperPattern(pid, d))
+                if (self.isSuperPattern(pid, d)) {
                     return false;
+                }
             }
             return true;
         }
@@ -401,7 +427,8 @@ abstract public class DetailEditPanel extends JPanel {
         super(new GridBagLayout());
 
         this.self = s;
-        
+        this.detail = d;
+
         setEditable(editable);
 
         int b = 4;
@@ -452,12 +479,11 @@ abstract public class DetailEditPanel extends JPanel {
 
         sentences = new JPanel(new GridBagLayout());
         links = new JPanel(new GridBagLayout());
-        
+
         mainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         mainSplit.setTopComponent(new JScrollPane(sentences));
         mainSplit.setBottomComponent(new JScrollPane(links));
-        mainSplit.setDividerLocation(0.5f);
-        
+
         add(mainSplit, gc);
 
         {
@@ -465,75 +491,6 @@ abstract public class DetailEditPanel extends JPanel {
 
 
 
-            if (isDeletable()) {
-                final JButton deleteButton = new JButton("Delete");
-                deleteButton.addActionListener(new ActionListener() {
-
-                    @Override public void actionPerformed(ActionEvent e) {
-                        if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Delete this detail?", "Delete", JOptionPane.YES_NO_OPTION)) {
-                            SwingUtilities.invokeLater(new Runnable() {
-
-                                @Override public void run() {
-                                    deleteThis();
-                                }
-                            });
-                        }
-                    }
-                });
-                bottomBar.add(deleteButton);
-            }
-
-            {
-                final JButton sendButton = new JButton("Send");
-                sendButton.addActionListener(new ActionListener() {
-
-                    @Override public void actionPerformed(ActionEvent e) {
-                        SwingUtilities.invokeLater(new Runnable() {
-
-                            @Override public void run() {                                
-                                final String html = detailToHTML(detail);
-                                new SwingWindow(new MessageEditPanel(detail.getName(), html), 800, 600);
-                            }
-                        });
-                    }
-                });
-
-                bottomBar.add(sendButton);
-            }
-            
-            if (isEditable()) {
-                final JButton updateButton = new JButton("Update");
-                updateButton.addActionListener(new ActionListener() {
-
-                    @Override public void actionPerformed(ActionEvent e) {
-                        SwingUtilities.invokeLater(new Runnable() {
-
-                            @Override public void run() {
-                                updateButton.setEnabled(false);
-                                updateDetail();
-                                new Thread(new Runnable() {
-
-                                    @Override public void run() {
-                                        try {
-                                            Thread.sleep(updateDelayMS);
-                                        } catch (InterruptedException ex) {
-                                        }
-                                        updateButton.setEnabled(true);
-                                    }
-                                }).start();
-
-                            }
-                        });
-                    }
-                });
-
-                bottomBar.add(updateButton);
-            } else {
-                final JButton refreshButton = new JButton("Refresh");
-                bottomBar.add(refreshButton);
-            }
-        
-        
 
             GridBagConstraints gcx = new GridBagConstraints();
             gcx.weightx = 1.0;
@@ -547,8 +504,109 @@ abstract public class DetailEditPanel extends JPanel {
 
         }
 
+
+        refreshUI();
+
+    }
+
+    public synchronized void refreshBottomBar() {
+
+        bottomBar.removeAll();
+
+        if (isDeletable()) {
+            final JButton deleteButton = new JButton("Delete");
+            deleteButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Delete this detail?", "Delete", JOptionPane.YES_NO_OPTION)) {
+                        SwingUtilities.invokeLater(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                deleteThis();
+                            }
+                        });
+                    }
+                }
+            });
+            bottomBar.add(deleteButton);
+        }
+
+        for (final DetailAction da : actions) {
+            if (da.applies(self, detail)) {
+                final JButton b = new JButton(da.getLabel());
+                b.setToolTipText(da.getDescription());
+                b.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        SwingUtilities.invokeLater(new Runnable() {
+
+                            @Override public void run() {
+                                //TODO use a global threadpool
+                                
+                                Runnable rr = new Runnable() {
+
+                                    @Override public void run() {
+                                        da.getRun(self, detail).run();
+                                        refreshUI();   
+                                        otherDetailsChanged();
+                                    }
+                                    
+                                };
+                                
+                                new Thread(rr).start();
+                                
+                            }
+                        });
+                    }
+                });
+
+                bottomBar.add(b);
+
+
+            }
+        }
+
+        if (isEditable()) {
+            final JButton updateButton = new JButton("Update");
+            updateButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            updateButton.setEnabled(false);
+                            saveToDetail();
+                            refreshBottomBar();
+                            new Thread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    try {
+                                        Thread.sleep(updateDelayMS);
+                                    } catch (InterruptedException ex) {
+                                    }
+                                    updateButton.setEnabled(true);
+                                }
+                            }).start();
+
+                        }
+                    });
+                }
+            });
+
+            bottomBar.add(updateButton);
+        } else {
+            final JButton refreshButton = new JButton("Refresh");
+            bottomBar.add(refreshButton);
+        }
         
-        setDetail(d);
+        bottomBar.updateUI();
+
 
     }
 
@@ -561,7 +619,9 @@ abstract public class DetailEditPanel extends JPanel {
     }
 
     /**
-     * returns false if the switch was cancelled.  if no switch was necessary, it returns true.
+     * returns false if the switch was cancelled. if no switch was necessary, it
+     * returns true.
+     *
      * @param nextMode
      * @return
      */
@@ -576,13 +636,13 @@ abstract public class DetailEditPanel extends JPanel {
                 if (detail.getPatterns().size() > 0) {
                     if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Change mode to Thought?  This will remove all properties.", "Change Mode", JOptionPane.YES_NO_OPTION)) {
                         detail.getValues().clear();
-                        updateDetail();
+                        saveToDetail();
                         refreshUI();
                         return true;
                     }
                 } else {
                     detail.getValues().clear();
-                    updateDetail();
+                    saveToDetail();
                     patternChanged();
                     refreshUI();
                     return true;
@@ -603,7 +663,7 @@ abstract public class DetailEditPanel extends JPanel {
                         addProperty(p);
                     }
 
-                    updateDetail();
+                    saveToDetail();
 
                     refreshUI();
                     return true;
@@ -618,10 +678,10 @@ abstract public class DetailEditPanel extends JPanel {
     }
 
     protected void setDetailName(String s) {
-        detail.setName(s);
+        detail.setName(s.trim());
     }
-    
-    public void setDetail(Detail d) {
+
+    public synchronized void setDetail(Detail d) {
         this.detail = d;
         sentences.removeAll();
         links.removeAll();
@@ -633,72 +693,76 @@ abstract public class DetailEditPanel extends JPanel {
         //if (d.getPatterns().size() == 0) {
         //} else {
 
-            sentences.setAlignmentY(TOP_ALIGNMENT);
+        sentences.setAlignmentY(TOP_ALIGNMENT);
 
-            gc.weightx = 1.0;
-            gc.weighty = 0.0;
-            gc.anchor = gc.NORTHWEST;
-            gc.gridx = 1;
-            gc.gridy = 1;
-            gc.ipadx = 4;
-            gc.ipady = 4;
-            gc.insets = new Insets(4, 4, 4, 4);
+        gc.weightx = 1.0;
+        gc.weighty = 0.0;
+        gc.anchor = gc.NORTHWEST;
+        gc.gridx = 1;
+        gc.gridy = 1;
+        gc.ipadx = 4;
+        gc.ipady = 4;
+        gc.insets = new Insets(4, 4, 4, 4);
 
-            optionPanels.clear();
+        optionPanels.clear();
 
-            gc.fill = gc.HORIZONTAL;
-            
-            nameEdit = new JTextArea(d.getName());
-            nameEdit.setEditable(isEditable());
-            nameEdit.setOpaque(isEditable());
-            nameEdit.addKeyListener(new KeyListener() {
+        gc.fill = gc.HORIZONTAL;
 
-                @Override
-                public void keyTyped(KeyEvent e) {
-                    setDetailName(nameEdit.getText());
-                }
+        nameEdit = new JScaledTextArea(d.getName(), 1.5f);
 
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    setDetailName(nameEdit.getText());
-                }
+        nameEdit.setEditable(isEditable());
+        nameEdit.setOpaque(isEditable());
+        nameEdit.addKeyListener(new KeyListener() {
 
-                @Override
-                public void keyReleased(KeyEvent e) {
-                    setDetailName(nameEdit.getText());
-                }
+            @Override
+            public void keyTyped(KeyEvent e) {
+                setDetailName(nameEdit.getText());
+            }
 
-            });
-            //nameEdit.setWrapStyleWord(true);
-            //nameEdit.setLineWrap(true);
-            //nameEdit.setFont(nameEdit.getFont().deriveFont(nameEdit.getFont().getSize2D() * 1.7f));
-            sentences.add(nameEdit, gc);
+            @Override
+            public void keyPressed(KeyEvent e) {
+                setDetailName(nameEdit.getText());
+            }
 
-            gc.fill = gc.NONE;
+            @Override
+            public void keyReleased(KeyEvent e) {
+                setDetailName(nameEdit.getText());
+            }
+        });
+        
+        JPanel subjectWrapper = new JPanel(new BorderLayout());
+        //subjectWrapper.add(new JScrollPane(nameEdit, JScrollPane.VERTICAL_SCROLLBAR, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+        subjectWrapper.add(nameEdit, BorderLayout.CENTER);
+        int w = 8;        
+        subjectWrapper.setBorder(BorderFactory.createEmptyBorder(w, w, w, w));
+        
+        sentences.add(subjectWrapper, gc);
 
-            for (final PropertyValue pv : detail.getValues()) {
-                gc.gridy++;
-                JComponent nextLine = getLinePanel(pv);
-                if (nextLine instanceof PropertyOptionPanel) {
-                    PropertyOptionPanel pop = (PropertyOptionPanel) nextLine;
-                    
-                    final Property property = self.getProperty(pv.getProperty());
+        gc.fill = gc.NONE;
 
-                    if (isEditable()) {
-                        JPopupMenu popup = new JPopupMenu();
-                        JMenuItem removeItem = new JMenuItem("Remove");
-                        
-                        int minCard = property.getCardinalityMin();
-                        boolean required = false;
-                        if (minCard > 0) {
-                            if (MemorySelf.getPropertyCount(d, property.getID()) - 1 < minCard) {
-                                required = true;
-                            }
+        for (final PropertyValue pv : detail.getValues()) {
+            gc.gridy++;
+            JComponent nextLine = getLinePanel(pv);
+            if (nextLine instanceof PropertyOptionPanel) {
+                PropertyOptionPanel pop = (PropertyOptionPanel) nextLine;
+
+                final Property property = self.getProperty(pv.getProperty());
+
+                if (isEditable()) {
+                    JPopupMenu popup = new JPopupMenu();
+                    JMenuItem removeItem = new JMenuItem("Remove");
+
+                    int minCard = property.getCardinalityMin();
+                    boolean required = false;
+                    if (minCard > 0) {
+                        if (MemorySelf.getPropertyCount(d, property.getID()) - 1 < minCard) {
+                            required = true;
                         }
-                            
-                        if (required) {
-                            removeItem.setEnabled(false);
-                            
+                    }
+
+                    if (required) {
+                        removeItem.setEnabled(false);
+
 //                            removeItem.setText("Remove all " + property.getName() + " properties...");
 //                            removeItem.addActionListener(new ActionListener() {
 //
@@ -707,102 +771,109 @@ abstract public class DetailEditPanel extends JPanel {
 //                                    removePattern(property.get);
 //                                }
 //                            });
-                        }
-                        else {
-                            removeItem.addActionListener(new ActionListener() {
+                    } else {
+                        removeItem.addActionListener(new ActionListener() {
 
-                                @Override public void actionPerformed(ActionEvent e) {
-                                    if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Remove " + property.getName() + "?", "Remove", JOptionPane.YES_NO_OPTION)) {
-                                        removeProperty(pv);
-                                    }
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Remove " + property.getName() + "?", "Remove", JOptionPane.YES_NO_OPTION)) {
+                                    removeProperty(pv);
                                 }
-                            });
-                        }
-                        
-                        popup.add(removeItem);
-
-                        pop.setPopup(popup);
+                            }
+                        });
                     }
-                    optionPanels.add(pop);
-                    nextLine = stylePropertyPanel(pop);
-                }
 
-                sentences.add(nextLine, gc);
+                    popup.add(removeItem);
+
+                    pop.setPopup(popup);
+                }
+                optionPanels.add(pop);
+                nextLine = stylePropertyPanel(pop);
             }
 
-            if (isEditable()) {
+            sentences.add(nextLine, gc);
+        }
 
-                JPanel addPropertyPanel = new JPanel(new BorderLayout());
-                {
-                    JMenuBar bb = new JMenuBar();
-                    
-                    JMenu b = new JMenu();
+        if (isEditable()) {
+
+            {
+                JMenuBar bb = new JMenuBar();
+
+                JMenu b = new JMenu();
+
+                if (buildAvailablePropertiesMenu(b) > 0) {
                     b.setIcon(Icons.getIcon("addPattern"));
                     b.setToolTipText("Add Property");
-                    buildAvailablePropertiesMenu(b);
-                    
                     bb.add(b);
 
                     JButton c = new JButton("...");
                     c.setToolTipText("Complete All");
                     c.addActionListener(new ActionListener() {
+
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             JDialog jd = new JDialog();
                             jd.setSize(600, 400);
                             jd.getContentPane().add(new CompletePropertiesPanel(self, detail, new Runnable() {
+
                                 @Override
                                 public void run() {
-                                    setDetail(detail);
                                     refreshUI();
-                                }                                
+                                }
                             }));
                             jd.setVisible(true);
-                        }                        
-                    });
-                    
-                    bb.add(c);
-                    
-                    addPropertyPanel.add(bb);
-                }
-                gc.gridy++;
-                sentences.add(addPropertyPanel, gc);
-            }
-            
-
-            
-            self.updateLinks(new Runnable() {
-
-                @Override
-                public void run() {
-                    Set<ValueEdge<Node, Link>> ae = self.getGraph().getAdjacentEdges(detail);
-                    GridBagConstraints gc = new GridBagConstraints();
-                    gc.gridy = 0;
-
-                    if (ae != null) {
-                        for (ValueEdge<Node, Link> e : ae) {
-                            gc.gridy++;
-                            links.add(new LinkPanel(e), gc);
                         }
-                    }
-                    
+                    });
+                    bb.add(c);
+
+                    JPanel addPropertyPanel = new JPanel(new BorderLayout());
+                    addPropertyPanel.add(bb);
                     gc.gridy++;
-                    gc.fill = gc.VERTICAL;
-                    gc.weighty = 1.0;
-                    links.add(Box.createVerticalBox(), gc);
-
-                    updateUI();
+                    sentences.add(addPropertyPanel, gc);
                 }
-            }, detail);
 
 
-            gc.gridy++;
-            gc.fill = gc.VERTICAL;
-            gc.weighty = 1.0;
-            sentences.add(Box.createVerticalBox(), gc);
+            }
+        }
+
+
+
+        self.updateLinks(new Runnable() {
+
+            @Override
+            public void run() {
+                Set<ValueEdge<Node, Link>> ae = self.getGraph().getAdjacentEdges(detail);
+                GridBagConstraints gc = new GridBagConstraints();
+                gc.gridy = 0;
+
+                if (ae != null) {
+                    for (ValueEdge<Node, Link> e : ae) {
+                        gc.gridy++;
+                        links.add(new LinkPanel(e), gc);
+                    }
+                }
+
+                gc.gridy++;
+                gc.fill = gc.VERTICAL;
+                gc.weighty = 1.0;
+                links.add(Box.createVerticalBox(), gc);
+
+                updateUI();
+            }
+        }, detail);
+
+
+        gc.gridy++;
+        gc.fill = gc.VERTICAL;
+        gc.weighty = 1.0;
+        sentences.add(Box.createVerticalBox(), gc);
         //}
 
         //headerIcon.setIcon(Icons.getDetailIcon(self, d));
+
+        refreshBottomBar();
+
+        mainSplit.setDividerLocation(0.5f);
 
         updateUI();
 
@@ -812,6 +883,7 @@ abstract public class DetailEditPanel extends JPanel {
         p.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         return p;
     }
+
     public static JComponent getLinePanel(Self self, Detail detail, PropertyValue pv, boolean editable) {
         Property prop = self.getProperty(pv.getProperty());
         if (prop instanceof IntProp) {
@@ -832,7 +904,7 @@ abstract public class DetailEditPanel extends JPanel {
         return new JLabel(pv.toString());
 
     }
-    
+
     protected JComponent getLinePanel(PropertyValue pv) {
         return getLinePanel(self, detail, pv, editable);
     }
@@ -848,13 +920,13 @@ abstract public class DetailEditPanel extends JPanel {
     protected void chooseInitialMode() {
         Object[] options = {"Imaginary", "Real"};
         int n = JOptionPane.showOptionDialog(this,
-            "Is this detail Real or Imaginary?\n\n" + realOrImaginary,
-            "Select Mode",
-            JOptionPane.YES_NO_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            options,
-            options[1]);
+                "Is this detail Real or Imaginary?\n\n" + realOrImaginary,
+                "Select Mode",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[1]);
         if (n == 1) {
             detail.setMode(Mode.Real);
         } else {
@@ -865,24 +937,24 @@ abstract public class DetailEditPanel extends JPanel {
     synchronized protected void addPattern(Pattern p) {
 
         if (!detail.getPatterns().contains(p.getID())) {
-            updateDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
-            
+            saveToDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
+
             detail.getPatterns().add(p.getID());
-            
+
             for (String x : self.getProperties(p)) {
                 Property px = self.getProperty(x);
                 for (int i = 0; i < self.moreValuesRequired(detail, x); i++) {
                     addProperty(px);
                 }
             }
-            
+
             patternChanged();
             refreshUI();
         }
     }
 
     synchronized protected void removePattern(Pattern p) {
-        updateDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
+        saveToDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
 
         detail.getPatterns().remove(p.getID());
         //TODO remove properties?
@@ -906,27 +978,18 @@ abstract public class DetailEditPanel extends JPanel {
         setDetail(detail);
     }
 
-    /** writes contents of UI widgets to the detail */
-    protected synchronized void updateDetail() {        
+    /**
+     * writes contents of UI widgets to the detail
+     */
+    protected synchronized void saveToDetail() {
         for (PropertyOptionPanel pop : optionPanels) {
             pop.widgetToValue();
         }
 
     }
+    abstract protected void otherDetailsChanged();
 
     abstract protected void deleteThis();
 
     abstract protected void patternChanged();
-    
-    public static String detailToHTML(Detail d) {
-        StringBuffer x = new StringBuffer("<html>");
-        x.append("<h1>" + d.getName() + "</h1><br/>");
-        x.append("<b>" + d.getPatterns() + "</b><br/>");
-        for (PropertyValue pv : d.getValues()) {
-            x.append(pv.toString() + "<br/>");
-        }
-        x.append("<br/><pre>" + MemorySelf.toJSON(d) + "</pre>");
-        x.append("</html>");
-        return x.toString();
-    }
 }

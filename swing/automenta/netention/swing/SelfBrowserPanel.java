@@ -14,7 +14,7 @@ import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.survive.Environment;
 import automenta.netention.swing.util.ButtonTabPanel;
-import automenta.netention.swing.widget.DetailEditPanel;
+import automenta.netention.swing.detail.DetailEditPanel;
 import automenta.netention.swing.widget.NewPropertyPanel;
 import automenta.netention.swing.widget.PatternEditPanel;
 import automenta.netention.swing.widget.IndexView;
@@ -173,21 +173,8 @@ public class SelfBrowserPanel extends JPanel {
 
             newMenu.addSeparator();
             
-            JMenuItem cl = new JMenuItem("Craigslist...");
-            cl.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    for (NMessage m : new CraigslistChannel("pittsburgh", "eng").getMessages()) {
-                        self.addDetail(m);
-                    }
-                    refreshView();
-                    updateUI();
-                }                
-            });
-            newMenu.add(cl);
             
             
-            newMenu.addSeparator();
 
             JMenuItem newPattern = new JMenuItem("Pattern...");
             newPattern.addActionListener(new ActionListener() {
@@ -288,6 +275,10 @@ public class SelfBrowserPanel extends JPanel {
                 final Detail d = (Detail) o;
                 tabContent = new DetailEditPanel(self, d, true) {
 
+                    @Override protected void otherDetailsChanged() {
+                        refreshView();
+                    }
+                    
                     @Override protected void patternChanged() {
                         refreshView();
                         indexView.selectObject(d);
@@ -318,6 +309,12 @@ public class SelfBrowserPanel extends JPanel {
         //TODO un-hack this
         if (indexView instanceof WhatTreePanel) {
             final WhatTreePanel w = ((WhatTreePanel) indexView);
+            
+            TreeSelectionListener[] listeners = w.getTree().getTreeSelectionListeners();
+            for (TreeSelectionListener t : listeners) {
+                w.getTree().removeTreeSelectionListener(t);
+            }
+
             w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
 
                 @Override public void valueChanged(TreeSelectionEvent e) {
@@ -329,6 +326,12 @@ public class SelfBrowserPanel extends JPanel {
         }
         else if (indexView instanceof WhenPanel) {
             final WhenPanel w = ((WhenPanel) indexView);
+            
+            TreeSelectionListener[] listeners = w.getTree().getTreeSelectionListeners();
+            for (TreeSelectionListener t : listeners) {
+                w.getTree().removeTreeSelectionListener(t);
+            }
+            
             w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
 
                 @Override public void valueChanged(TreeSelectionEvent e) {

@@ -48,6 +48,10 @@ public class MemoryDetail implements Detail {
         }
     }
 
+    public void setID(String id) {
+        this.id = id;
+    }        
+
     @Override public void setName(String newName) {
         this.name = newName;
     }

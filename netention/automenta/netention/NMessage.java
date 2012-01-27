@@ -33,8 +33,8 @@ public class NMessage extends MemoryDetail /*implements Serializable*/ {
     public NMessage() {
     }
     
-    public NMessage(String id, String from, String to, Date when, String subject, String content) {
-        super(id, Mode.Real, "message" );
+    public NMessage(String name, String from, String to, Date when, String subject, String content) {
+        super(name, Mode.Real, "message" );
         
         setFrom(from);
         setTo(to);

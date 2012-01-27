@@ -47,12 +47,18 @@ public class SelectionPropertyPanel extends PropertyOptionPanel {
 
                     rta.removeAllItems();
 
+                    int offset = 0;
+                    if (((SelectionProp)getProperty()).allowBlank()) {
+                        offset = 1;
+                        rta.addItem("");
+                    }
+
                     JPanel p = new TransparentFlowPanel();
                     int i = 0;
                     for (String s : prop.getOptions()) {
                         rta.addItem(s);
                         if (value.getValue().equals(s))
-                            rta.setSelectedIndex(i);
+                            rta.setSelectedIndex(i+offset);
                         i++;
                     }
                     
@@ -86,12 +92,18 @@ public class SelectionPropertyPanel extends PropertyOptionPanel {
 
                     rta.removeAllItems();
                     
+                    int offset = 0;
+                    if (((SelectionProp)getProperty()).allowBlank()) {
+                        offset = 1;
+                        rta.addItem("");
+                    }
+                    
                     JPanel p = new TransparentFlowPanel();
                     int i = 0;
                     for (String s : prop.getOptions()) {
                         rta.addItem(s);
                         if (value.getValue().equals(s))
-                            rta.setSelectedIndex(i);
+                            rta.setSelectedIndex(i+offset);
                         i++;
                     }
                     p.add(rta);

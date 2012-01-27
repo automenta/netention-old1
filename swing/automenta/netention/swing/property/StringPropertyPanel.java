@@ -10,8 +10,7 @@ import automenta.netention.value.string.StringContains;
 import automenta.netention.value.string.StringEquals;
 import automenta.netention.value.string.StringIs;
 import automenta.netention.value.string.StringNotContains;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -196,16 +195,36 @@ public class StringPropertyPanel extends PropertyOptionPanel {
     }
     
     public void addSuggestButtons(JPanel p, final JComboBox jp) {
-        JButton remember = new JButton("->");
+        
+        final JButton remember = new JButton("->");
         remember.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 getProperty().addSuggestion(jp.getSelectedItem().toString());
             }            
         });
-        remember.setToolTipText("Remember");
+        remember.setToolTipText("Remember " + jp.getSelectedItem());
+        
+        remember.setVisible(false);
+
         p.add(remember);
         
+
+        jp.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (jp.getSelectedItem()!=null) {
+                    if (!getProperty().getSuggestions().contains(jp.getSelectedItem())) {
+                        remember.setToolTipText("Remember " + jp.getSelectedItem());
+                        remember.setVisible(true);
+                        return;
+                    }
+                }
+                remember.setVisible(false);
+            }
+            
+        });
         
         
     }

@@ -4,17 +4,14 @@
  */
 package automenta.netention.swing.widget.email;
 
+import automenta.netention.swing.util.JScaledTextArea;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 
 /**
@@ -24,16 +21,22 @@ import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 public class MessageEditPanel extends JPanel {
 
     private final HTMLEditorPane editor;
-    private final JTextField subject;
+    private final JTextArea subject;
 
     public MessageEditPanel(String subj, String html) {
         super(new BorderLayout());
 
         int defaultSubjChars = 64;
 
-        subject = new JTextField();
-        subject.setText(subj);
-        add(subject, BorderLayout.NORTH);
+        subject = new JScaledTextArea(subj, 2.0f);
+        subject.setToolTipText("Subject");
+        
+        JPanel subjectWrapper = new JPanel(new BorderLayout());
+        subjectWrapper.add(subject, BorderLayout.CENTER);
+        int w = 8;        
+        subjectWrapper.setBorder(BorderFactory.createEmptyBorder(w, w, w, w));
+        
+        add(subjectWrapper, BorderLayout.NORTH);
 
         editor = new HTMLEditorPane();
 

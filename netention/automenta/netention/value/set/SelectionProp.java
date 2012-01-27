@@ -37,10 +37,11 @@ public class SelectionProp extends Property {
 
     @Override
     public PropertyValue newDefaultValue(Mode mode) {
-        if (mode == Mode.Imaginary) {
-            return new SelectionEquals(options.get(getDefaultOption()));
+        String x = allowBlank() ? "" : options.get(getDefaultOption());
+        if (mode == Mode.Imaginary) {            
+            return new SelectionEquals(x);
         } else {
-            return new SelectionIs(options.get(getDefaultOption()));
+            return new SelectionIs(x);
         }
     }
 
@@ -50,5 +51,9 @@ public class SelectionProp extends Property {
 
     public List<String> getOptions() {
         return options;
+    }
+    
+    public boolean allowBlank() {
+        return true; //TODO make this parameterizable
     }
 }

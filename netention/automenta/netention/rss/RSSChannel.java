@@ -67,6 +67,7 @@ public class RSSChannel implements Channel {
                   }
                   
                   NMessage n = new NMessage(item.getLink(), item.getAuthor(), url, date, item.getTitle(), item.getDescription());
+                  n.setID(getMessageIDPrefix() + item.getLink());
                   n.addTag(item.getCategory());
                   if (image!=null) {
                       String u = image.getUrl();
@@ -79,8 +80,8 @@ public class RSSChannel implements Channel {
             }
 
 
-        }catch(Exception e){
-            e.printStackTrace();;
+        } catch(Exception e) {
+            e.printStackTrace();
         }
         
         return m;
@@ -93,6 +94,10 @@ public class RSSChannel implements Channel {
     @Override
     public String toString() {
         return "RSSChannel(" + url + ")";
+    }
+
+    public String getMessageIDPrefix() {
+        return "rss";
     }
 
     

@@ -14,7 +14,7 @@ import automenta.netention.demo.AddDefaultPatterns;
 import automenta.netention.ieml.AddIEMLPatterns;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.util.SwingWindow;
-import automenta.netention.swing.widget.DetailEditPanel;
+import automenta.netention.swing.detail.DetailEditPanel;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import java.awt.BorderLayout;
@@ -63,6 +63,12 @@ public class RunDetailEdit implements Demo {
             @Override
             protected void patternChanged() {
             }
+
+            @Override
+            protected void otherDetailsChanged() {
+            }
+            
+            
         };
         views.setBackground(Color.WHITE);
         views.sentences.setOpaque(false);
@@ -78,8 +84,13 @@ public class RunDetailEdit implements Demo {
             }
 
             @Override
-            protected synchronized void updateDetail() {
-                super.updateDetail();
+            protected void otherDetailsChanged() {
+            }
+
+            
+            @Override
+            protected synchronized void saveToDetail() {
+                super.saveToDetail();
                 ep.refresh();
                 views.setDetail(getDetail(ep.getJSON()));
             }
