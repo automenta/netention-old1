@@ -50,8 +50,9 @@ abstract public class PropertyOptionPanel extends JPanel {
 
         typeLabel = new JLabel("");
 
-        setValue(value);
-        setToolTipText(getProperty().getDescription());
+        setValue(value);   
+        if (getProperty()!=null)
+            setToolTipText(getProperty().getDescription());
 
     }
 
@@ -59,57 +60,66 @@ abstract public class PropertyOptionPanel extends JPanel {
         options.add(po);
     }
 
+    protected void addTypeSelect() {
+    
+    
+    }
     protected void refresh() {
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.gridx = 1;
-        gc.gridy = 1;
-        gc.weightx = 0.0;
 
 
         //super.initPropertyPanel();
         removeAll();
 
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 1;
+        gc.gridy = 1;
+        gc.weightx = 0.0;
+
         //add(new JLabel(property.getName()));
-        if (editable) {
-            nameButton = new JHyperLink(property.getName(), "");
-            add(nameButton, gc);
-        } else {
-            add(new JScaledLabel(property.getName() + " ", 1.0f), gc);
-        }
-
-        gc.gridx++;
-
-        typeSelect = new JComboBox();
-        for (PropertyOption po : options) {
-            typeSelect.addItem(po.getName());
-        }
-        typeSelect.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int x = typeSelect.getSelectedIndex();
-
-                PropertyOption po = options.get(x);
-                setCurrentOption(po);
-
-                if (!po.accepts(getValue())) {
-                    setValue(po.newDefaultValue());
-                }
-
-                JPanel p = po.newEditPanel(value);
-
-                editPanel.removeAll();
-                editPanel.add(p);
-
-                updateUI();
+        if (showsLabel()) {
+            if (editable) {
+                nameButton = new JHyperLink(property.getName(), "");
+                add(nameButton, gc);
+            } else {
+                add(new JScaledLabel(property.getName() + " ", 1.0f), gc);
             }
-        });
+            gc.gridx++;
+        }
+        
 
-        add(typeSelect, gc);
-        gc.gridx++;
+        if (showsTypeSelect()) {
+            typeSelect = new JComboBox();
+            for (PropertyOption po : options) {
+                typeSelect.addItem(po.getName());
+            }
+            typeSelect.addActionListener(new ActionListener() {
 
-        add(typeLabel, gc);
-        gc.gridx++;
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int x = typeSelect.getSelectedIndex();
+
+                    PropertyOption po = options.get(x);
+                    setCurrentOption(po);
+
+                    if (!po.accepts(getValue())) {
+                        setValue(po.newDefaultValue());
+                    }
+
+                    JPanel p = po.newEditPanel(value);
+
+                    editPanel.removeAll();
+                    editPanel.add(p);
+
+                    updateUI();
+                }
+            });
+
+            add(typeSelect, gc);
+            gc.gridx++;
+
+            add(typeLabel, gc);
+            gc.gridx++;
+        }
 
         editPanel = new JPanel(new GridLayout(1, 1));
         editPanel.setOpaque(false);
@@ -117,12 +127,14 @@ abstract public class PropertyOptionPanel extends JPanel {
         gc.weightx = 1.0;
         gc.fill = gc.HORIZONTAL;
         add(editPanel, gc);
-
+        
         valueToWidget();
 
         updateUI();
 
     }
+    
+    
 
     public Mode getMode() {
         return getDetail().getMode();
@@ -149,30 +161,38 @@ abstract public class PropertyOptionPanel extends JPanel {
         if (value == null) {
             return;
         }
+        
+        if (typeSelect!=null) {
 
-        if (options.size() >= 2) {
-            typeSelect.setVisible(true);
-            typeLabel.setVisible(false);
-        } else {
-            typeSelect.setVisible(false);
-            typeLabel.setVisible(true);
-        }
-
-        for (int i = 0; i < options.size(); i++) {
-            PropertyOption po = options.get(i);
-            if (po.accepts(value)) {
-
-                typeSelect.setSelectedIndex(i);
-                typeLabel.setText(typeSelect.getSelectedItem().toString());
-
-                setCurrentOption(po);
-
-                JPanel p = po.newEditPanel(value);
-                editPanel.removeAll();
-                editPanel.add(p);
-
-                return;
+            if (options.size() >= 2) {
+                typeSelect.setVisible(true);
+                typeLabel.setVisible(false);
+            } else {
+                typeSelect.setVisible(false);
+                typeLabel.setVisible(true);
             }
+
+            for (int i = 0; i < options.size(); i++) {
+                PropertyOption po = options.get(i);
+                if (po.accepts(value)) {
+
+                    typeSelect.setSelectedIndex(i);
+                    typeLabel.setText(typeSelect.getSelectedItem().toString());
+
+                    setCurrentOption(po);
+
+                    JPanel p = po.newEditPanel(value);
+                    editPanel.removeAll();
+                    editPanel.add(p);
+
+                    return;
+                }
+            }
+        }
+        else {
+            JPanel p = getCurrentOption().newEditPanel(value);
+            editPanel.removeAll();
+            editPanel.add(p);
         }
 
         updateUI();
@@ -180,7 +200,11 @@ abstract public class PropertyOptionPanel extends JPanel {
         //System.out.println("unknown option for: " + value);
     }
 
-    private void setCurrentOption(PropertyOption po) {
+    public PropertyOption getCurrentOption() {
+        return currentOption;
+    }
+    
+    protected void setCurrentOption(PropertyOption po) {
         this.currentOption = po;
     }
 
@@ -251,6 +275,13 @@ abstract public class PropertyOptionPanel extends JPanel {
     public Self getSelf() {
         return self;
     }
+
+    public boolean showsTypeSelect() {
+        return true;
+    }
     
+    public boolean showsLabel() {
+        return true;
+    }
     
 }

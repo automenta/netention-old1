@@ -1,6 +1,9 @@
+Comment PropertyValue's 
+    --Arbitrary HTML
+    --Attach Image / Sound
+
 NodePropertyPanel
 	--expandable embedded read-only preview of target Node
-
 
 PropertyValue -> HTML renderers
 
@@ -19,8 +22,7 @@ DetailEditPanel
 
 
 Pattern w/ Default Values = Template
-
-Create Template from Detail (add as subclass of one or more of its existing parents)
+    Create Template from Detail (add as subclass of one or more of its existing parents)    
 
 Add "RSS Channel" Pattern
 	--with action to refresh the RSS items
@@ -48,9 +50,36 @@ FindPatternPanel - Pattern and Property Search Dialog
 
 Alphabetize Patterns Menu and Sub-menus
 
-OpenCalais / Zemanta Support
-
-Google Results
 
 Cache "Pattern Menu" in SelfBrowserPanel to avoid recreating it each time new detail is displayed
     --may be useful in SelfBrowserPanel itself
+
+Hotkeys
+    --Detail editor "Update" button
+
+XML Schema Import
+
+Load/Save "Blobs"
+
+Dynamic creation of properties during detail editing
+
+Fix content area from becoming too wide, it sticks once its stretched
+
+Limit title lengths in JComboBox's because they can be extremely wide
+
+Detail Annotations (Actions that provide more data)
+
+    YaCy P2P Search Engine Support (Results = Links)
+    
+    Gnutella Search (Results = Links)
+
+    OpenCalais / Zemanta Support
+
+    Google Results
+
+RSS Channel
+    Fix Item Date Parsing 
+
+Multiselect / Node Stack Buffer ?
+    Provides all operations common to them (apply to all)
+    Provides all operations involving one or more of them

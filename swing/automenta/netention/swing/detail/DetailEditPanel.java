@@ -21,6 +21,7 @@ import automenta.netention.swing.util.JHyperLink;
 import automenta.netention.swing.util.JScaledTextArea;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.CompletePropertiesPanel;
+import automenta.netention.value.Comment;
 import automenta.netention.value.bool.BoolProp;
 import automenta.netention.value.integer.IntProp;
 import automenta.netention.value.node.NodeProp;
@@ -527,7 +528,7 @@ abstract public class DetailEditPanel extends JPanel {
                 }
             });
             bottomBar.add(deleteButton);
-        }
+        } 
 
         for (final DetailAction da : actions) {
             if (da.applies(self, detail)) {
@@ -748,11 +749,13 @@ abstract public class DetailEditPanel extends JPanel {
                     JPopupMenu popup = new JPopupMenu();
                     JMenuItem removeItem = new JMenuItem("Remove");
 
-                    int minCard = property.getCardinalityMin();
                     boolean required = false;
-                    if (minCard > 0) {
-                        if (MemorySelf.getPropertyCount(d, property.getID()) - 1 < minCard) {
-                            required = true;
+                    if (property!=null) {
+                        int minCard = property.getCardinalityMin();
+                        if (minCard > 0) {
+                            if (MemorySelf.getPropertyCount(d, property.getID()) - 1 < minCard) {
+                                required = true;
+                            }
                         }
                     }
 
@@ -822,12 +825,21 @@ abstract public class DetailEditPanel extends JPanel {
                     });
                     bb.add(c);
 
-                    JPanel addPropertyPanel = new JPanel(new BorderLayout());
-                    addPropertyPanel.add(bb);
-                    gc.gridy++;
-                    sentences.add(addPropertyPanel, gc);
                 }
 
+                JButton cm = new JButton("Abc");
+                cm.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        addComment();
+                    }                    
+                });
+                bb.add(cm);
+                
+                JPanel addPropertyPanel = new JPanel(new BorderLayout());
+                addPropertyPanel.add(bb);
+                gc.gridy++;
+                sentences.add(addPropertyPanel, gc);
 
             }
         }
@@ -915,6 +927,10 @@ abstract public class DetailEditPanel extends JPanel {
     }
 
     public static JComponent getLinePanel(Self self, Detail detail, PropertyValue pv, boolean editable) {
+        if (pv instanceof Comment) {
+            return new CommentPanel(self, detail, (Comment)pv, editable);
+        }
+        
         Property prop = self.getProperty(pv.getProperty());
         if (prop instanceof IntProp) {
             //Int must be tested before Real because it is a subclass of it
@@ -989,6 +1005,11 @@ abstract public class DetailEditPanel extends JPanel {
         detail.getPatterns().remove(p.getID());
         //TODO remove properties?
         patternChanged();
+        refreshUI();
+    }
+    synchronized protected void addComment() {
+        Comment c = new Comment();
+        detail.getValues().add(c);
         refreshUI();
     }
 
