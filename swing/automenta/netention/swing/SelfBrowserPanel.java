@@ -13,19 +13,16 @@ import automenta.netention.impl.MemorySelf;
 import automenta.netention.survive.Environment;
 import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.detail.DetailEditPanel;
+import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.NewPropertyPanel;
 import automenta.netention.swing.widget.PatternEditPanel;
 import automenta.netention.swing.widget.IndexView;
 import automenta.netention.swing.widget.Map2DPanel;
-import automenta.netention.swing.widget.WhatTreePanel;
 import automenta.netention.swing.widget.ItemTreePanel;
 import automenta.netention.swing.widget.net.GnutellaStatusBar;
 import automenta.netention.swing.widget.survive.DefineSurvivalPanel;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.Date;
 import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
@@ -41,9 +38,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
 /**
@@ -204,10 +198,25 @@ public class SelfBrowserPanel extends JPanel {
         netMenu.setIcon(Icons.getIcon("network"));
         netMenu.setToolTipText("Network");
         {
-            JMenuItem load = new JMenuItem("Import...");
-            netMenu.add(load);
-            JMenuItem save = new JMenuItem("Export...");
-            netMenu.add(save);
+            JMenuItem load = new JMenuItem("Load/Save JSON");
+            load.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    SwingWindow w = new SwingWindow(new LoadSaveJSON(self), 500, 400);
+                    w.addWindowListener(new WindowAdapter() {
+
+                        @Override
+                        public void windowClosing(WindowEvent e) {
+                            refreshView();
+                        }
+                        
+                    });
+                }
+                
+            });
+            
+            netMenu.add(load);            
 
         }
 
@@ -306,27 +315,6 @@ public class SelfBrowserPanel extends JPanel {
     protected void refreshView() {
         indexView.refresh();
 
-        //TODO un-hack this
-        if (indexView instanceof WhatTreePanel) {
-            final WhatTreePanel w = ((WhatTreePanel) indexView);
-            
-            TreeSelectionListener[] listeners = w.getTree().getTreeSelectionListeners();
-            for (TreeSelectionListener t : listeners) {
-                w.getTree().removeTreeSelectionListener(t);
-            }
-
-            w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
-
-                @Override public void valueChanged(TreeSelectionEvent e) {
-                    removeTabs();
-                    DefaultMutableTreeNode selected = (DefaultMutableTreeNode) w.getTree().getSelectionPath().getLastPathComponent();
-                    addTab(selected.getUserObject());
-                }
-            });
-        }
-        else if (indexView instanceof ItemTreePanel) {
-            final ItemTreePanel w = ((ItemTreePanel) indexView);
-        }
     }
 
     public void newProperty() {

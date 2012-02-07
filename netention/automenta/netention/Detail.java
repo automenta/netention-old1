@@ -105,4 +105,6 @@ public interface Detail extends RODetail {
 //		return count;
 //	}
 
+    public void mergeFrom(Detail d);
+
 }

@@ -159,6 +159,12 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
         removeAll();
 
         treeModel = getModel();
+        if (treeModel instanceof WhenTreeModel) {
+            ((WhenTreeModel)treeModel).refresh();
+        }
+        else if (treeModel instanceof TypeTreeModel) {
+            ((TypeTreeModel)treeModel).refresh();
+        }
         tree = new JTree(treeModel);
 
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer() {

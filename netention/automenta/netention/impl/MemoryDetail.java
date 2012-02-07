@@ -109,7 +109,9 @@ public class MemoryDetail implements Detail {
 //    }
     
     public boolean addPattern(String patternID) {
-        return getPatterns().add(patternID);
+        if (!getPatterns().contains(patternID))
+            return getPatterns().add(patternID);
+        return false;
     }
     public boolean removePattern(String patternID) {
         return getPatterns().remove(patternID);
@@ -161,6 +163,17 @@ public class MemoryDetail implements Detail {
         
         values.removeAll(toRemove);
     }
+
+    @Override
+    public void mergeFrom(Detail d) {
+        for (String p : d.getPatterns())
+            addPattern(p);
+        
+        for (PropertyValue v : d.getValues()) {
+            addValue(v.getProperty(), v);
+        }
+    }
+
     
 
 }

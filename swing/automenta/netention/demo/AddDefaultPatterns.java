@@ -214,6 +214,11 @@ public class AddDefaultPatterns {
         MemoryDetail d2 = new MemoryDetail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");
         MemoryDetail d3 = new MemoryDetail("What is Netention?", Mode.Real, "message");
         {
+            d1.setID("default1");
+            d11.setID("default2");
+            d2.setID("default3");
+            d3.setID("default4");
+
             d1.addValue("numWheels", new IntegerIs(4));
             d1.addValue("manufacturer", new StringIs("myself"));
             d1.addValue("wheelRadius", new RealIs(16.0));
