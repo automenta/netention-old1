@@ -2,7 +2,10 @@ package automenta.netention.value.string;
 
 import automenta.netention.DefiniteValue;
 import automenta.netention.IndefiniteValue;
+import automenta.netention.Property;
 import automenta.netention.PropertyValue;
+import automenta.netention.Self;
+import automenta.netention.html.DetailHTML;
 
 
 public class StringIs extends PropertyValue implements DefiniteValue<String> {
@@ -42,5 +45,28 @@ public class StringIs extends PropertyValue implements DefiniteValue<String> {
 		// TODO impl remaining String satisfy's
 		return 0;
 	}
-	
+        
+    public static String toHTML(String p, String operative, String value, Self s) {
+        if (p!=null) {
+            Property pp = s.getProperty(p);
+            if (pp!=null) {
+                if (pp instanceof StringProp) {
+                    StringProp sp = (StringProp)pp;
+                    if (sp.isRich()) {
+                        return pp.getName() + " " + operative + ":<br/><ul>" + value + "</ul>";
+                    }
+                }
+                return pp.getName() + " is: " + value;                
+            }
+        }
+        return value;
+        
+    }
+
+    @Override
+    public String toHTML(Self s, DetailHTML h) {
+        return toHTML(getProperty(), "is", string, s);
+    }
+
+        
 }

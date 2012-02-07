@@ -28,17 +28,13 @@ import automenta.netention.value.node.NodeProp;
 import automenta.netention.value.real.RealProp;
 import automenta.netention.value.set.SelectionProp;
 import automenta.netention.value.string.StringProp;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -421,7 +417,8 @@ abstract public class DetailEditPanel extends JPanel {
     }
 
     public DetailEditPanel(Self s, Detail d, boolean editable, boolean deletable) {
-        super(new GridBagLayout());
+        //super(new GridBagLayout());
+        super(new BorderLayout());
 
         this.self = s;
         this.detail = d;
@@ -457,20 +454,15 @@ abstract public class DetailEditPanel extends JPanel {
 //            header.add(menuBar, BorderLayout.NORTH);
 //        }
 
-        add(menuBar, gc);
-
-        gc.gridy++;
-
-
-
+        add(menuBar, BorderLayout.NORTH);
 
         {
+            gc.gridy++;
             gc.weightx = 1.0;
-            gc.weighty = 1.0;
+            gc.weighty = 0.99;
             gc.fill = gc.BOTH;
             gc.anchor = gc.NORTHWEST;
             gc.gridx = 1;
-            //gc.gridy = 3;
         }
 
 
@@ -481,23 +473,20 @@ abstract public class DetailEditPanel extends JPanel {
         mainSplit.setTopComponent(new JScrollPane(sentences));
         mainSplit.setBottomComponent(new JScrollPane(links));
 
-        add(mainSplit, gc);
+        add(mainSplit, BorderLayout.CENTER);
 
         {
             bottomBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-
-
-
             GridBagConstraints gcx = new GridBagConstraints();
             gcx.weightx = 1.0;
-            gcx.weighty = 0.0;
-            gcx.fill = gc.NONE;
-            gcx.anchor = gc.SOUTHEAST;
+            gcx.weighty = 0.01;
+            gcx.fill = gc.BOTH;
+            gcx.anchor = gc.NORTH;
             gcx.gridx = 1;
-            gcx.gridy = 4;
+            gcx.gridy = 3;
 
-            add(bottomBar, gcx);
+            add(new JScrollPane(bottomBar), BorderLayout.SOUTH);
 
         }
 
@@ -510,6 +499,7 @@ abstract public class DetailEditPanel extends JPanel {
 
         bottomBar.removeAll();
 
+        
         if (isDeletable()) {
             final JButton deleteButton = new JButton("Delete");
             deleteButton.addActionListener(new ActionListener() {
@@ -562,7 +552,6 @@ abstract public class DetailEditPanel extends JPanel {
 
                 bottomBar.add(b);
 
-
             }
         }
 
@@ -580,6 +569,7 @@ abstract public class DetailEditPanel extends JPanel {
                             saveToDetail();
                             refreshLinks();
                             refreshBottomBar();
+                            updateUI();
                             new Thread(new Runnable() {
 
                                 @Override
@@ -597,7 +587,7 @@ abstract public class DetailEditPanel extends JPanel {
                 }
             });
 
-            bottomBar.add(updateButton);
+            bottomBar.add(updateButton);            
         } else {
             final JButton refreshButton = new JButton("Refresh");
             bottomBar.add(refreshButton);
@@ -737,7 +727,9 @@ abstract public class DetailEditPanel extends JPanel {
 
         gc.fill = gc.NONE;
 
+        int line = 0;
         for (final PropertyValue pv : detail.getValues()) {
+            final int lline = line;
             gc.gridy++;
             JComponent nextLine = getLinePanel(pv);
             if (nextLine instanceof PropertyOptionPanel) {
@@ -747,6 +739,34 @@ abstract public class DetailEditPanel extends JPanel {
 
                 if (isEditable()) {
                     JPopupMenu popup = new JPopupMenu();
+                   
+                    if (line!=0) {
+                        JMenuItem moveUp = new JMenuItem("Move Up");
+                        moveUp.addActionListener(new ActionListener() {
+                            @Override public void actionPerformed(ActionEvent e) {
+                                detail.getValues().remove(pv);
+                                detail.getValues().add(lline-1,pv);
+                                refreshUI();
+                            }                        
+                        });
+                        popup.add(moveUp);
+                    }
+                    
+                    
+                    if (line!=detail.getValues().size()-1) {
+                        JMenuItem moveDown = new JMenuItem("Move Down");
+                        moveDown.addActionListener(new ActionListener() {
+                            @Override public void actionPerformed(ActionEvent e) {
+                                detail.getValues().remove(pv);
+                                detail.getValues().add(lline+1,pv);
+                                refreshUI();
+                            }                        
+                        });
+                        popup.add(moveDown);
+                    }
+                    
+                    popup.addSeparator();
+                    
                     JMenuItem removeItem = new JMenuItem("Remove");
 
                     boolean required = false;
@@ -775,7 +795,9 @@ abstract public class DetailEditPanel extends JPanel {
 
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Remove " + property.getName() + "?", "Remove", JOptionPane.YES_NO_OPTION)) {
+                                String name = "Comment";
+                                if (property!=null) name = property.getName();
+                                if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Remove " + name + "?", "Remove", JOptionPane.YES_NO_OPTION)) {
                                     removeProperty(pv);
                                 }
                             }
@@ -791,6 +813,7 @@ abstract public class DetailEditPanel extends JPanel {
             }
 
             sentences.add(nextLine, gc);
+            line++;
         }
 
         if (isEditable()) {
@@ -828,6 +851,7 @@ abstract public class DetailEditPanel extends JPanel {
                 }
 
                 JButton cm = new JButton("Abc");
+                cm.setToolTipText("Add Comment");
                 cm.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -922,11 +946,11 @@ abstract public class DetailEditPanel extends JPanel {
     }
     
     public JComponent stylePropertyPanel(PropertyOptionPanel p) {
-        p.setBorder(BorderFactory.createLoweredBevelBorder());
+        //p.setBorder(BorderFactory.createLoweredBevelBorder());
         return p;
     }
 
-    public static JComponent getLinePanel(Self self, Detail detail, PropertyValue pv, boolean editable) {
+    public static JComponent getLinePanel(Self self, Detail detail, final PropertyValue pv, boolean editable) {
         if (pv instanceof Comment) {
             return new CommentPanel(self, detail, (Comment)pv, editable);
         }

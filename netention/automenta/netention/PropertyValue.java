@@ -3,6 +3,8 @@
  */
 package automenta.netention;
 
+import automenta.netention.html.DetailHTML;
+
 public abstract class PropertyValue implements Value {
 	
 	private String property;
@@ -16,5 +18,8 @@ public abstract class PropertyValue implements Value {
 	public void setProperty(String property) {
 		this.property = property;
 	}
-
+        
+        public String toHTML(Self s, DetailHTML h) {
+            return toString();
+        }
 }

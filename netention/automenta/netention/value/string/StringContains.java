@@ -1,5 +1,8 @@
 package automenta.netention.value.string;
 
+import automenta.netention.Self;
+import automenta.netention.html.DetailHTML;
+
 public class StringContains extends StringEquals {
 
 	public StringContains() {
@@ -10,5 +13,9 @@ public class StringContains extends StringEquals {
 		super(string);
 	}
 	
+    @Override
+    public String toHTML(Self s, DetailHTML h) {
+        return StringIs.toHTML(getProperty(), "equals", getString(), s);
+    }
 	
 }

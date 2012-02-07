@@ -5,6 +5,7 @@
 
 package automenta.netention.swing.detail;
 
+import automenta.netention.html.BasicDetailHTML;
 import automenta.netention.swing.detail.action.CraigslistRefreshAction;
 import automenta.netention.swing.detail.action.SendAction;
 import java.util.LinkedList;
@@ -18,7 +19,7 @@ public class SwingDetailActions {
     private List<DetailAction> actions = new LinkedList();
 
     public SwingDetailActions() {
-        actions.add(new SendAction());
+        actions.add(new SendAction(new BasicDetailHTML()));
         actions.add(new CraigslistRefreshAction(false));
         actions.add(new CraigslistRefreshAction(true));
     }

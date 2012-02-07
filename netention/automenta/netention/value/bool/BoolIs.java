@@ -8,6 +8,8 @@ package automenta.netention.value.bool;
 import automenta.netention.DefiniteValue;
 import automenta.netention.IndefiniteValue;
 import automenta.netention.PropertyValue;
+import automenta.netention.Self;
+import automenta.netention.html.DetailHTML;
 
 /**
  *
@@ -44,4 +46,10 @@ public class BoolIs extends PropertyValue implements DefiniteValue<Boolean> {
         this.value = b;
     }
 
+    @Override
+    public String toHTML(Self s, DetailHTML h) {
+        return super.toHTML(s, h);
+    }
+
+    
 }

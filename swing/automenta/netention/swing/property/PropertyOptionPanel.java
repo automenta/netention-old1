@@ -78,7 +78,11 @@ abstract public class PropertyOptionPanel extends JPanel {
         //add(new JLabel(property.getName()));
         if (showsLabel()) {
             if (editable) {
-                nameButton = new JHyperLink(property.getName(), "");
+                String name = "";
+                if (property!=null)
+                    name = property.getName();
+                
+                nameButton = new JHyperLink(name, "");
                 add(nameButton, gc);
             } else {
                 add(new JScaledLabel(property.getName() + " ", 1.0f), gc);

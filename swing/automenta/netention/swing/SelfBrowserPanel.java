@@ -6,10 +6,8 @@ package automenta.netention.swing;
 
 import automenta.netention.Detail;
 import automenta.netention.Mode;
-import automenta.netention.NMessage;
 import automenta.netention.Pattern;
 import automenta.netention.Property;
-import automenta.netention.craigslist.CraigslistChannel;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.survive.Environment;
@@ -327,19 +325,19 @@ public class SelfBrowserPanel extends JPanel {
         else if (indexView instanceof WhenPanel) {
             final WhenPanel w = ((WhenPanel) indexView);
             
-            TreeSelectionListener[] listeners = w.getTree().getTreeSelectionListeners();
-            for (TreeSelectionListener t : listeners) {
-                w.getTree().removeTreeSelectionListener(t);
-            }
-            
-            w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
-
-                @Override public void valueChanged(TreeSelectionEvent e) {
-                    removeTabs();
-                    DefaultMutableTreeNode selected = (DefaultMutableTreeNode) w.getTree().getSelectionPath().getLastPathComponent();
-                    addTab(selected.getUserObject());
-                }
-            });
+//            TreeSelectionListener[] listeners = w.getTree().getTreeSelectionListeners();
+//            for (TreeSelectionListener t : listeners) {
+//                w.getTree().removeTreeSelectionListener(t);
+//            }
+//            
+//            w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+//
+//                @Override public void valueChanged(TreeSelectionEvent e) {
+//                    removeTabs();
+//                    DefaultMutableTreeNode selected = (DefaultMutableTreeNode) w.getTree().getSelectionPath().getLastPathComponent();
+//                    addTab(selected.getUserObject());
+//                }
+//            });
         }
     }
 
@@ -410,7 +408,13 @@ public class SelfBrowserPanel extends JPanel {
     }
 
     protected void viewWhen() {
-        indexView = new WhenPanel(self);
+        indexView = new WhenPanel(self) {
+            
+            @Override public void onOpened(Object item) {
+                addTab(item);
+            }
+
+        };
         refreshView();
 
         content.setLeftComponent(new JScrollPane((JPanel) indexView));

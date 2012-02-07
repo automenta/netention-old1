@@ -8,10 +8,11 @@ package automenta.netention.swing.property;
 import automenta.netention.Detail;
 import automenta.netention.Self;
 import automenta.netention.Value;
+import automenta.netention.swing.util.JHyperLink;
 import automenta.netention.value.Comment;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 
 /**
  *
@@ -23,9 +24,9 @@ public class CommentPanel extends PropertyOptionPanel {
         super(self, d, comment, editable);
         
         
-        setCurrentOption(new PropertyOption<Comment>("_") {
+        setCurrentOption(new PropertyOption<Comment>(" ") {
 
-            final JTextArea p = new JTextArea();
+            final HTMLEditorPane p = new HTMLEditorPane();
             
             @Override
             public Comment widgetToValue(Comment value) {
@@ -64,7 +65,7 @@ public class CommentPanel extends PropertyOptionPanel {
     }
     
     public boolean showsLabel() {
-        return false;
+        return true;
     }
     
 }

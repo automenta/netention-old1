@@ -6,6 +6,8 @@
 package automenta.netention.value;
 
 import automenta.netention.PropertyValue;
+import automenta.netention.Self;
+import automenta.netention.html.DetailHTML;
 
 /**
  *
@@ -27,7 +29,13 @@ public class Comment extends PropertyValue {
     public String getText() {
         return text;
     }
+
+    @Override
+    public String toHTML(Self s, DetailHTML h) {
+        return "<p>" + text + "</p>";
+    }
     
 
+    
     
 }

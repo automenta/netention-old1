@@ -11,16 +11,40 @@ import automenta.netention.impl.MemorySelf;
 import automenta.netention.rdf.AddOWLPatterns;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.util.SwingWindow;
+import java.awt.Component;
+import java.awt.Font;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 
 /**
  *
  * @author seh
  */
 public class RunSelfBrowser implements Demo {
+    
+public static void adjustGlobalFontSize(Float percentChange, Component root ) {
+
+    Enumeration keySet = UIManager.getDefaults().keys();
+    while (keySet.hasMoreElements()) {
+        Object key = keySet.nextElement();
+        Object value = UIManager.get(key);
+        if (value instanceof Font) {
+            Font f = (Font)value;
+            Float sizef = f.getSize2D() * percentChange;
+            int size = Math.round(sizef);               
+            FontUIResource resf = new FontUIResource(f.getName(), f.getStyle(), size);
+            UIManager.put(key, resf);
+        }
+    }
+    SwingUtilities.updateComponentTreeUI(root);
+
+}
+
 
     public static MemorySelf newDefaultSelf() {
         MemorySelf self = new MemorySelf("me", "Me");
@@ -66,7 +90,8 @@ public class RunSelfBrowser implements Demo {
 
         final MemorySelf mSelf = self;
 
-        return new SelfBrowserPanel(mSelf, new SeedEnvironment());
+        JPanel j = new SelfBrowserPanel(mSelf, new SeedEnvironment());
+        return j;
     }
 
     public static void main(String[] args) {
@@ -76,7 +101,8 @@ public class RunSelfBrowser implements Demo {
             @Override
             public void run() {
 
-                SwingWindow window = new SwingWindow(new RunSelfBrowser().newPanel(), 900, 800, true) {
+
+                SwingWindow window = new SwingWindow(new RunSelfBrowser().newPanel(), 900, 800, true) {                    
 //                    @Override
 //                    protected void onClosing() {
 //                        //SAVE ON EXIT
@@ -90,6 +116,8 @@ public class RunSelfBrowser implements Demo {
 //                        }
 //                    }
                 };
+                adjustGlobalFontSize(1.3f, window);
+
             }
         });
 
