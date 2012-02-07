@@ -7,6 +7,7 @@ package automenta.netention.swing.widget;
 import automenta.netention.Detail;
 import automenta.netention.Node;
 import automenta.netention.Pattern;
+import automenta.netention.Self;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
 import java.awt.BorderLayout;
@@ -26,17 +27,19 @@ import org.apache.commons.collections15.multimap.MultiHashMap;
  *
  * @author seh
  */
-public class WhatTreePanel extends JPanel implements IndexView {
+@Deprecated public class WhatTreePanel extends JPanel implements IndexView {
 
     float textScale = 1.25f;
     private final MemorySelf self;
     private JTree tree;
     private TypeTreeModel treeModel;
 
-    public class TypeTreeModel extends DefaultTreeModel {
+    public static class TypeTreeModel extends DefaultTreeModel {
+        private final Self self;
 
-        public TypeTreeModel() {
+        public TypeTreeModel(Self self) {
             super(new DefaultMutableTreeNode("All"));
+            this.self = self;
             refresh();
         }
 
@@ -92,7 +95,7 @@ public class WhatTreePanel extends JPanel implements IndexView {
     public void refresh() {
         removeAll();
 
-        treeModel = new TypeTreeModel();
+        //treeModel = new TypeTreeModel();
         tree = new JTree(treeModel);
 
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer() {

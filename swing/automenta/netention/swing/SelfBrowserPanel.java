@@ -18,10 +18,11 @@ import automenta.netention.swing.widget.PatternEditPanel;
 import automenta.netention.swing.widget.IndexView;
 import automenta.netention.swing.widget.Map2DPanel;
 import automenta.netention.swing.widget.WhatTreePanel;
-import automenta.netention.swing.widget.WhenPanel;
+import automenta.netention.swing.widget.ItemTreePanel;
 import automenta.netention.swing.widget.net.GnutellaStatusBar;
 import automenta.netention.swing.widget.survive.DefineSurvivalPanel;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -43,6 +44,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
 
 /**
  * Displays a list of one's Details and a tabbed viewer of them 
@@ -322,22 +324,8 @@ public class SelfBrowserPanel extends JPanel {
                 }
             });
         }
-        else if (indexView instanceof WhenPanel) {
-            final WhenPanel w = ((WhenPanel) indexView);
-            
-//            TreeSelectionListener[] listeners = w.getTree().getTreeSelectionListeners();
-//            for (TreeSelectionListener t : listeners) {
-//                w.getTree().removeTreeSelectionListener(t);
-//            }
-//            
-//            w.getTree().addTreeSelectionListener(new TreeSelectionListener() {
-//
-//                @Override public void valueChanged(TreeSelectionEvent e) {
-//                    removeTabs();
-//                    DefaultMutableTreeNode selected = (DefaultMutableTreeNode) w.getTree().getSelectionPath().getLastPathComponent();
-//                    addTab(selected.getUserObject());
-//                }
-//            });
+        else if (indexView instanceof ItemTreePanel) {
+            final ItemTreePanel w = ((ItemTreePanel) indexView);
         }
     }
 
@@ -399,16 +387,20 @@ public class SelfBrowserPanel extends JPanel {
     }
 
     protected void viewWhat() {
-        indexView = new WhatTreePanel(self);
-        refreshView();
-
-        content.setLeftComponent(new JScrollPane((JPanel) indexView));
-        content.setRightComponent(contentTabs);
-        updateUI();
+        viewTree(new ItemTreePanel.TypeTreeModel(self));
+    }
+    protected void viewWhen() {
+        viewTree(new ItemTreePanel.WhenTreeModel(self));
     }
 
-    protected void viewWhen() {
-        indexView = new WhenPanel(self) {
+    protected void viewTree(final TreeModel model) {
+        indexView = new ItemTreePanel(self) {
+
+            @Override
+            public TreeModel getModel() {
+                return model;
+            }
+            
             
             @Override public void onOpened(Object item) {
                 addTab(item);

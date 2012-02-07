@@ -7,6 +7,7 @@ package automenta.netention.swing.widget;
 import automenta.netention.Detail;
 import automenta.netention.Node;
 import automenta.netention.Pattern;
+import automenta.netention.Self;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
 import java.awt.BorderLayout;
@@ -16,31 +17,30 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.Icon;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTree;
-import javax.swing.ListModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
+import org.apache.commons.collections15.IteratorUtils;
+import org.apache.commons.collections15.multimap.MultiHashMap;
 
 /**
  *
  * @author seh
  */
-abstract public class WhenPanel extends JPanel implements IndexView {
+abstract public class ItemTreePanel extends JPanel implements IndexView {
 
     float textScale = 1.25f;
     private final MemorySelf self;
     private JTree tree;
-    private WhenTreeModel treeModel;
+    private TreeModel treeModel;
 
-    public class WhenTreeModel extends DefaultTreeModel {
+    public static class WhenTreeModel extends DefaultTreeModel {
+        private final Self self;
 
-        public WhenTreeModel() {
+        public WhenTreeModel(Self self) {
             super(new DefaultMutableTreeNode("All"));
+            this.self = self;
             refresh();
         }
 
@@ -57,25 +57,74 @@ abstract public class WhenPanel extends JPanel implements IndexView {
             }
         }
     }
+    public static class TypeTreeModel extends DefaultTreeModel {
+        private final Self self;
 
-    class ActionJList extends MouseAdapter {
-
-        protected JList list;
-
-        public ActionJList(JList l) {
-            list = l;
+        public TypeTreeModel(Self self) {
+            super(new DefaultMutableTreeNode("All"));
+            this.self = self;
+            refresh();
         }
 
-        public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 2) {
-                int index = list.locationToIndex(e.getPoint());
-                ListModel dlm = list.getModel();
-                Object item = dlm.getElementAt(index);;
-                list.ensureIndexIsVisible(index);
-                System.out.println("Double clicked on " + item);
+        protected void refresh() {
+            ((DefaultMutableTreeNode) root).removeAllChildren();
+
+
+            MultiHashMap<String, Detail> patterns = new MultiHashMap();
+            for (String p : self.getPatterns()) {
+                patterns.put(p, null);
+            }
+
+            for (Node n : IteratorUtils.toList(self.iterateNodes())) {
+                if (n instanceof Detail) {
+                    Detail d = (Detail)n;
+                    if (d.getPatterns().size() > 0) {
+                        for (String s : d.getPatterns()) {
+                            patterns.put(s, d);
+                        }
+                    } else {
+                        patterns.put("Thought", d);
+                    }
+                }
+            }
+
+            for (String p : patterns.keySet()) {
+                Pattern pat = self.getPattern(p);
+                DefaultMutableTreeNode pNode;
+                if (pat != null) {
+                    pNode = new DefaultMutableTreeNode(pat);                    
+                } else {
+                    pNode = new DefaultMutableTreeNode(p);
+                }
+                ((DefaultMutableTreeNode) root).add(pNode);
+                for (Detail d : patterns.get(p)) {
+                    if (d != null) {
+                        DefaultMutableTreeNode dNode = new DefaultMutableTreeNode(d);
+                        pNode.add(dNode);
+                    }
+                }
             }
         }
     }
+
+//    class ActionJList extends MouseAdapter {
+//
+//        protected JList list;
+//
+//        public ActionJList(JList l) {
+//            list = l;
+//        }
+//
+//        public void mouseClicked(MouseEvent e) {
+//            if (e.getClickCount() == 2) {
+//                int index = list.locationToIndex(e.getPoint());
+//                ListModel dlm = list.getModel();
+//                Object item = dlm.getElementAt(index);;
+//                list.ensureIndexIsVisible(index);
+//                System.out.println("Double clicked on " + item);
+//            }
+//        }
+//    }
 
     class ActionJTree extends MouseAdapter {
 
@@ -96,7 +145,7 @@ abstract public class WhenPanel extends JPanel implements IndexView {
 
     abstract public void onOpened(Object item);
 
-    public WhenPanel(MemorySelf self) {
+    public ItemTreePanel(MemorySelf self) {
         super(new BorderLayout());
 
 
@@ -104,10 +153,12 @@ abstract public class WhenPanel extends JPanel implements IndexView {
 
     }
 
+    abstract public TreeModel getModel();
+    
     public void refresh() {
         removeAll();
 
-        treeModel = new WhenTreeModel();
+        treeModel = getModel();
         tree = new JTree(treeModel);
 
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer() {

@@ -6,7 +6,6 @@
             <name>netention-p2p</name>
             <explicit-platform explicit-source-supported="true"/>
             <source-roots>
-                <root id="src.demo.dir"/>
                 <root id="src.swing.dir"/>
                 <root id="src.netention.dir"/>
             </source-roots>
