@@ -15,7 +15,7 @@ import java.io.FileOutputStream;
  *
  * @author seh
  */
-public class JSONIO {
+@Deprecated public class JSONIO {
 
 //    public static void saveSelf(MemorySelf self, String path) throws Exception {
 //        save(self, path, "patterns", "properties");
@@ -29,7 +29,7 @@ public class JSONIO {
 //        save(self, path, "id", "name", "details", "links");
 //    }
     
-    public static void save(MemorySelf self, String path, String... excludes) throws Exception {
+    @Deprecated public static void save(MemorySelf self, String path, String... excludes) throws Exception {
         JSONSerializer serializer = new JSONSerializer();
 
         //String output = serializer./*exclude(excludes)*/prettyPrint(self);
@@ -40,7 +40,7 @@ public class JSONIO {
         fout.close();
     }
 
-    public static MemorySelf load(String path) throws Exception {
+    @Deprecated public static MemorySelf load(String path) throws Exception {
         FileInputStream fout = new FileInputStream(path);
         DataInputStream oos = new DataInputStream(fout);
         String input = oos.readUTF();

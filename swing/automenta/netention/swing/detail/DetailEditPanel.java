@@ -827,6 +827,19 @@ abstract public class DetailEditPanel extends JPanel {
                     b.setIcon(Icons.getIcon("addPattern"));
                     b.setToolTipText("Add Property");
                     bb.add(b);
+                }
+
+                JButton cm = new JButton("Abc");
+                cm.setToolTipText("Add Comment");
+                cm.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        addComment();
+                    }                    
+                });
+                bb.add(cm);
+
+                if (buildAvailablePropertiesMenu(b) > 0) {
 
                     JButton c = new JButton("...");
                     c.setToolTipText("Complete All");
@@ -849,16 +862,6 @@ abstract public class DetailEditPanel extends JPanel {
                     bb.add(c);
 
                 }
-
-                JButton cm = new JButton("Abc");
-                cm.setToolTipText("Add Comment");
-                cm.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        addComment();
-                    }                    
-                });
-                bb.add(cm);
                 
                 JPanel addPropertyPanel = new JPanel(new BorderLayout());
                 addPropertyPanel.add(bb);

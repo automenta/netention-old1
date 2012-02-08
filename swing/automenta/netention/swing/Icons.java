@@ -54,7 +54,9 @@ public class Icons {
         objectToIconPath.put("when", "media/tango32/actions/appointment-new.png");
         objectToIconPath.put("recent", "media/tango32/places/user-home.png");
         objectToIconPath.put("frequent", "media/tango32/status/dialog-warning.png");
-
+        
+        objectToIconPath.put("home", "media/tango32/actions/go-home.png");
+        objectToIconPath.put("map", "media/tango32/categories/applications-internet.png");
     }
 
     public static Icon getFileIcon(String origPath) {

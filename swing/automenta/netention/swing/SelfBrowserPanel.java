@@ -22,22 +22,11 @@ import automenta.netention.swing.widget.ItemTreePanel;
 import automenta.netention.swing.widget.net.GnutellaStatusBar;
 import automenta.netention.swing.widget.survive.DefineSurvivalPanel;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.*;
 import java.util.Date;
-import javax.swing.ButtonGroup;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.tree.TreeModel;
 
 /**
@@ -60,77 +49,103 @@ public class SelfBrowserPanel extends JPanel {
     JPopupMenu.setDefaultLightWeightPopupEnabled( false );
     }
 
-    public class ViewMenu extends JMenu implements ActionListener {
+    public class ViewMenu extends JPanel implements ActionListener {
 
-        private final JRadioButtonMenuItem where;
-        private final JRadioButtonMenuItem what;
-        private final JRadioButtonMenuItem who;
-        private final ButtonGroup group;
-        private final JRadioButtonMenuItem when;
-        private final JRadioButtonMenuItem recent;
-        private final JRadioButtonMenuItem frequent;
-        private final JRadioButtonMenuItem survivalMap;
+        private final JToggleButton where;
+        private final JToggleButton what;
+        private final JToggleButton who;
+        private final JToggleButton when;
+        private final JToggleButton recent;
+        private final JToggleButton frequent;
+        private final JToggleButton survivalMap;
+        private final JToggleButton now;
+        private final ButtonGroup bg;
 
         public ViewMenu() {
-            super();
+            super(new FlowLayout(FlowLayout.LEFT, 0, 0));
             setToolTipText("Views");
 
-            survivalMap = new JRadioButtonMenuItem("Survival Map", Icons.getIcon("what"));
+            bg = new ButtonGroup() {
+                @Override
+                public void setSelected(ButtonModel model, boolean selected) {
+                    if (selected) {
+                        super.setSelected(model, selected);
+                    } else {
+                        clearSelection();
+                    }
+                }                
+            };
+            
+            bg.add(now = new JToggleButton(Icons.getIcon("home")));
+            now.setToolTipText("Now");
+            now.addActionListener(this);
+
+            bg.add(survivalMap = new JToggleButton(Icons.getIcon("map")));
+            survivalMap.setToolTipText("Survival Map");
             survivalMap.addActionListener(this);
             
-            what = new JRadioButtonMenuItem("What", Icons.getIcon("what"));
+            bg.add(what = new JToggleButton(Icons.getIcon("what")));
+            what.setToolTipText("What");
             what.addActionListener(this);
-            who = new JRadioButtonMenuItem("Who", Icons.getIcon("who"));
+            
+            
+            bg.add(who = new JToggleButton(Icons.getIcon("who")));
+            who.setToolTipText("Who");
             who.addActionListener(this);
-            where = new JRadioButtonMenuItem("Where", Icons.getIcon("where"));
+
+            bg.add(where = new JToggleButton(Icons.getIcon("where")));
+            where.setToolTipText("Where");
             where.addActionListener(this);
             
-            when = new JRadioButtonMenuItem("When", Icons.getIcon("when"));
+            bg.add(when = new JToggleButton(Icons.getIcon("when")));
+            when.setToolTipText("When");
             when.addActionListener(this);
-            recent = new JRadioButtonMenuItem("Recent", Icons.getIcon("recent"));
-            //when.addActionListener(this);
-            frequent = new JRadioButtonMenuItem("Frequent", Icons.getIcon("frequent"));
+            
+            bg.add(recent = new JToggleButton(Icons.getIcon("recent")));
+            recent.setToolTipText("Recent");;
+            recent.addActionListener(this);
+            
+            bg.add(frequent = new JToggleButton(Icons.getIcon("frequent")));
+            frequent.setToolTipText("Frequent");
             frequent.addActionListener(this);
 
-            add(survivalMap);
+            add(now);
+            add(when);
             add(what);
+            add(survivalMap);
             add(who);
             add(where);
-            add(when);
             add(recent);
             add(frequent);
 
-            group = new ButtonGroup();
-            group.add(what);
-            group.add(who);
-            group.add(where);
-            group.add(when);
-            group.add(recent);
-            group.add(frequent);
-            group.add(survivalMap);
-
-            setIcon(when.getIcon());
-            when.setSelected(true);
+            
+            bg.setSelected(when.getModel(), true);
         }
 
         @Override
+        public Component add(Component comp) {
+            if (comp instanceof AbstractButton) {
+                ((AbstractButton)comp).setBorderPainted(false);
+            }
+            return super.add(comp);
+        }
+        
+        
+
+        @Override
         public void actionPerformed(ActionEvent e) {
+            
             if (what.isSelected()) {
-                setIcon(what.getIcon());
                 viewWhat();
             } else if (who.isSelected()) {
-                setIcon(who.getIcon());
                 viewWho();
             } else if (where.isSelected()) {
-                setIcon(where.getIcon());
                 viewWhere();
             } else if (when.isSelected()) {
-                setIcon(when.getIcon());
                 viewWhen();
             } else if (recent.isSelected()) {
                 
             } else if (frequent.isSelected()) {
-                setIcon(frequent.getIcon());
                 //viewFrequent();
             }
             else if (survivalMap.isSelected()) {
@@ -220,13 +235,14 @@ public class SelfBrowserPanel extends JPanel {
 
         }
 
-        JMenu viewMenu = new ViewMenu();
+        JPanel viewMenu = new ViewMenu();
 
-        menubar.add(viewMenu);
         menubar.add(newMenu);
         menubar.add(netMenu);
 
-        add(menubar, BorderLayout.NORTH);
+        viewMenu.add(menubar);
+        
+        add(viewMenu, BorderLayout.NORTH);
 
         content = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
