@@ -6,10 +6,7 @@ package automenta.netention.swing.widget;
 
 import automenta.netention.swing.widget.survive.MapDisplay;
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -17,6 +14,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
@@ -42,11 +40,35 @@ public class Map2DPanel extends JPanel implements JMapViewerEventListener, MapDi
 
     private JLabel mperpLabelName=null;
     private JLabel mperpLabelValue = null;
+    private final JPanel optionsPanel;
 
     public Map2DPanel() {
         super();
 
         map = new JMapViewer();
+        map.addJMVListener(new JMapViewerEventListener() {
+
+            @Override
+            public void processCommand(JMVCommandEvent jmvce) {
+//                COMMAND cmd = jmvce.getCommand();
+            }
+        });
+        map.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                Coordinate p = map.getPosition(e.getPoint());
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    onRightClick(p);
+                }
+                else if (e.getButton() == MouseEvent.BUTTON1) {
+                    onLeftClick(p, e);
+                }
+            }
+
+            
+        });
         map.setPreferredSize(null);
         map.setMinimumSize(null);
 
@@ -59,7 +81,7 @@ public class Map2DPanel extends JPanel implements JMapViewerEventListener, MapDi
         // new DefaultMapController(map);
 
         setLayout(new BorderLayout());
-        JPanel panel = new JPanel();
+        optionsPanel = new JPanel();
         JPanel helpPanel = new JPanel();
 
         mperpLabelName=new JLabel("Meters/Pixels: ");
@@ -68,11 +90,13 @@ public class Map2DPanel extends JPanel implements JMapViewerEventListener, MapDi
         zoomLabel=new JLabel("Zoom: ");
         zoomValue=new JLabel(String.format("%s", map.getZoom()));
 
-        add(panel, BorderLayout.NORTH);
-        add(helpPanel, BorderLayout.SOUTH);
-        JLabel helpLabel = new JLabel("Use right mouse button to move,\n "
-                + "left double click or mouse wheel to zoom.");
-        helpPanel.add(helpLabel);
+        //add(panel, BorderLayout.NORTH);
+        
+//        add(helpPanel, BorderLayout.SOUTH);
+//        JLabel helpLabel = new JLabel("Use right mouse button to move,\n "
+//                + "left double click or mouse wheel to zoom.");
+//        helpPanel.add(helpLabel);
+        
         JButton button = new JButton("setDisplayToFitMapMarkers");
         button.addActionListener(new ActionListener() {
 
@@ -100,8 +124,8 @@ public class Map2DPanel extends JPanel implements JMapViewerEventListener, MapDi
             }
         });
         map.setTileLoader((TileLoader) tileLoaderSelector.getSelectedItem());
-        panel.add(tileSourceSelector);
-        panel.add(tileLoaderSelector);
+        optionsPanel.add(tileSourceSelector);
+        optionsPanel.add(tileLoaderSelector);
         final JCheckBox showMapMarker = new JCheckBox("Map markers visible");
         showMapMarker.setSelected(map.getMapMarkersVisible());
         showMapMarker.addActionListener(new ActionListener() {
@@ -110,7 +134,7 @@ public class Map2DPanel extends JPanel implements JMapViewerEventListener, MapDi
                 map.setMapMarkerVisible(showMapMarker.isSelected());
             }
         });
-        panel.add(showMapMarker);
+        optionsPanel.add(showMapMarker);
         final JCheckBox showTileGrid = new JCheckBox("Tile grid visible");
         showTileGrid.setSelected(map.isTileGridVisible());
         showTileGrid.addActionListener(new ActionListener() {
@@ -119,7 +143,7 @@ public class Map2DPanel extends JPanel implements JMapViewerEventListener, MapDi
                 map.setTileGridVisible(showTileGrid.isSelected());
             }
         });
-        panel.add(showTileGrid);
+        optionsPanel.add(showTileGrid);
         final JCheckBox showZoomControls = new JCheckBox("Show zoom controls");
         showZoomControls.setSelected(map.getZoomContolsVisible());
         showZoomControls.addActionListener(new ActionListener() {
@@ -128,13 +152,13 @@ public class Map2DPanel extends JPanel implements JMapViewerEventListener, MapDi
                 map.setZoomContolsVisible(showZoomControls.isSelected());
             }
         });
-        panel.add(showZoomControls);
-        panel.add(button);
+        optionsPanel.add(showZoomControls);
+        optionsPanel.add(button);
 
-        panel.add(zoomLabel);
-        panel.add(zoomValue);
-        panel.add(mperpLabelName);
-        panel.add(mperpLabelValue);
+        optionsPanel.add(zoomLabel);
+        optionsPanel.add(zoomValue);
+        optionsPanel.add(mperpLabelName);
+        optionsPanel.add(mperpLabelValue);
 
         add(map, BorderLayout.CENTER);
 
@@ -182,4 +206,10 @@ public class Map2DPanel extends JPanel implements JMapViewerEventListener, MapDi
     @Override
     public void redraw() {
     }
+    
+    public void onLeftClick(Coordinate p, MouseEvent e) {
+    }
+    public void onRightClick(Coordinate p) {
+    }
+    
 }

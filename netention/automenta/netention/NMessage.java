@@ -17,6 +17,8 @@ import java.util.Set;
  */
 public class NMessage extends MemoryDetail /*implements Serializable*/ {
     public static final String MessagePattern = "message";
+    public static final String StatusPattern = "status";
+    
     public static final String to = "message.to";
     public static final String from = "message.from";
     public static final String subject = "message.subject";

@@ -109,6 +109,7 @@ abstract public class DetailEditPanel extends JPanel {
 
     private int buildAvailablePropertiesMenu(JMenu b) {
         int count = 0;
+        b.removeAll();
         for (final Property p : self.getAvailableProperties(detail).keySet()) {
             JMenuItem j = new JMenuItem(p.getName());
             j.setToolTipText(p.getID());

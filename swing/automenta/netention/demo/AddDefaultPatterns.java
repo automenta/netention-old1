@@ -42,12 +42,17 @@ public class AddDefaultPatterns {
                     new SelectionProp("condition", "Condition", "New", "Used"));
         }
 
-        s.addPattern(new Pattern("Mobile").setIconURL("media://tango32/places/start-here.png"));
+        s.addPattern(new Pattern("Located").setIconURL("media://tango32/actions/go-jump.png"));
+        {
+            s.addProperties("Located",
+                    new StringProp("currentLocation", "Current Location"));
+            
+        }
+
+        s.addPattern(new Pattern("Mobile", "Located").setIconURL("media://tango32/places/start-here.png"));
         {
             s.addProperties("Mobile",
-                    new StringProp("currentLocation", "Current Location"),
-                    new StringProp("nextLocation", "Next Location") 
-            );
+                    new StringProp("nextLocation", "Next Location") );
         }
 
         s.addPattern(new Pattern("Person").setIconURL("media://tango32/apps/system-users.png"));
@@ -179,10 +184,13 @@ public class AddDefaultPatterns {
         
         s.addPattern(new Pattern(NMessage.MessagePattern).setIconURL("media://tango32/apps/internet-mail.png")).setName("Message");
         {
-            s.addProperty(new StringProp(NMessage.to, "Recipient"), "message");
-            s.addProperty(new StringProp(NMessage.from, "Author"), "message");
-            s.addProperty(new StringProp(NMessage.subject, "Subject"), "message");
-            s.addProperty(new StringProp(NMessage.content, "Content").setRich(true), "message");
+            s.addProperty(new StringProp(NMessage.to, "Recipient"), NMessage.MessagePattern);
+            s.addProperty(new StringProp(NMessage.from, "Author"), NMessage.MessagePattern);
+            s.addProperty(new StringProp(NMessage.subject, "Subject"), NMessage.MessagePattern);
+            s.addProperty(new StringProp(NMessage.content, "Content").setRich(true), NMessage.MessagePattern);
+        }
+        s.addPattern(new Pattern(NMessage.StatusPattern, NMessage.MessagePattern).setIconURL("media://tango32/status/software-update-available.png")).setName("Status"); //nice icon name ;)
+        {
         }
 
 

@@ -14,13 +14,10 @@ import automenta.netention.survive.Environment;
 import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.detail.DetailEditPanel;
 import automenta.netention.swing.util.SwingWindow;
-import automenta.netention.swing.widget.NewPropertyPanel;
-import automenta.netention.swing.widget.PatternEditPanel;
-import automenta.netention.swing.widget.IndexView;
-import automenta.netention.swing.widget.Map2DPanel;
-import automenta.netention.swing.widget.ItemTreePanel;
-import automenta.netention.swing.widget.net.GnutellaStatusBar;
+import automenta.netention.swing.widget.*;
+import automenta.netention.swing.widget.NowPanel.NotificationsPanel;
 import automenta.netention.swing.widget.survive.DefineSurvivalPanel;
+import automenta.netention.value.string.StringIs;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -28,6 +25,7 @@ import java.awt.event.*;
 import java.util.Date;
 import javax.swing.*;
 import javax.swing.tree.TreeModel;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
 
 /**
  * Displays a list of one's Details and a tabbed viewer of them 
@@ -48,6 +46,7 @@ public class SelfBrowserPanel extends JPanel {
     // do not remove this line, necessary for Swing integration !
     JPopupMenu.setDefaultLightWeightPopupEnabled( false );
     }
+    private final SelfConfig config;
 
     public class ViewMenu extends JPanel implements ActionListener {
 
@@ -135,7 +134,9 @@ public class SelfBrowserPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             
-            if (what.isSelected()) {
+            if (now.isSelected()) {
+                viewNow();
+            } else if (what.isSelected()) {
                 viewWhat();
             } else if (who.isSelected()) {
                 viewWho();
@@ -147,8 +148,7 @@ public class SelfBrowserPanel extends JPanel {
                 
             } else if (frequent.isSelected()) {
                 //viewFrequent();
-            }
-            else if (survivalMap.isSelected()) {
+            } else if (survivalMap.isSelected()) {
                 viewSurvival();
             }
 
@@ -158,10 +158,11 @@ public class SelfBrowserPanel extends JPanel {
 //        viewMenu.setToolTipText("Views");
     }
 
-    public SelfBrowserPanel(final MemorySelf self, final Environment e) {
+    public SelfBrowserPanel(final MemorySelf self, final SelfConfig config, final Environment e) {
         super(new BorderLayout());
 
         this.self = self;
+        this.config = config;
         this.environment = e;
 
         JMenuBar menubar = new JMenuBar();
@@ -257,8 +258,6 @@ public class SelfBrowserPanel extends JPanel {
         content.setDividerLocation(0.45);
 
         add(content, BorderLayout.CENTER);
-
-        add(new GnutellaStatusBar(), BorderLayout.SOUTH);
         
         updateUI();
     }
@@ -417,6 +416,23 @@ public class SelfBrowserPanel extends JPanel {
         content.setRightComponent(contentTabs);
         updateUI();        
     }
+    
+    protected void viewNow() {
+        content.setLeftComponent(new NotificationsPanel(self));
+        content.setRightComponent(new NowPanel(self, config) {
+            @Override
+            public void addDetail(Coordinate h) {
+                String name = "At: " + h.getLat() + ", " + h.getLon();
+                MemoryDetail d = new MemoryDetail(name, Mode.Real, "Located");
+                d.addValue("currentLocation", new StringIs(h.getLat() + ", " + h.getLon()));
+                self.addDetail(d);
+                addTab(d);
+                viewWhen();
+            }            
+        });
+        updateUI();
+    }
+    
 //    /** TODO the code in this method is not actually frequent, but the JOGL Graph view */
 //    protected void viewFrequent() {
 //        indexView = new GraphPanel(self);

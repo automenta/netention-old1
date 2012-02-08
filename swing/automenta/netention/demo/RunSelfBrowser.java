@@ -10,6 +10,7 @@ import automenta.netention.ieml.AddIEMLPatterns;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.rdf.AddOWLPatterns;
 import automenta.netention.swing.SelfBrowserPanel;
+import automenta.netention.swing.SelfConfig;
 import automenta.netention.swing.util.SwingWindow;
 import java.awt.Component;
 import java.awt.Font;
@@ -88,9 +89,12 @@ public static void adjustGlobalFontSize(Float percentChange, Component root ) {
         }
         //self.addPlugin(new Twitter());
 
+        //TODO load Selfconfig from file and save when exiting
+        SelfConfig sc = new SelfConfig();
+        
         final MemorySelf mSelf = self;
 
-        JPanel j = new SelfBrowserPanel(mSelf, new SeedEnvironment());
+        JPanel j = new SelfBrowserPanel(mSelf, sc, new SeedEnvironment());
         return j;
     }
 
