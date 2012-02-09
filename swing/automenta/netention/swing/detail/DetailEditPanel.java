@@ -539,7 +539,6 @@ abstract public class DetailEditPanel extends JPanel {
                                     @Override public void run() {
                                         da.getRun(self, detail).run();
                                         refreshUI();   
-                                        otherDetailsChanged();
                                     }
                                     
                                 };
@@ -721,7 +720,7 @@ abstract public class DetailEditPanel extends JPanel {
         JPanel subjectWrapper = new JPanel(new BorderLayout());
         //subjectWrapper.add(new JScrollPane(nameEdit, JScrollPane.VERTICAL_SCROLLBAR, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
         subjectWrapper.add(nameEdit, BorderLayout.CENTER);
-        int w = 8;        
+        int w = 4;        
         subjectWrapper.setBorder(BorderFactory.createEmptyBorder(w, w, w, w));
         
         sentences.add(subjectWrapper, gc);
@@ -821,6 +820,8 @@ abstract public class DetailEditPanel extends JPanel {
 
             {
                 JMenuBar bb = new JMenuBar();
+                bb.setOpaque(false);
+                bb.setBorderPainted(false);
 
                 JMenu b = new JMenu();
 
@@ -1066,7 +1067,6 @@ abstract public class DetailEditPanel extends JPanel {
         }
 
     }
-    abstract protected void otherDetailsChanged();
 
     abstract protected void deleteThis();
 

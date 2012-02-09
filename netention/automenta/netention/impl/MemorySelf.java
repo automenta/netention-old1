@@ -51,6 +51,8 @@ public class MemorySelf implements Self, Serializable {
      * detailID -> details
      */
     public final Map<String, Detail> details = new HashMap();
+    
+    private transient List<SelfListener> listeners = new LinkedList();
 
     /*
      * detail -> detail link graph
@@ -171,18 +173,29 @@ public class MemorySelf implements Self, Serializable {
         return true;
     }
 
-    public boolean addDetail(Detail d) {
-        Detail existing = details.get(d.getID());
-        if (existing != null) {
-            return false;
-        }
+    public void addDetail(final Detail... de) {
+        for (Detail d : de) {
+//            Detail existing = details.get(d.getID());
+//            if (existing != null) {
+//                return false;
+//            }
 
-        details.put(d.getID(), d);
-        return true;
+            details.put(d.getID(), d);
+        }
+        
+        for (SelfListener sl : listeners)
+            sl.onDetailsAdded(de);
+        
     }
 
-    public boolean removeDetail(Detail d) {
-        return details.remove(d.getID()) != null;
+    public void removeDetail(Detail... de) {
+        for (Detail d : de)
+            details.remove(d);
+
+        for (SelfListener sl : listeners)
+            sl.onDetailsRemoved(de);
+            
+        //return details.remove(d.getID()) != null;
     }
 
     public void getProperties(Pattern p, Collection<String> c) {
@@ -458,6 +471,16 @@ public class MemorySelf implements Self, Serializable {
 
     private void mergeFromPattern(Pattern p) {
         //TODO impl
+    }
+
+    @Override
+    public void addListener(SelfListener s) {
+        listeners.add(s);
+    }
+
+    @Override
+    public void removeListener(SelfListener s) {
+        listeners.remove(s);
     }
     
 }

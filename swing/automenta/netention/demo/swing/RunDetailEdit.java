@@ -64,9 +64,6 @@ public class RunDetailEdit implements Demo {
             protected void patternChanged() {
             }
 
-            @Override
-            protected void otherDetailsChanged() {
-            }
             
             
         };
@@ -83,9 +80,6 @@ public class RunDetailEdit implements Demo {
             protected void patternChanged() {
             }
 
-            @Override
-            protected void otherDetailsChanged() {
-            }
 
             
             @Override

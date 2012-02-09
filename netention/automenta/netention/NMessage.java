@@ -49,7 +49,7 @@ public class NMessage extends MemoryDetail /*implements Serializable*/ {
     public String getStringValue(String propID) {
         StringIs p = getValue(StringIs.class, propID);
         if (p!=null)
-            return p.getString();
+            return p.getValue();
         else
             return "";
     }

@@ -10,7 +10,7 @@ import automenta.netention.NMessage;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
-import automenta.netention.swing.SelfConfig;
+import automenta.netention.swing.SelfSession;
 import automenta.netention.swing.util.JScaledTextArea;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.value.string.StringIs;
@@ -37,7 +37,7 @@ abstract public class NowPanel extends JPanel {
 
     
     private final MemorySelf self;
-    private final SelfConfig config;
+    private final SelfSession config;
     private final Map2DPanel map;
     //private int DEFAULT_HOME_ZOOM = 3;
     private MapMarkerDot homeMarker;
@@ -112,7 +112,7 @@ abstract public class NowPanel extends JPanel {
         
     }
     
-    public NowPanel(MemorySelf self, final SelfConfig config) {
+    public NowPanel(MemorySelf self, final SelfSession config) {
         super(new BorderLayout(6,6));
         
         this.config = config;

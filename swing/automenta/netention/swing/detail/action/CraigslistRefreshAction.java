@@ -17,6 +17,7 @@ import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.value.set.SelectionEquals;
 import automenta.netention.value.set.SelectionIs;
 import java.awt.BorderLayout;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JPanel;
@@ -25,7 +26,11 @@ import javax.swing.JTextArea;
 import org.horrabin.horrorss.RssItemBean;
 
 /**
- *
+ * if "complete" is enabled:
+ * Fetches incomplete data fields (ex: author's e-mail address) for
+ * a detail that is missing that information.  (Only appears
+ * when the detail is a Craiglist Ad that is missing the author field)
+
  * @author seh
  */
 public class CraigslistRefreshAction implements DetailAction {
@@ -145,11 +150,12 @@ public class CraigslistRefreshAction implements DetailAction {
                                 output.append("  " + n.getSubject() + "\n");
                             }
                             
-                        }; 
+                        };                         
                         
-                        for (NMessage m : ccl.getMessages()) {
-                            s.addDetail(m);
-                        }
+                        Collection<NMessage> ms = ccl.getMessages();
+                        NMessage[] mss = ms.toArray(new NMessage[ms.size()]);
+                                
+                        s.addDetail(mss);
                         
                     }
                 }

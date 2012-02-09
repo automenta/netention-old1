@@ -15,10 +15,10 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.*;
 import org.apache.commons.collections15.IteratorUtils;
@@ -59,6 +59,7 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
     }
     public static class TypeTreeModel extends DefaultTreeModel {
         private final Self self;
+        private MultiHashMap<String, Detail> patterns;
 
         public TypeTreeModel(Self self) {
             super(new DefaultMutableTreeNode("All"));
@@ -66,11 +67,39 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
             refresh();
         }
 
+        public void buildPatternMenu(final DefaultMutableTreeNode t, final String pid) {
+            final Pattern p = self.getPattern(pid);
+
+            DefaultMutableTreeNode ss = new DefaultMutableTreeNode(self.getPattern(pid));            
+            t.add(ss);
+            
+            Collection<Detail> dp = patterns.get(pid);
+            if (dp!=null)
+                for (Detail d : dp) {
+                    if (d != null) {
+                        DefaultMutableTreeNode dNode = new DefaultMutableTreeNode(d);
+                        ss.add(dNode);
+                    }
+                }
+
+            Collection<String> children = self.getSubPatterns(pid);
+            if (children.size() > 0) {
+                for (String s : children) {
+                    buildPatternMenu(ss, s);
+                }
+            }
+
+            
+
+
+
+        }
+
+        
         protected void refresh() {
             ((DefaultMutableTreeNode) root).removeAllChildren();
 
-
-            MultiHashMap<String, Detail> patterns = new MultiHashMap();
+            patterns = new MultiHashMap();
             for (String p : self.getPatterns()) {
                 patterns.put(p, null);
             }
@@ -87,23 +116,20 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
                     }
                 }
             }
-
-            for (String p : patterns.keySet()) {
-                Pattern pat = self.getPattern(p);
-                DefaultMutableTreeNode pNode;
-                if (pat != null) {
-                    pNode = new DefaultMutableTreeNode(pat);                    
-                } else {
-                    pNode = new DefaultMutableTreeNode(p);
-                }
-                ((DefaultMutableTreeNode) root).add(pNode);
-                for (Detail d : patterns.get(p)) {
-                    if (d != null) {
-                        DefaultMutableTreeNode dNode = new DefaultMutableTreeNode(d);
-                        pNode.add(dNode);
-                    }
+            
+            List<String> roots = new LinkedList();
+            for (String sp : self.getPatterns()) {
+                Pattern p = self.getPattern(sp);
+                if (p.getParents().isEmpty()) {
+                    roots.add(p.id);
                 }
             }
+
+            for (String pid : roots) {
+                buildPatternMenu((DefaultMutableTreeNode)root, pid);
+            }
+            
+
         }
     }
 

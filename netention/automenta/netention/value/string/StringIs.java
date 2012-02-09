@@ -19,10 +19,6 @@ public class StringIs extends PropertyValue implements DefiniteValue<String> {
 		this.string = string;
 	}
 	
-	public String getString() {
-		return string;
-	}
-
 	@Override public String getValue() {	
 		return string;
 	}

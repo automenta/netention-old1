@@ -12,11 +12,19 @@ import java.util.Map;
  * @author seh
  */
 public interface Self {
+    
+    public static interface SelfListener {
+        public void onDetailsAdded(Detail... d);
+        public void onDetailsRemoved(Detail... d);
+    }
 
+    public void addListener(SelfListener s);
+    public void removeListener(SelfListener s);
+    
     /** all available properties */
     public Collection<String> getProperties();
 
-    public boolean addDetail(Detail d);
+    public void addDetail(Detail... d);
     
     public Detail getDetail(String id);
     

@@ -68,14 +68,14 @@ public class StringPropertyPanel extends PropertyOptionPanel {
                         
                         hta = new HTMLEditorPane();
 
-                        hta.setText(value.getString());
+                        hta.setText(value.getValue());
                         
                         p.add(hta);
                         
                     }
                     else {
                         rta = getComboBox();                    
-                        rta.setSelectedItem(value.getString());                            
+                        rta.setSelectedItem(value.getValue());                            
                         p.add(rta);
                         addSuggestButtons(p, rta);
                     }

@@ -8,6 +8,7 @@ import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.Pattern;
 import automenta.netention.Property;
+import automenta.netention.Self.SelfListener;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.survive.Environment;
@@ -30,7 +31,7 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 /**
  * Displays a list of one's Details and a tabbed viewer of them 
  */
-public class SelfBrowserPanel extends JPanel {
+public class SelfBrowserPanel extends JPanel implements SelfListener {
     final Environment environment;
     
 
@@ -46,7 +47,17 @@ public class SelfBrowserPanel extends JPanel {
     // do not remove this line, necessary for Swing integration !
     JPopupMenu.setDefaultLightWeightPopupEnabled( false );
     }
-    private final SelfConfig config;
+    private final SelfSession config;
+
+    @Override
+    public void onDetailsAdded(Detail... d) {
+        refreshView();
+    }
+
+    @Override
+    public void onDetailsRemoved(Detail... d) {
+        refreshView();
+    }
 
     public class ViewMenu extends JPanel implements ActionListener {
 
@@ -158,12 +169,14 @@ public class SelfBrowserPanel extends JPanel {
 //        viewMenu.setToolTipText("Views");
     }
 
-    public SelfBrowserPanel(final MemorySelf self, final SelfConfig config, final Environment e) {
+    public SelfBrowserPanel(final MemorySelf self, final SelfSession config, final Environment e) {
         super(new BorderLayout());
 
         this.self = self;
         this.config = config;
         this.environment = e;
+        
+        self.addListener(this);
 
         JMenuBar menubar = new JMenuBar();
 
@@ -220,14 +233,6 @@ public class SelfBrowserPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     SwingWindow w = new SwingWindow(new LoadSaveJSON(self), 500, 400);
-                    w.addWindowListener(new WindowAdapter() {
-
-                        @Override
-                        public void windowClosing(WindowEvent e) {
-                            refreshView();
-                        }
-                        
-                    });
                 }
                 
             });
@@ -299,9 +304,6 @@ public class SelfBrowserPanel extends JPanel {
                 final Detail d = (Detail) o;
                 tabContent = new DetailEditPanel(self, d, true) {
 
-                    @Override protected void otherDetailsChanged() {
-                        refreshView();
-                    }
                     
                     @Override protected void patternChanged() {
                         refreshView();
