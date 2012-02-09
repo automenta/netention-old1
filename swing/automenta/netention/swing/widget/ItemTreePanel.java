@@ -57,6 +57,7 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
             }
         }
     }
+    
     public static class TypeTreeModel extends DefaultTreeModel {
         private final Self self;
         private MultiHashMap<String, Detail> patterns;

@@ -208,7 +208,7 @@ public class AddOWLPatterns {
 
             Pattern t = self.getPattern(clazz.getIRI().toString());
             if (t == null) {
-                t = new Pattern(clazz.getIRI().toString());
+                t = new Pattern( clazz.getIRI().toString());
                 t.setName( clazz.getIRI().getFragment() );
                 self.addPattern(t);
             }

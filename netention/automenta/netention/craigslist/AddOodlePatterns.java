@@ -22,7 +22,7 @@ import java.util.Map;
  * @author seh
  */
 public class AddOodlePatterns {
-
+    final public static String PREFIX = "oodle:";
 
     public void add(MemorySelf ms) throws Exception {
         //http://developer.oodle.com/files/xml/oodle_categories.xml
@@ -57,7 +57,7 @@ public class AddOodlePatterns {
                 if (c.length == d) {
                     Pattern p;
                     if (d == 1) {
-                        p = new Pattern(s);
+                        p = new Pattern(PREFIX + s);
                         char startchar = s.charAt(0);
                         if (Character.isLowerCase(startchar)) {
                             p.setName(Character.toUpperCase(startchar) + s.substring(1));
