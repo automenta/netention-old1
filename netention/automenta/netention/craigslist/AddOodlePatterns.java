@@ -73,7 +73,7 @@ public class AddOodlePatterns {
                         
                         //System.out.println(s + " hasParent " + parent);
                         
-                        p = new Pattern(s, parent);
+                        p = new Pattern(s, PREFIX + parent);
                         p.setName(cat.get(s));     
                         //System.out.println(p.getID() + " " + p.getName());
                     }

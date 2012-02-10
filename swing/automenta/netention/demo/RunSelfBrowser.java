@@ -27,47 +27,61 @@ import javax.swing.plaf.FontUIResource;
  * @author seh
  */
 public class RunSelfBrowser implements Demo {
-    
-public static void adjustGlobalFontSize(Float percentChange, Component root ) {
 
-    Enumeration keySet = UIManager.getDefaults().keys();
-    while (keySet.hasMoreElements()) {
-        Object key = keySet.nextElement();
-        Object value = UIManager.get(key);
-        if (value instanceof Font) {
-            Font f = (Font)value;
-            Float sizef = f.getSize2D() * percentChange;
-            int size = Math.round(sizef);               
-            FontUIResource resf = new FontUIResource(f.getName(), f.getStyle(), size);
-            UIManager.put(key, resf);
+    public static void adjustGlobalFontSize(Float percentChange, Component root) {
+
+        Enumeration keySet = UIManager.getDefaults().keys();
+        while (keySet.hasMoreElements()) {
+            Object key = keySet.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof Font) {
+                Font f = (Font) value;
+                Float sizef = f.getSize2D() * percentChange;
+                int size = Math.round(sizef);
+                FontUIResource resf = new FontUIResource(f.getName(), f.getStyle(), size);
+                UIManager.put(key, resf);
+            }
         }
+        SwingUtilities.updateComponentTreeUI(root);
+
     }
-    SwingUtilities.updateComponentTreeUI(root);
-
-}
-
 
     public static MemorySelf newDefaultSelf() {
         MemorySelf self = new MemorySelf("me", "Me");
-        
+
         new AddDefaultPatterns().add(self);
-        
+
         try {
             new AddOodlePatterns().add(self);
+
+            //refactor hierarchy
+            self.refactorPatternParent("oodle:sale", "Built");
+            self.removePattern(self.getPattern("oodle:sale"));
+
+            self.getPattern("oodle:vehicle").addParent("Built");
+
         } catch (Exception ex2) {
             ex2.printStackTrace();
         }
-        
+
         new AddIEMLPatterns().add(self);
 
         //ImportOWL.load("schema/SUMO.owl", self);
-        AddOWLPatterns.add("schema/sumodlfull.owl", self);
+        /*
+        {
+            AddOWLPatterns.add("schema/sumodlfull.owl", self);
+
+            self.getPattern("http://stuarthendren.net/resource/sumodlfull.owl#Artifact").addParent("Built");
+        }
+        * 
+        */
+
         //ImportOWL.load("schema/foaf.owl", self);
         //ImportOWL.load("schema/biography.owl", self);
         //ImportOWL.load("schema/sweetAll.owl", self);
-        
+
         new AddCraigslistPatterns().add(self);
-        
+
         return self;
     }
 
@@ -91,7 +105,7 @@ public static void adjustGlobalFontSize(Float percentChange, Component root ) {
 
         //TODO load Selfconfig from file and save when exiting
         SelfSession sc = new SelfSession();
-        
+
         final MemorySelf mSelf = self;
 
         JPanel j = new SelfBrowserPanel(mSelf, sc, new SeedEnvironment());
@@ -106,7 +120,7 @@ public static void adjustGlobalFontSize(Float percentChange, Component root ) {
             public void run() {
 
 
-                SwingWindow window = new SwingWindow(new RunSelfBrowser().newPanel(), 900, 800, true) {                    
+                SwingWindow window = new SwingWindow(new RunSelfBrowser().newPanel(), 900, 800, true) {
 //                    @Override
 //                    protected void onClosing() {
 //                        //SAVE ON EXIT

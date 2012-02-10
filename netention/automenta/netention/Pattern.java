@@ -82,6 +82,9 @@ public class Pattern implements Serializable, Node {
     public void addParent(String patternID) {
         parents.add(patternID);
     }
+    public boolean removeParent(String patternID) {
+        return parents.remove(patternID);
+    }
 
     @Override
     public Date getWhen() {
@@ -95,5 +98,6 @@ public class Pattern implements Serializable, Node {
     public void addDefaultValue(PropertyValue pv) {
         defaultValues.add(pv);
     }
+
     
 }

@@ -4,6 +4,7 @@
  */
 package automenta.netention.swing;
 
+import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.Pattern;

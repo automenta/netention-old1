@@ -5,18 +5,20 @@
 
 package automenta.netention.swing.widget;
 
+import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.Mode;
 import automenta.netention.NMessage;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.SelfSession;
+import automenta.netention.swing.map.LabeledMarker;
 import automenta.netention.swing.util.JScaledTextArea;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.value.string.StringIs;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Point;
 import java.awt.event.*;
 import java.util.Date;
 import javax.swing.JButton;
@@ -24,7 +26,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 /**
 [10:35:43 PM EDT] SeH: so dashboard is going to include:
@@ -40,7 +42,7 @@ abstract public class NowPanel extends JPanel {
     private final SelfSession config;
     private final Map2DPanel map;
     //private int DEFAULT_HOME_ZOOM = 3;
-    private MapMarkerDot homeMarker;
+    private MapMarker homeMarker;
 
     //edit icon and username=self.author
     private static class ProfileEditor extends JPanel {
@@ -201,7 +203,8 @@ abstract public class NowPanel extends JPanel {
         if (homeMarker!=null)
             map.getMap().removeMapMarker(homeMarker);
         
-        homeMarker = new MapMarkerDot(h.getLat(), h.getLon());
+        //homeMarker = new MapMarkerDot(h.getLat(), h.getLon());
+        homeMarker = new LabeledMarker("Home", new Color(0.0f, 1.0f, 0.0f, 0.3f), h.getLat(), h.getLon());
         
         map.getMap().addMapMarker(homeMarker);
         

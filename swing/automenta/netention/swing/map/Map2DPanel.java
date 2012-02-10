@@ -2,10 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.netention.swing.widget;
+package automenta.netention.swing.map;
 
 import automenta.netention.swing.widget.survive.MapDisplay;
 import java.awt.BorderLayout;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.io.IOException;
 import javax.swing.JButton;
@@ -20,6 +21,7 @@ import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -46,24 +48,39 @@ public class Map2DPanel extends JPanel implements JMapViewerEventListener, MapDi
         super();
 
         map = new JMapViewer();
-        map.addJMVListener(new JMapViewerEventListener() {
+//        map.addJMVListener(new JMapViewerEventListener() {
+//
+//            @Override
+//            public void processCommand(JMVCommandEvent jmvce) {
+////                COMMAND cmd = jmvce.getCommand();
+//            }
+//        });
+        map.addMouseMotionListener(new MouseMotionListener() {
 
             @Override
-            public void processCommand(JMVCommandEvent jmvce) {
-//                COMMAND cmd = jmvce.getCommand();
+            public void mouseDragged(MouseEvent e) {
             }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                onMove(e);
+            }
+            
         });
         map.addMouseListener(new MouseAdapter() {
 
+
             @Override
-            public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
+            public void mouseReleased(MouseEvent e) {                
                 Coordinate p = map.getPosition(e.getPoint());
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    onRightClick(p);
-                }
-                else if (e.getButton() == MouseEvent.BUTTON1) {
-                    onLeftClick(p, e);
+                
+                if (onClick(p, e)) {
+                    if (e.getButton() == MouseEvent.BUTTON3) {
+                        onRightClick(p);
+                    }
+                    else if (e.getButton() == MouseEvent.BUTTON1) {
+                        onLeftClick(p, e);
+                    }
                 }
             }
 
@@ -207,6 +224,59 @@ public class Map2DPanel extends JPanel implements JMapViewerEventListener, MapDi
     public void redraw() {
     }
     
+
+    MarkerClickable hover = null;
+    
+    public void onMove(final MouseEvent e) {
+        MarkerClickable nextHover = null;
+        
+        for (final MapMarker x : getMap().getMapMarkerList()) {
+            if (x instanceof MarkerClickable) {
+                final MarkerClickable mc = (MarkerClickable)x;
+                final Rectangle a = mc.getClickableArea();
+                if (a == null)
+                    continue;
+                
+                if (a.contains(e.getPoint())) {
+                    nextHover = mc;
+                    break;
+                }
+            }
+        }
+        
+        if (nextHover!=hover) {
+            if (hover!=null) {
+                hover.onMouseExit();
+                map.repaint();                
+            }
+            
+            hover = nextHover;
+            
+            if (hover!=null) {
+                hover.onMouseEnter(e.getPoint());
+                map.repaint();
+            }
+        }
+        
+    }
+    
+    //returns false if the click has been intercepted by this handler, or true to filter down into the more general click handling
+    public boolean onClick(final Coordinate p, final MouseEvent e) {
+        for (final MapMarker x : getMap().getMapMarkerList()) {
+            if (x instanceof MarkerClickable) {
+                final MarkerClickable mc = (MarkerClickable)x;
+                final Rectangle a = mc.getClickableArea();
+                if (a == null)
+                    continue;
+                
+                if (a.contains(e.getPoint())) {
+                    mc.onClicked(e.getPoint(), e.getButton());
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     public void onLeftClick(Coordinate p, MouseEvent e) {
     }
     public void onRightClick(Coordinate p) {
