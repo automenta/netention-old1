@@ -53,7 +53,8 @@ public class LabeledMarker implements MapMarker, MarkerClickable {
         g.fillRect(cx, cy, w, h);
         
         g.setColor(textColor);
-        g.setFont(new Font("Arial", Font.BOLD, 18 ));
+        
+        g.setFont(g.getFont().deriveFont(18.0f)); //new Font("Sans", Font.BOLD, 18 )
         g.drawString(text, cx, cy+h);
         
         //update clickable area

@@ -212,7 +212,7 @@ public class AddDefaultPatterns {
         s.addPattern(webPattern = new Pattern(web).setName("Web"));
         
         
-        addDefaults(s);
+        //addDefaults(s);
         
     }
     

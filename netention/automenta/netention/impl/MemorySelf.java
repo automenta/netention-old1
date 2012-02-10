@@ -280,10 +280,10 @@ public class MemorySelf implements Self, Serializable {
         oos.close();
     }
 
-    public static void saveJSON(MemorySelf self, String path, boolean includeSchema) throws Exception {
+    public static void saveJSON(MemorySelf self, String path, boolean includeDetails, boolean includeSchema) throws Exception {
         FileOutputStream fout = new FileOutputStream(path);
         PrintStream ps = new PrintStream(fout);
-        String j = toJSON(self, includeSchema);
+        String j = toJSON(self, includeDetails, includeSchema);
         ps.append(j);
         fout.close();
     }
@@ -412,15 +412,20 @@ public class MemorySelf implements Self, Serializable {
         return serializer.include("patterns", "values", "whenCreated", "whenModified").serialize(detail);
     }
 
-    public static String toJSON(MemorySelf s, boolean includeSchema) {
+    public static String toJSON(MemorySelf s, boolean includeDetails, boolean includeSchema) {
         JSONSerializer serializer = new JSONSerializer();
         serializer.prettyPrint(true);
-        serializer.include("detailList", "patterns", "values", "whenCreated", "whenModified");
+        serializer.include("patterns", "values", "whenCreated", "whenModified");
 
         if (includeSchema)
             serializer.include("propertyList", "patternList");
         else
             serializer.exclude("propertyList", "patternList");
+        
+        if (includeDetails)
+            serializer.include("detailList");
+        else
+            serializer.exclude("detailList");
         
         return serializer.deepSerialize(new MemorySelfData(s));
     }
