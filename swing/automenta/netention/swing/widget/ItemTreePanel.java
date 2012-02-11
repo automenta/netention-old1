@@ -233,6 +233,7 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
                         sel ? getBackgroundSelectionColor() : getBackground());
 
 
+                this.updateUI();
 
                 return this;
 
