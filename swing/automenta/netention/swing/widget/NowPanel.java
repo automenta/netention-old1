@@ -194,7 +194,6 @@ abstract public class NowPanel extends JPanel {
             }                    
         });
         
-        //map.getRootPane().setG
         mapPanel.add(map, BorderLayout.CENTER);
         
         add(mapPanel, BorderLayout.CENTER);
@@ -259,10 +258,10 @@ abstract public class NowPanel extends JPanel {
             map.getMap().addMapMarker(homeMarker);
         
         if (p!=null) {
-            Iterator<Node> in = Iterators.filter(self.iterateNodes(), new Predicate<Node>() {
+            final Iterator<Node> in = Iterators.filter(self.iterateNodes(), new Predicate<Node>() {
                 @Override public boolean apply(Node t) {
                         
-                    for (Pattern x : p) {
+                    for (final Pattern x : p) {
                         if (self.isInstance(x.getID(), t.getID())) {
                             return true;  
                         }
