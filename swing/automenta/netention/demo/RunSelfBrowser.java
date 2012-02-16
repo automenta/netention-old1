@@ -6,6 +6,7 @@ package automenta.netention.demo;
 
 import automenta.netention.craigslist.AddCraigslistPatterns;
 import automenta.netention.craigslist.AddOodlePatterns;
+import automenta.netention.ieml.AddENTPMflowcycles;
 import automenta.netention.ieml.AddIEMLPatterns;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.survive.data.AddNuclearFacilities;
@@ -83,6 +84,8 @@ public class RunSelfBrowser implements Demo {
         new AddCraigslistPatterns().add(self);
 
         new AddNuclearFacilities(self, "schema/IAEA_Nuclear_Facilities.csv");
+        
+        new AddENTPMflowcycles().add(self);
         
         return self;
     }
