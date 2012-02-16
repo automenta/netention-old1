@@ -208,6 +208,16 @@ public class AddDefaultPatterns {
             s.addProperty(new NodeProp("FlowTarget", "Target").setCardinalityMin(1), valueFlow.id);
         }
 
+        Pattern valueFlowOpen;
+        s.addPattern(valueFlowOpen = new Pattern("valueFlowIEML").setName("IEML Value Flow"));
+        {
+            s.addProperties("valueFlowIEML",
+                    new StringProp("openMedium", "Medium"),
+                    new StringProp("openSource", "Source"),
+                    new StringProp("openDestination", "Destination"),
+                    new SelectionProp("seqlayermark", "Sequence Layer Mark", ":", ".", "-", "'", ",", "_", ";"));
+        }        
+        
         Pattern webPattern;
         s.addPattern(webPattern = new Pattern(web).setName("Web"));
         
