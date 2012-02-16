@@ -35,6 +35,23 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
     private JTree tree;
     private TreeModel treeModel;
 
+    List<Pattern> getSelectedPatterns() {
+        List<Pattern> p = new LinkedList();
+        
+        if (tree!=null) {
+            TreePath[] paths = tree.getSelectionPaths();
+            if (paths!=null) {
+                for (TreePath t : paths) {
+                    Object o = ((DefaultMutableTreeNode)t.getLastPathComponent()).getUserObject();
+                    if (o instanceof Pattern)
+                        p.add((Pattern)o);
+                }
+            }
+        }
+        
+        return p;
+    }
+
     public static class WhenTreeModel extends DefaultTreeModel {
         private final Self self;
 
@@ -61,27 +78,38 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
     public static class TypeTreeModel extends DefaultTreeModel {
         private final Self self;
         private MultiHashMap<String, Detail> patterns;
+        private final boolean includeInstances;
 
         public TypeTreeModel(Self self) {
+            this(self, true);
+        }
+        
+        public TypeTreeModel(Self self, boolean includeInstances) {
             super(new DefaultMutableTreeNode("All"));
             this.self = self;
+            this.includeInstances = includeInstances;
             refresh();
         }
+        
+        
 
         public void buildPatternMenu(final DefaultMutableTreeNode t, final String pid) {
             final Pattern p = self.getPattern(pid);
 
+            
             DefaultMutableTreeNode ss = new DefaultMutableTreeNode(self.getPattern(pid));            
             t.add(ss);
             
-            Collection<Detail> dp = patterns.get(pid);
-            if (dp!=null)
-                for (Detail d : dp) {
-                    if (d != null) {
-                        DefaultMutableTreeNode dNode = new DefaultMutableTreeNode(d);
-                        ss.add(dNode);
+            if (includeInstances) {
+                Collection<Detail> dp = patterns.get(pid);
+                if (dp!=null)
+                    for (Detail d : dp) {
+                        if (d != null) {
+                            DefaultMutableTreeNode dNode = new DefaultMutableTreeNode(d);
+                            ss.add(dNode);
+                        }
                     }
-                }
+            }
 
             Collection<String> children = self.getSubPatterns(pid);
             if (children.size() > 0) {
@@ -89,10 +117,6 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
                     buildPatternMenu(ss, s);
                 }
             }
-
-            
-
-
 
         }
 
@@ -265,6 +289,8 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
 
         tree.setCellRenderer(renderer);
         tree.setRootVisible(false);
+        tree.setToggleClickCount(1);
+        tree.setShowsRootHandles(true);
 
         add(tree, BorderLayout.CENTER);
         tree.addMouseListener(new ActionJTree(tree));

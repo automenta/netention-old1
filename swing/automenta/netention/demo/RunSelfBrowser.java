@@ -73,8 +73,8 @@ public class RunSelfBrowser implements Demo {
 
             self.getPattern("http://stuarthendren.net/resource/sumodlfull.owl#Artifact").addParent("Built");
         }
-        * 
         */
+        
 
         //ImportOWL.load("schema/foaf.owl", self);
         //ImportOWL.load("schema/biography.owl", self);

@@ -492,5 +492,19 @@ public class MemorySelf implements Self, Serializable {
         }
     }
 
+    public boolean isInstance(final String patternID, final String detaiID) {
+        Detail d = getDetail(detaiID);
+        if (d != null) {
+            for (final String pid : d.getPatterns()) {
+                if (pid.equals(patternID))
+                    return true;
+                
+                if (isSuperPattern(patternID, pid))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     
 }

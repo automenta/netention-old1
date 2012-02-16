@@ -5,9 +5,12 @@
 
 package automenta.netention.swing.widget;
 
+import automenta.netention.Detail;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.Mode;
 import automenta.netention.NMessage;
+import automenta.netention.Node;
+import automenta.netention.Pattern;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
@@ -15,16 +18,21 @@ import automenta.netention.swing.SelfSession;
 import automenta.netention.swing.map.LabeledMarker;
 import automenta.netention.swing.util.JScaledTextArea;
 import automenta.netention.swing.util.SwingWindow;
+import automenta.netention.value.geo.GeoPointIs;
 import automenta.netention.value.string.StringIs;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.*;
 import java.util.Date;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreeModel;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
@@ -43,6 +51,7 @@ abstract public class NowPanel extends JPanel {
     private final Map2DPanel map;
     //private int DEFAULT_HOME_ZOOM = 3;
     private MapMarker homeMarker;
+    private final ItemTreePanel typeFilter;
 
     //edit icon and username=self.author
     private static class ProfileEditor extends JPanel {
@@ -114,14 +123,14 @@ abstract public class NowPanel extends JPanel {
         
     }
     
-    public NowPanel(MemorySelf self, final SelfSession config) {
+    public NowPanel(final MemorySelf self, final SelfSession config) {
         super(new BorderLayout(6,6));
         
         this.config = config;
         this.self = self;
         
         /*
-         * Map right click:
+         * Map left click:
          *      --Set My Location
          *      --Create Detail Here
          *      --...?
@@ -137,6 +146,7 @@ abstract public class NowPanel extends JPanel {
             }
             mapPanel.add(mapControlPanel, BorderLayout.NORTH);
         }
+        
         map = new Map2DPanel() {
 
             @Override
@@ -189,9 +199,35 @@ abstract public class NowPanel extends JPanel {
         
         add(mapPanel, BorderLayout.CENTER);
         
+        typeFilter = new ItemTreePanel(self) {
+
+            @Override
+            public void onOpened(Object item) {
+            }
+
+            @Override
+            public TreeModel getModel() {
+                return new TypeTreeModel(self, false);
+            }
+            
+        };
+        
+        typeFilter.refresh();
+        typeFilter.getTree().addTreeSelectionListener(new TreeSelectionListener() {
+            @Override public void valueChanged(TreeSelectionEvent e) {
+                redrawMarkers();
+            }
+
+        });
+        
+        add(new JScrollPane(typeFilter), BorderLayout.EAST);
+        
         add(new StatusUpdatePanel(), BorderLayout.SOUTH);
         
         setHome(config.getCurrentLocation());
+    
+
+        redrawMarkers(null);
     }
     
     public void setHome(Coordinate h) {
@@ -200,13 +236,11 @@ abstract public class NowPanel extends JPanel {
         
         config.setCurrentLocation(h);
 
-        if (homeMarker!=null)
-            map.getMap().removeMapMarker(homeMarker);
         
         //homeMarker = new MapMarkerDot(h.getLat(), h.getLon());
         homeMarker = new LabeledMarker("Home", new Color(0.0f, 1.0f, 0.0f, 0.3f), h.getLat(), h.getLon());
-        
-        map.getMap().addMapMarker(homeMarker);
+    
+        redrawMarkers();
         
     }
     
@@ -215,5 +249,52 @@ abstract public class NowPanel extends JPanel {
     public void goHome() {
         Coordinate c = config.getCurrentLocation();                        
         map.getMap().setDisplayPositionByLatLon(c.getLat(), c.getLon(), 13);
+    }
+    
+    private void redrawMarkers(final List<Pattern> p) {        
+        
+        map.getMap().removeAllMapMarkers();
+
+        if (homeMarker != null)
+            map.getMap().addMapMarker(homeMarker);
+        
+        if (p!=null) {
+            Iterator<Node> in = Iterators.filter(self.iterateNodes(), new Predicate<Node>() {
+                @Override public boolean apply(Node t) {
+                        
+                    for (Pattern x : p) {
+                        if (self.isInstance(x.getID(), t.getID())) {
+                            return true;  
+                        }
+                    }
+                    
+                    return false;
+                }                
+            });
+            
+            while (in.hasNext()) {
+                Detail d = (Detail)in.next();
+                if (d.getMode() == Mode.Real) {
+                    if (self.isInstance("Located", d.getID())) {
+                        addMarker(d);
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    public void addMarker(Detail d) {
+        double[] l = GeoPointIs.getLocation(d);
+                
+        if (l!=null) {
+            LabeledMarker m = new LabeledMarker(d.getName(), new Color(0.0f, 1.0f, 0.0f, 0.3f), l[0], l[1]);
+            map.getMap().addMapMarker(m);        
+        }
+    }
+            
+
+    public void redrawMarkers() {
+        redrawMarkers(typeFilter.getSelectedPatterns());        
     }
 }
