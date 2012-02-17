@@ -215,6 +215,10 @@ abstract public class DetailEditPanel extends JPanel {
 
             for (String pid : detail.getPatterns()) {
                 final Pattern p = self.getPattern(pid);
+                if (p == null) {
+                    //log error?
+                    continue;
+                }
 
                 JMenu j = new JMenu(p.getName());
                 j.setIcon(Icons.getPatternIcon(p));

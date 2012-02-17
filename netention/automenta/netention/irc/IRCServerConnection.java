@@ -27,7 +27,9 @@ public class IRCServerConnection extends PircBot {
         this.setVersion("netention");
         this.connect(ircHost);        
         
+        
     }
+
 
     public static String getVERSION() {
         return VERSION;
@@ -38,10 +40,12 @@ public class IRCServerConnection extends PircBot {
         c.onConnect(this, channel);
         joinChannel(channel);
     }
+    
     public void leave(String channel) {
         chans.remove(channel);
     }
-    
+
+    @Override
     public void onMessage(String channel, String sender,
                        String login, String hostname, String message) {
 //        if (message.equalsIgnoreCase("time")) {
@@ -49,6 +53,8 @@ public class IRCServerConnection extends PircBot {
 //            sendMessage(channel, sender + ": The time is now " + time);
 //        }
 //        System.out.println(channel + " " + sender + " " + login + " " + hostname + " : " + message);
+        
+        super.onMessage(channel, sender, login, hostname, message);
         
         IRCChannel c = chans.get(channel);
         if (c!=null)

@@ -34,10 +34,11 @@ public class NMessage extends MemoryDetail /*implements Serializable*/ {
 //    private String image;
 
     public NMessage() {
+        super();
     }
     
-    public NMessage(String name, String from, String to, Date when, String subject, String content) {
-        super(name, Mode.Real, "message" );
+    public NMessage(String name, String from, String to, Date when, String subject, String... content) {
+        super(name, Mode.Real, MessagePattern );
         
         setFrom(from);
         setTo(to);
@@ -54,9 +55,10 @@ public class NMessage extends MemoryDetail /*implements Serializable*/ {
             return "";
     }
     
-    public synchronized void setStringValue(String propID, String v) {
+    public synchronized void setStringValue(String propID, String... v) {
         removeAllValues(propID);
-        addValue(propID, new StringIs(v));
+        for (String x : v)
+            addValue(propID, new StringIs(x));
     }
     
     public String getContent() {
@@ -113,7 +115,7 @@ public class NMessage extends MemoryDetail /*implements Serializable*/ {
         setStringValue(this.to, to);
     }
 
-    public void setContent(String content) {
+    public void setContent(String... content) {
         setStringValue(this.content, content);
     }
 

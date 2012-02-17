@@ -276,7 +276,6 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
 
         }
 
-
         tree.setCellRenderer(renderer);
         tree.setRootVisible(false);
         tree.setToggleClickCount(1);

@@ -33,4 +33,12 @@ public abstract class IRCChannel {
         connection.leave(channel);
     }
 
+    public String getChannel() {
+        return channel;
+    }
+
+    public void send(String message) {
+        connection.sendMessage(channel, message);
+    }
+
 }
