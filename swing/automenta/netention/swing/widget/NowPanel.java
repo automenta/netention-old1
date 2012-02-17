@@ -287,7 +287,7 @@ abstract public class NowPanel extends JPanel {
         double[] l = GeoPointIs.getLocation(d);
                 
         if (l!=null) {
-            LabeledMarker m = new LabeledMarker(d.getName(), new Color(0.0f, 1.0f, 0.0f, 0.3f), l[0], l[1]);
+            LabeledMarker m = new LabeledMarker(d.getName(), new Color(0.0f, 1.0f, 0.0f, 0.3f), l[0], l[1], Icons.getObjectIcon(self, d));
             map.getMap().addMapMarker(m);        
         }
     }

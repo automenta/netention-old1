@@ -5,7 +5,9 @@
 
 package automenta.netention.swing.map;
 
+import automenta.netention.swing.Icons;
 import java.awt.*;
+import javax.swing.ImageIcon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 /**
@@ -21,6 +23,7 @@ public class LabeledMarker implements MapMarker, MarkerClickable {
     private Color textColor = Color.BLACK;
     int w = 30;
     int h = 30;
+    private ImageIcon icon;
 
     public LabeledMarker(String text, Color bgColor, double lat, double lon) {
         super();
@@ -30,6 +33,10 @@ public class LabeledMarker implements MapMarker, MarkerClickable {
         
         this.lat = lat;
         this.lon = lon;
+    }
+    public LabeledMarker(String text, Color bgColor, double lat, double lon, ImageIcon icon) {
+        this(text, bgColor, lat, lon);
+        setIcon(icon);
     }
     
     @Override
@@ -50,7 +57,13 @@ public class LabeledMarker implements MapMarker, MarkerClickable {
         
         int cx = point.x - w/2;
         int cy = point.y - h/2;
-        g.fillRect(cx, cy, w, h);
+        
+        if (icon!=null) {
+            g.drawImage(icon.getImage(), cx, cy, w, h, null);
+        }
+        else {
+            g.fillRect(cx, cy, w, h);
+        }
         
         g.setColor(textColor);
         
@@ -84,6 +97,10 @@ public class LabeledMarker implements MapMarker, MarkerClickable {
     @Override
     public void onMouseExit() {
         w = h = 30;
+    }
+
+    public void setIcon(ImageIcon icon) {
+        this.icon = icon;
     }
 
 }

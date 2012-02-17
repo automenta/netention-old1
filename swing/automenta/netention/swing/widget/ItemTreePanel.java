@@ -240,7 +240,7 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
                 }
 
                 // check whatever you need to on the node user object
-                setIcon(getObjectIcon(nodeObj));
+                setIcon(Icons.getObjectIcon(self, nodeObj));
 
                 if (!leaf) {
                     if (expanded) {
@@ -264,16 +264,6 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
 
             }
 
-            public Icon getObjectIcon(Object o) {
-                if (o instanceof Detail) {
-                    Detail d = (Detail) o;
-                    return Icons.getDetailIcon(self, d);
-                } else if (o instanceof Pattern) {
-                    Pattern p = (Pattern) o;
-                    return Icons.getPatternIcon(p);
-                }
-                return Icons.getIcon("thought");
-            }
         };
 
 

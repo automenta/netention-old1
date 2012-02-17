@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 /**
@@ -61,7 +60,7 @@ public class Icons {
         objectToIconPath.put("person", "media/tango32/emotes/face-smile.png");
     }
 
-    public static Icon getFileIcon(String origPath) {
+    public static ImageIcon getFileIcon(String origPath) {
         String path = origPath;
         if (icons.containsKey(origPath)) {
             return icons.get(origPath);
@@ -98,7 +97,7 @@ public class Icons {
 
     }
 
-    public static Icon getIcon(String type) {
+    public static ImageIcon getIcon(String type) {
         String path = objectToIconPath.get(type);
         if (path != null) {
             return getFileIcon(path);
@@ -106,11 +105,11 @@ public class Icons {
         return getFileIcon(objectToIconPath.get("default"));
     }
 
-    public static Icon getDetailIcon(Self s, Detail d) {
+    public static ImageIcon getDetailIcon(Self s, Detail d) {
         String p = d.getIconURL();
         if (p == null) {
             for (String pat : d.getPatterns()) {
-                Icon i = getPatternIcon(s.getPattern(pat));
+                ImageIcon i = getPatternIcon(s.getPattern(pat));
                 if (i != null) {
                     return i;
                 }
@@ -121,7 +120,7 @@ public class Icons {
         }
     }
 
-    public static Icon getPatternIcon(Pattern p) {
+    public static ImageIcon getPatternIcon(Pattern p) {
         if (p == null) {
             return null;
         }
@@ -133,5 +132,16 @@ public class Icons {
         }
         
     }
+
+            public static ImageIcon getObjectIcon(Self self, Object o) {
+                if (o instanceof Detail) {
+                    Detail d = (Detail) o;
+                    return Icons.getDetailIcon(self, d);
+                } else if (o instanceof Pattern) {
+                    Pattern p = (Pattern) o;
+                    return Icons.getPatternIcon(p);
+                }
+                return Icons.getIcon("thought");
+            }
 
 }
