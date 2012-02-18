@@ -1,7 +1,9 @@
 package automenta.netention;
 
+import java.util.List;
 
-public interface Detail extends RODetail {
+
+public interface Detail extends Node {
 
 //	private String creator;	//agentID of the creator of this node
 //
@@ -17,6 +19,14 @@ public interface Detail extends RODetail {
 //
 //	}
 
+    /** creator's URI */
+    public String getCreator();
+
+    public Mode getMode();
+	public List<String> getPatterns();
+	public List<PropertyValue> getValues();
+
+    public String getIconURL();
 
     public void setName(String newName);
 

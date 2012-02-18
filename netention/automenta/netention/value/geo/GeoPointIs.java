@@ -31,10 +31,22 @@ public class GeoPointIs extends StringIs {
         double lat = 0;
         double lng = 0;
         
-        String x[] = string.trim().replace(",", "").split(" ");
+        String x[] = string.trim().replace(",", " ").split(" ");
+        
         if (x.length >= 2) {
-            lat = Double.parseDouble(x[0]);
-            lng = Double.parseDouble(x[1]);
+            boolean c = false;
+            for (int i= 0; i < x.length; i++) {
+                if (x[i].length() > 0) {
+                    double d = Double.parseDouble(x[i]);
+                    if (!c) {
+                        lat = d;
+                        c = true;
+                    }
+                    else {
+                        lng = d;
+                    }
+                }
+            }
         }
         
         this.coords = new double[] { lat, lng };        

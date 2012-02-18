@@ -22,22 +22,22 @@ import java.util.logging.Logger;
  * IAEA Nuclear Facilities
  * @author seh
  */
-public class AddNuclearFacilities { 
-    private static final Logger logger = Logger.getLogger(AddNuclearFacilities.class.toString());
+public class NuclearFacilities { 
+    private static final Logger logger = Logger.getLogger(NuclearFacilities.class.toString());
 
     public static final String NuclearFacility = "NuclearFacility";
     
     //http://www.google.com/fusiontables/DataSource?dsrcid=579353&search=nuclear&cd=5
     //Seems to be last updated on March 15 2011
     
-    final Date dateCollected = new GregorianCalendar(2011, 3, 15).getTime();
+    final static Date dateCollected = new GregorianCalendar(2011, 3, 15).getTime();
       
-    public AddNuclearFacilities(Self s, String csvPath) {
+    public static void add(Self s, String csvPath) {
         //super("Nuclear Facilities", "Pollution", "nuclear.png", "Number of Reactors");
                 
         if (csvPath == null) {
             //TODO load from web and store at csvPath            
-            throw new UnsupportedOperationException(this.toString() + " Fetching from web");
+            throw new UnsupportedOperationException(NuclearFacilities.class.toString() + " Fetching from web");
         }
 
         File f = new File(csvPath);
@@ -98,7 +98,7 @@ public class AddNuclearFacilities {
     
     public static void main(String[] args) {
         MemorySelf s = new MemorySelf();
-        new AddNuclearFacilities(s, "schema/IAEA_Nuclear_Facilities.csv");
+        NuclearFacilities.add(s, "schema/IAEA_Nuclear_Facilities.csv");
     }
 
 }

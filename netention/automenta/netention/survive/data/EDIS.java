@@ -117,14 +117,21 @@ public class EDIS {
             
             MemoryDetail d = new MemoryDetail(name, Mode.Real, getPattern(name), "Located" );
             if (latlng.length() > 0) {
-                try {                    
-                    d.addValue("currentLocation", new GeoPointIs(latlng));                    
+                try {                  
+                    final GeoPointIs g = new GeoPointIs(latlng);
+                    d.addValue("currentLocation", g);
                 }
                 catch (NumberFormatException exx) { 
                     logger.severe("Invalid geolocation: " + latlng);
                 }
             }
-            //d.setWhenCreated
+//            else {
+//                System.out.println("  missing location: " + ee);
+//            }
+            
+            //TODO parse date            
+                //d.setWhenCreated
+            
             self.addDetail(d);
         }
         

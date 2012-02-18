@@ -72,15 +72,15 @@ public interface Node extends Serializable {
 
     }
     
-    public static class StringNode extends AbstractNode {
-
-        public StringNode(String id) {
-            super(id);
-        }
-        @Override public String toString() {
-            return getName();
-        }
-        
-    }
+//    public static class StringNode extends AbstractNode {
+//
+//        public StringNode(String id) {
+//            super(id);
+//        }
+//        @Override public String toString() {
+//            return getName();
+//        }
+//        
+//    }
 
 }
