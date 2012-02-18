@@ -73,8 +73,14 @@ public class AddNuclearFacilities {
                 
                 
                 MemoryDetail md = new MemoryDetail(name, Mode.Real, NuclearFacility, "Located");
-                GeoPointIs g = new GeoPointIs(lat, lng, country);
-                md.addValue("currentLocation", g);
+                try {
+                    GeoPointIs g = new GeoPointIs(lat, lng, country);
+                    md.addValue("currentLocation", g);
+                }
+                catch (NumberFormatException exx) {
+                    exx.printStackTrace();
+                }
+                
                 md.addValue("totalReactors", new IntegerIs(totalReactors));
                 md.setWhenCreated(dateCollected);
                 s.addDetail(md);

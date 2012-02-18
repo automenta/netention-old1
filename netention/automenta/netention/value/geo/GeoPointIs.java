@@ -18,38 +18,49 @@ public class GeoPointIs extends StringIs {
         }
         return null;
     }
+    private double[] coords;
 
     public GeoPointIs() {
+        super();
+        this.coords = new double[] { 0, 0 };
     }
 
-    public GeoPointIs(String string) {
+    public GeoPointIs(String string) throws java.lang.NumberFormatException {
         super(string);
-    }
 
-    public GeoPointIs(double lat, double lng) {
-        this(lat + "," + lng);
-    }
-    public GeoPointIs(double lat, double lng, String extra) {
-        this(lat + "," + lng + "," + extra);
-    }
-    
-    public double[] getCoordinates() {
         double lat = 0;
         double lng = 0;
         
-        String x[] = getValue().split(",| ");
+        String x[] = string.trim().replace(",", "").split(" ");
         if (x.length >= 2) {
             lat = Double.parseDouble(x[0]);
             lng = Double.parseDouble(x[1]);
         }
         
-        return new double[] { lat, lng };
+        this.coords = new double[] { lat, lng };        
+    }
+
+    public GeoPointIs(double lat, double lng) {
+        super(lat + "," + lng);
+        this.coords = new double[] { lat, lng };
+    }
+    
+    public GeoPointIs(double lat, double lng, String extra) {
+        super(lat + "," + lng + "," + extra);
+        this.coords = new double[] { lat, lng };
+    }
+    
+    public double[] getCoordinates() {
+        return coords;        
     }
 
     @Override
     public String toString() {
         return getValue();
     }
+ 
+    public double getLat() { return getCoordinates()[0]; }
+    public double getLng() { return getCoordinates()[1]; }
     
     
     
