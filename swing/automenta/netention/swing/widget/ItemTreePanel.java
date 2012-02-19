@@ -35,22 +35,6 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
     private JTree tree;
     private TreeModel treeModel;
 
-    List<Pattern> getSelectedPatterns() {
-        List<Pattern> p = new LinkedList();
-        
-        if (tree!=null) {
-            TreePath[] paths = tree.getSelectionPaths();
-            if (paths!=null) {
-                for (TreePath t : paths) {
-                    Object o = ((DefaultMutableTreeNode)t.getLastPathComponent()).getUserObject();
-                    if (o instanceof Pattern)
-                        p.add((Pattern)o);
-                }
-            }
-        }
-        
-        return p;
-    }
 
     public static class WhenTreeModel extends DefaultTreeModel {
         private final Self self;
@@ -191,11 +175,18 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
                 DefaultMutableTreeNode item = (DefaultMutableTreeNode) path.getLastPathComponent();                
                 onOpened(item.getUserObject());
             }
+            else if (e.getButton() == MouseEvent.BUTTON3) {
+                onRightClick(e);
+            }
         }
     }
 
     abstract public void onOpened(Object item);
 
+    /**
+     * note: may need refresh() since it is not called in constructor
+     * @param self 
+     */
     public ItemTreePanel(Self self) {
         super(new BorderLayout());
 
@@ -296,5 +287,50 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
      */
     public void selectObject(Detail d) {
         //TODO impl this
+    }
+    
+    public List<Object> getSelectedObjects() {
+        List<Object> l = new LinkedList();
+        for (TreePath t : tree.getSelectionPaths()) {
+            l.add(((DefaultMutableTreeNode)t.getLastPathComponent()).getUserObject());
+        }
+        return l;
+    }
+    
+    public List<Pattern> getSelectedPatterns() {
+        List<Pattern> p = new LinkedList();
+        
+        if (tree!=null) {
+            TreePath[] paths = tree.getSelectionPaths();
+            if (paths!=null) {
+                for (TreePath t : paths) {
+                    Object o = ((DefaultMutableTreeNode)t.getLastPathComponent()).getUserObject();
+                    if (o instanceof Pattern)
+                        p.add((Pattern)o);
+                }
+            }
+        }
+        
+        return p;
+    }
+    public List<Detail> getSelectedDetails() {
+        List<Detail> p = new LinkedList();
+        
+        if (tree!=null) {
+            TreePath[] paths = tree.getSelectionPaths();
+            if (paths!=null) {
+                for (TreePath t : paths) {
+                    Object o = ((DefaultMutableTreeNode)t.getLastPathComponent()).getUserObject();
+                    if (o instanceof Detail)
+                        p.add((Detail)o);
+                }
+            }
+        }
+        
+        return p;
+    }
+
+    public void onRightClick(MouseEvent e) {
+        
     }
 }

@@ -21,7 +21,10 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.tree.TreeModel;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
@@ -409,6 +412,42 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
                 addTab(item);
             }
 
+            @Override
+            public void onRightClick(final MouseEvent e) {
+                super.onRightClick(e);
+                
+                JPopupMenu j = new JPopupMenu();
+                
+                final List<Detail> details = getSelectedDetails();
+                if (details.size() > 0) {
+                    JMenuItem a = new JMenuItem("Delete " + details.size() + " details...");
+                    a.addActionListener(new ActionListener() {
+                        @Override public void actionPerformed(ActionEvent xe) {
+                            int n = JOptionPane.showConfirmDialog(
+                                        SelfBrowserPanel.this,
+                                        "Delete " + details.size() + " details?",
+                                        "Delete Details",
+                                        JOptionPane.YES_NO_OPTION);
+                            if (n == JOptionPane.YES_OPTION) {
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    @Override public void run() {
+                                        deleteDetails(details);
+                                        refreshView();
+                                    }                                    
+                                });
+                            }
+
+                        }                        
+                    });
+                    j.add(a);
+                }
+                
+                j.show(e.getComponent(), e.getX(), e.getY());
+                
+            }
+            
+            
+
         };
         refreshView();
 
@@ -459,5 +498,9 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
         
         content.setLeftComponent(new DefineSurvivalPanel(map, environment));
         updateUI();
+    }
+    
+    protected void deleteDetails(Collection<Detail> d) {
+        self.removeDetail(d.toArray(new Detail[d.size()]));
     }
 }

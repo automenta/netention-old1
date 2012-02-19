@@ -174,11 +174,11 @@ public class MemorySelf extends Self {
     }
 
     @Override
-    public void removeDetail(Detail... de) {
-        for (Detail d : de)
-            details.remove(d);
+    public void removeDetail(final Detail... de) {
+        for (final Detail d : de)
+            details.remove(d.getID());
 
-        for (SelfListener sl : listeners)
+        for (final SelfListener sl : listeners)
             sl.onDetailsRemoved(de);
             
         //return details.remove(d.getID()) != null;

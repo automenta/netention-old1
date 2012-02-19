@@ -86,6 +86,7 @@ public class RunSelfBrowser implements Demo {
         new AddENTPMflowcycles().add(self);
 
         NuclearFacilities.add(self, "schema/IAEA_Nuclear_Facilities.csv");
+        
         new EDIS().init(self).update(self);
         
         return self;
