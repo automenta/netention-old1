@@ -288,4 +288,36 @@ abstract public class Self {
         return serializer.deepSerialize(new MemorySelfData(s));
     }
 
+    public void addProperties(Pattern p, Property... properties) {
+        addProperties(p.getID(), properties);
+    }
+
+    public void addProperties(String pattern, Property... properties) {
+        for (Property p : properties) {
+            addProperty(p, pattern);
+        }
+    }
+
+    
+    public void refactorPatternParent(String fromParent, String toParent) {
+        
+        for (String s : getPatterns()) {
+            Pattern p = getPattern(s);
+            if (p.getParents().contains(fromParent)) {
+                p.removeParent(fromParent);
+                p.addParent(toParent);
+            }            
+        }
+    }
+
+
+    public boolean containsProperty(Detail d, Property p) {
+        for (PropertyValue pv : d.getValues()) {
+            if (p.getID().equals(pv.getProperty())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 }

@@ -4,7 +4,6 @@
  */
 package automenta.netention;
 
-import automenta.netention.impl.MemoryDetail;
 import automenta.netention.value.string.StringIs;
 import flexjson.JSONSerializer;
 import java.util.Date;
@@ -15,7 +14,7 @@ import java.util.Set;
  *
  * @author seh
  */
-public class NMessage extends MemoryDetail /*implements Serializable*/ {
+public class NMessage extends Detail /*implements Serializable*/ {
     public static final String MessagePattern = "message";
     public static final String StatusPattern = "status";
     
@@ -58,7 +57,7 @@ public class NMessage extends MemoryDetail /*implements Serializable*/ {
     public synchronized void setStringValue(String propID, String... v) {
         removeAllValues(propID);
         for (String x : v)
-            addValue(propID, new StringIs(x));
+            add(propID, new StringIs(x));
     }
     
     public String getContent() {

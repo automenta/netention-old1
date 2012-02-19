@@ -5,7 +5,6 @@
 
 package automenta.netention;
 
-import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
 import automenta.netention.value.integer.IntProp;
@@ -43,9 +42,9 @@ public class TestMemorySelf extends TestCase {
             s.addPattern(p2);
         }
 
-        MemoryDetail ma = new MemoryDetail("a", Mode.Real, "pat1", "pat2");
+        Detail ma = new Detail("a", Mode.Real, "pat1", "pat2");
         s.addDetail(ma);
-        MemoryDetail mb = new MemoryDetail("b", Mode.Imaginary, "pat1");
+        Detail mb = new Detail("b", Mode.Imaginary, "pat1");
         s.addDetail(mb);
 
         //add details
@@ -53,13 +52,13 @@ public class TestMemorySelf extends TestCase {
             
             assertEquals(2, s.getAvailableProperties(ma, "pat1", "pat2").size());
 
-            ma.addValue("prop1", new IntegerIs(0));
+            ma.add("prop1", new IntegerIs(0));
 
             //now that a property is added, it should be one less available
             assertEquals(1, s.getAvailableProperties(ma, "pat1", "pat2").size());
 
 
-            mb.addValue("prop1", new IntegerEquals(0));
+            mb.add("prop1", new IntegerEquals(0));
         }
 
         //test linker

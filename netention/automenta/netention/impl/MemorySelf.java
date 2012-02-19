@@ -184,15 +184,6 @@ public class MemorySelf extends Self {
         //return details.remove(d.getID()) != null;
     }
 
-    public boolean containsProperty(Detail d, Property p) {
-        for (PropertyValue pv : d.getValues()) {
-            if (p.getID().equals(pv.getProperty())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public void link(Linker l) {
         MutableBidirectedGraph<Node, ValueEdge<Node, Link>> g = l.run(IteratorUtils.toList(iterateNodes()));
@@ -239,16 +230,6 @@ public class MemorySelf extends Self {
         }
     }
 
-    public void addProperties(Pattern p, Property... properties) {
-        addProperties(p.getID(), properties);
-    }
-
-    public void addProperties(String pattern, Property... properties) {
-        for (Property p : properties) {
-            addProperty(p, pattern);
-        }
-    }
-
     @Override
     public void foreachNode(NodeVisitor n) {
         for (Node a : details.values()) {
@@ -256,17 +237,6 @@ public class MemorySelf extends Self {
                 break;
         }
         n.onFinished();
-    }
-
-    public void refactorPatternParent(String fromParent, String toParent) {
-        
-        for (String s : getPatterns()) {
-            Pattern p = getPattern(s);
-            if (p.getParents().contains(fromParent)) {
-                p.removeParent(fromParent);
-                p.addParent(toParent);
-            }            
-        }
     }
 
     

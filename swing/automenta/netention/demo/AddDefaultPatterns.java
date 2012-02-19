@@ -1,10 +1,10 @@
 package automenta.netention.demo;
 
+import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.NMessage;
 import automenta.netention.Pattern;
 import automenta.netention.Self;
-import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.value.bool.BoolIs;
 import automenta.netention.value.integer.IntegerIs;
@@ -228,24 +228,24 @@ public class AddDefaultPatterns {
     }
     
     @Deprecated public void addDefaults(Self s) {
-        MemoryDetail d1 = new MemoryDetail("Red Bike", Mode.Real, "Built", "Mobile");
-        MemoryDetail d11 = new MemoryDetail("Blue Bike", Mode.Real, "Built");
-        MemoryDetail d2 = new MemoryDetail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");
-        MemoryDetail d3 = new MemoryDetail("What is Netention?", Mode.Real, "message");
+        Detail d1 = new Detail("Red Bike", Mode.Real, "Built", "Mobile");
+        Detail d11 = new Detail("Blue Bike", Mode.Real, "Built");
+        Detail d2 = new Detail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");
+        Detail d3 = new Detail("What is Netention?", Mode.Real, "message");
         {
             d1.setID("default1");
             d11.setID("default2");
             d2.setID("default3");
             d3.setID("default4");
 
-            d1.addValue("numWheels", new IntegerIs(4));
-            d1.addValue("manufacturer", new StringIs("myself"));
-            d1.addValue("wheelRadius", new RealIs(16.0));
-            d1.addValue("hasKickStand", new BoolIs(true));
+            d1.add("numWheels", new IntegerIs(4));
+            d1.add("manufacturer", new StringIs("myself"));
+            d1.add("wheelRadius", new RealIs(16.0));
+            d1.add("hasKickStand", new BoolIs(true));
             //d1.addProperty("anotherObject", new NodeIs(d2.getID()));
             {
                 //d11.addProperty("numWheels", new IntegerIs(2));
-                d11.addValue("manufacturer", new StringIs("myself"));
+                d11.add("manufacturer", new StringIs("myself"));
                 //d11.addProperty("wheelRadius", new RealIs(16.0));
                 //d11.addProperty("hasKickStand", new BoolIs(true));
                 //d11.addProperty("anotherObject", new NodeIs(d2.getID()));
@@ -254,7 +254,7 @@ public class AddDefaultPatterns {
         }
         {
             //d2.addProperty("numWheels", new IntegerEquals(4));
-            d2.addValue("manufacturer", new StringEquals("myself"));
+            d2.add("manufacturer", new StringEquals("myself"));
             //d2.addProperty("wheelRadius", new RealEquals(16.0));
             //d2.addProperty("hasKickStand", new BoolEquals(true));
             //d2.addProperty("anotherObject", new NodeEquals(d1.getID()));

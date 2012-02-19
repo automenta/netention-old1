@@ -4,11 +4,11 @@
  */
 package automenta.netention.demo.swing;
 
+import automenta.netention.Detail;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
 import automenta.netention.demo.Demo;
 import automenta.netention.demo.RunSelfBrowser;
-import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.detail.DetailEditPanel;
 import automenta.netention.swing.util.SwingWindow;
@@ -39,12 +39,12 @@ public class RunDetailEdit implements Demo {
 
         final Self mSelf = RunSelfBrowser.newDefaultSelf();
 
-        final MemoryDetail d = new MemoryDetail("Untitled");
+        final Detail d = new Detail("Untitled");
         mSelf.addDetail(d);
 
         final EncodingPanel ep = new EncodingPanel(d);
 
-        final DetailEditPanel views = new DetailEditPanel(mSelf, new MemoryDetail(), false, false) {
+        final DetailEditPanel views = new DetailEditPanel(mSelf, new Detail(), false, false) {
 
             @Override
             protected void deleteThis() {
@@ -98,9 +98,9 @@ public class RunDetailEdit implements Demo {
     public static class EncodingPanel extends JPanel {
 
         private final JTextArea textArea;
-        private final MemoryDetail detail;
+        private final Detail detail;
 
-        public EncodingPanel(MemoryDetail d) {
+        public EncodingPanel(Detail d) {
             super(new BorderLayout());
 
             this.detail = d;
@@ -122,8 +122,8 @@ public class RunDetailEdit implements Demo {
         }
     }
 
-    public static MemoryDetail getDetail(String json) {
-        MemoryDetail md = new JSONDeserializer<MemoryDetail>().deserialize(json);
+    public static Detail getDetail(String json) {
+        Detail md = new JSONDeserializer<Detail>().deserialize(json);
         System.out.println(md.getName());
         System.out.println(md.getPatterns());
         System.out.println(md.getValues());

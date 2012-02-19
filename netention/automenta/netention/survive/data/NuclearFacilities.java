@@ -4,10 +4,10 @@
  */
 package automenta.netention.survive.data;
 
+import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.Pattern;
 import automenta.netention.Self;
-import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.value.geo.GeoPointIs;
 import automenta.netention.value.integer.IntegerIs;
@@ -72,16 +72,16 @@ public class NuclearFacilities {
                 int totalReactors = Integer.parseInt(tokens[4].trim().replace("\"", ""));
                 
                 
-                MemoryDetail md = new MemoryDetail(name, Mode.Real, NuclearFacility, "Located");
+                Detail md = new Detail(name, Mode.Real, NuclearFacility, "Located");
                 try {
                     GeoPointIs g = new GeoPointIs(lat, lng, country);
-                    md.addValue("currentLocation", g);
+                    md.add("currentLocation", g);
                 }
                 catch (NumberFormatException exx) {
                     exx.printStackTrace();
                 }
                 
-                md.addValue("totalReactors", new IntegerIs(totalReactors));
+                md.add("totalReactors", new IntegerIs(totalReactors));
                 md.setWhenCreated(dateCollected);
                 s.addDetail(md);
                 

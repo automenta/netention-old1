@@ -6,7 +6,6 @@
 package automenta.netention.swing.widget;
 
 import automenta.netention.*;
-import automenta.netention.impl.MemoryDetail;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.SelfSession;
 import automenta.netention.swing.map.LabeledMarker;
@@ -108,8 +107,8 @@ abstract public class NowPanel extends JPanel {
             String s = text.getText();
             if (s.length() > 0) {
                 Date when = new Date();
-                MemoryDetail m = new MemoryDetail(s, Mode.Real, NMessage.StatusPattern, "Located");
-                m.addValue("currentLocation", new StringIs(config.getCurrentLocation().getLat() + ", " + config.getCurrentLocation().getLon()));
+                Detail m = new Detail(s, Mode.Real, NMessage.StatusPattern, "Located");
+                m.add("currentLocation", new StringIs(config.getCurrentLocation().getLat() + ", " + config.getCurrentLocation().getLon()));
                 self.addDetail(m);
             }
             text.setText("");

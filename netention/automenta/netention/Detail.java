@@ -1,120 +1,164 @@
 package automenta.netention;
 
+import automenta.netention.value.Comment;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 
-public interface Detail extends Node {
+public class Detail implements Node {
+    
+    private String id;
+    private String name;
+    private Mode mode;
+    private List<String> patterns = new LinkedList();
+    private List<PropertyValue> values = new LinkedList();
+    private String creator;
+    private Date whenCreated;
+    private Date whenModified;
+    private String iconURL = null;
 
-//	private String creator;	//agentID of the creator of this node
-//
-//	private List<String> patterns = new LinkedList();
-//	private List<PropertyValue> properties = new LinkedList();
-//
-//	public Detail(String id, String name, String... patterns) {
-//		super(id, name);
-//
-//		for (String p : patterns) {
-//			getPatterns().add(p);
-//		}
-//
-//	}
+    public Detail() {
+        this("");
+    }
 
-    /** creator's URI */
-    public String getCreator();
+    public Detail(String name) {
+        this(name, Mode.Unknown);
+    }
 
-    public Mode getMode();
-	public List<String> getPatterns();
-	public List<PropertyValue> getValues();
+    public Detail(String name, Mode mode, String... initialPatterns) {
+        this.id = UUID.randomUUID().toString();
+        this.name = name;
+        this.mode = mode;
+        this.creator = "Me";
+        this.whenCreated = this.whenModified = new Date();
 
-    public String getIconURL();
+        for (String p : initialPatterns) {
+            addPattern(p);
+        }
+    }
 
-    public void setName(String newName);
+    public void setID(String id) {
+        this.id = id;
+    }        
 
-    public void setMode(Mode mode);
+    public void setName(String newName) {
+        this.name = newName;
+    }
 
+    public void setMode(Mode newMode) {
+        this.mode = newMode;
+    }
+    
+    public Date getWhen() {
+        return whenModified;
+    }
+    
+    public Mode getMode() {
+        return mode;
+    }
 
-//	/** analogous to the set of rdf:type statements */
-//	public List<String> getPatterns() {
-//		return patterns;
-//	}
-//
-//	public void add(String property, PropertyValue value) {
-//		synchronized (getProperties()) {
-//			value.setProperty(property);
-//			getProperties().add(value);
-//		}
-//	}
-//
-//	/** equivalent to set, but useful for currying */
-//	public Node with(String property, PropertyValue value) {
-//		add(property, value);
-//		return this;
-//	}
-//
-//	public class InvalidPropertyException extends Exception { }
-//
-//	//TODO implement setValidated(String property, PropertyValue value)
-//
-////	public void setValidated(String property, Serializable value) throws InvalidPropertyException {
-////		if (isValidPropertyType(property, value)) {
-////			set(property, value);
-////		}
-////		else {
-////			throw new InvalidPropertyException();
-////		}
-////	}
-//
-//	public boolean isValidPropertyType(String property, Object value) {
-//		//TODO implement isValidPropertyType, and test property type checking
-//		return true;
-//	}
-//
-//	/** the creator's agent ID */
-//	public String getCreator() {
-//		return creator;
-//	}
-//
-//	public void setCreator(String creator) {
-//		this.creator = creator;
-//	}
-//
-//	@Override public String toString() {
-//		return getID() + " (" + getName() + ")" + "=<" + getPatterns() + ">";
-//	}
-//
-//	/** get all properties */
-//	public List<PropertyValue> getProperties() {
-//		return properties;
-//	}
-//
-//	/** get all properties with a certain property ID */
-//	public Collection<PropertyValue> getProperties(String property) {
-//		List<PropertyValue> lpv = new LinkedList();
-//		for (PropertyValue pv : getProperties()) {
-//			if (pv.getProperty().equals(property))
-//				lpv.add(pv);
-//		}
-//		return lpv;
-//	}
-//
-//
-//    public List<Pattern> getOtherPossiblePatterns(Schema s, Detail d) {
-//        return null;
+    public List<String> getPatterns() {
+        return patterns;
+    }
+
+    public List<PropertyValue> getValues() {
+        return values;
+    }
+
+    public String getID() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public <X extends PropertyValue> X getValue(Class<? extends X> c, String propID) {
+        for (PropertyValue pv : getValues())
+            if (pv.getProperty().equals(propID))
+                if (c.isAssignableFrom(pv.getClass()))
+                    return (X)pv;
+        return null;
+    }
+    
+    public boolean add(String propID, PropertyValue p) {
+        p.setProperty(propID);
+        return getValues().add(p);
+    }
+
+    public void add(Comment c) {
+        getValues().add(c);
+    }
+    
+    //TODO impl
+//    public boolean removeProperty(String propID) {
+//        return false;
 //    }
-//
-//    public List<Property> getOtherPossibleProperties(Schema s, Detail d) {
-//        return null;
-//    }
-//
-//	public int getNumPropertiesDefined(String property) {
-//		int count = 0;
-//		for (PropertyValue pv : getProperties()) {
-//			if (pv.getProperty().equals(property))
-//				count++;
-//		}
-//		return count;
-//	}
+    
+    public boolean addPattern(String patternID) {
+        if (!getPatterns().contains(patternID))
+            return getPatterns().add(patternID);
+        return false;
+    }
+    public boolean removePattern(String patternID) {
+        return getPatterns().remove(patternID);
+    }
 
-    public void mergeFrom(Detail d);
+    public String toString() {
+        return getName();
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public String getIconURL() {
+        return iconURL;
+    }
+
+    public void setIconURL(String u) {
+        this.iconURL = u;
+    }
+
+    public Date getWhenCreated() {
+        return whenCreated;
+    }
+
+    public void setWhenCreated(Date whenCreated) {
+        this.whenCreated = whenCreated;
+    }
+
+    public Date getWhenModified() {
+        return whenModified;
+    }
+
+    public void setWhenModified(Date whenModified) {
+        this.whenModified = whenModified;
+    }
+
+
+    public void removeAllValues(String propID) {
+        List<PropertyValue> toRemove = new LinkedList();
+        
+        for (PropertyValue v : values) {
+            if (v.getProperty().equals(propID))
+                toRemove.add(v);
+        }
+        
+        values.removeAll(toRemove);
+    }
+
+    public void mergeFrom(Detail d) {
+        for (String p : d.getPatterns())
+            addPattern(p);
+        
+        for (PropertyValue v : d.getValues()) {
+            add(v.getProperty(), v);
+        }
+    }
+
+    
 
 }

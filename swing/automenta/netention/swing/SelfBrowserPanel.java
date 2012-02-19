@@ -6,7 +6,6 @@ package automenta.netention.swing;
 
 import automenta.netention.*;
 import automenta.netention.Self.SelfListener;
-import automenta.netention.impl.MemoryDetail;
 import automenta.netention.survive.Environment;
 import automenta.netention.swing.detail.DetailEditPanel;
 import automenta.netention.swing.map.Map2DPanel;
@@ -375,7 +374,7 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
 //                    contentTabs.removeTabAt(s);
 //            }
 //        };
-        MemoryDetail d = new MemoryDetail("", Mode.Unknown);
+        Detail d = new Detail("", Mode.Unknown);
         d.setName(new Date().toLocaleString() + " I'm thinking about...");
         self.addDetail(d);
         addTab(d);
@@ -424,8 +423,8 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
             @Override
             public void addDetail(Coordinate h) {
                 String name = "At: " + h.getLat() + ", " + h.getLon();
-                MemoryDetail d = new MemoryDetail(name, Mode.Real, "Located");
-                d.addValue("currentLocation", new StringIs(h.getLat() + ", " + h.getLon()));
+                Detail d = new Detail(name, Mode.Real, "Located");
+                d.add("currentLocation", new StringIs(h.getLat() + ", " + h.getLon()));
                 self.addDetail(d);
                 addTab(d);
                 viewWhen();

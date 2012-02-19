@@ -17,13 +17,18 @@ public class Comment extends PropertyValue {
     private String text;
     
     public Comment() {
+        this("");
+    }
+    
+    public Comment(String p) {
         super();
         setProperty("");
-        text = "";
+        text = p;        
     }
 
-    public void setText(String text) {
+    public Comment setText(String text) {
         this.text = text;
+        return this;
     }
 
     public String getText() {

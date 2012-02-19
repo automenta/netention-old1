@@ -5,11 +5,12 @@
 
 package automenta.netention.survive.data;
 
+import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.Pattern;
 import automenta.netention.Self;
-import automenta.netention.impl.MemoryDetail;
 import automenta.netention.rss.HTTP;
+import automenta.netention.value.Comment;
 import automenta.netention.value.geo.GeoPointIs;
 import java.io.IOException;
 import java.util.HashMap;
@@ -134,13 +135,15 @@ public class EDIS {
             //System.out.println("  " + date + " " + loc + " in " + country);
             //System.out.println("  " + datas);
             
-            MemoryDetail d = new MemoryDetail(name, Mode.Real, getPattern(name));
+            Detail d = new Detail(name, Mode.Real, getPattern(name));
+            d.setID(name + "." + date + "." + latlng);
+            d.add(new Comment(ee));
             
             //TODO set detail to page that the EDIS marker refers to
             
             if (latlng.length() > 0) {
                 try {                  
-                    d.addValue("currentLocation", new GeoPointIs(latlng));
+                    d.add("currentLocation", new GeoPointIs(latlng));
                     d.addPattern("Located");
                 }
                 catch (NumberFormatException exx) { 
