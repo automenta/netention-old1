@@ -4,6 +4,7 @@
  */
 package automenta.netention.demo;
 
+import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.craigslist.AddCraigslistPatterns;
 import automenta.netention.craigslist.AddOodlePatterns;
@@ -11,7 +12,6 @@ import automenta.netention.ieml.AddENTPMflowcycles;
 import automenta.netention.ieml.AddIEMLPatterns;
 import automenta.netention.impl.LogToMessage;
 import automenta.netention.impl.MemorySelf;
-import automenta.netention.survive.data.EDIS;
 import automenta.netention.survive.data.NuclearFacilities;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.SelfSession;
@@ -88,7 +88,12 @@ public class RunSelfBrowser implements Demo {
 
         NuclearFacilities.add(self, "schema/IAEA_Nuclear_Facilities.csv");
         
-        new EDIS().init(self).update(self);
+        Pattern disaster; 
+        {
+            self.addPattern(disaster = new Pattern("Disaster"));
+
+            //new EDIS().init(self, disaster).update(self);
+        }
         
         new LogToMessage(self);
         

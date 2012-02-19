@@ -48,18 +48,18 @@ public class EDIS {
     /**
      *  adds Disaster patterns
      */
-    public EDIS init(Self self) {
-        
-        Pattern disaster;
-        self.addPattern(disaster = new Pattern("Disaster"));
-        
+    public EDIS init(Self self, Pattern disaster) {
+                
         init(self, disaster, "Earthquake", "media://edis/DS_UGE.seism.png");
         init(self, disaster, "Volcano Activity Report", "media://edis/VOE.vulano_eruption.png");
         
         return this;
     }
     private void init(Self self, Pattern disaster, String disasterName, String iconURL) {
-        self.addPattern(new Pattern(getPattern(disasterName), disaster.id).setIconURL(iconURL));
+        self.addPattern(new Pattern(getPattern(disasterName), disaster.id)
+                                .setName(disasterName)
+                                .setIconURL(iconURL)
+                );
     }
     
     

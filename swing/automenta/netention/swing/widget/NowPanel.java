@@ -11,6 +11,7 @@ import automenta.netention.swing.SelfSession;
 import automenta.netention.swing.map.LabeledMarker;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JScaledTextArea;
+import automenta.netention.swing.util.MLTreeSelectionModel;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.value.geo.GeoPointIs;
 import automenta.netention.value.string.StringIs;
@@ -60,10 +61,39 @@ abstract public class NowPanel extends JPanel {
     //[10:37:11 PM EDT] SeH: 4. list of ongoing activities
     public static class NotificationsPanel extends JPanel {
         private final Self self;
+        private final ItemTreePanel it;
 
-        public NotificationsPanel(Self self) {
+        public NotificationsPanel(final Self self) {
             super(new BorderLayout());
             this.self = self;
+            
+            add(new JScrollPane(it = new ItemTreePanel(self) {
+
+                @Override
+                public void onOpened(Object item) {
+                }
+
+                @Override
+                public TreeModel getModel() {
+                    return new WhenTreeModel(self) {
+
+                        @Override
+                        public boolean shows(Node n) {
+                            if (n instanceof Detail) {
+                                Detail d = (Detail)n;
+                                if (NMessage.hasRecipient(d, self.getID())) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+
+                    };
+                }
+                
+            }), BorderLayout.CENTER);
+            
+            it.refresh();
         }
         
         
@@ -205,14 +235,17 @@ abstract public class NowPanel extends JPanel {
             
         };
         
+        typeFilter.setSticky(true);
         typeFilter.refresh();
+
+        typeFilter.getTree().setToggleClickCount(2);        
         typeFilter.getTree().addTreeSelectionListener(new TreeSelectionListener() {
             @Override public void valueChanged(TreeSelectionEvent e) {
                 redrawMarkers();
             }
 
         });
-        
+
         add(new JScrollPane(typeFilter), BorderLayout.EAST);
         
         add(new StatusUpdatePanel(), BorderLayout.SOUTH);

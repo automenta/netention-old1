@@ -9,6 +9,7 @@ import automenta.netention.Node;
 import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.swing.Icons;
+import automenta.netention.swing.util.MLTreeSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
@@ -34,7 +35,7 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
     private final Self self;
     private JTree tree;
     private TreeModel treeModel;
-
+    private boolean sticky;
 
     public static class WhenTreeModel extends DefaultTreeModel {
         private final Self self;
@@ -52,10 +53,15 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
             List<Node> d = Self.getDetailsByTime(self.iterateNodes(), false);
 
             for (Node n : d) {
-                DefaultMutableTreeNode pNode = new DefaultMutableTreeNode(n);
-                ((DefaultMutableTreeNode) root).add(pNode);
-
+                if (shows(n)) {
+                    DefaultMutableTreeNode pNode = new DefaultMutableTreeNode(n);
+                    ((DefaultMutableTreeNode) root).add(pNode);
+                }
             }
+        }
+        
+        public boolean shows(Node n) {
+            return true;
         }
     }
     
@@ -195,6 +201,14 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
 
     }
 
+    public void setSticky(boolean sticky) {
+        this.sticky = sticky;
+    }
+
+    public boolean isSticky() {
+        return sticky;
+    }
+    
     abstract public TreeModel getModel();
     
     public void refresh() {
@@ -207,7 +221,68 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
         else if (treeModel instanceof TypeTreeModel) {
             ((TypeTreeModel)treeModel).refresh();
         }
-        tree = new JTree(treeModel);
+        
+        if (isSticky()) {
+            tree = new JTree(treeModel) { 
+
+                //@see MLTreeSelectionModel
+
+                @Override
+                public void setSelectionPath(TreePath path) {
+
+                        //System.out.println("MLDebugJTree: setSelectionPath(" + path + ")");
+
+                        if (!isPathSelected(path)) {
+                            addSelectionPath(path);
+                        }
+                        else {
+                            removeSelectionPath(path);
+                        }
+
+                        return;
+                        //super.setSelectionPath(path);
+                }
+
+                @Override
+                public void setSelectionPaths(TreePath[] paths) {
+
+                        //System.out.println("MLDebugJTree: setSelectionPaths(" + paths + ")");
+
+                        addSelectionPaths(paths);
+
+                        return;
+                }
+
+                @Override
+                public void setSelectionRow(int row) {
+
+                        //System.out.println("MLDebugJTree: setSelectionRow(" + row + ")");
+
+                        addSelectionRow(row);
+
+
+                        return;
+                        //super.setSelectionRow(row);
+                }
+
+                @Override
+                public void setSelectionRows(int[] rows) {
+
+                        //System.out.println("MLDebugJTree: setSelectionRows(" + rows + ")");
+
+                        addSelectionRows(rows);
+
+                        return;
+                        //super.setSelectionRows(rows);
+                }
+
+            };
+            
+            tree.setSelectionModel(new MLTreeSelectionModel());
+        }
+        else {
+            tree = new JTree(treeModel);
+        }
 
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer() {
 

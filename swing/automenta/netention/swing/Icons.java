@@ -7,7 +7,12 @@ package automenta.netention.swing;
 import automenta.netention.Detail;
 import automenta.netention.Pattern;
 import automenta.netention.Self;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ColorConvertOp;
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
@@ -15,6 +20,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import sun.awt.image.ToolkitImage;
 
 /**
  *
@@ -103,6 +109,30 @@ public class Icons {
             return getFileIcon(path);
         }
         return getFileIcon(objectToIconPath.get("default"));
+    }
+    
+    public static BufferedImage convertToGrayscale(BufferedImage source) { 
+        BufferedImageOp op = new ColorConvertOp(
+            ColorSpace.getInstance(ColorSpace.CS_GRAY), null); 
+
+        return op.filter(source, null);
+    }
+
+    public static BufferedImage getBufferedImage(ToolkitImage image) {  
+        // Create a buffered image in which to draw  
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(), image.getHeight(),  
+                                            BufferedImage.TYPE_INT_RGB);  
+        // Draw image into bufferedImage.  
+        Graphics2D g2 = bufferedImage.createGraphics();  
+        g2.drawImage(image, 0, 0, null);
+        g2.dispose();  
+        return bufferedImage;  
+    }  
+    
+    public static ImageIcon getIconGrayscale(String t) {
+        ImageIcon ii = getIcon(t);
+        ii.setImage(convertToGrayscale(getBufferedImage((ToolkitImage)ii.getImage())));
+        return ii;
     }
 
     public static ImageIcon getDetailIcon(Self s, Detail d) {
