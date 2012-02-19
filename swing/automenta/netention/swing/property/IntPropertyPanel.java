@@ -3,17 +3,9 @@
  */
 package automenta.netention.swing.property;
 
+import automenta.netention.*;
 import automenta.netention.swing.util.TransparentFlowPanel;
-import automenta.netention.Detail;
-import automenta.netention.Mode;
-import automenta.netention.PropertyValue;
-import automenta.netention.Self;
-import automenta.netention.Value;
-import automenta.netention.value.integer.IntegerBetween;
-import automenta.netention.value.integer.IntegerEquals;
-import automenta.netention.value.integer.IntegerIs;
-import automenta.netention.value.integer.IntegerLessThan;
-import automenta.netention.value.integer.IntegerMoreThan;
+import automenta.netention.value.integer.*;
 import java.awt.Label;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

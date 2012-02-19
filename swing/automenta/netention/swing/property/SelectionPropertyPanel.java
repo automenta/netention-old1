@@ -1,10 +1,6 @@
 package automenta.netention.swing.property;
 
-import automenta.netention.Detail;
-import automenta.netention.Mode;
-import automenta.netention.PropertyValue;
-import automenta.netention.Self;
-import automenta.netention.Value;
+import automenta.netention.*;
 import automenta.netention.swing.util.TransparentFlowPanel;
 import automenta.netention.value.set.SelectionEquals;
 import automenta.netention.value.set.SelectionIs;

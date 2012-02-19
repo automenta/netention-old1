@@ -4,8 +4,11 @@
  */
 package automenta.netention.swing.widget.email;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Frame;
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /* This class displays a simple dialog instructing the user
    that messages are being downloaded. */

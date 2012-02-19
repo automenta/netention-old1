@@ -5,7 +5,6 @@ package automenta.netention.swing.property;
 
 import automenta.netention.PropertyValue;
 import automenta.netention.Value;
-
 import javax.swing.JPanel;
 
 abstract public class PropertyOption<V extends PropertyValue> {

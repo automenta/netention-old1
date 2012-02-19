@@ -5,13 +5,7 @@
 
 package automenta.netention.linker;
 
-import automenta.netention.Detail;
-import automenta.netention.Link;
-import automenta.netention.Mode;
-import automenta.netention.Node;
-import automenta.netention.Pattern;
-import automenta.netention.PropertyValue;
-import automenta.netention.Self;
+import automenta.netention.*;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.link.CreatedBy;
 import automenta.netention.link.HasProperty;
@@ -19,7 +13,6 @@ import automenta.netention.link.PatternOf;
 import automenta.netention.node.Creator;
 import automenta.netention.node.PropertyNode;
 import com.syncleus.dann.graph.MutableAdjacencyGraph;
-import com.syncleus.dann.graph.MutableBidirectedGraph;
 import java.util.Iterator;
 
 /**

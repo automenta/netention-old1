@@ -5,10 +5,10 @@
 
 package automenta.netention.swing.widget;
 
-import automenta.netention.swing.detail.DetailEditPanel;
 import automenta.netention.*;
 import automenta.netention.demo.RunSelfBrowser;
 import automenta.netention.impl.MemoryDetail;
+import automenta.netention.swing.detail.DetailEditPanel;
 import automenta.netention.swing.util.SwingWindow;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

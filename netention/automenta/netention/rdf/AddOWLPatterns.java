@@ -1,24 +1,22 @@
 package automenta.netention.rdf;
 
-import java.io.File;
-import java.net.MalformedURLException;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import automenta.netention.Pattern;
 import automenta.netention.Property;
 import automenta.netention.Self;
-import automenta.netention.impl.MemorySelf;
 import automenta.netention.value.integer.IntProp;
 import automenta.netention.value.node.NodeProp;
 import automenta.netention.value.real.RealProp;
 import automenta.netention.value.string.StringProp;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.NodeSet;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 

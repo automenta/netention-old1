@@ -4,10 +4,11 @@
  */
 package automenta.netention.swing.widget.email;
 
-import java.util.*;
-import javax.mail.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.util.ArrayList;
+import java.util.Date;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.swing.table.AbstractTableModel;
 
 // This class manages the e-mail table's data.
 public class MessagesTableModel extends AbstractTableModel {

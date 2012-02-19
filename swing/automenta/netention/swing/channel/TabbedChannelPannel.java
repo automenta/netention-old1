@@ -8,7 +8,6 @@ package automenta.netention.swing.channel;
 import automenta.netention.NMessage;
 import automenta.netention.Self;
 import automenta.netention.demo.RunSelfBrowser;
-import automenta.netention.impl.MemorySelf;
 import automenta.netention.irc.IRCChannel;
 import automenta.netention.irc.IRCServerConnection;
 import automenta.netention.swing.detail.DetailEditPanel;

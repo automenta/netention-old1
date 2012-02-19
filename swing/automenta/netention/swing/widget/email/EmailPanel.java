@@ -6,12 +6,14 @@ package automenta.netention.swing.widget.email;
 
 import automenta.netention.Self;
 import automenta.netention.email.EMailChannel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.event.*;
-import java.util.*;
+import java.util.Properties;
 import javax.mail.*;
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 // The E-mail Client.
 public class EmailPanel extends JFrame {

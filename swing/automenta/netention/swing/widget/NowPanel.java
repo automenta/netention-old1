@@ -6,11 +6,11 @@
 package automenta.netention.swing.widget;
 
 import automenta.netention.*;
-import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.SelfSession;
 import automenta.netention.swing.map.LabeledMarker;
+import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JScaledTextArea;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.value.geo.GeoPointIs;

@@ -24,8 +24,8 @@ package automenta.netention.gnutella;
  
 import com.kenmccrary.jtella.ConnectionData;
 import com.kenmccrary.jtella.GNUTellaConnection;
-import com.kenmccrary.jtella.SearchMessage;
 import com.kenmccrary.jtella.MessageReceiverAdapter;
+import com.kenmccrary.jtella.SearchMessage;
 
 /**
  *  An example class for showing how to monitor search queries on the

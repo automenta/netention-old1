@@ -5,36 +5,15 @@
 package automenta.netention.demo.swing;
 
 import automenta.netention.demo.Demo;
-import automenta.netention.demo.Demo;
 import automenta.netention.swing.util.SwingWindow;
 import com.syncleus.dann.math.statistics.SimpleMarkovChain;
 import com.syncleus.dann.math.statistics.SimpleMarkovChainEvidence;
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import java.util.*;
+import javax.swing.*;
 
 /**
  *

@@ -1,10 +1,6 @@
 package automenta.netention.value.string;
 
-import automenta.netention.DefiniteValue;
-import automenta.netention.IndefiniteValue;
-import automenta.netention.Property;
-import automenta.netention.PropertyValue;
-import automenta.netention.Self;
+import automenta.netention.*;
 import automenta.netention.html.DetailHTML;
 
 

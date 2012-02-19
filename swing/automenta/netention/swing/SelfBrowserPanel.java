@@ -5,21 +5,23 @@
 package automenta.netention.swing;
 
 import automenta.netention.*;
-import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.Self.SelfListener;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.survive.Environment;
-import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.detail.DetailEditPanel;
+import automenta.netention.swing.map.Map2DPanel;
+import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.util.SwingWindow;
-import automenta.netention.swing.widget.*;
 import automenta.netention.swing.widget.NowPanel.NotificationsPanel;
+import automenta.netention.swing.widget.*;
 import automenta.netention.swing.widget.survive.DefineSurvivalPanel;
 import automenta.netention.value.string.StringIs;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.Date;
 import javax.swing.*;
 import javax.swing.tree.TreeModel;

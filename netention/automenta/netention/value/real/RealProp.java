@@ -7,8 +7,6 @@ import automenta.netention.Mode;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Unit;
-import automenta.netention.value.real.RealEquals;
-import automenta.netention.value.real.RealIs;
 
 
 

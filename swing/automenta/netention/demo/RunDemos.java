@@ -5,10 +5,10 @@
 package automenta.netention.demo;
 
 
-import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.demo.swing.RunAbout;
 import automenta.netention.demo.swing.RunDetailEdit;
 import automenta.netention.demo.swing.RunTextCutup;
+import automenta.netention.swing.util.SwingWindow;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -18,11 +18,7 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 /**
  *

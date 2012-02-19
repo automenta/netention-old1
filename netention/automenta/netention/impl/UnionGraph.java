@@ -7,7 +7,6 @@ package automenta.netention.impl;
 
 import com.syncleus.dann.graph.BidirectedGraph;
 import com.syncleus.dann.graph.DirectedEdge;
-import com.syncleus.dann.graph.Graph;
 import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
 
 /**

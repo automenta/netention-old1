@@ -6,8 +6,6 @@ package automenta.netention.value.integer;
 import automenta.netention.Mode;
 import automenta.netention.PropertyValue;
 import automenta.netention.value.real.RealProp;
-import automenta.netention.value.integer.IntegerEquals;
-import automenta.netention.value.integer.IntegerIs;
 
 
 

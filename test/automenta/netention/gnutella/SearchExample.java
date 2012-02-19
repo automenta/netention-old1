@@ -7,13 +7,7 @@ package automenta.netention.gnutella;
  
 import com.dan.jtella.ConnectedHostsListener;
 import com.dan.jtella.HostsChangedEvent;
-import com.kenmccrary.jtella.ConnectionData;
-import com.kenmccrary.jtella.GNUTellaConnection;
-import com.kenmccrary.jtella.SearchReplyMessage;
-import com.kenmccrary.jtella.MessageReceiverAdapter;
-import com.kenmccrary.jtella.NodeConnection;
-import com.kenmccrary.jtella.SearchMessage;
-import com.kenmccrary.jtella.SearchSession;
+import com.kenmccrary.jtella.*;
 
 
 /**

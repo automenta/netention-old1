@@ -1,7 +1,7 @@
 package automenta.netention.value.time;
 
-import automenta.netention.value.real.RealProp;
 import automenta.netention.Unit;
+import automenta.netention.value.real.RealProp;
 
 
 public class TimePointProp extends RealProp {

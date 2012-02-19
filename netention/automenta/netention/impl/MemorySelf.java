@@ -4,19 +4,14 @@
  */
 package automenta.netention.impl;
 
-import automenta.netention.Detail;
-import automenta.netention.Link;
-import automenta.netention.Node;
-import automenta.netention.Pattern;
-import automenta.netention.Property;
-import automenta.netention.PropertyValue;
-import automenta.netention.Self;
+import automenta.netention.*;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.linker.Linker;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 import org.apache.commons.collections15.IteratorUtils;
 

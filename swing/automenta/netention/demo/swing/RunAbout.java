@@ -6,7 +6,6 @@
 package automenta.netention.demo.swing;
 
 import automenta.netention.demo.Demo;
-import automenta.netention.demo.Demo;
 import javax.swing.JPanel;
 
 /**

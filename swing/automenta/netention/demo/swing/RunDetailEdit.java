@@ -6,28 +6,17 @@ package automenta.netention.demo.swing;
 
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
-import automenta.netention.craigslist.AddOodlePatterns;
-import automenta.netention.impl.MemoryDetail;
-import automenta.netention.impl.MemorySelf;
 import automenta.netention.demo.Demo;
 import automenta.netention.demo.RunSelfBrowser;
-import automenta.netention.demo.AddDefaultPatterns;
-import automenta.netention.ieml.AddIEMLPatterns;
-import automenta.netention.swing.SelfBrowserPanel;
-import automenta.netention.swing.util.SwingWindow;
+import automenta.netention.impl.MemoryDetail;
+import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.detail.DetailEditPanel;
+import automenta.netention.swing.util.SwingWindow;
 import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 /**

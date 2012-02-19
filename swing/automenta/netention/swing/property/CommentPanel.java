@@ -8,7 +8,6 @@ package automenta.netention.swing.property;
 import automenta.netention.Detail;
 import automenta.netention.Self;
 import automenta.netention.Value;
-import automenta.netention.swing.util.JHyperLink;
 import automenta.netention.value.Comment;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;

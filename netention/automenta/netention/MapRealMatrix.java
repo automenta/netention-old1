@@ -32,12 +32,10 @@ package automenta.netention;
 ** http://math.nist.gov/javanumerics/jama/ as of 9/13/2009.
 */
 
+import com.syncleus.dann.math.RealNumber;
 import com.syncleus.dann.math.linear.RealMatrix;
 import com.syncleus.dann.math.linear.SimpleRealMatrix;
-
-
 import java.io.Serializable;
-import com.syncleus.dann.math.RealNumber;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;

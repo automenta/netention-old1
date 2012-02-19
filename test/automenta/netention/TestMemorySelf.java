@@ -9,9 +9,9 @@ import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
 import automenta.netention.value.integer.IntProp;
-import automenta.netention.value.string.StringProp;
 import automenta.netention.value.integer.IntegerEquals;
 import automenta.netention.value.integer.IntegerIs;
+import automenta.netention.value.string.StringProp;
 import junit.framework.TestCase;
 
 /**

@@ -1,14 +1,16 @@
 package automenta.netention.swing.property;
 
+import automenta.netention.*;
 import automenta.netention.swing.util.TransparentFlowPanel;
-import automenta.netention.Detail;
-import automenta.netention.Mode;
-import automenta.netention.PropertyValue;
-import automenta.netention.Self;
-import automenta.netention.Value;
 import automenta.netention.value.string.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 
 public class StringPropertyPanel extends PropertyOptionPanel {

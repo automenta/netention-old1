@@ -4,15 +4,8 @@
  */
 package automenta.netention.swing.detail;
 
-import automenta.netention.Detail;
-import automenta.netention.Link;
 import automenta.netention.Link.HasStrength;
-import automenta.netention.Mode;
-import automenta.netention.Node;
-import automenta.netention.Pattern;
-import automenta.netention.Property;
-import automenta.netention.PropertyValue;
-import automenta.netention.Self;
+import automenta.netention.*;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.*;
@@ -32,8 +25,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 

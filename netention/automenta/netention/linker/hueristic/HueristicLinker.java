@@ -1,13 +1,8 @@
 package automenta.netention.linker.hueristic;
 
-import automenta.netention.Detail;
-import automenta.netention.Link;
-import automenta.netention.Mode;
-import automenta.netention.Node;
-import automenta.netention.Self;
+import automenta.netention.*;
 import automenta.netention.graph.Pair;
 import automenta.netention.graph.ValueEdge;
-
 import automenta.netention.linker.Linker;
 import com.syncleus.dann.graph.BidirectedGraph;
 import com.syncleus.dann.graph.MutableBidirectedGraph;

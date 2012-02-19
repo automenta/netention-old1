@@ -1,20 +1,15 @@
 package automenta.netention.swing.property;
 
-import automenta.netention.Detail;
-import automenta.netention.Mode;
-import automenta.netention.Property;
-import automenta.netention.PropertyValue;
-import automenta.netention.Self;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-
+import automenta.netention.*;
 import automenta.netention.swing.util.JHyperLink;
 import automenta.netention.swing.util.JScaledLabel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

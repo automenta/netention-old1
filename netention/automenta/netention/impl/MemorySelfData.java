@@ -5,11 +5,7 @@
 
 package automenta.netention.impl;
 
-import automenta.netention.Detail;
-import automenta.netention.Node;
-import automenta.netention.Pattern;
-import automenta.netention.Property;
-import automenta.netention.Self;
+import automenta.netention.*;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import flexjson.JSONDeserializer;

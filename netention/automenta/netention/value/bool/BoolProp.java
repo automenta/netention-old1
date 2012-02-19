@@ -8,8 +8,6 @@ package automenta.netention.value.bool;
 import automenta.netention.Mode;
 import automenta.netention.Property;
 import automenta.netention.PropertyValue;
-import automenta.netention.value.bool.BoolEquals;
-import automenta.netention.value.bool.BoolIs;
 
 /**
  *

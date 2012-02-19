@@ -3,20 +3,9 @@
  */
 package automenta.netention.swing.property;
 
+import automenta.netention.*;
 import automenta.netention.swing.util.TransparentFlowPanel;
-import automenta.netention.Detail;
-import automenta.netention.Mode;
-import automenta.netention.PropertyValue;
-import automenta.netention.Self;
-import automenta.netention.Unit;
-import automenta.netention.Value;
-import automenta.netention.value.real.RealProp;
-import automenta.netention.value.real.RealBetween;
-import automenta.netention.value.real.RealEquals;
-import automenta.netention.value.real.RealIs;
-import automenta.netention.value.real.RealLessThan;
-import automenta.netention.value.real.RealMoreThan;
-import java.util.List;
+import automenta.netention.value.real.*;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;

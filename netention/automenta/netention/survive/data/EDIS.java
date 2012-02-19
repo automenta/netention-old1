@@ -52,10 +52,13 @@ public class EDIS {
         Pattern disaster;
         self.addPattern(disaster = new Pattern("Disaster"));
         
-        self.addPattern(new Pattern(getPattern("Earthquake"), disaster.id).setIconURL("media://edis/DS_UGE.seism.png"));
-        self.addPattern(new Pattern(getPattern("Volcano Activity Report"), disaster.id).setIconURL("media://edis/VOE.vulano_eruption.png"));
+        init(self, disaster, "Earthquake", "media://edis/DS_UGE.seism.png");
+        init(self, disaster, "Volcano Activity Report", "media://edis/VOE.vulano_eruption.png");
         
         return this;
+    }
+    private void init(Self self, Pattern disaster, String disasterName, String iconURL) {
+        self.addPattern(new Pattern(getPattern(disasterName), disaster.id).setIconURL(iconURL));
     }
     
     

@@ -6,15 +6,15 @@ import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
-import automenta.netention.value.real.RealProp;
-import automenta.netention.value.string.StringProp;
 import automenta.netention.value.bool.BoolIs;
 import automenta.netention.value.integer.IntegerIs;
 import automenta.netention.value.node.NodeProp;
 import automenta.netention.value.real.RealIs;
+import automenta.netention.value.real.RealProp;
 import automenta.netention.value.set.SelectionProp;
 import automenta.netention.value.string.StringEquals;
 import automenta.netention.value.string.StringIs;
+import automenta.netention.value.string.StringProp;
 import automenta.netention.value.time.TimePointProp;
 import automenta.netention.value.uri.URIProp;
 

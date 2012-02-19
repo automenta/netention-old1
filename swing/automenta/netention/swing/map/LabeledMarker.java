@@ -5,8 +5,10 @@
 
 package automenta.netention.swing.map;
 
-import automenta.netention.swing.Icons;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import javax.swing.ImageIcon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 

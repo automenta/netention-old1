@@ -4,9 +4,8 @@ import automenta.netention.*;
 import automenta.netention.link.Satisfies;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import java.util.logging.Logger;
-
 import java.util.Collection;
+import java.util.logging.Logger;
 
 /**
  * Link Strength Heuristic 
