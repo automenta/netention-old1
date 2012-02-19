@@ -11,7 +11,7 @@ import automenta.netention.survive.NullDataSource;
  *
  * @author seh
  */
-public class SeedEnvironment extends Environment {
+@Deprecated public class SeedEnvironment extends Environment {
 
     public SeedEnvironment() {
         super();

@@ -16,8 +16,6 @@ import automenta.netention.linker.Linker;
 import automenta.netention.linker.hueristic.DefaultHeuristicLinker;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
 import com.syncleus.dann.graph.MutableDirectedAdjacencyGraph;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
 import java.io.*;
 import java.util.*;
 import org.apache.commons.collections15.IteratorUtils;
@@ -256,10 +254,14 @@ public class MemorySelf extends Self {
         }
     }
 
-
-    
-
-
+    @Override
+    public void foreachNode(NodeVisitor n) {
+        for (Node a : details.values()) {
+            if (!n.onNode(a))
+                break;
+        }
+        n.onFinished();
+    }
 
     public void refactorPatternParent(String fromParent, String toParent) {
         

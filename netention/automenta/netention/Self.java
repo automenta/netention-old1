@@ -33,6 +33,18 @@ abstract public class Self {
     abstract public Detail getDetail(String id);
     
     abstract public Iterator<Node> iterateNodes();
+    
+    public static interface NodeVisitor {
+        /**
+         * @param n
+         * @return whether to continue visiting: true=yes, false=no
+         */
+        public boolean onNode(Node n);
+        public void onFinished();
+    }
+    
+    /** asynchronous visitor */
+    abstract public void foreachNode(NodeVisitor n);
 
     /** all available patterns */
     abstract public Collection<String> getPatterns();

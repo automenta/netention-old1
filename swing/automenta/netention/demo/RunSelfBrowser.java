@@ -87,18 +87,15 @@ public class RunSelfBrowser implements Demo {
         new AddENTPMflowcycles().add(self);
 
         NuclearFacilities.add(self, "schema/IAEA_Nuclear_Facilities.csv");
-        new EDIS(self);
+        new EDIS().init(self).update(self);
         
         return self;
     }
 
     public JPanel newPanel() {
-        final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
+//        final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
 
-        final String filePath = "/tmp/netention1";
-        
-        Self self = newDefaultSelf();
-
+//        final String filePath = "/tmp/netention1";       
 //        //LOAD
 //        MemorySelf self = newDefaultSelf();
 //        try {
@@ -113,11 +110,10 @@ public class RunSelfBrowser implements Demo {
         //self.addPlugin(new Twitter());
 
         //TODO load Selfconfig from file and save when exiting
+        Self self = newDefaultSelf();
         SelfSession sc = new SelfSession();
 
-        final Self mSelf = self;
-
-        JPanel j = new SelfBrowserPanel(mSelf, sc, new SeedEnvironment());
+        JPanel j = new SelfBrowserPanel(self, sc, new SeedEnvironment());
         return j;
     }
 

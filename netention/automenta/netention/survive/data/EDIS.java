@@ -6,6 +6,7 @@
 package automenta.netention.survive.data;
 
 import automenta.netention.Mode;
+import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.rss.HTTP;
@@ -35,6 +36,7 @@ public class EDIS {
 
     public static Map<String,String> eventIcon = new HashMap();
     static {
+     
         
     }
     
@@ -42,8 +44,22 @@ public class EDIS {
         return name.replace(" ", "_");
     }
 
-    public EDIS(Self self) {
-        super();
+    /**
+     *  adds Disaster patterns
+     */
+    public EDIS init(Self self) {
+        
+        Pattern disaster;
+        self.addPattern(disaster = new Pattern("Disaster"));
+        
+        self.addPattern(new Pattern(getPattern("Earthquake"), disaster.id).setIconURL("media://edis/DS_UGE.seism.png"));
+        self.addPattern(new Pattern(getPattern("Volcano Activity Report"), disaster.id).setIconURL("media://edis/VOE.vulano_eruption.png"));
+        
+        return this;
+    }
+    
+    
+    public EDIS update(Self self) {
         
         //var point = new GLatLng(19.421, -155.287);var marker = createMarker(point,'<div style="width:240px" align="left"><b>Volcano Activity Report<\/b><br\/><br\/><b>Volcano name:<\/b> Kilauea<br\/><b>Location:<\/b> Hawaii and Pacific Ocean, HI<br\/><b>Alert level:<\/b> Watch<br\/><b>Alert code:<\/b> Orange<br\/><b>Last report:<\/b> -<br\/><a href="read/index.php?pageid=volcano_read&amp;number=1302-01-">Details<\/a><br\/><br\/><b><small><font color="blue">Report by USGS</font><\/div>', VOE);map.addOverlay(marker);
         String[] p = HTTP.getURL(url).split("\n");
@@ -115,11 +131,14 @@ public class EDIS {
             //System.out.println("  " + date + " " + loc + " in " + country);
             //System.out.println("  " + datas);
             
-            MemoryDetail d = new MemoryDetail(name, Mode.Real, getPattern(name), "Located" );
+            MemoryDetail d = new MemoryDetail(name, Mode.Real, getPattern(name));
+            
+            //TODO set detail to page that the EDIS marker refers to
+            
             if (latlng.length() > 0) {
                 try {                  
-                    final GeoPointIs g = new GeoPointIs(latlng);
-                    d.addValue("currentLocation", g);
+                    d.addValue("currentLocation", new GeoPointIs(latlng));
+                    d.addPattern("Located");
                 }
                 catch (NumberFormatException exx) { 
                     logger.severe("Invalid geolocation: " + latlng);
@@ -135,6 +154,7 @@ public class EDIS {
             self.addDetail(d);
         }
         
+        return this;
     }
 
     /** only needs to be called once, or each time EDIS changes */
