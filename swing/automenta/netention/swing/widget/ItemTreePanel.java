@@ -176,10 +176,10 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
         }
 
         public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 2) {
+            if ((e.getClickCount() == 2) && (e.getButton() == MouseEvent.BUTTON1)) {
                 TreePath path = tree.getClosestPathForLocation(e.getPoint().x, e.getPoint().y);
                 DefaultMutableTreeNode item = (DefaultMutableTreeNode) path.getLastPathComponent();                
-                onOpened(item.getUserObject());
+                onDoubleLeftClick(item.getUserObject());
             }
             else if (e.getButton() == MouseEvent.BUTTON3) {
                 onRightClick(e);
@@ -187,7 +187,7 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
         }
     }
 
-    abstract public void onOpened(Object item);
+    abstract public void onDoubleLeftClick(Object item);
 
     /**
      * note: may need refresh() since it is not called in constructor

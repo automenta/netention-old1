@@ -6,9 +6,8 @@
 package automenta.netention.swing.detail.action;
 
 import automenta.netention.Detail;
-import automenta.netention.Self;
+import automenta.netention.action.DetailAction;
 import automenta.netention.html.DetailHTML;
-import automenta.netention.swing.detail.DetailAction;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.email.MessageEditPanel;
 
@@ -16,35 +15,30 @@ import automenta.netention.swing.widget.email.MessageEditPanel;
  *
  * @author seh
  */
-public class SendAction implements DetailAction {
+public class SendAction extends DetailAction {
     private final DetailHTML detailHTML;
 
     public SendAction(DetailHTML h) {
-        super();
+        super("Send");
         this.detailHTML = h;
     }
 
     
-    @Override
-    public String getLabel() {
-        return "Send";
-    }
-
     @Override
     public String getDescription() {
         return "Edit and publish this to one or more targets";
     }
     
     @Override
-    public boolean applies(Self s, Detail d) {
-        return true;
+    public double applies(Detail d) {
+        return 1.0;
     }
 
     @Override
-    public Runnable getRun(final Self s, final Detail detail) {
+    public Runnable getRun(final Detail detail) {
         return new Runnable() {
             @Override public void run() {
-                final String html = "<html>" + detailHTML.getHTML(s, detail) + "</html>";
+                final String html = "<html>" + detailHTML.getHTML(getSelf(), detail) + "</html>";
                 new SwingWindow(new MessageEditPanel(detail.getName(), html), 800, 600);
             }            
         };

@@ -70,7 +70,7 @@ abstract public class NowPanel extends JPanel {
             add(new JScrollPane(it = new ItemTreePanel(self) {
 
                 @Override
-                public void onOpened(Object item) {
+                public void onDoubleLeftClick(Object item) {
                 }
 
                 @Override
@@ -225,7 +225,7 @@ abstract public class NowPanel extends JPanel {
         typeFilter = new ItemTreePanel(self) {
 
             @Override
-            public void onOpened(Object item) {
+            public void onDoubleLeftClick(Object item) {
             }
 
             @Override

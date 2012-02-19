@@ -6,6 +6,7 @@ package automenta.netention.swing.detail;
 
 import automenta.netention.Link.HasStrength;
 import automenta.netention.*;
+import automenta.netention.action.DetailAction;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.*;
@@ -38,7 +39,6 @@ import javax.swing.border.EmptyBorder;
  */
 abstract public class DetailEditPanel extends JPanel {
 
-    List<DetailAction> actions = new SwingDetailActions().getActions();
     public final JPanel sentences;
     private Detail detail;
     private final Self self;
@@ -517,8 +517,7 @@ abstract public class DetailEditPanel extends JPanel {
             bottomBar.add(deleteButton);
         } 
 
-        for (final DetailAction da : actions) {
-            if (da.applies(self, detail)) {
+        for (final DetailAction da : self.getDetailActions(detail)) {
                 final JButton b = new JButton(da.getLabel());
                 b.setToolTipText(da.getDescription());
                 b.addActionListener(new ActionListener() {
@@ -533,14 +532,15 @@ abstract public class DetailEditPanel extends JPanel {
                                 Runnable rr = new Runnable() {
 
                                     @Override public void run() {
-                                        da.getRun(self, detail).run();
+                                        da.getRun(detail).run();
                                         refreshUI();   
                                     }
                                     
                                 };
                                 
-                                new Thread(rr).start();
+                                //new Thread(rr).start();
                                 
+                                self.queue(rr);
                             }
                         });
                     }
@@ -548,7 +548,6 @@ abstract public class DetailEditPanel extends JPanel {
 
                 bottomBar.add(b);
 
-            }
         }
 
         if (isEditable()) {

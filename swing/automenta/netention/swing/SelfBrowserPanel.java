@@ -408,7 +408,7 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
             }
             
             
-            @Override public void onOpened(Object item) {
+            @Override public void onDoubleLeftClick(Object item) {
                 addTab(item);
             }
 

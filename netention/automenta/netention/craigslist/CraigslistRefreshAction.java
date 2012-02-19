@@ -3,26 +3,18 @@
  * and open the template in the editor.
  */
 
-package automenta.netention.swing.detail.action;
+package automenta.netention.craigslist;
 
 import automenta.netention.Detail;
 import automenta.netention.NMessage;
 import automenta.netention.PropertyValue;
-import automenta.netention.Self;
-import automenta.netention.craigslist.AddCraigslistPatterns;
-import automenta.netention.craigslist.Craigslist;
-import automenta.netention.craigslist.CraigslistChannel;
-import automenta.netention.swing.detail.DetailAction;
-import automenta.netention.swing.util.SwingWindow;
+import automenta.netention.action.DetailAction;
 import automenta.netention.value.set.SelectionEquals;
 import automenta.netention.value.set.SelectionIs;
-import java.awt.BorderLayout;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import java.util.logging.Logger;
 import org.horrabin.horrorss.RssItemBean;
 
 /**
@@ -33,24 +25,26 @@ import org.horrabin.horrorss.RssItemBean;
 
  * @author seh
  */
-public class CraigslistRefreshAction implements DetailAction {
-
+public class CraigslistRefreshAction extends DetailAction {
+    private static final Logger logger = Logger.getLogger(CraigslistRefreshAction.class.toString());
+    
     final Craigslist cl = Craigslist.get();
 
     final boolean complete;
 
     public CraigslistRefreshAction(boolean complete) {
+        super();
         this.complete = complete;
     }
     
     @Override
-    public boolean applies(Self s, Detail d) {
+    public double applies(Detail d) {
         if (d.getPatterns().contains(AddCraigslistPatterns.CraigslistChannel)) {
             if (getLocations(d).size() > 0)
                 if (getCategories(d).size() > 0)
-                    return true;
+                    return 1.0;
         }
-        return false;
+        return 0.0;
     }
 
     @Override    
@@ -115,7 +109,7 @@ public class CraigslistRefreshAction implements DetailAction {
     }
     
     @Override
-    public Runnable getRun(final Self s, final Detail d) {
+    public Runnable getRun(final Detail d) {
         final List<String> locations = getLocations(d);
         final List<String> categories = getCategories(d);
         
@@ -123,21 +117,9 @@ public class CraigslistRefreshAction implements DetailAction {
         return new Runnable() {
             @Override
             public void run() {
-                JPanel statusPanel = new JPanel(new BorderLayout());
-                final JTextArea output = new JTextArea();
-                output.setEditable(false);
-                
-                statusPanel.add(new JScrollPane(output), BorderLayout.CENTER);
-                
-                output.append("Locations: " + locations + "\n");
-                output.append("Categories: " + categories + "\n\n");
-                
-                SwingWindow sw = new SwingWindow(statusPanel, 400, 300);
-                sw.setTitle("Loading data from Craigslist.org... (closes when finished)");
                 
                 for (String loc : locations) {
                     for (String category: categories) {
-                        output.append("Loading " + loc + " " + category + "...\n");
                         
                         String xloc = cl.getLocations().get(loc);
                         String xcategory = cl.getCategories().get(category);
@@ -147,7 +129,7 @@ public class CraigslistRefreshAction implements DetailAction {
                             @Override
                             public void onNewMessage(RssItemBean item, NMessage n) {
                                 super.onNewMessage(item, n);
-                                output.append("  " + n.getSubject() + "\n");
+                                //output.append("  " + n.getSubject() + "\n");
                             }
                             
                         };                         
@@ -155,12 +137,11 @@ public class CraigslistRefreshAction implements DetailAction {
                         Collection<NMessage> ms = ccl.getMessages();
                         NMessage[] mss = ms.toArray(new NMessage[ms.size()]);
                                 
-                        s.addDetail(mss);
+                        getSelf().addDetail(mss);
                         
                     }
                 }
                 
-                sw.setVisible(false);
 
             }            
         };

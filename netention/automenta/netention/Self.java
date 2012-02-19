@@ -1,5 +1,7 @@
 package automenta.netention;
 
+import automenta.netention.action.Action;
+import automenta.netention.action.DetailAction;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.impl.MemorySelfData;
 import automenta.netention.linker.Linker;
@@ -8,7 +10,15 @@ import flexjson.JSONSerializer;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.collections15.IteratorUtils;
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
+
+import static org.quartz.JobBuilder.*;
+import static org.quartz.TriggerBuilder.*;
+
 
 /**
  * A session managed by a certain user/agent.
@@ -17,6 +27,9 @@ import org.apache.commons.collections15.IteratorUtils;
 abstract public class Self {
     
     protected final transient List<SelfListener> listeners = new LinkedList();
+    protected final transient List<Action> actions = new LinkedList();
+    protected Scheduler scheduler;
+;
 
     public static interface SelfListener {
         public void onDetailsAdded(Detail... d);
@@ -75,8 +88,58 @@ abstract public class Self {
     abstract public String getID();
     
     abstract public String getName();
-    
 
+    public Self() {
+        super();
+        try {
+            scheduler = StdSchedulerFactory.getDefaultScheduler();
+
+            scheduler.start();
+
+        } catch (SchedulerException ex) {
+            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        }
+    }
+    
+    public void stop() {
+        try {
+            scheduler.shutdown();
+        } catch (SchedulerException ex) {
+            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static class RunnableJob implements Job {
+
+        public RunnableJob() {
+        }
+
+        public void execute(JobExecutionContext context) throws JobExecutionException {
+            JobDataMap data = context.getMergedJobDataMap();
+            Runnable r = (Runnable)data.get(Runnable.class.toString());
+            r.run();
+        }
+
+    }
+
+    public void queue(Runnable r) {
+
+        JobDataMap m = new JobDataMap();
+        m.put(Runnable.class.toString(), r);
+        JobDetail job = newJob(RunnableJob.class).usingJobData(m).build();
+
+    
+        Trigger trigger = newTrigger().startNow().build();
+
+        try {
+            scheduler.scheduleJob(job, trigger);
+        } catch (SchedulerException ex) {
+            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+    }
+    
     public void addListener(SelfListener s) {
         listeners.add(s);
     }
@@ -318,6 +381,24 @@ abstract public class Self {
             }
         }
         return false;
+    }
+    
+    public void addAction(Action a) {
+        actions.add(a);
+        a.onActionEnabled(this);
+    }
+    
+    public List<DetailAction> getDetailActions(Detail detail) {
+        List<DetailAction> ll = new LinkedList();
+        for (Action a : actions) {
+            if (a instanceof DetailAction) {
+                DetailAction d = (DetailAction)a;
+                if (d.applies(detail) > 0) {
+                    ll.add(d);
+                }
+            }
+        }
+        return ll;
     }
     
 }

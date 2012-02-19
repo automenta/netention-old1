@@ -42,6 +42,12 @@ public class HTTP {
         }
     }
 
+    /**
+     * <xjrn> that's optimistic.  it probably works fine for localhost.it might work if you dedicate a thread alone for blocking requests.  it will not background the socket fetch under any async conditions that i know of
+     * @param url
+     * @param outputPath
+     * @throws IOException 
+     */
     public static void saveURL(String url, String outputPath) throws IOException {
         URL u = new URL(url);
         ReadableByteChannel rbc = Channels.newChannel(u.openStream());
