@@ -6,7 +6,7 @@ package automenta.netention.craigslist;
 
 import automenta.netention.Pattern;
 import automenta.netention.Property;
-import automenta.netention.impl.MemorySelf;
+import automenta.netention.Self;
 import automenta.netention.value.bool.BoolProp;
 import automenta.netention.value.set.SelectionProp;
 import java.io.BufferedReader;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class AddOodlePatterns {
     final public static String PREFIX = "oodle:";
 
-    public void add(MemorySelf ms) throws Exception {
+    public void add(Self ms) throws Exception {
         //http://developer.oodle.com/files/xml/oodle_categories.xml
         Map<String,String> cat = new HashMap();
 
@@ -86,7 +86,7 @@ public class AddOodlePatterns {
         
     }
     
-    protected void addAttributes(MemorySelf ms) {
+    protected void addAttributes(Self ms) {
         //http://developer.oodle.com/attributes-list
 
         
@@ -149,10 +149,10 @@ public class AddOodlePatterns {
         }
     }
     
-    public static void main(String[] args) throws Exception {
-        new AddOodlePatterns().add(new MemorySelf());
-        
-    }
+//    public static void main(String[] args) throws Exception {
+//        new AddOodlePatterns().add(new MemorySelf());
+//        
+//    }
     
 //    public static void main(String[] args) throws Exception {
 //        SAXParserFactory factory = SAXParserFactory.newInstance();

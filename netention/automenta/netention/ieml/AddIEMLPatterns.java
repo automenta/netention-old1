@@ -2,7 +2,7 @@
 package automenta.netention.ieml;
 
 import automenta.netention.Pattern;
-import automenta.netention.impl.MemorySelf;
+import automenta.netention.Self;
 import automenta.netention.value.set.SelectionProp;
 
 /**
@@ -11,7 +11,7 @@ import automenta.netention.value.set.SelectionProp;
  */
 public class AddIEMLPatterns {
 
-    public void add(MemorySelf self) {
+    public void add(Self self) {
 
         Pattern ieml = self.addPattern(new Pattern("IEML"));
 

@@ -97,7 +97,7 @@ public class NuclearFacilities {
     }
     
     public static void main(String[] args) {
-        MemorySelf s = new MemorySelf();
+        Self s = new MemorySelf();
         NuclearFacilities.add(s, "schema/IAEA_Nuclear_Facilities.csv");
     }
 

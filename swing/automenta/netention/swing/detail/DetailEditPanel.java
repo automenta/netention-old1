@@ -14,7 +14,6 @@ import automenta.netention.Property;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
 import automenta.netention.graph.ValueEdge;
-import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.*;
 import automenta.netention.swing.util.JHyperLink;
@@ -777,7 +776,7 @@ abstract public class DetailEditPanel extends JPanel {
                     if (property!=null) {
                         int minCard = property.getCardinalityMin();
                         if (minCard > 0) {
-                            if (MemorySelf.getPropertyCount(d, property.getID()) - 1 < minCard) {
+                            if (Self.getPropertyCount(d, property.getID()) - 1 < minCard) {
                                 required = true;
                             }
                         }

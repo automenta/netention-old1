@@ -3,6 +3,7 @@ package automenta.netention.demo;
 import automenta.netention.Mode;
 import automenta.netention.NMessage;
 import automenta.netention.Pattern;
+import automenta.netention.Self;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.value.real.RealProp;
@@ -226,7 +227,7 @@ public class AddDefaultPatterns {
         
     }
     
-    @Deprecated public void addDefaults(MemorySelf s) {
+    @Deprecated public void addDefaults(Self s) {
         MemoryDetail d1 = new MemoryDetail("Red Bike", Mode.Real, "Built", "Mobile");
         MemoryDetail d11 = new MemoryDetail("Blue Bike", Mode.Real, "Built");
         MemoryDetail d2 = new MemoryDetail("Imaginary Bike", Mode.Imaginary, "Mobile", "Built");

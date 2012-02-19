@@ -282,14 +282,15 @@ public class AddOWLPatterns {
 
     }
 
-    public static void main(String[] args) {
-
-        //String owlPath = "schema/foaf.owl";
-        //String owlPath = "schema/SUMO.owl";
-        //String owlPath = "schema/doap.owl";
-        //String owlPath = "schema/cv.owl";
-        String owlPath = "schema/biography.owl";
-        add(owlPath, new MemorySelf());
-
-    }
+//    public static void main(String[] args) {
+//
+//        //String owlPath = "schema/foaf.owl";
+//        //String owlPath = "schema/SUMO.owl";
+//        //String owlPath = "schema/doap.owl";
+//        //String owlPath = "schema/cv.owl";
+//        String owlPath = "schema/biography.owl";
+//        add(owlPath, new MemorySelf());
+//
+//    }
+    
 }

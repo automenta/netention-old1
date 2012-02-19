@@ -5,6 +5,7 @@
 package automenta.netention.demo.swing;
 
 import automenta.netention.PropertyValue;
+import automenta.netention.Self;
 import automenta.netention.craigslist.AddOodlePatterns;
 import automenta.netention.impl.MemoryDetail;
 import automenta.netention.impl.MemorySelf;
@@ -47,7 +48,7 @@ public class RunDetailEdit implements Demo {
 
     public JPanel newPanel() {
 
-        final MemorySelf mSelf = RunSelfBrowser.newDefaultSelf();
+        final Self mSelf = RunSelfBrowser.newDefaultSelf();
 
         final MemoryDetail d = new MemoryDetail("Untitled");
         mSelf.addDetail(d);

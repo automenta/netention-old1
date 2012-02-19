@@ -4,13 +4,12 @@
  */
 package automenta.netention.swing.widget.email;
 
+import automenta.netention.Self;
 import automenta.netention.email.EMailChannel;
-import automenta.netention.impl.MemorySelf;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.mail.*;
-import javax.mail.internet.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -39,12 +38,12 @@ public class EmailPanel extends JFrame {
     // Flag for whether or not a message is being deleted.
     private boolean deleting;
     
-    private final MemorySelf self;
+    private final Self self;
     private EMailChannel emc;
     
     
     // Constructor for E-mail Client.
-    public EmailPanel(MemorySelf self) {
+    public EmailPanel(Self self) {
         this.self = self;
         
         // Set application title.
@@ -357,14 +356,15 @@ public class EmailPanel extends JFrame {
         
     }
     
-    public static void main(String[] args) throws Exception {
-        MemorySelf self = new MemorySelf();
-        
-        EmailPanel client = new EmailPanel(self);
-        client.show();
-        
-        // Display connect dialog.
-        client.connect();
-    }
+//    public static void main(String[] args) throws Exception {
+//        Self self = new MemorySelf();
+//        
+//        EmailPanel client = new EmailPanel(self);
+//        client.show();
+//        
+//        // Display connect dialog.
+//        client.connect();
+//    }
+    
 }
 

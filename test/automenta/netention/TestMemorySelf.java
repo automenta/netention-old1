@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 public class TestMemorySelf extends TestCase {
 
     public void testMemorySelf() {
-        MemorySelf s = new MemorySelf("me", "Me");
+        Self s = new MemorySelf("me", "Me");
 
         //add properties
         {

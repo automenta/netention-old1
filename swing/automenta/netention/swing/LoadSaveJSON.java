@@ -4,7 +4,7 @@
  */
 package automenta.netention.swing;
 
-import automenta.netention.impl.MemorySelf;
+import automenta.netention.Self;
 import automenta.netention.impl.MemorySelfData;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -18,7 +18,7 @@ import javax.swing.*;
  */
 public class LoadSaveJSON extends JPanel {
 
-    public LoadSaveJSON(final MemorySelf self) {
+    public LoadSaveJSON(final Self self) {
         super(new BorderLayout());
 
         final JTextArea jta = new JTextArea();
@@ -37,9 +37,9 @@ public class LoadSaveJSON extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     final String path = loadFile.getText();
                     try {
-                        MemorySelfData msd = MemorySelf.loadJSON(path);
+                        MemorySelfData msd = MemorySelfData.loadJSON(path);
                         jta.append("Loaded from " + path + "\n");
-                        self.mergeFrom(msd);
+                        msd.mergeTo(self);
                     } catch (Exception ex) {
                         jta.append(ex.toString() + " when loading from " + path);
                         ex.printStackTrace();
@@ -80,7 +80,7 @@ public class LoadSaveJSON extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     final String path = saveFile.getText();
                     try {
-                        MemorySelf.saveJSON(self, path, includeDetails.isSelected(), includeSchema.isSelected());
+                        Self.saveJSON(self, path, includeDetails.isSelected(), includeSchema.isSelected());
                         jta.append("Saved to " + path + "\n");
                     } catch (Exception ex) {
                         jta.append(ex.toString() + " when saving to " + path + "\n");

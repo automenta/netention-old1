@@ -4,6 +4,7 @@
  */
 package automenta.netention.demo;
 
+import automenta.netention.Self;
 import automenta.netention.craigslist.AddCraigslistPatterns;
 import automenta.netention.craigslist.AddOodlePatterns;
 import automenta.netention.ieml.AddENTPMflowcycles;
@@ -17,7 +18,6 @@ import automenta.netention.swing.util.SwingWindow;
 import java.awt.Component;
 import java.awt.Font;
 import java.util.Enumeration;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -96,24 +96,26 @@ public class RunSelfBrowser implements Demo {
         final Logger logger = Logger.getLogger(SelfBrowserPanel.class.getName());
 
         final String filePath = "/tmp/netention1";
+        
+        Self self = newDefaultSelf();
 
-        //LOAD
-        MemorySelf self = newDefaultSelf();
-        try {
-            self = MemorySelf.load(filePath);
-            //self = JSONIO.load(filePath);
-            logger.log(Level.INFO, "Loaded " + filePath);
-        } catch (Exception ex) {
-            System.out.println("unable to load " + filePath + " : " + ex);
-            self = newDefaultSelf();
-            logger.log(Level.INFO, "Loaded Seed Self");
-        }
+//        //LOAD
+//        MemorySelf self = newDefaultSelf();
+//        try {
+//            self = MemorySelf.load(filePath);
+//            //self = JSONIO.load(filePath);
+//            logger.log(Level.INFO, "Loaded " + filePath);
+//        } catch (Exception ex) {
+//            System.out.println("unable to load " + filePath + " : " + ex);
+//            self = newDefaultSelf();
+//            logger.log(Level.INFO, "Loaded Seed Self");
+//        }
         //self.addPlugin(new Twitter());
 
         //TODO load Selfconfig from file and save when exiting
         SelfSession sc = new SelfSession();
 
-        final MemorySelf mSelf = self;
+        final Self mSelf = self;
 
         JPanel j = new SelfBrowserPanel(mSelf, sc, new SeedEnvironment());
         return j;

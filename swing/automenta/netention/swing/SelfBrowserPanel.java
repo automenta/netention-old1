@@ -4,14 +4,10 @@
  */
 package automenta.netention.swing;
 
+import automenta.netention.*;
 import automenta.netention.swing.map.Map2DPanel;
-import automenta.netention.Detail;
-import automenta.netention.Mode;
-import automenta.netention.Pattern;
-import automenta.netention.Property;
 import automenta.netention.Self.SelfListener;
 import automenta.netention.impl.MemoryDetail;
-import automenta.netention.impl.MemorySelf;
 import automenta.netention.survive.Environment;
 import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.detail.DetailEditPanel;
@@ -38,7 +34,7 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
 
     private final JSplitPane content;
     private IndexView indexView;
-    private final MemorySelf self;
+    private final Self self;
     private final JTabbedPane contentTabs;
     int contentMargin = 6;
     int maxTabTitleLength = 24;
@@ -170,7 +166,7 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
 //        viewMenu.setToolTipText("Views");
     }
 
-    public SelfBrowserPanel(final MemorySelf self, final SelfSession config, final Environment e) {
+    public SelfBrowserPanel(final Self self, final SelfSession config, final Environment e) {
         super(new BorderLayout());
 
         this.self = self;

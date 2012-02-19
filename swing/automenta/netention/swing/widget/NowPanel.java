@@ -5,14 +5,9 @@
 
 package automenta.netention.swing.widget;
 
-import automenta.netention.Detail;
+import automenta.netention.*;
 import automenta.netention.swing.map.Map2DPanel;
-import automenta.netention.Mode;
-import automenta.netention.NMessage;
-import automenta.netention.Node;
-import automenta.netention.Pattern;
 import automenta.netention.impl.MemoryDetail;
-import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.SelfSession;
 import automenta.netention.swing.map.LabeledMarker;
@@ -46,7 +41,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 abstract public class NowPanel extends JPanel {
 
     
-    private final MemorySelf self;
+    private final Self self;
     private final SelfSession config;
     private final Map2DPanel map;
     //private int DEFAULT_HOME_ZOOM = 3;
@@ -65,9 +60,9 @@ abstract public class NowPanel extends JPanel {
     //[10:36:28 PM EDT] SeH: 3. inbox: list of notifications
     //[10:37:11 PM EDT] SeH: 4. list of ongoing activities
     public static class NotificationsPanel extends JPanel {
-        private final MemorySelf self;
+        private final Self self;
 
-        public NotificationsPanel(MemorySelf self) {
+        public NotificationsPanel(Self self) {
             super(new BorderLayout());
             this.self = self;
         }
@@ -123,7 +118,7 @@ abstract public class NowPanel extends JPanel {
         
     }
     
-    public NowPanel(final MemorySelf self, final SelfSession config) {
+    public NowPanel(final Self self, final SelfSession config) {
         super(new BorderLayout(6,6));
         
         this.config = config;

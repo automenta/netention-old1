@@ -196,7 +196,7 @@ public class TabbedChannelPannel extends JPanel {
     
     public static void main(String[] args) throws Exception {
         
-        MemorySelf s = RunSelfBrowser.newDefaultSelf();
+        Self s = RunSelfBrowser.newDefaultSelf();
         
         TabbedChannelPannel tcp = new TabbedChannelPannel(s);
                 

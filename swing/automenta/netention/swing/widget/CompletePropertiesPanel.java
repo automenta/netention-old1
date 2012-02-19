@@ -9,7 +9,6 @@ import automenta.netention.swing.detail.DetailEditPanel;
 import automenta.netention.*;
 import automenta.netention.demo.RunSelfBrowser;
 import automenta.netention.impl.MemoryDetail;
-import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.util.SwingWindow;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -122,7 +121,7 @@ public class CompletePropertiesPanel extends JPanel {
     }
     
     public static void main(String[] args) {
-        MemorySelf s = RunSelfBrowser.newDefaultSelf();
+        Self s = RunSelfBrowser.newDefaultSelf();
         Detail d = new MemoryDetail("Description", Mode.Real, "Built");
         new SwingWindow(new CompletePropertiesPanel(s, d, null), 800, 600, true);
     }

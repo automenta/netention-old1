@@ -9,7 +9,6 @@ import automenta.netention.Detail;
 import automenta.netention.Pattern;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
-import automenta.netention.impl.MemorySelf;
 import java.util.List;
 
 /**
@@ -40,7 +39,7 @@ public class BasicDetailHTML implements DetailHTML {
         for (PropertyValue pv : d.getValues()) {
             x.append(pv.toHTML(s, this) + "<br/>");
         }
-        x.append("<br/><pre>" + MemorySelf.toJSON(d) + "</pre>");
+        x.append("<br/><pre>" + Self.toJSON(d) + "</pre>");
         x.append("");
         return x.toString();
     }

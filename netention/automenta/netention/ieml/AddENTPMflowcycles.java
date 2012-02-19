@@ -1,7 +1,7 @@
 package automenta.netention.ieml;
 
 import automenta.netention.Pattern;
-import automenta.netention.impl.MemorySelf;
+import automenta.netention.Self;
 import automenta.netention.value.set.SelectionProp;
 
 /**
@@ -10,7 +10,7 @@ import automenta.netention.value.set.SelectionProp;
  */
 public class AddENTPMflowcycles {
 
-    public void add(MemorySelf self) {
+    public void add(Self self) {
 
         Pattern ENTPMflowcycles = self.addPattern(new Pattern("ENTPM flowcycles"));
         
@@ -23,7 +23,7 @@ public class AddENTPMflowcycles {
     
     }
 
-    private void addContent(MemorySelf self, Pattern ENTPMflowcycles) {
+    private void addContent(Self self, Pattern ENTPMflowcycles) {
 
         Pattern ENTPMcontentflowcycles = self.addPattern(new Pattern("ENTPM content flowcycle", ENTPMflowcycles.getID()));
         
@@ -120,7 +120,7 @@ public class AddENTPMflowcycles {
      
     }
 
-    private void addData(MemorySelf self, Pattern ENTPMflowcycles) {
+    private void addData(Self self, Pattern ENTPMflowcycles) {
     
         Pattern ENTPMdataflowcycles = self.addPattern(new Pattern("ENTPM data flowcycle", ENTPMflowcycles.getID()));
 
@@ -212,7 +212,7 @@ public class AddENTPMflowcycles {
         }
     }
 
-    private void addExp(MemorySelf self, Pattern ENTPMflowcycles) {
+    private void addExp(Self self, Pattern ENTPMflowcycles) {
         
         Pattern ENTPMexpflowcycles = self.addPattern(new Pattern("ENTPM exp flowcycle", ENTPMflowcycles.getID()));
 
@@ -305,7 +305,7 @@ public class AddENTPMflowcycles {
         
     }
 
-    private void addInfo(MemorySelf self, Pattern ENTPMflowcycles) {
+    private void addInfo(Self self, Pattern ENTPMflowcycles) {
         
         Pattern ENTPMinfoflowcycles = self.addPattern(new Pattern("ENTPM info flowcycles", ENTPMflowcycles.getID()));
 

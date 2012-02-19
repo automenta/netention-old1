@@ -44,6 +44,7 @@ public class GeoPointIs extends StringIs {
                     }
                     else {
                         lng = d;
+                        break;
                     }
                 }
             }
