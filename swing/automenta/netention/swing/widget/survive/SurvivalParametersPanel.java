@@ -4,15 +4,13 @@
  */
 package automenta.netention.swing.widget.survive;
 
-import automenta.netention.Detail;
-import automenta.netention.Node;
 import automenta.netention.Self;
-import automenta.netention.geo.Geo;
 import automenta.netention.graph.Pair;
 import automenta.netention.survive.DataInterest;
 import automenta.netention.survive.DataSource;
 import automenta.netention.survive.Environment;
-import automenta.netention.survive.data.NuclearFacilities;
+import automenta.netention.survive.SurvivalModel;
+import automenta.netention.survive.SurvivalModel.DefaultHeuristicSurvive;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JFloatSlider;
 import automenta.netention.swing.widget.NowPanel;
@@ -23,7 +21,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -214,11 +211,15 @@ public class SurvivalParametersPanel extends JPanel {
          }
     }
 
+    
+    private SurvivalModel survive;
+    
     public SurvivalParametersPanel(Self self, Map2DPanel mp, Environment d) {
         super(new BorderLayout());
 
         this.self = self;
         this.map = mp;
+        this.survive = new DefaultHeuristicSurvive(self);
 
         JPanel categoriesPanel = new JPanel();
         categoriesPanel.setLayout(new BoxLayout(categoriesPanel, BoxLayout.PAGE_AXIS));
@@ -328,37 +329,13 @@ public class SurvivalParametersPanel extends JPanel {
         updateHeatmap();
     }
     
-    public double getThreat(final double lat, final double lng) {
-        double t = 0;
-
-        Iterator<Node> n = self.iterateNodes();
-        while (n.hasNext()) {
-            Node i = n.next();
-            if (i instanceof Detail) {
-                final Detail d = (Detail)i;
-                
-                if (d.hasPatternOr(NuclearFacilities.NuclearFacility) || self.isInstance("Disaster", d.getID())) {
-                    double[] loc = Geo.getLocation(d);
-                    double dist = Geo.meters((float)lat, (float)lng, (float)loc[0], (float)loc[1]);
-                    double rad = 100 * 1000;
-                    double scale = 0.02;
-                    t += scale * 1.0 / (dist/rad);
-                }
-            }
-            
-        }
-        
-        if (t > 1.0) t = 1.0;
-        
-        return t;
-    }
     
     public class HeatmapOverlay implements MapMarker {
         private int resolution;
 
-        Map<Pair<Integer>, Double> threatValues = new ConcurrentHashMap();
-        double minThreat = 0;
-        double maxThreat = 0;
+        Map<Pair<Integer>, Pair<Double>> values = new ConcurrentHashMap();
+        double minThreat = 0, maxThreat = 0;
+        double minBenefit = 0, maxBenefit = 0;
         int pw, ph;
 
         public HeatmapOverlay() {
@@ -373,33 +350,37 @@ public class SurvivalParametersPanel extends JPanel {
             
             pw = (int)Math.ceil( (float)map.getWidth() / (float)w);
             ph = (int)Math.ceil( (float)map.getHeight() / (float)h);
-            
-            
-            threatValues.clear();
-            
-            
-            //double lng = nw.getLon() + dLng/2.0;
+                        
+            values.clear();
+                        
             int px = 0;
             int py = 0;
             for (int x = 0; x < w; x++) {
                 px = 0;
                 for (int y = 0; y < h; y++) {
-                    if (stop)
+                    if (stopUpdater)
                         return;
 
-                    Coordinate p = map.getMap().getPosition(px+pw/2, py+ph/2);
-                    double lat = p.getLat();
-                    double lng = p.getLon();
-                    final double v = getThreat(lat, lng);
+                    final Coordinate p = map.getMap().getPosition(px+pw/2, py+ph/2);
+                    final double lat = p.getLat();
+                    final double lng = p.getLon();
                     
-                    if (threatValues.size()==0)
-                        minThreat = maxThreat = v;
+                    final double threat = survive.getThreat(lat, lng, null);
+                    final double benefit = survive.getBenefit(lat, lng, null);
+                    
+                    if (values.size()==0) {
+                        minThreat = maxThreat = threat;
+                        minBenefit = maxBenefit = benefit;
+                    }
                     else {
-                        if (v > maxThreat) maxThreat = v;
-                        if (v < minThreat) minThreat = v;
+                        if (threat > maxThreat) maxThreat = threat;
+                        if (threat < minThreat) minThreat = threat;
+                        
+                        if (benefit > maxBenefit) maxBenefit = benefit;
+                        if (benefit < minBenefit) minBenefit = benefit;
                     }
                     
-                    threatValues.put(new Pair<Integer>(px, py), v);                    
+                    values.put(new Pair<Integer>(px, py), new Pair<Double>(threat, benefit));                    
                     
                     px += pw;
                 }
@@ -422,23 +403,27 @@ public class SurvivalParametersPanel extends JPanel {
         }
 
         @Override
-        public void paint(Graphics g, Point point) {
+        public void paint(final Graphics g, final Point point) {
+            
+            for (final Entry<Pair<Integer>, Pair<Double>> e : values.entrySet()) {
+                if (stopUpdater)
+                    return;
 
-                
-            if (minThreat!=maxThreat) {
-                for (Entry<Pair<Integer>, Double> e : threatValues.entrySet()) {
-                    if (stop)
-                        return;
+                final double normThreat = (maxThreat!=minThreat) ? (e.getValue().getFirst().doubleValue() - minThreat) / (maxThreat - minThreat) : 0; 
+                final double normBenefit = (maxBenefit!=minBenefit) ? (e.getValue().getSecond().doubleValue() - minBenefit) / (maxBenefit - minBenefit) : 0;
 
-                    int ppx = e.getKey().getFirst();
-                    int ppy = e.getKey().getSecond();
+                final int ppx = e.getKey().getFirst();
+                final int ppy = e.getKey().getSecond();
 
-                    double normThreat = (e.getValue().doubleValue() - minThreat) / (maxThreat - minThreat);
-                    final Color cc = new Color(1f, 0f, 0f, (float)normThreat);
-                    g.setColor(cc);
-                    g.fillRect(ppx, ppy, pw, ph);                    
-                    
+                final float cr = (float)normThreat;
+                final float cg = (float)normBenefit;
+                final float ca = getOpacity() * (float)Math.min(1.0, cr + cg);
+
+                if (ca > 0) {                    
+                    g.setColor(new Color(cr, cg, 0f, ca));
+                    g.fillRect(ppx, ppy, pw, ph);        
                 }
+
             }
 
         }
@@ -446,12 +431,16 @@ public class SurvivalParametersPanel extends JPanel {
         
     }
     
-    boolean stop = false;
+    float getOpacity() {
+        return 0.75f;        
+    }
+    
+    boolean stopUpdater = false;
     Thread updater;
     
     public synchronized void updateHeatmap() {
         if (updater!=null) {
-            stop = true;
+            stopUpdater = true;
             try {
                 updater.interrupt();
                 updater.stop();
@@ -464,57 +453,32 @@ public class SurvivalParametersPanel extends JPanel {
         updater = new Thread(new Runnable() {
             @Override
             public void run() {
-                stop = false;
+                stopUpdater = false;
                 
+                final int startResolution = 6;
+                final int maxResolution = 48;
+                final int resInc = 3;
                 
-                for (int r = 6; r < 48; r+=2) {
-                    if (stop)
+                for (int r = startResolution; r < maxResolution; r+=resInc) {
+                    if (stopUpdater)
                         return;
                     
                     hm.update(r);
                     
-                    if (stop)
+                    if (stopUpdater)
                         return;
                     
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(150);
                     } catch (InterruptedException ex) {
                         return;
                     }
+                    Thread.yield();
                 }
             }            
         });
         updater.start();
-        
-        
-//       Coordinate center = this.map.getMap().getPosition();
-//        Coordinate nw = this.map.getMap().getPosition(0, 0);
-//        Coordinate se = this.map.getMap().getPosition(this.map.getWidth(), this.map.getHeight());
-//
-//        if (nw.equals(se))
-//            return;
-        
-//        double mPerPx = this.map.getMap().getMeterPerPixel();
-//        double pxPerM = 1.0 / mPerPx;
-//        double mWide = Geo.meters((float)nw.getLat(), (float)nw.getLon(), (float)nw.getLat(), (float)se.getLon());
-//        double mHigh = Geo.meters((float)se.getLat(), (float)nw.getLon(), (float)nw.getLat(), (float)nw.getLon());
-
-        //int pw = (int)(mWide * pxPerM / ((float)cw));
-        //int ph = (int)(mHigh * pxPerM / ((float)ch));
                 
-//        int pw = (int)Math.round((float)map.getWidth() / ((float)cw));
-//        int ph = (int)Math.round((float)map.getHeight() / ((float)ch));
-        
-//        GeoRectScalarMap s = new GeoRectScalarMap(nw.getLat(), nw.getLon(), se.getLat(), se.getLon()) {
-//            @Override public double value(double lat, double lng) {
-//                return getThreat(lat, lng);
-//            }                      
-//        };
-//        
-//        GeoPointValue[] markers = s.get(cw, ch);
-
-        //this.map.getMap().removeAllMapMarkers();
-        
     }
     
 }
