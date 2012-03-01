@@ -107,7 +107,7 @@ public class RunSelfBrowser implements Demo {
         {
             self.addPattern(disaster = new Pattern("Disaster"));
 
-            new EDIS().init(self, disaster).update(self);
+            //new EDIS().init(self, disaster).update(self);
         }
         
         new LogToMessage(self);

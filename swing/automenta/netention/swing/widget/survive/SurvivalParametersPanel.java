@@ -8,21 +8,15 @@ import automenta.netention.Detail;
 import automenta.netention.Node;
 import automenta.netention.Self;
 import automenta.netention.geo.Geo;
-import automenta.netention.geo.GeoRectScalarMap;
-import automenta.netention.geo.GeoRectScalarMap.GeoPointValue;
+import automenta.netention.graph.Pair;
 import automenta.netention.survive.DataInterest;
 import automenta.netention.survive.DataSource;
 import automenta.netention.survive.Environment;
 import automenta.netention.survive.data.NuclearFacilities;
-import automenta.netention.swing.map.GridRectMarker;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JFloatSlider;
 import automenta.netention.swing.widget.NowPanel;
-import automenta.netention.value.geo.GeoPointIs;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
@@ -31,6 +25,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -40,6 +36,7 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 /**
  * Controls for determining (in real-time) the parameters of 'threat' and 'benefit' composite indicators which are visualized on a map as a heatmap overlay
@@ -68,6 +65,7 @@ public class SurvivalParametersPanel extends JPanel {
     }
     private final Map2DPanel map;
     private final Self self;
+    private final HeatmapOverlay hm;
 
     public class HeatmapPanel extends JPanel {
 
@@ -322,6 +320,10 @@ public class SurvivalParametersPanel extends JPanel {
             }
             
         });
+
+        NowPanel.redrawMarkers(self, map, null);
+        hm = new HeatmapOverlay();
+        map.getMap().addMapMarker(hm);
         
         updateHeatmap();
     }
@@ -339,7 +341,7 @@ public class SurvivalParametersPanel extends JPanel {
                     double[] loc = Geo.getLocation(d);
                     double dist = Geo.meters((float)lat, (float)lng, (float)loc[0], (float)loc[1]);
                     double rad = 100 * 1000;
-                    double scale = 0.01;
+                    double scale = 0.02;
                     t += scale * 1.0 / (dist/rad);
                 }
             }
@@ -351,16 +353,146 @@ public class SurvivalParametersPanel extends JPanel {
         return t;
     }
     
+    public class HeatmapOverlay implements MapMarker {
+        private int resolution;
+
+        Map<Pair<Integer>, Double> threatValues = new ConcurrentHashMap();
+        double minThreat = 0;
+        double maxThreat = 0;
+        int pw, ph;
+
+        public HeatmapOverlay() {
+        }
+        
+
+        public synchronized void update(int r) {
+            this.resolution = r;
+            
+            int w = resolution;
+            int h = resolution;
+            
+            pw = (int)Math.ceil( (float)map.getWidth() / (float)w);
+            ph = (int)Math.ceil( (float)map.getHeight() / (float)h);
+            
+            
+            threatValues.clear();
+            
+            
+            //double lng = nw.getLon() + dLng/2.0;
+            int px = 0;
+            int py = 0;
+            for (int x = 0; x < w; x++) {
+                px = 0;
+                for (int y = 0; y < h; y++) {
+                    if (stop)
+                        return;
+
+                    Coordinate p = map.getMap().getPosition(px+pw/2, py+ph/2);
+                    double lat = p.getLat();
+                    double lng = p.getLon();
+                    final double v = getThreat(lat, lng);
+                    
+                    if (threatValues.size()==0)
+                        minThreat = maxThreat = v;
+                    else {
+                        if (v > maxThreat) maxThreat = v;
+                        if (v < minThreat) minThreat = v;
+                    }
+                    
+                    threatValues.put(new Pair<Integer>(px, py), v);                    
+                    
+                    px += pw;
+                }
+
+                //lng += dLng;
+                py += ph;
+            }
+           
+            map.getMap().repaint();
+        }
+        
+        @Override
+        public double getLat() {
+            return map.getMap().getPosition().getLat();
+        }
+
+        @Override
+        public double getLon() {
+            return map.getMap().getPosition().getLon();
+        }
+
+        @Override
+        public void paint(Graphics g, Point point) {
+
+                
+            if (minThreat!=maxThreat) {
+                for (Entry<Pair<Integer>, Double> e : threatValues.entrySet()) {
+                    if (stop)
+                        return;
+
+                    int ppx = e.getKey().getFirst();
+                    int ppy = e.getKey().getSecond();
+
+                    double normThreat = (e.getValue().doubleValue() - minThreat) / (maxThreat - minThreat);
+                    final Color cc = new Color(1f, 0f, 0f, (float)normThreat);
+                    g.setColor(cc);
+                    g.fillRect(ppx, ppy, pw, ph);                    
+                    
+                }
+            }
+
+        }
+
+        
+    }
+    
+    boolean stop = false;
+    Thread updater;
+    
     public synchronized void updateHeatmap() {
-        int cw = 12;
-        int ch = 12;
+        if (updater!=null) {
+            stop = true;
+            try {
+                updater.interrupt();
+                updater.stop();
+                //updater.join();
+            } catch (Exception ex) {
+            }
+        }
+        
+        
+        updater = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                stop = false;
+                
+                
+                for (int r = 6; r < 48; r+=2) {
+                    if (stop)
+                        return;
+                    
+                    hm.update(r);
+                    
+                    if (stop)
+                        return;
+                    
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        return;
+                    }
+                }
+            }            
+        });
+        updater.start();
+        
         
 //       Coordinate center = this.map.getMap().getPosition();
-        Coordinate nw = this.map.getMap().getPosition(0, 0);
-        Coordinate se = this.map.getMap().getPosition(this.map.getWidth(), this.map.getHeight());
-
-        if (nw.equals(se))
-            return;
+//        Coordinate nw = this.map.getMap().getPosition(0, 0);
+//        Coordinate se = this.map.getMap().getPosition(this.map.getWidth(), this.map.getHeight());
+//
+//        if (nw.equals(se))
+//            return;
         
 //        double mPerPx = this.map.getMap().getMeterPerPixel();
 //        double pxPerM = 1.0 / mPerPx;
@@ -370,23 +502,18 @@ public class SurvivalParametersPanel extends JPanel {
         //int pw = (int)(mWide * pxPerM / ((float)cw));
         //int ph = (int)(mHigh * pxPerM / ((float)ch));
                 
-        int pw = (int)Math.round((float)map.getWidth() / ((float)cw));
-        int ph = (int)Math.round((float)map.getHeight() / ((float)ch));
+//        int pw = (int)Math.round((float)map.getWidth() / ((float)cw));
+//        int ph = (int)Math.round((float)map.getHeight() / ((float)ch));
         
-        GeoRectScalarMap s = new GeoRectScalarMap(nw.getLat(), nw.getLon(), se.getLat(), se.getLon()) {
-            @Override public double value(double lat, double lng) {
-                return getThreat(lat, lng);
-            }                      
-        };
-        
-        GeoPointValue[] markers = s.get(cw, ch);
+//        GeoRectScalarMap s = new GeoRectScalarMap(nw.getLat(), nw.getLon(), se.getLat(), se.getLon()) {
+//            @Override public double value(double lat, double lng) {
+//                return getThreat(lat, lng);
+//            }                      
+//        };
+//        
+//        GeoPointValue[] markers = s.get(cw, ch);
 
         //this.map.getMap().removeAllMapMarkers();
-        NowPanel.redrawMarkers(self, map, null);
-        
-        for (GeoPointValue g : markers) {        
-            this.map.getMap().addMapMarker(new GridRectMarker(new Color(1f, 0f, 0f, (float)g.value), g.lat, g.lng, pw, ph));
-        }
         
     }
     

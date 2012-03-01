@@ -31,7 +31,7 @@ abstract public class GeoRectScalarMap {
     }
     
     
-    public GeoPointValue[] get(int width, int height) {
+    @Deprecated public GeoPointValue[] get(int width, int height) {
         final int n = width * height;
         GeoPointValue[] g = new GeoPointValue[n];
         
