@@ -1,23 +1,11 @@
 package automenta.netention.value.geo;
 
-import automenta.netention.Detail;
-import automenta.netention.PropertyValue;
+import automenta.netention.geo.GeoPoint;
 import automenta.netention.value.string.StringIs;
 
 
 public class GeoPointIs extends StringIs {
 
-    public static double[] getLocation(Detail d) {
-        for (PropertyValue pv : d.getValues()) {
-            if (pv instanceof GeoPointIs) {
-                if (pv.getProperty().equals("currentLocation")) {
-                    GeoPointIs g = (GeoPointIs)pv;
-                    return g.getCoordinates();
-                }
-            }
-        }
-        return null;
-    }
     private double[] coords;
 
     public GeoPointIs() {
@@ -51,6 +39,10 @@ public class GeoPointIs extends StringIs {
         }
         
         this.coords = new double[] { lat, lng };        
+    }
+    
+    public GeoPointIs(GeoPoint g) {
+        this(g.lat, g.lng);
     }
 
     public GeoPointIs(double lat, double lng) {

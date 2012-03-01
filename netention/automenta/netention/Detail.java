@@ -159,6 +159,16 @@ public class Detail implements Node {
         }
     }
 
+    public boolean hasPatternOr(final String... a) {
+        for (final String p : getPatterns()) {
+            for (final String x : a) {
+                if (x.equals(p))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     
 
 }

@@ -4,15 +4,21 @@
  */
 package automenta.netention.swing.widget.survive;
 
+import automenta.netention.Detail;
+import automenta.netention.Node;
+import automenta.netention.Self;
 import automenta.netention.geo.Geo;
 import automenta.netention.geo.GeoRectScalarMap;
 import automenta.netention.geo.GeoRectScalarMap.GeoPointValue;
 import automenta.netention.survive.DataInterest;
 import automenta.netention.survive.DataSource;
 import automenta.netention.survive.Environment;
+import automenta.netention.survive.data.NuclearFacilities;
 import automenta.netention.swing.map.GridRectMarker;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JFloatSlider;
+import automenta.netention.swing.widget.NowPanel;
+import automenta.netention.value.geo.GeoPointIs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -23,6 +29,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,10 +42,10 @@ import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 
 /**
- *
+ * Controls for determining (in real-time) the parameters of 'threat' and 'benefit' composite indicators which are visualized on a map as a heatmap overlay
  * @author seh
  */
-public class DefineSurvivalPanel extends JPanel {
+public class SurvivalParametersPanel extends JPanel {
 
     JPanel configPanel = new JPanel();
     
@@ -60,6 +67,7 @@ public class DefineSurvivalPanel extends JPanel {
         return ii;
     }
     private final Map2DPanel map;
+    private final Self self;
 
     public class HeatmapPanel extends JPanel {
 
@@ -132,7 +140,7 @@ public class DefineSurvivalPanel extends JPanel {
             try {
                 l.setIcon(getIcon(ds.iconURL, datasourceIconWidth, datasourceIconHeight));
             } catch (MalformedURLException ex) {
-                Logger.getLogger(DefineSurvivalPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SurvivalParametersPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
             add(l);
 
@@ -208,9 +216,10 @@ public class DefineSurvivalPanel extends JPanel {
          }
     }
 
-    public DefineSurvivalPanel(Map2DPanel mp, Environment d) {
+    public SurvivalParametersPanel(Self self, Map2DPanel mp, Environment d) {
         super(new BorderLayout());
 
+        this.self = self;
         this.map = mp;
 
         JPanel categoriesPanel = new JPanel();
@@ -246,7 +255,7 @@ public class DefineSurvivalPanel extends JPanel {
                 ImageIcon ii = getIcon(d.categoryIcon.get(s), categoryImageWidth, categoryImageHeight);
                 jb.setIcon(ii);
             } catch (MalformedURLException ex) {
-                Logger.getLogger(DefineSurvivalPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SurvivalParametersPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
 
 
@@ -293,7 +302,11 @@ public class DefineSurvivalPanel extends JPanel {
 
             @Override
             public void componentResized(ComponentEvent e) {
-                updateHeatmap();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override public void run() {
+                        updateHeatmap();
+                    }                    
+                });
             }           
             
         });
@@ -301,7 +314,11 @@ public class DefineSurvivalPanel extends JPanel {
 
             @Override
             public void processCommand(JMVCommandEvent jmvce) {
-                updateHeatmap();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override public void run() {
+                        updateHeatmap();
+                    }                    
+                });
             }
             
         });
@@ -309,9 +326,34 @@ public class DefineSurvivalPanel extends JPanel {
         updateHeatmap();
     }
     
-    public void updateHeatmap() {
-        int cw = 16;
-        int ch = 16;
+    public double getThreat(final double lat, final double lng) {
+        double t = 0;
+
+        Iterator<Node> n = self.iterateNodes();
+        while (n.hasNext()) {
+            Node i = n.next();
+            if (i instanceof Detail) {
+                final Detail d = (Detail)i;
+                
+                if (d.hasPatternOr(NuclearFacilities.NuclearFacility) || self.isInstance("Disaster", d.getID())) {
+                    double[] loc = Geo.getLocation(d);
+                    double dist = Geo.meters((float)lat, (float)lng, (float)loc[0], (float)loc[1]);
+                    double rad = 100 * 1000;
+                    double scale = 0.01;
+                    t += scale * 1.0 / (dist/rad);
+                }
+            }
+            
+        }
+        
+        if (t > 1.0) t = 1.0;
+        
+        return t;
+    }
+    
+    public synchronized void updateHeatmap() {
+        int cw = 12;
+        int ch = 12;
         
 //       Coordinate center = this.map.getMap().getPosition();
         Coordinate nw = this.map.getMap().getPosition(0, 0);
@@ -328,21 +370,24 @@ public class DefineSurvivalPanel extends JPanel {
         //int pw = (int)(mWide * pxPerM / ((float)cw));
         //int ph = (int)(mHigh * pxPerM / ((float)ch));
                 
-        int pw = (int)Math.ceil((float)map.getWidth() / ((float)cw));
-        int ph = (int)Math.ceil((float)map.getHeight() / ((float)ch));
+        int pw = (int)Math.round((float)map.getWidth() / ((float)cw));
+        int ph = (int)Math.round((float)map.getHeight() / ((float)ch));
         
         GeoRectScalarMap s = new GeoRectScalarMap(nw.getLat(), nw.getLon(), se.getLat(), se.getLon()) {
             @Override public double value(double lat, double lng) {
-                return Math.random();
+                return getThreat(lat, lng);
             }                      
         };
         
         GeoPointValue[] markers = s.get(cw, ch);
 
-        this.map.getMap().removeAllMapMarkers();
+        //this.map.getMap().removeAllMapMarkers();
+        NowPanel.redrawMarkers(self, map, null);
+        
         for (GeoPointValue g : markers) {        
             this.map.getMap().addMapMarker(new GridRectMarker(new Color(1f, 0f, 0f, (float)g.value), g.lat, g.lng, pw, ph));
         }
+        
     }
     
 }

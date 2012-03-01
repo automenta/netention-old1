@@ -6,14 +6,13 @@
 package automenta.netention.swing.widget;
 
 import automenta.netention.*;
+import automenta.netention.geo.Geo;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.SelfSession;
 import automenta.netention.swing.map.LabeledMarker;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JScaledTextArea;
-import automenta.netention.swing.util.MLTreeSelectionModel;
 import automenta.netention.swing.util.SwingWindow;
-import automenta.netention.value.geo.GeoPointIs;
 import automenta.netention.value.string.StringIs;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
@@ -241,7 +240,7 @@ abstract public class NowPanel extends JPanel {
         typeFilter.getTree().setToggleClickCount(2);        
         typeFilter.getTree().addTreeSelectionListener(new TreeSelectionListener() {
             @Override public void valueChanged(TreeSelectionEvent e) {
-                redrawMarkers();
+                redrawMarkers(self, map, typeFilter.getSelectedPatterns());
             }
 
         });
@@ -253,7 +252,7 @@ abstract public class NowPanel extends JPanel {
         setHome(config.getCurrentLocation());
     
 
-        redrawMarkers(null);
+        redrawMarkers(self, map, null);
     }
     
     public void setHome(Coordinate h) {
@@ -266,7 +265,9 @@ abstract public class NowPanel extends JPanel {
         //homeMarker = new MapMarkerDot(h.getLat(), h.getLon());
         homeMarker = new LabeledMarker("Home", new Color(0.0f, 1.0f, 0.0f, 0.3f), h.getLat(), h.getLon());
     
-        redrawMarkers();
+        redrawMarkers(self, map, typeFilter.getSelectedPatterns());
+        if (homeMarker != null)
+            map.getMap().addMapMarker(homeMarker);
         
     }
     
@@ -277,15 +278,13 @@ abstract public class NowPanel extends JPanel {
         map.getMap().setDisplayPositionByLatLon(c.getLat(), c.getLon(), 13);
     }
     
-    private void redrawMarkers(final List<Pattern> p) {        
+    public static void redrawMarkers(final Self self, Map2DPanel map, final List<Pattern> p) {        
         
         map.getMap().removeAllMapMarkers();
 
-        if (homeMarker != null)
-            map.getMap().addMapMarker(homeMarker);
-        
+        final Iterator<Node> in;
         if (p!=null) {
-            final Iterator<Node> in = Iterators.filter(self.iterateNodes(), new Predicate<Node>() {
+            in = Iterators.filter(self.iterateNodes(), new Predicate<Node>() {
                 @Override public boolean apply(Node t) {
                         
                     for (final Pattern x : p) {
@@ -297,21 +296,25 @@ abstract public class NowPanel extends JPanel {
                     return false;
                 }                
             });
+        }
+        else {
+            in = self.iterateNodes();
+        }
             
             while (in.hasNext()) {
                 Detail d = (Detail)in.next();
                 if (d.getMode() == Mode.Real) {
                     if (self.isInstance("Located", d.getID())) {
-                        addMarker(d);
+                        addMarker(self, map, d);
                     }
                 }
             }
             
-        }
+        
     }
     
-    public void addMarker(Detail d) {
-        double[] l = GeoPointIs.getLocation(d);
+    public static void addMarker(Self self, Map2DPanel map, Detail d) {
+        double[] l = Geo.getLocation(d);
                 
         if (l!=null) {
             LabeledMarker m = new LabeledMarker(d.getName(), new Color(0.0f, 1.0f, 0.0f, 0.3f), l[0], l[1], Icons.getObjectIcon(self, d));
@@ -320,7 +323,4 @@ abstract public class NowPanel extends JPanel {
     }
             
 
-    public void redrawMarkers() {
-        redrawMarkers(typeFilter.getSelectedPatterns());        
-    }
 }
