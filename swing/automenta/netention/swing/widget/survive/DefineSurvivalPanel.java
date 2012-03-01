@@ -4,13 +4,21 @@
  */
 package automenta.netention.swing.widget.survive;
 
+import automenta.netention.geo.Geo;
+import automenta.netention.geo.GeoRectScalarMap;
+import automenta.netention.geo.GeoRectScalarMap.GeoPointValue;
 import automenta.netention.survive.DataInterest;
 import automenta.netention.survive.DataSource;
 import automenta.netention.survive.Environment;
+import automenta.netention.swing.map.GridRectMarker;
+import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JFloatSlider;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,6 +30,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
+import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 
 /**
  *
@@ -48,7 +59,7 @@ public class DefineSurvivalPanel extends JPanel {
         ImageIcon ii = new ImageIcon(new ImageIcon(u).getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH));
         return ii;
     }
-    private final MapDisplay map;
+    private final Map2DPanel map;
 
     public class HeatmapPanel extends JPanel {
 
@@ -197,7 +208,7 @@ public class DefineSurvivalPanel extends JPanel {
          }
     }
 
-    public DefineSurvivalPanel(MapDisplay mp, Environment d) {
+    public DefineSurvivalPanel(Map2DPanel mp, Environment d) {
         super(new BorderLayout());
 
         this.map = mp;
@@ -276,5 +287,62 @@ public class DefineSurvivalPanel extends JPanel {
         add(renderPanel, BorderLayout.SOUTH);
 
         doLayout();
+        
+        
+        map.addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updateHeatmap();
+            }           
+            
+        });
+        map.getMap().addJMVListener(new JMapViewerEventListener() {
+
+            @Override
+            public void processCommand(JMVCommandEvent jmvce) {
+                updateHeatmap();
+            }
+            
+        });
+        
+        updateHeatmap();
     }
+    
+    public void updateHeatmap() {
+        int cw = 16;
+        int ch = 16;
+        
+//       Coordinate center = this.map.getMap().getPosition();
+        Coordinate nw = this.map.getMap().getPosition(0, 0);
+        Coordinate se = this.map.getMap().getPosition(this.map.getWidth(), this.map.getHeight());
+
+        if (nw.equals(se))
+            return;
+        
+//        double mPerPx = this.map.getMap().getMeterPerPixel();
+//        double pxPerM = 1.0 / mPerPx;
+//        double mWide = Geo.meters((float)nw.getLat(), (float)nw.getLon(), (float)nw.getLat(), (float)se.getLon());
+//        double mHigh = Geo.meters((float)se.getLat(), (float)nw.getLon(), (float)nw.getLat(), (float)nw.getLon());
+
+        //int pw = (int)(mWide * pxPerM / ((float)cw));
+        //int ph = (int)(mHigh * pxPerM / ((float)ch));
+                
+        int pw = (int)Math.ceil((float)map.getWidth() / ((float)cw));
+        int ph = (int)Math.ceil((float)map.getHeight() / ((float)ch));
+        
+        GeoRectScalarMap s = new GeoRectScalarMap(nw.getLat(), nw.getLon(), se.getLat(), se.getLon()) {
+            @Override public double value(double lat, double lng) {
+                return Math.random();
+            }                      
+        };
+        
+        GeoPointValue[] markers = s.get(cw, ch);
+
+        this.map.getMap().removeAllMapMarkers();
+        for (GeoPointValue g : markers) {        
+            this.map.getMap().addMapMarker(new GridRectMarker(new Color(1f, 0f, 0f, (float)g.value), g.lat, g.lng, pw, ph));
+        }
+    }
+    
 }

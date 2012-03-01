@@ -67,10 +67,12 @@ public class LabeledMarker implements MapMarker, MarkerClickable {
             g.fillRect(cx, cy, w, h);
         }
         
-        g.setColor(textColor);
-        
-        g.setFont(g.getFont().deriveFont(18.0f)); //new Font("Sans", Font.BOLD, 18 )
-        g.drawString(text, cx, cy+h);
+        if (text!=null) {
+            g.setColor(textColor);
+
+            g.setFont(g.getFont().deriveFont(18.0f)); //new Font("Sans", Font.BOLD, 18 )
+            g.drawString(text, cx, cy+h);
+        }
         
         //update clickable area
         if (clickableArea == null) {
@@ -88,17 +90,17 @@ public class LabeledMarker implements MapMarker, MarkerClickable {
 
     @Override
     public void onClicked(Point p, int button) {
-        System.out.println(this + " Clicked!");
+        //System.out.println(this + " Clicked!");
     }
 
     @Override
     public void onMouseEnter(Point p) {
-        w = h = 35;        
+        //w = h = 35;        
     }
 
     @Override
     public void onMouseExit() {
-        w = h = 30;
+        //w = h = 30;
     }
 
     public void setIcon(ImageIcon icon) {

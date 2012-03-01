@@ -5,9 +5,7 @@
 
 package automenta.netention.swing.map;
 
-import java.awt.Graphics;
-import java.awt.Point;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
+import java.awt.Color;
 
 /**
  * a single rectangle, ex: one coordinate in a grid 
@@ -16,25 +14,12 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
  * 
  * @author seh
  */
-public class GridRectMarker implements MapMarker {
+public class GridRectMarker extends LabeledMarker {
 
-    public GridRectMarker() {
-    }
-
-    
-    @Override
-    public double getLat() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public double getLon() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void paint(Graphics grphcs, Point point) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public GridRectMarker(Color c, double lat, double lng, int width, int height) {
+        super(null, c, lat, lng);
+        this.w = width;
+        this.h = height;
     }
 
 }

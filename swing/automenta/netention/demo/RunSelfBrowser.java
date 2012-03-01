@@ -65,6 +65,7 @@ public class RunSelfBrowser implements Demo {
         
         new AddDefaultPatterns().add(self);
 
+        /*
         try {
             new AddOodlePatterns().add(self);
 
@@ -77,6 +78,8 @@ public class RunSelfBrowser implements Demo {
         } catch (Exception ex2) {
             ex2.printStackTrace();
         }
+        * 
+        */
 
         new AddIEMLPatterns().add(self);
 

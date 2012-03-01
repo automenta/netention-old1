@@ -275,12 +275,19 @@ abstract public class Self {
 
             @Override
             public int compare(final Node o1, final Node o2) {
-                final boolean b = o1.getWhen().before(o2.getWhen());
-                if (!ascend) {
-                    return b ? 1 : -1;
-                } else {
-                    return b ? -1 : 1;
-                }
+                final long x = o1.getWhen().getTime();
+                final long y = o2.getWhen().getTime();
+                
+                if (x == y) return 0;
+                if (x < y) return -1;
+                /*if (x > y)*/ return 1;
+                
+//                final boolean b = o1.getWhen().before(o2.getWhen());
+//                if (!ascend) {
+//                    return b ? 1 : -1;
+//                } else {
+//                    return b ? -1 : 1;
+//                }
             }
         });
         return il;
