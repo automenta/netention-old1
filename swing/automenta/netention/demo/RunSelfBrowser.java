@@ -13,6 +13,7 @@ import automenta.netention.ieml.AddENTPMflowcycles;
 import automenta.netention.ieml.AddIEMLPatterns;
 import automenta.netention.impl.LogToMessage;
 import automenta.netention.impl.MemorySelf;
+import automenta.netention.survive.data.EDIS;
 import automenta.netention.survive.data.IntentionalCommunities;
 import automenta.netention.survive.data.NuclearFacilities;
 import automenta.netention.swing.SelfBrowserPanel;
@@ -111,7 +112,7 @@ public class RunSelfBrowser implements Demo {
             
         }
         
-        new IntentionalCommunities(self, "schema/ic.org.xml");
+        //new IntentionalCommunities(self, "schema/ic.org.xml");
         
         new LogToMessage(self);
         

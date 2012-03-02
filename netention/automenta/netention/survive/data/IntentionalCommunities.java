@@ -37,6 +37,10 @@ public class IntentionalCommunities {
     int added = 0;
     
     public IntentionalCommunities(final Self self, String path) {
+        this(self, path, -1);
+    }
+    
+    public IntentionalCommunities(final Self self, String path, final int limit) {
         
         Pattern p = self.addPattern(new Pattern(IntentionalCommunity, "Built").setName("Intentional Community").setIconURL("media://tango32/places/user-home.png"));
         
@@ -49,6 +53,10 @@ public class IntentionalCommunities {
                 @Override
                 public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
                     super.startElement(uri, localName, qName, attributes);
+
+                    if (limit!=-1)
+                        if (added == limit)
+                            return;
                     
                     if (qName.equals("marker")) {
                         String label = attributes.getValue("label");

@@ -61,6 +61,7 @@ public class SurvivalParametersPanel extends JPanel {
     private final Self self;
     private final HeatmapOverlay hm;
     private final JPanel categoriesPanel;
+    private final JFloatSlider opacitySlider;
 
     public class HeatmapPanel extends JPanel {
 
@@ -109,6 +110,7 @@ public class SurvivalParametersPanel extends JPanel {
             ep.setAlignmentX(LEFT_ALIGNMENT);
             add(ep);
         }
+
     }
 
 //    
@@ -210,7 +212,7 @@ public class SurvivalParametersPanel extends JPanel {
         categoriesPanel = new JPanel();
         categoriesPanel.setLayout(new BoxLayout(categoriesPanel, BoxLayout.PAGE_AXIS));
         
-        HeatmapPanel hmp = new HeatmapPanel();
+        final HeatmapPanel hmp = new HeatmapPanel();
         categoriesPanel.add(hmp);
 
         addIndicator(NuclearFacilities.NuclearFacility, Affect.Threatens);
@@ -278,6 +280,16 @@ public class SurvivalParametersPanel extends JPanel {
             jc.addItem("3rd World Urban");
             jc.addItem("1st World Urban");
             presetsPanel.add(jc, BorderLayout.CENTER);
+            
+            
+            opacitySlider = new JFloatSlider(0.75, 0.0, 1.0, JSlider.HORIZONTAL);
+            opacitySlider.setToolTipText("Heatmap Transparency");
+            opacitySlider.addChangeListener(new ChangeListener() {
+                @Override public void stateChanged(ChangeEvent e) {
+                    hm.setOpacity((float)opacitySlider.value());
+                }                
+            });
+            presetsPanel.add(opacitySlider, BorderLayout.SOUTH);
         }
         add(presetsPanel, BorderLayout.NORTH);
 
@@ -318,6 +330,7 @@ public class SurvivalParametersPanel extends JPanel {
         double minThreat = 0, maxThreat = 0;
         double minBenefit = 0, maxBenefit = 0;
         int pw, ph;
+        private float opacity = 0.75f;
 
                 
         public HeatmapOverlay() {
@@ -370,11 +383,18 @@ public class SurvivalParametersPanel extends JPanel {
                     px += pw;
                 }
 
-                //lng += dLng;
                 py += ph;
             }
            
             map.getMap().repaint();
+        }
+
+        private void setOpacity(float value) {
+            if (value!=opacity) {
+                this.opacity = value;
+                map.getMap().repaint();
+            }
+            
         }
         
         @Override
@@ -402,7 +422,7 @@ public class SurvivalParametersPanel extends JPanel {
 
                 final float cr = (float)normThreat;
                 final float cg = (float)normBenefit;
-                final float ca = getOpacity() * (float)Math.min(1.0, cr + cg);
+                final float ca = opacity * Math.min(1.0f, cr + cg);
 
                 if (ca > 0) {                    
                     g.setColor(new Color(cr, cg, 0f, ca));
@@ -416,9 +436,6 @@ public class SurvivalParametersPanel extends JPanel {
         
     }
     
-    float getOpacity() {
-        return 0.75f;        
-    }
     
     boolean stopUpdater = false;
     Thread updater;
@@ -440,8 +457,8 @@ public class SurvivalParametersPanel extends JPanel {
             public void run() {
                 stopUpdater = false;
                 
-                final int startResolution = 6;
-                final int maxResolution = 48;
+                final int startResolution = 4;
+                final int maxResolution = 64;
                 final int resInc = 4;
                 
                 for (int r = startResolution; r < maxResolution; r+=resInc) {
@@ -454,7 +471,7 @@ public class SurvivalParametersPanel extends JPanel {
                         return;
                     
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(100);
                     } catch (InterruptedException ex) {
                         return;
                     }
