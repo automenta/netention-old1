@@ -4,13 +4,13 @@
  */
 package automenta.netention.swing.widget.survive;
 
+import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.graph.Pair;
-import automenta.netention.survive.DataInterest;
-import automenta.netention.survive.DataSource;
-import automenta.netention.survive.Environment;
-import automenta.netention.survive.SurvivalModel;
-import automenta.netention.survive.SurvivalModel.DefaultHeuristicSurvive;
+import automenta.netention.survive.*;
+import automenta.netention.survive.data.EDIS;
+import automenta.netention.survive.data.NuclearFacilities;
+import automenta.netention.swing.Icons;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JFloatSlider;
 import automenta.netention.swing.widget.NowPanel;
@@ -40,7 +40,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
  * @author seh
  */
 public class SurvivalParametersPanel extends JPanel {
-
+    final static Logger logger = Logger.getLogger(SurvivalParametersPanel.class.toString());
+            
     JPanel configPanel = new JPanel();
     
     Map<String, Boolean> categoryVisible = new HashMap();
@@ -63,6 +64,7 @@ public class SurvivalParametersPanel extends JPanel {
     private final Map2DPanel map;
     private final Self self;
     private final HeatmapOverlay hm;
+    private final JPanel categoriesPanel;
 
     public class HeatmapPanel extends JPanel {
 
@@ -212,61 +214,155 @@ public class SurvivalParametersPanel extends JPanel {
     }
 
     
-    private SurvivalModel survive;
+    private DefaultHeuristicSurvivalModel survive;
+    
+    public void addIndicator(String pattern, Affect a) {
+        Pattern p = self.getPattern(pattern);
+        if (p == null) {
+            logger.severe("No existing pattern: " + pattern);
+            return;
+        }
+        
+        final Influence i = new Influence(a);
+        survive.addInfluence(pattern, i);
+        
+        JPanel c = new JPanel();
+        c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
+
+        final JPanel cSub = new JPanel();
+        int indent = 15;
+        int spacing = 5;
+        cSub.setBorder(new EmptyBorder(spacing, indent, spacing, 0));
+        cSub.setLayout(new BoxLayout(cSub, BoxLayout.PAGE_AXIS));
+
+//            {
+//
+//                for (DataSource ds : d.getSources(s)) {
+//                    DataSourcePanel dsp = new DataSourcePanel(map, ds);
+//                    dsp.setBorder(new EmptyBorder(spacing, 0, 0, 0));
+//                    cSub.add(dsp);
+//                }
+//            }
+
+        final JFloatSlider importance = new JFloatSlider(0, 0, 1.0, JSlider.HORIZONTAL);
+        final JFloatSlider radius = new JFloatSlider(100, 0.1, 1000, JSlider.HORIZONTAL);
+
+        importance.setPaintLabels(true);
+        radius.setPaintLabels(true);
+        
+        final JLabel importanceLabel = new JLabel();
+        final JLabel radiusLabel = new JLabel();
+        
+        ChangeListener cl = new ChangeListener() {
+
+            @Override public void stateChanged(ChangeEvent e) {
+                i.importance = importance.value();
+                i.radius = radius.value() * 1000.0;
+                
+                importanceLabel.setText("Importance: " + (int)(i.importance * 100.0) + "%");
+                radiusLabel.setText("Radius: " + (int)(i.radius/1000.0) +  " km");
+                
+                boolean activated = i.importance!=0.0;
+                
+                radiusLabel.setVisible(activated);
+                radius.setVisible(activated);
+                radius.setEnabled(activated);
+                
+                if (e!=null)
+                    updateHeatmapOnSwing();
+            }
+            
+        };
+                
+        cSub.add(importanceLabel);
+        importance.addChangeListener(cl);
+        cSub.add(importance);
+        
+        cSub.add(radiusLabel);
+        radius.addChangeListener(cl);
+        cSub.add(radius);
+
+        JLabel jb = new JLabel(p.getName());
+        jb.setToolTipText(a.toString());
+
+        ImageIcon ii = Icons.getPatternIcon(p);
+        jb.setIcon(ii);
+
+
+        c.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+        c.add(jb, BorderLayout.NORTH);
+        c.add(cSub, BorderLayout.CENTER);
+        c.doLayout();
+
+        c.setBorder(BorderFactory.createLoweredBevelBorder());
+
+        categoriesPanel.add(c);
+        
+        cl.stateChanged(null);
+        
+    }
     
     public SurvivalParametersPanel(Self self, Map2DPanel mp, Environment d) {
         super(new BorderLayout());
 
         this.self = self;
         this.map = mp;
-        this.survive = new DefaultHeuristicSurvive(self);
+        this.survive = new DefaultHeuristicSurvivalModel(self);
 
-        JPanel categoriesPanel = new JPanel();
+        categoriesPanel = new JPanel();
         categoriesPanel.setLayout(new BoxLayout(categoriesPanel, BoxLayout.PAGE_AXIS));
         
         HeatmapPanel hmp = new HeatmapPanel();
         categoriesPanel.add(hmp);
 
-        int ic = 0;
+        addIndicator(NuclearFacilities.NuclearFacility, Affect.Threatens);
+        addIndicator(EDIS.NUCLEAR_EVENT, Affect.Threatens);
+        addIndicator(EDIS.EARTHQUAKE, Affect.Threatens);
+        addIndicator(EDIS.VOLCANO_ACTIVITY, Affect.Threatens);
+        addIndicator(EDIS.TORNADO, Affect.Threatens);
+        addIndicator(EDIS.BIOLOGICAL_HAZARD, Affect.Threatens);
+        addIndicator(EDIS.EPIDEMIC_HAZARD, Affect.Threatens);
+        addIndicator(EDIS.EXTREME_WEATHER, Affect.Threatens);
+        addIndicator("Disaster", Affect.Threatens);
         
-        for (String s : d.categories) {
-            JPanel c = new JPanel();
-            c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
-
-            final JPanel cSub = new JPanel();
-            int indent = 15;
-            int spacing = 5;
-            cSub.setBorder(new EmptyBorder(spacing, indent, spacing, 0));
-            cSub.setLayout(new BoxLayout(cSub, BoxLayout.PAGE_AXIS));
-            {
-
-                for (DataSource ds : d.getSources(s)) {
-                    DataSourcePanel dsp = new DataSourcePanel(map, ds);
-                    dsp.setBorder(new EmptyBorder(spacing, 0, 0, 0));
-                    cSub.add(dsp);
-                }
-            }
-
-
-            JLabel jb = new JLabel(s);
-
-            try {
-                ImageIcon ii = getIcon(d.categoryIcon.get(s), categoryImageWidth, categoryImageHeight);
-                jb.setIcon(ii);
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(SurvivalParametersPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-
-            c.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-            c.add(jb, BorderLayout.NORTH);
-            c.add(cSub, BorderLayout.CENTER);
-            c.doLayout();
-
-            c.setBorder(BorderFactory.createLoweredBevelBorder());
-
-            categoriesPanel.add(c);
-        }
+//        for (String s : d.categories) {
+//            JPanel c = new JPanel();
+//            c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
+//
+//            final JPanel cSub = new JPanel();
+//            int indent = 15;
+//            int spacing = 5;
+//            cSub.setBorder(new EmptyBorder(spacing, indent, spacing, 0));
+//            cSub.setLayout(new BoxLayout(cSub, BoxLayout.PAGE_AXIS));
+//            {
+//
+//                for (DataSource ds : d.getSources(s)) {
+//                    DataSourcePanel dsp = new DataSourcePanel(map, ds);
+//                    dsp.setBorder(new EmptyBorder(spacing, 0, 0, 0));
+//                    cSub.add(dsp);
+//                }
+//            }
+//
+//
+//            JLabel jb = new JLabel(s);
+//
+//            try {
+//                ImageIcon ii = getIcon(d.categoryIcon.get(s), categoryImageWidth, categoryImageHeight);
+//                jb.setIcon(ii);
+//            } catch (MalformedURLException ex) {
+//                Logger.getLogger(SurvivalParametersPanel.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//
+//
+//            c.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+//            c.add(jb, BorderLayout.NORTH);
+//            c.add(cSub, BorderLayout.CENTER);
+//            c.doLayout();
+//
+//            c.setBorder(BorderFactory.createLoweredBevelBorder());
+//
+//            categoriesPanel.add(c);
+//        }
 
         categoriesPanel.add(Box.createVerticalBox());
 
@@ -277,7 +373,7 @@ public class SurvivalParametersPanel extends JPanel {
         {
             JComboBox jc = new JComboBox();
             jc.addItem("Immediate Survival");
-            jc.addItem("Hunteger-Gatherer");
+            jc.addItem("Hunter-Gatherer");
             jc.addItem("Agriculture");
             jc.addItem("Outdoor Camping");
             jc.addItem("3rd World Urban");
@@ -298,28 +394,14 @@ public class SurvivalParametersPanel extends JPanel {
         
         
         map.addComponentListener(new ComponentAdapter() {
-
-            @Override
-            public void componentResized(ComponentEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override public void run() {
-                        updateHeatmap();
-                    }                    
-                });
-            }           
-            
+            @Override public void componentResized(ComponentEvent e) {
+                updateHeatmapOnSwing();
+            }
         });
         map.getMap().addJMVListener(new JMapViewerEventListener() {
-
-            @Override
-            public void processCommand(JMVCommandEvent jmvce) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override public void run() {
-                        updateHeatmap();
-                    }                    
-                });
-            }
-            
+            @Override public void processCommand(JMVCommandEvent jmvce) {
+                updateHeatmapOnSwing();
+            }            
         });
 
         NowPanel.redrawMarkers(self, map, null);
@@ -333,11 +415,12 @@ public class SurvivalParametersPanel extends JPanel {
     public class HeatmapOverlay implements MapMarker {
         private int resolution;
 
-        Map<Pair<Integer>, Pair<Double>> values = new ConcurrentHashMap();
+        Map<Pair<Integer>, double[]> values = new ConcurrentHashMap();
         double minThreat = 0, maxThreat = 0;
         double minBenefit = 0, maxBenefit = 0;
         int pw, ph;
 
+                
         public HeatmapOverlay() {
         }
         
@@ -364,9 +447,12 @@ public class SurvivalParametersPanel extends JPanel {
                     final Coordinate p = map.getMap().getPosition(px+pw/2, py+ph/2);
                     final double lat = p.getLat();
                     final double lng = p.getLon();
-                    
-                    final double threat = survive.getThreat(lat, lng, null);
-                    final double benefit = survive.getBenefit(lat, lng, null);
+        
+                    double[] d = new double[2];
+                    survive.get(lat, lng, d, null);
+
+                    final double threat = d[0];
+                    final double benefit = d[1];
                     
                     if (values.size()==0) {
                         minThreat = maxThreat = threat;
@@ -380,7 +466,7 @@ public class SurvivalParametersPanel extends JPanel {
                         if (benefit < minBenefit) minBenefit = benefit;
                     }
                     
-                    values.put(new Pair<Integer>(px, py), new Pair<Double>(threat, benefit));                    
+                    values.put(new Pair<Integer>(px, py), d);
                     
                     px += pw;
                 }
@@ -405,12 +491,12 @@ public class SurvivalParametersPanel extends JPanel {
         @Override
         public void paint(final Graphics g, final Point point) {
             
-            for (final Entry<Pair<Integer>, Pair<Double>> e : values.entrySet()) {
+            for (final Entry<Pair<Integer>, double[]> e : values.entrySet()) {
                 if (stopUpdater)
                     return;
 
-                final double normThreat = (maxThreat!=minThreat) ? (e.getValue().getFirst().doubleValue() - minThreat) / (maxThreat - minThreat) : 0; 
-                final double normBenefit = (maxBenefit!=minBenefit) ? (e.getValue().getSecond().doubleValue() - minBenefit) / (maxBenefit - minBenefit) : 0;
+                final double normThreat = (maxThreat!=minThreat) ? (e.getValue()[0] - minThreat) / (maxThreat - minThreat) : 0; 
+                final double normBenefit = (maxBenefit!=minBenefit) ? (e.getValue()[1] - minBenefit) / (maxBenefit - minBenefit) : 0;
 
                 final int ppx = e.getKey().getFirst();
                 final int ppy = e.getKey().getSecond();
@@ -443,8 +529,8 @@ public class SurvivalParametersPanel extends JPanel {
             stopUpdater = true;
             try {
                 updater.interrupt();
-                updater.stop();
-                //updater.join();
+                //updater.stop();
+                updater.join();
             } catch (Exception ex) {
             }
         }
@@ -457,7 +543,7 @@ public class SurvivalParametersPanel extends JPanel {
                 
                 final int startResolution = 6;
                 final int maxResolution = 48;
-                final int resInc = 3;
+                final int resInc = 4;
                 
                 for (int r = startResolution; r < maxResolution; r+=resInc) {
                     if (stopUpdater)
@@ -469,11 +555,11 @@ public class SurvivalParametersPanel extends JPanel {
                         return;
                     
                     try {
-                        Thread.sleep(150);
+                        Thread.sleep(200);
                     } catch (InterruptedException ex) {
                         return;
                     }
-                    Thread.yield();
+                    //Thread.yield();
                 }
             }            
         });
@@ -481,4 +567,12 @@ public class SurvivalParametersPanel extends JPanel {
                 
     }
     
+    protected void updateHeatmapOnSwing() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                updateHeatmap();
+            }                    
+        });
+    }
+            
 }

@@ -17,6 +17,7 @@ public class JFloatSlider extends JSlider {
     private double dvalue;
 
     public JFloatSlider(double value, double minValue, double maxValue, int orientation) {
+        super();
         setName("X");
         this.maxValue = maxValue;
         this.minValue = minValue;

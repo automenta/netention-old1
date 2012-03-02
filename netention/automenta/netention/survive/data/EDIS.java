@@ -26,6 +26,14 @@ import org.jsoup.select.Elements;
  * @author seh
  */
 public class EDIS {
+    public static final String EARTHQUAKE = getPattern("Earthquake");
+    public static final String VOLCANO_ACTIVITY = getPattern("Volcano Activity Report");
+    public static final String TORNADO = getPattern("Tornado");
+    public static final String BIOLOGICAL_HAZARD = getPattern("Biological Hazard");
+    public static final String EPIDEMIC_HAZARD = getPattern("Epidemic Hazard");
+    public static final String NUCLEAR_EVENT = getPattern("Nuclear Event");
+    public static final String EXTREME_WEATHER = getPattern("Extreme Weather");
+    
     final static Logger logger = Logger.getLogger(EDIS.class.toString());
 
     public static final String url = "http://hisz.rsoe.hu/alertmap/index2.php";
@@ -47,11 +55,18 @@ public class EDIS {
      */
     public EDIS init(Self self, Pattern disaster) {
                 
-        init(self, disaster, "Earthquake", "media://edis/DS_UGE.seism.png");
-        init(self, disaster, "Volcano Activity Report", "media://edis/VOE.vulano_eruption.png");
+        init(self, disaster, EARTHQUAKE, "media://edis/DS_UGE.seism.png");
+        init(self, disaster, VOLCANO_ACTIVITY, "media://edis/VOE.vulano_eruption.png");
+        
+        init(self, disaster, TORNADO, "media://edis/MET_TOR.tornado.png");
+        init(self, disaster, BIOLOGICAL_HAZARD, "media://edis/DS_BH_BH.biohazard2.png");
+        init(self, disaster, EPIDEMIC_HAZARD, "media://edis/DS_BH_EH.epidemic.png");
+        init(self, disaster, NUCLEAR_EVENT, "media://edis/DS_CR.nuclear_accident.png");
+        init(self, disaster, EXTREME_WEATHER, "media://edis/MET_WIND.severe_weather.png");
         
         return this;
     }
+    
     private void init(Self self, Pattern disaster, String disasterName, String iconURL) {
         self.addPattern(new Pattern(getPattern(disasterName), disaster.id)
                                 .setName(disasterName)

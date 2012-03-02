@@ -105,7 +105,7 @@ public class RunSelfBrowser implements Demo {
         
         Pattern disaster; 
         {
-            self.addPattern(disaster = new Pattern("Disaster"));
+            self.addPattern(disaster = new Pattern("Disaster").setIconURL("media://edis/DS_VW.terror.png"));
 
             new EDIS().init(self, disaster).update(self);
         }
