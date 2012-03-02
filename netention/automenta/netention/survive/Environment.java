@@ -10,7 +10,7 @@ import java.util.*;
  *
  * @author seh
  */
-public class Environment {
+@Deprecated public class Environment {
     
     public final Set<String> categories = new HashSet();
     public final Map<String, String> categoryIcon = new HashMap();

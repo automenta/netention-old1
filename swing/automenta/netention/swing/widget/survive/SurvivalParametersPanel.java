@@ -9,6 +9,7 @@ import automenta.netention.Self;
 import automenta.netention.graph.Pair;
 import automenta.netention.survive.*;
 import automenta.netention.survive.data.EDIS;
+import automenta.netention.survive.data.IntentionalCommunities;
 import automenta.netention.survive.data.NuclearFacilities;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.map.Map2DPanel;
@@ -20,11 +21,9 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -43,10 +42,7 @@ public class SurvivalParametersPanel extends JPanel {
     final static Logger logger = Logger.getLogger(SurvivalParametersPanel.class.toString());
             
     JPanel configPanel = new JPanel();
-    
-    Map<String, Boolean> categoryVisible = new HashMap();
-    final Map<DataSource, DataInterest> dataInterest = new HashMap();
-    
+        
     final static int categoryImageWidth = 40;
     final static int categoryImageHeight = 40;
     final static int datasourceIconWidth = 25;
@@ -115,105 +111,7 @@ public class SurvivalParametersPanel extends JPanel {
         }
     }
 
-    public DataInterest getInterest(DataSource ds) {
-        DataInterest di = dataInterest.get(ds);        
-        if (di == null) {
-            di = new DataInterest(0, 0);
-            dataInterest.put(ds, di);
-        }
-        return di;
-    }
-    public class DataSourcePanel extends JPanel {
-
-        public DataSourcePanel(final MapDisplay map, final DataSource ds) {
-            super();
-
-            BoxLayout bl = new BoxLayout(this, BoxLayout.PAGE_AXIS);
-            setLayout(bl);
-
-            setAlignmentX(LEFT_ALIGNMENT);
-
-            JLabel l = new JLabel(ds.name);
-            try {
-                l.setIcon(getIcon(ds.iconURL, datasourceIconWidth, datasourceIconHeight));
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(SurvivalParametersPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            add(l);
-
-            final DataInterest di = getInterest(ds);
-
-            //boolean layerEnabled = layerEnabled.get(ds);
-
-            final JFloatSlider importanceSlider = new JFloatSlider(di.getImportance(), 0, 1.0, JSlider.HORIZONTAL);
-            importanceSlider.setEnabled(false);
-            importanceSlider.addChangeListener(new ChangeListener() {
-
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            di.setImportance(importanceSlider.value());
-                            //map.getHeatMap().setInterestsChanged();
-                            map.redraw();
-                        }
-                    }).start();
-                }
-            });
-            JPanel fep = new JPanel(new FlowLayout());
-            fep.setOpaque(false);
-            fep.add(importanceSlider);
-            add(fep);
-            
-//            DataRenderer dr = map.dataRenderers.get(ds);
-//            if (dr instanceof ShadedCircleRenderer) {
-//                final ShadedCircleRenderer scr = (ShadedCircleRenderer) dr;
-//
-//                JPanel ep = new JPanel(new FlowLayout());
-//                ep.setOpaque(false);
-//
-//
-//                final JToggleButton showEvents = new JToggleButton("Plot", layerEnabled);
-//                ep.add(showEvents);
-//
-//                final JFloatSlider scaleSlider = new JFloatSlider(di.getScale(), scr.getMinScale(), scr.getMaxScale(), JSlider.HORIZONTAL);
-//                scaleSlider.setEnabled(layerEnabled);
-//                scaleSlider.addChangeListener(new ChangeListener() {
-//
-//                    @Override
-//                    public void stateChanged(ChangeEvent e) {
-//                        new Thread(new Runnable() {
-//
-//                            @Override
-//                            public void run() {
-//                                scr.setScale(scaleSlider.value());
-//                                map.getHeatMap().setInterestsChanged();
-//                                map.redraw();
-//                            }
-//                        }).start();
-//                    }
-//                });
-//                ep.add(scaleSlider);
-//
-//                showEvents.addActionListener(new ActionListener() {
-//
-//                    @Override
-//                    public void actionPerformed(ActionEvent e) {
-//                        map.setLayerEnabled(ds, showEvents.isSelected());
-//                        scaleSlider.setEnabled(showEvents.isSelected());
-//                    }
-//                });
-//                
-//                ep.setAlignmentX(LEFT_ALIGNMENT);
-//                add(ep);
-//
-//            }
-         }
-    }
-
-    
+//    
     private DefaultHeuristicSurvivalModel survive;
     
     public void addIndicator(String pattern, Affect a) {
@@ -324,6 +222,7 @@ public class SurvivalParametersPanel extends JPanel {
         addIndicator(EDIS.EPIDEMIC_HAZARD, Affect.Threatens);
         addIndicator(EDIS.EXTREME_WEATHER, Affect.Threatens);
         addIndicator("Disaster", Affect.Threatens);
+        addIndicator(IntentionalCommunities.IntentionalCommunity, Affect.Benefits);
         
 //        for (String s : d.categories) {
 //            JPanel c = new JPanel();
@@ -576,3 +475,103 @@ public class SurvivalParametersPanel extends JPanel {
     }
             
 }
+
+//    public DataInterest getInterest(DataSource ds) {
+//        DataInterest di = dataInterest.get(ds);        
+//        if (di == null) {
+//            di = new DataInterest(0, 0);
+//            dataInterest.put(ds, di);
+//        }
+//        return di;
+//    }
+//    
+//    public class DataSourcePanel extends JPanel {
+//
+//        public DataSourcePanel(final MapDisplay map, final DataSource ds) {
+//            super();
+//
+//            BoxLayout bl = new BoxLayout(this, BoxLayout.PAGE_AXIS);
+//            setLayout(bl);
+//
+//            setAlignmentX(LEFT_ALIGNMENT);
+//
+//            JLabel l = new JLabel(ds.name);
+//            try {
+//                l.setIcon(getIcon(ds.iconURL, datasourceIconWidth, datasourceIconHeight));
+//            } catch (MalformedURLException ex) {
+//                Logger.getLogger(SurvivalParametersPanel.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            add(l);
+//
+//            final DataInterest di = getInterest(ds);
+//
+//            //boolean layerEnabled = layerEnabled.get(ds);
+//
+//            final JFloatSlider importanceSlider = new JFloatSlider(di.getImportance(), 0, 1.0, JSlider.HORIZONTAL);
+//            importanceSlider.setEnabled(false);
+//            importanceSlider.addChangeListener(new ChangeListener() {
+//
+//                @Override
+//                public void stateChanged(ChangeEvent e) {
+//                    new Thread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            di.setImportance(importanceSlider.value());
+//                            //map.getHeatMap().setInterestsChanged();
+//                            map.redraw();
+//                        }
+//                    }).start();
+//                }
+//            });
+//            JPanel fep = new JPanel(new FlowLayout());
+//            fep.setOpaque(false);
+//            fep.add(importanceSlider);
+//            add(fep);
+//            
+////            DataRenderer dr = map.dataRenderers.get(ds);
+////            if (dr instanceof ShadedCircleRenderer) {
+////                final ShadedCircleRenderer scr = (ShadedCircleRenderer) dr;
+////
+////                JPanel ep = new JPanel(new FlowLayout());
+////                ep.setOpaque(false);
+////
+////
+////                final JToggleButton showEvents = new JToggleButton("Plot", layerEnabled);
+////                ep.add(showEvents);
+////
+////                final JFloatSlider scaleSlider = new JFloatSlider(di.getScale(), scr.getMinScale(), scr.getMaxScale(), JSlider.HORIZONTAL);
+////                scaleSlider.setEnabled(layerEnabled);
+////                scaleSlider.addChangeListener(new ChangeListener() {
+////
+////                    @Override
+////                    public void stateChanged(ChangeEvent e) {
+////                        new Thread(new Runnable() {
+////
+////                            @Override
+////                            public void run() {
+////                                scr.setScale(scaleSlider.value());
+////                                map.getHeatMap().setInterestsChanged();
+////                                map.redraw();
+////                            }
+////                        }).start();
+////                    }
+////                });
+////                ep.add(scaleSlider);
+////
+////                showEvents.addActionListener(new ActionListener() {
+////
+////                    @Override
+////                    public void actionPerformed(ActionEvent e) {
+////                        map.setLayerEnabled(ds, showEvents.isSelected());
+////                        scaleSlider.setEnabled(showEvents.isSelected());
+////                    }
+////                });
+////                
+////                ep.setAlignmentX(LEFT_ALIGNMENT);
+////                add(ep);
+////
+////            }
+//         }
+//    }
+//

@@ -9,7 +9,7 @@ package automenta.netention.survive;
  * Can be extended with more parameters later.
  * @author seh
  */
-public class DataInterest {
+@Deprecated public class DataInterest {
     private double importance;
     private double scale;
 

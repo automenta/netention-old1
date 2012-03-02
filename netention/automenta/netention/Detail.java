@@ -27,6 +27,12 @@ public class Detail implements Node {
         this(name, Mode.Unknown);
     }
 
+    /**
+     * 
+     * @param name
+     * @param mode
+     * @param initialPatterns  the order of these should indicate the most important patterns first.  the primary icon used is the icon of the first pattern
+     */
     public Detail(String name, Mode mode, String... initialPatterns) {
         this.id = UUID.randomUUID().toString();
         this.name = name;

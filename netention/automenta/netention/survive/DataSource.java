@@ -12,7 +12,7 @@ import java.util.Map;
  * A collection of events provided by indicator or sensor data source for modeling the environment
  * @author seh
  */
-abstract public class DataSource {
+@Deprecated abstract public class DataSource {
     
     public final String id;
     public final String name;
