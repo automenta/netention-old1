@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package automenta.netention.demo.swing;
+package automenta.netention.app;
 
 import automenta.netention.demo.Demo;
 import javax.swing.JPanel;

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.netention.demo.swing;
+package automenta.netention.app;
 
 import automenta.netention.demo.Demo;
 import automenta.netention.swing.util.SwingWindow;

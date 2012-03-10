@@ -208,6 +208,7 @@ public class SurvivalParametersPanel extends JPanel {
         this.self = self;
         this.map = mp;
         this.survive = new DefaultHeuristicSurvivalModel(self);
+        hm = new HeatmapOverlay();
 
         categoriesPanel = new JPanel();
         categoriesPanel.setLayout(new BoxLayout(categoriesPanel, BoxLayout.PAGE_AXIS));
@@ -221,6 +222,7 @@ public class SurvivalParametersPanel extends JPanel {
         addIndicator(EDIS.VOLCANO_ACTIVITY, Affect.Threatens);
         addIndicator(EDIS.TORNADO, Affect.Threatens);
         addIndicator(EDIS.BIOLOGICAL_HAZARD, Affect.Threatens);
+        addIndicator(EDIS.CHEMICAL_HAZARD, Affect.Threatens);
         addIndicator(EDIS.EPIDEMIC_HAZARD, Affect.Threatens);
         addIndicator(EDIS.EXTREME_WEATHER, Affect.Threatens);
         addIndicator("Disaster", Affect.Threatens);
@@ -282,7 +284,7 @@ public class SurvivalParametersPanel extends JPanel {
             presetsPanel.add(jc, BorderLayout.CENTER);
             
             
-            opacitySlider = new JFloatSlider(0.75, 0.0, 1.0, JSlider.HORIZONTAL);
+            opacitySlider = new JFloatSlider(hm.getOpacity(), 0.0, 1.0, JSlider.HORIZONTAL);
             opacitySlider.setToolTipText("Heatmap Transparency");
             opacitySlider.addChangeListener(new ChangeListener() {
                 @Override public void stateChanged(ChangeEvent e) {
@@ -316,7 +318,6 @@ public class SurvivalParametersPanel extends JPanel {
         });
 
         NowPanel.redrawMarkers(self, map, null);
-        hm = new HeatmapOverlay();
         map.getMap().addMapMarker(hm);
         
         updateHeatmap();
@@ -431,6 +432,10 @@ public class SurvivalParametersPanel extends JPanel {
 
             }
 
+        }
+
+        private float getOpacity() {
+            return opacity;
         }
 
         

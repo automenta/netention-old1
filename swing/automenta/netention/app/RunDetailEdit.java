@@ -2,13 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.netention.demo.swing;
+package automenta.netention.app;
 
 import automenta.netention.Detail;
 import automenta.netention.PropertyValue;
 import automenta.netention.Self;
 import automenta.netention.demo.Demo;
-import automenta.netention.demo.RunSelfBrowser;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.detail.DetailEditPanel;
 import automenta.netention.swing.util.SwingWindow;

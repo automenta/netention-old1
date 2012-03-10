@@ -9,10 +9,14 @@ import automenta.netention.Detail;
 import automenta.netention.Mode;
 import automenta.netention.Pattern;
 import automenta.netention.Self;
+import automenta.netention.app.RunSelfBrowser;
 import automenta.netention.rss.HTTP;
 import automenta.netention.value.Comment;
 import automenta.netention.value.geo.GeoPointIs;
+import automenta.netention.value.real.RealIs;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
 import org.jsoup.Jsoup;
@@ -26,9 +30,13 @@ import org.jsoup.select.Elements;
  * @author seh
  */
 public class EDIS {
+
     public static final String EARTHQUAKE = getPattern("Earthquake");
+    public final static String earthquakeMagnitude = "earthquakeMagnitude";    
+    
     public static final String VOLCANO_ACTIVITY = getPattern("Volcano Activity Report");
     public static final String TORNADO = getPattern("Tornado");
+    public static final String CHEMICAL_HAZARD = getPattern("Chemical Hazard");
     public static final String BIOLOGICAL_HAZARD = getPattern("Biological Hazard");
     public static final String EPIDEMIC_HAZARD = getPattern("Epidemic Hazard");
     public static final String NUCLEAR_EVENT = getPattern("Nuclear Event");
@@ -41,6 +49,8 @@ public class EDIS {
     public static final String baseURL = "http://hisz.rsoe.hu/alertmap/";
 
     public static Map<String,String> eventIcon = new HashMap();
+
+    
     static {
      
         
@@ -60,6 +70,7 @@ public class EDIS {
         
         init(self, disaster, TORNADO, "media://edis/MET_TOR.tornado.png");
         init(self, disaster, BIOLOGICAL_HAZARD, "media://edis/DS_BH_BH.biohazard2.png");
+        init(self, disaster, CHEMICAL_HAZARD, "media://edis/DS_CA.chemical_accident2.png");
         init(self, disaster, EPIDEMIC_HAZARD, "media://edis/DS_BH_EH.epidemic.png");
         init(self, disaster, NUCLEAR_EVENT, "media://edis/DS_CR.nuclear_accident.png");
         init(self, disaster, EXTREME_WEATHER, "media://edis/MET_WIND.severe_weather.png");
@@ -92,16 +103,41 @@ public class EDIS {
             int a2 = s.indexOf(")");
             String latlng = s.substring(a1+1, a2);
             
+            String text;
+            
             int b1 = s.indexOf("'");
             int b2 = s.indexOf("'", b1+1);
-            String text = s.substring(b1+1, b2);
+            String stext = s.substring(b1+1, b2);   //single quoted mode
 
+            String dtext = "";
+            try {
+                int c1 = s.indexOf("\"");
+                int c2 = s.indexOf("\"", b1+1);
+                dtext = s.substring(c1+1, c2);   //double quoted mode
+            }
+            catch (Exception e) { }
+
+            if (stext.length() > dtext.length())
+                text = stext;
+            else
+                text = dtext;
+            
+            
+            
             String name = null;
             String data = "";
 
             
             Document doc = Jsoup.parse(text);
-            Elements e = doc.getElementsByTag("div").first().getAllElements();
+            Elements e;
+            
+            try {
+                e = doc.getElementsByTag("div").first().getAllElements();            
+            }
+            catch (NullPointerException n) {
+                logger.info("Invalid line: " + s);
+                continue;
+            }
             
             for (int i = 0; i < e.size(); i++) {
                 Element x = e.get(i);
@@ -111,7 +147,7 @@ public class EDIS {
             }
 
             String ee = doc.getElementsByTag("div").html();
-            String date = "", loc = "", country = "";
+            String date = "", loc = "", country = "", magnitude = "";
             
             List<String> datas = new LinkedList();
             for (String f : ee.split("<br />")) {
@@ -125,6 +161,7 @@ public class EDIS {
                     final String datePrefix2 = "Event date: ";
                     final String locPrefix = "Location: ";
                     final String countryPrefix = "Country: ";
+                    final String magnitudePrefix = "Magnitude: ";
                     if (f.startsWith(datePrefix)) {
                         date = f.substring(datePrefix.length());
                     }
@@ -137,17 +174,33 @@ public class EDIS {
                     else if (f.startsWith(countryPrefix)) {
                         country =  f.substring(countryPrefix.length());
                     }
+                    else if (f.startsWith(magnitudePrefix)) {
+                        magnitude = f.substring(magnitudePrefix.length());
+                    }
                 }
             }
             
             date = date.replace(" :" , "");
             date = date.replace(".", "-");
+
+            Date dateV;
+            try {
+                dateV = getDate(date);
+            }
+            catch (ParseException pe) {
+                logger.info("Un-parseable date: " + text);
+                dateV = new Date();
+            }
+                
             
-            //System.out.println(name + " " + latlng);
-            //System.out.println("  " + date + " " + loc + " in " + country);
-            //System.out.println("  " + datas);
+            System.out.println(name + " " + latlng);
+            System.out.println("  " + date + " " + loc + " in " + country);
+            System.out.println("  " + datas);            
             
-            Detail d = new Detail(name, Mode.Real, getPattern(name));
+            final String pattern = getPattern(name);
+            Detail d = new Detail(name, Mode.Real, pattern);
+            
+            d.setWhenCreated(dateV);
             d.setID(name + "." + date + "." + latlng);
             d.add(new Comment(ee));
             
@@ -162,12 +215,17 @@ public class EDIS {
                     logger.severe("Invalid geolocation: " + latlng);
                 }
             }
-//            else {
-//                System.out.println("  missing location: " + ee);
-//            }
+            else {
+                logger.info("Missing location: " + text);
+            }
             
-            //TODO parse date            
-                //d.setWhenCreated
+            //Earthquake Data
+            if (pattern.equals("Earthquake")) {
+                if (magnitude.length() > 0) {
+                    double mm = Double.parseDouble(magnitude);
+                    d.add(earthquakeMagnitude, new RealIs(mm));
+                }
+            }
             
             self.addDetail(d);
         }
@@ -209,8 +267,13 @@ public class EDIS {
         }
     }
     
-//    public static void main(String[] args) {
-//        Self s = RunSelfBrowser.newDefaultSelf();
-//        new EDIS(s);
-//    }
+    public final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+    public Date getDate(String s) throws ParseException {
+        return dateFormat.parse(s + " GMT");
+    }
+    
+    public static void main(String[] args) throws Exception {
+        Self s = RunSelfBrowser.newDefaultSelf();
+        new EDIS().init(s, new Pattern("Disaster")).update(s);                
+    }
 }

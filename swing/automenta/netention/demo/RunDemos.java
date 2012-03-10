@@ -5,9 +5,10 @@
 package automenta.netention.demo;
 
 
-import automenta.netention.demo.swing.RunAbout;
-import automenta.netention.demo.swing.RunDetailEdit;
-import automenta.netention.demo.swing.RunTextCutup;
+import automenta.netention.app.RunSelfBrowser;
+import automenta.netention.app.RunAbout;
+import automenta.netention.app.RunDetailEdit;
+import automenta.netention.app.RunTextCutup;
 import automenta.netention.swing.util.SwingWindow;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;

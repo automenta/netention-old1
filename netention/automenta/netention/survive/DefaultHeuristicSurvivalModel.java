@@ -8,6 +8,9 @@ import automenta.netention.Detail;
 import automenta.netention.Node;
 import automenta.netention.Self;
 import automenta.netention.geo.Geo;
+import automenta.netention.survive.data.EDIS;
+import automenta.netention.value.real.RealIs;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -19,6 +22,7 @@ import java.util.List;
  */
 public class DefaultHeuristicSurvivalModel implements SurvivalModel {
     private final Self self;
+    final Date now = new Date();
     List<String> influencePatterns = new LinkedList(); //order matters
     HashMap<String, Influence> influences = new HashMap(); //could this be done with a LinkedHashMap?
 
@@ -42,6 +46,25 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
     }
 
     
+    public double getScaleFactor(final Detail d) {
+        if (self.isInstance(EDIS.EARTHQUAKE, d.getID())) {
+            final double MAX_EARTHQUAKE_MAG = 10.0;
+            final double HOUR_DECAY = 2.0;            
+            
+            double magnitude = d.getValue(RealIs.class, EDIS.earthquakeMagnitude).getValue();
+            if (magnitude > MAX_EARTHQUAKE_MAG)
+                magnitude = MAX_EARTHQUAKE_MAG;
+            
+            final double age = self.getTimeBetween(now, d.getWhen());
+            
+            double factor = (magnitude / MAX_EARTHQUAKE_MAG) * Math.exp(-age / (HOUR_DECAY * 60.0*60.0));
+            return factor;
+        }
+        return 1.0;
+    }
+    public double getRadiusFactor(final Detail d) {
+        return 1.0;
+    }
     
      @Override
      public void get(final double lat, final double lng, final double[] result, String explanation) {
@@ -54,9 +77,11 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
                 
                 Influence ii = getInfluence(d);
                 if (ii!=null) {
-                    final double scale = ii.importance;
+                    final double scale = ii.importance * getScaleFactor(d);
                     if (scale > 0) {
-                        final double rad = ii.radius;
+                        final double rad = ii.radius * getRadiusFactor(d);
+                        
+                        
                         final double[] loc = Geo.getLocation(d);
                         final double dist = Geo.meters((float) lat, (float) lng, (float) loc[0], (float) loc[1]);
                         

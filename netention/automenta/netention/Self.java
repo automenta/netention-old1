@@ -29,7 +29,11 @@ abstract public class Self {
     protected final transient List<SelfListener> listeners = new LinkedList();
     protected final transient List<Action> actions = new LinkedList();
     protected Scheduler scheduler;
-;
+
+
+    public static long getTimeBetween(final Date later, final Date earlier) {
+        return later.getTime() - earlier.getTime();
+    }
 
     public static interface SelfListener {
         public void onDetailsAdded(Detail... d);
@@ -91,15 +95,15 @@ abstract public class Self {
 
     public Self() {
         super();
-        try {
-            scheduler = StdSchedulerFactory.getDefaultScheduler();
-
-            scheduler.start();
-
-        } catch (SchedulerException ex) {
-            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(1);
-        }
+        
+//        try {
+//            scheduler = StdSchedulerFactory.getDefaultScheduler();
+//
+//            scheduler.start();
+//        } catch (SchedulerException ex) {
+//            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
+//            System.exit(1);
+//        }
     }
     
     public void stop() {

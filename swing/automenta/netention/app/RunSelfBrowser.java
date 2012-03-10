@@ -2,19 +2,21 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.netention.demo;
+package automenta.netention.app;
 
 import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.craigslist.AddCraigslistPatterns;
 import automenta.netention.craigslist.CraigslistRefreshAction;
+import automenta.netention.demo.AddDefaultPatterns;
+import automenta.netention.demo.Demo;
+import automenta.netention.demo.SeedEnvironment;
 import automenta.netention.html.BasicDetailHTML;
 import automenta.netention.ieml.AddENTPMflowcycles;
 import automenta.netention.ieml.AddIEMLPatterns;
 import automenta.netention.impl.LogToMessage;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.survive.data.EDIS;
-import automenta.netention.survive.data.IntentionalCommunities;
 import automenta.netention.survive.data.NuclearFacilities;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.SelfSession;
