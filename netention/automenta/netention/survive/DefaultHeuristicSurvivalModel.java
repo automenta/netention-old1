@@ -6,15 +6,14 @@ package automenta.netention.survive;
 
 import automenta.netention.Detail;
 import automenta.netention.Node;
+import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.geo.Geo;
 import automenta.netention.survive.data.EDIS;
+import automenta.netention.survive.data.IntentionalCommunities;
+import automenta.netention.survive.data.NuclearFacilities;
 import automenta.netention.value.real.RealIs;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -23,23 +22,49 @@ import java.util.List;
 public class DefaultHeuristicSurvivalModel implements SurvivalModel {
     private final Self self;
     final Date now = new Date();
-    List<String> influencePatterns = new LinkedList(); //order matters
-    HashMap<String, Influence> influences = new HashMap(); //could this be done with a LinkedHashMap?
+    
+    List<Influence> influences = new LinkedList(); //order matters
+    
+//    List<String> influencePatterns = new LinkedList(); //order matters
+//    Map<String, Affect> affects = new HashMap();
+//    HashMap<String, Influence> influences = new HashMap(); //could this be done with a LinkedHashMap?
 
     public DefaultHeuristicSurvivalModel(Self self) {
         this.self = self;
+        
+        addInfluence(NuclearFacilities.NuclearFacility, Affect.Threatens);
+        addInfluence(EDIS.NUCLEAR_EVENT, Affect.Threatens);
+        addInfluence(EDIS.EARTHQUAKE, Affect.Threatens);
+        addInfluence(EDIS.VOLCANO_ACTIVITY, Affect.Threatens);
+        addInfluence(EDIS.TORNADO, Affect.Threatens);
+        addInfluence(EDIS.BIOLOGICAL_HAZARD, Affect.Threatens);
+        addInfluence(EDIS.CHEMICAL_HAZARD, Affect.Threatens);
+        addInfluence(EDIS.EPIDEMIC_HAZARD, Affect.Threatens);
+        addInfluence(EDIS.EXTREME_WEATHER, Affect.Threatens);
+        addInfluence("Disaster", Affect.Threatens);
+        
+        addInfluence(IntentionalCommunities.IntentionalCommunity, Affect.Benefits);
+        
+    }
+
+    public List<Influence> getInfluences() {
+        return influences;
+    }
+        
+    public void addInfluence(String patternID, Affect affect) {
+        Pattern p = self.getPattern(patternID);
+        if (p!=null) {
+            Influence i = new Influence(patternID, p.getName(), p.getID(), affect);
+            influences.add(i);
+        }
     }
     
-    public void addInfluence(String pattern, Influence i) {
-        influencePatterns.add(pattern);
-        influences.put(pattern, i);
-    }
     
-    @Override
+    //TODO improve by using a hashmap, and ability to return multiple influences per detail
     public Influence getInfluence(final Detail d) {
-        for (final String p : influencePatterns) {
-            if (self.isInstance(p, d.getID())) {
-                return influences.get(p);
+        for (final Influence i : influences) {
+            if (self.isInstance(i.patternID, d.getID())) {
+                return i;
             }
         }
         return null;
@@ -77,8 +102,12 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
                 
                 Influence ii = getInfluence(d);
                 if (ii!=null) {
-                    final double scale = ii.importance * getScaleFactor(d);
+                    double scale = ii.importance;
+                                        
                     if (scale > 0) {
+                                                
+                        scale *= getScaleFactor(d);
+                        
                         final double rad = ii.radius * getRadiusFactor(d);
                         
                         
@@ -93,6 +122,8 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
                             t += v;
                         else if (ii.affect == Affect.Benefits)
                             b += v;
+                        
+
                     }
                 }
             }
@@ -101,5 +132,6 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
         result[0] = t;
         result[1] = b;
     }
+
     
 }

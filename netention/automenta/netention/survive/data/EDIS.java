@@ -193,9 +193,9 @@ public class EDIS {
             }
                 
             
-            System.out.println(name + " " + latlng);
-            System.out.println("  " + date + " " + loc + " in " + country);
-            System.out.println("  " + datas);            
+//            System.out.println(name + " " + latlng);
+//            System.out.println("  " + date + " " + loc + " in " + country);
+//            System.out.println("  " + datas);            
             
             final String pattern = getPattern(name);
             Detail d = new Detail(name, Mode.Real, pattern);

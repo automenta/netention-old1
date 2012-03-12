@@ -4,13 +4,9 @@
  */
 package automenta.netention.swing.widget.survive;
 
-import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.graph.Pair;
 import automenta.netention.survive.*;
-import automenta.netention.survive.data.EDIS;
-import automenta.netention.survive.data.IntentionalCommunities;
-import automenta.netention.survive.data.NuclearFacilities;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JFloatSlider;
@@ -114,18 +110,10 @@ public class SurvivalParametersPanel extends JPanel {
     }
 
 //    
-    private DefaultHeuristicSurvivalModel survive;
+    private SurvivalModel survive;
     
-    public void addIndicator(String pattern, Affect a) {
-        Pattern p = self.getPattern(pattern);
-        if (p == null) {
-            logger.severe("No existing pattern: " + pattern);
-            return;
-        }
-        
-        final Influence i = new Influence(a);
-        survive.addInfluence(pattern, i);
-        
+    public void addIndicator(final Influence i) {
+                
         JPanel c = new JPanel();
         c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
 
@@ -182,10 +170,10 @@ public class SurvivalParametersPanel extends JPanel {
         radius.addChangeListener(cl);
         cSub.add(radius);
 
-        JLabel jb = new JLabel(p.getName());
-        jb.setToolTipText(a.toString());
+        JLabel jb = new JLabel(i.label);
+        jb.setToolTipText(i.affect.toString());
 
-        ImageIcon ii = Icons.getPatternIcon(p);
+        ImageIcon ii = Icons.getPatternIcon(self.getPattern(i.icon));
         jb.setIcon(ii);
 
 
@@ -216,17 +204,9 @@ public class SurvivalParametersPanel extends JPanel {
         final HeatmapPanel hmp = new HeatmapPanel();
         categoriesPanel.add(hmp);
 
-        addIndicator(NuclearFacilities.NuclearFacility, Affect.Threatens);
-        addIndicator(EDIS.NUCLEAR_EVENT, Affect.Threatens);
-        addIndicator(EDIS.EARTHQUAKE, Affect.Threatens);
-        addIndicator(EDIS.VOLCANO_ACTIVITY, Affect.Threatens);
-        addIndicator(EDIS.TORNADO, Affect.Threatens);
-        addIndicator(EDIS.BIOLOGICAL_HAZARD, Affect.Threatens);
-        addIndicator(EDIS.CHEMICAL_HAZARD, Affect.Threatens);
-        addIndicator(EDIS.EPIDEMIC_HAZARD, Affect.Threatens);
-        addIndicator(EDIS.EXTREME_WEATHER, Affect.Threatens);
-        addIndicator("Disaster", Affect.Threatens);
-        addIndicator(IntentionalCommunities.IntentionalCommunity, Affect.Benefits);
+        for (Influence i : survive.getInfluences()) {
+            addIndicator(i);
+        } 
         
 //        for (String s : d.categories) {
 //            JPanel c = new JPanel();
@@ -367,7 +347,7 @@ public class SurvivalParametersPanel extends JPanel {
                     final double threat = d[0];
                     final double benefit = d[1];
                     
-                    if (values.size()==0) {
+                    if (values.isEmpty()) {
                         minThreat = maxThreat = threat;
                         minBenefit = maxBenefit = benefit;
                     }
