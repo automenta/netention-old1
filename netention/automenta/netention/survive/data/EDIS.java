@@ -79,7 +79,7 @@ public class EDIS {
     }
     
     private void init(Self self, Pattern disaster, String disasterName, String iconURL) {
-        self.addPattern(new Pattern(getPattern(disasterName), disaster.id)
+        self.addPattern(new Pattern(getPattern(disasterName), disaster.id, "Event")
                                 .setName(disasterName)
                                 .setIconURL(iconURL)
                 );

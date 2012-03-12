@@ -78,6 +78,12 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
         final double age = Math.abs(now - when);
         return Math.exp(-age / (HOUR_DECAY * 60.0*60.0));        
     }
+    public static double getAgeFactor(final Self self, final Detail d, final long now, double HOUR_DECAY) {
+        if (self.isInstance("Event", d.getID())) {
+            return getAgeFactor(d.getWhen().getTime(), now, HOUR_DECAY);
+        } 
+        return 1.0f; //non-event, so ongoing
+    }
 
     public double getAgeFactor(final Detail d, double HOUR_DECAY) {
         return getAgeFactor(d.getWhen().getTime(), now.getTime(), HOUR_DECAY);

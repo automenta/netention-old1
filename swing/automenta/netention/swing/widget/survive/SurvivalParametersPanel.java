@@ -373,7 +373,7 @@ public class SurvivalParametersPanel extends JPanel {
 
                 @Override
                 public float getOpacity() {
-                    final float f = (float)DefaultHeuristicSurvivalModel.getAgeFactor(d.getWhen().getTime(), focusDate.getTime(), 50000);
+                    final float f = (float)DefaultHeuristicSurvivalModel.getAgeFactor(self, d, focusDate.getTime(), 50000);
                     return f;
                 }
                 
