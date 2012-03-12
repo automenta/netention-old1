@@ -5,10 +5,9 @@
 
 package automenta.netention.swing.map;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import javax.swing.ImageIcon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
@@ -52,24 +51,51 @@ public class LabeledMarker implements MapMarker, MarkerClickable {
     }
 
     
+    public float getOpacity() {
+        return 1.0f;
+    }
+    
     @Override
     public void paint(Graphics g, Point point) {
+        final Graphics2D g2d = (Graphics2D)g;
         
         g.setColor(bgColor);
         
         int cx = point.x - w/2;
         int cy = point.y - h/2;
         
+        final float opacity = getOpacity();
         if (icon!=null) {
-            g.drawImage(icon.getImage(), cx, cy, w, h, null);
+            if ((opacity!=1.0f) && (icon.getImage() instanceof BufferedImage)) {
+                float[] scales = { 1f, 1f, 1f, getOpacity() };
+                float[] offsets = new float[4];
+
+                //TODO scale before alpha
+                    //                BufferedImage dstImage = null;
+                    //                AffineTransform transform =
+                    //                    AffineTransform.getScaleInstance(0.5, 0.5);
+                    //                AffineTransformOp op = new AffineTransformOp(transform,
+                    //                    AffineTransformOp.TYPE_BILINEAR);
+                    //                dstImage = op.filter(sourceImage, null);       
+
+                RescaleOp rop = new RescaleOp(scales, offsets, null);
+                g2d.drawImage( rop.filter((BufferedImage)icon.getImage(), null) , cx, cy, w, h, null);
+            }
+            else {
+                g2d.drawImage(icon.getImage(), cx, cy, w, h, null);
+            }
         }
         else {
             g.fillRect(cx, cy, w, h);
         }
         
         if (text!=null) {
-            g.setColor(textColor);
-
+            Color tc = textColor;
+            if (opacity!=1f) {
+                final int a = (int)(((((float)textColor.getAlpha())/256.0f) * opacity) * 256.0);
+                tc = new Color(textColor.getRed(), textColor.getGreen(), textColor.getBlue(), a);
+            }
+            g.setColor(tc);
             g.setFont(g.getFont().deriveFont(18.0f)); //new Font("Sans", Font.BOLD, 18 )
             g.drawString(text, cx, cy+h);
         }

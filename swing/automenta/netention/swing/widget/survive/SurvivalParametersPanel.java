@@ -4,19 +4,24 @@
  */
 package automenta.netention.swing.widget.survive;
 
-import automenta.netention.Self;
+import automenta.netention.*;
+import automenta.netention.geo.Geo;
 import automenta.netention.graph.Pair;
 import automenta.netention.survive.*;
 import automenta.netention.swing.Icons;
+import automenta.netention.swing.map.LabeledMarker;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JFloatSlider;
-import automenta.netention.swing.widget.NowPanel;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,6 +63,7 @@ public class SurvivalParametersPanel extends JPanel {
     private final HeatmapOverlay hm;
     private final JPanel categoriesPanel;
     private final JFloatSlider opacitySlider;
+    private Date focusDate;
 
     public class HeatmapPanel extends JPanel {
 
@@ -157,7 +163,7 @@ public class SurvivalParametersPanel extends JPanel {
                 radius.setEnabled(activated);
                 
                 if (e!=null)
-                    updateHeatmapOnSwing();
+                    updateOverlaysOnSwing();
             }
             
         };
@@ -264,14 +270,35 @@ public class SurvivalParametersPanel extends JPanel {
             presetsPanel.add(jc, BorderLayout.CENTER);
             
             
-            opacitySlider = new JFloatSlider(hm.getOpacity(), 0.0, 1.0, JSlider.HORIZONTAL);
-            opacitySlider.setToolTipText("Heatmap Transparency");
-            opacitySlider.addChangeListener(new ChangeListener() {
-                @Override public void stateChanged(ChangeEvent e) {
-                    hm.setOpacity((float)opacitySlider.value());
-                }                
-            });
-            presetsPanel.add(opacitySlider, BorderLayout.SOUTH);
+            JPanel optionsPanel = new JPanel();
+            optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
+            {
+                opacitySlider = new JFloatSlider(hm.getOpacity(), 0.0, 1.0, JSlider.HORIZONTAL);
+                opacitySlider.setToolTipText("Heatmap Transparency");
+                opacitySlider.addChangeListener(new ChangeListener() {
+                    @Override public void stateChanged(ChangeEvent e) {
+                        hm.setOpacity((float)opacitySlider.value());
+                    }                
+                });
+                optionsPanel.add(new JLabel("Opacity"));
+                optionsPanel.add(opacitySlider);
+
+                final JLabel al = new JLabel("Date: ");
+                final JFloatSlider ageSlider = new JFloatSlider(10000.0, 0.0, 10000.0, JSlider.HORIZONTAL);                
+                ChangeListener agecl = new ChangeListener() {
+                    @Override public void stateChanged(ChangeEvent e) {
+                        Date date = new Date(new Date().getTime() - (long)((10000.0 - ageSlider.value()) * (60*60*24)));
+                        al.setText("Date: " + date.toString());                        
+                        setDate(date);
+                    }                
+                };
+                ageSlider.addChangeListener(agecl);
+                agecl.stateChanged(null);
+                
+                optionsPanel.add(al);
+                optionsPanel.add(ageSlider);
+            }
+            presetsPanel.add(optionsPanel, BorderLayout.SOUTH);
         }
         add(presetsPanel, BorderLayout.NORTH);
 
@@ -288,21 +315,77 @@ public class SurvivalParametersPanel extends JPanel {
         
         map.addComponentListener(new ComponentAdapter() {
             @Override public void componentResized(ComponentEvent e) {
-                updateHeatmapOnSwing();
+                updateOverlaysOnSwing();
             }
         });
         map.getMap().addJMVListener(new JMapViewerEventListener() {
             @Override public void processCommand(JMVCommandEvent jmvce) {
-                updateHeatmapOnSwing();
+                updateOverlaysOnSwing();
             }            
         });
 
-        NowPanel.redrawMarkers(self, map, null);
+        redrawMarkers(null);
         map.getMap().addMapMarker(hm);
         
-        updateHeatmap();
+        updateOverlays();
     }
     
+    public void redrawMarkers(final java.util.List<Pattern> p) {        
+        
+        map.getMap().removeAllMapMarkers();
+
+        final Iterator<Node> in;
+        if (p!=null) {
+            in = Iterators.filter(self.iterateNodes(), new Predicate<Node>() {
+                @Override public boolean apply(Node t) {
+                        
+                    for (final Pattern x : p) {
+                        if (self.isInstance(x.getID(), t.getID())) {
+                            return true;  
+                        }
+                    }
+                    
+                    return false;
+                }                
+            });
+        }
+        else {
+            in = self.iterateNodes();
+        }
+            
+        while (in.hasNext()) {
+            Detail d = (Detail)in.next();
+            if (d.getMode() == Mode.Real) {
+                if (self.isInstance("Located", d.getID())) {
+                    addMarker(d);
+                }
+            }
+        }
+            
+        
+    }
+    
+    public void addMarker(final Detail d) {
+        double[] l = Geo.getLocation(d);
+                
+        if (l!=null) {
+            LabeledMarker m = new LabeledMarker(d.getName(), new Color(0.0f, 1.0f, 0.0f, 0.3f), l[0], l[1], Icons.getObjectIcon(self, d)) {
+
+                @Override
+                public float getOpacity() {
+                    final float f = (float)DefaultHeuristicSurvivalModel.getAgeFactor(d.getWhen().getTime(), focusDate.getTime(), 50000);
+                    return f;
+                }
+                
+            };
+            map.getMap().addMapMarker(m);        
+        }
+    }
+    
+    public void setDate(Date d) {
+        this.focusDate = d;
+        updateOverlaysOnSwing();
+    }
     
     public class HeatmapOverlay implements MapMarker {
         private int resolution;
@@ -341,11 +424,12 @@ public class SurvivalParametersPanel extends JPanel {
                     final double lat = p.getLat();
                     final double lng = p.getLon();
         
-                    double[] d = new double[2];
+                    double[] d = new double[3];
                     survive.get(lat, lng, d, null);
 
                     final double threat = d[0];
                     final double benefit = d[1];
+                    final double certainty = d[2];
                     
                     if (values.isEmpty()) {
                         minThreat = maxThreat = threat;
@@ -397,13 +481,14 @@ public class SurvivalParametersPanel extends JPanel {
 
                 final double normThreat = (maxThreat!=minThreat) ? (e.getValue()[0] - minThreat) / (maxThreat - minThreat) : 0; 
                 final double normBenefit = (maxBenefit!=minBenefit) ? (e.getValue()[1] - minBenefit) / (maxBenefit - minBenefit) : 0;
-
+                final double certainty = e.getValue()[2];
+                
                 final int ppx = e.getKey().getFirst();
                 final int ppy = e.getKey().getSecond();
 
                 final float cr = (float)normThreat;
                 final float cg = (float)normBenefit;
-                final float ca = opacity * Math.min(1.0f, cr + cg);
+                final float ca = opacity * Math.min(1.0f, (float)certainty);
 
                 if (ca > 0) {                    
                     g.setColor(new Color(cr, cg, 0f, ca));
@@ -425,7 +510,7 @@ public class SurvivalParametersPanel extends JPanel {
     boolean stopUpdater = false;
     Thread updater;
     
-    public synchronized void updateHeatmap() {
+    public synchronized void updateOverlays() {
         if (updater!=null) {
             stopUpdater = true;
             try {
@@ -468,10 +553,10 @@ public class SurvivalParametersPanel extends JPanel {
                 
     }
     
-    protected void updateHeatmapOnSwing() {
+    protected void updateOverlaysOnSwing() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
-                updateHeatmap();
+                updateOverlays();
             }                    
         });
     }

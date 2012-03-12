@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import sun.awt.image.ToolkitImage;
 
@@ -75,7 +76,7 @@ public class Icons {
         ImageIcon i = null;
         if (path.startsWith("http://")) {
             try {
-                i = new ImageIcon(new URL(path));
+                i = new ImageIcon(ImageIO.read(new URL(path)));
                 Logger.getLogger(Icons.class.getName()).log(Level.INFO, "Loaded image " + path);
             } catch (Exception ex) {
                 Logger.getLogger(Icons.class.getName()).log(Level.SEVERE, null, ex);
@@ -87,17 +88,17 @@ public class Icons {
             }
 
             try {
-                i = new ImageIcon(new File(".").getAbsolutePath() + "/" + path);
+                i = new ImageIcon(ImageIO.read(new File("./" + path)));
             } catch (Exception ex) {
                 Logger.getLogger(Icons.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
         
-        if (i != null) {
-            i.setImage(i.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
-            icons.put(origPath, i);
-        }
+//        if (i != null) {
+//            i.setImage(i.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+//            icons.put(origPath, i);
+//        }
 
         return i;
 

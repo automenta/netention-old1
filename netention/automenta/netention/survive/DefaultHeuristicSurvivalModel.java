@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class DefaultHeuristicSurvivalModel implements SurvivalModel {
     private final Self self;
-    final Date now = new Date();
+    Date now = new Date();
     
     List<Influence> influences = new LinkedList(); //order matters
     
@@ -50,7 +50,11 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
     public List<Influence> getInfluences() {
         return influences;
     }
-        
+
+    public void setNow(Date now) {
+        this.now = now;
+    }            
+    
     public void addInfluence(String patternID, Affect affect) {
         Pattern p = self.getPattern(patternID);
         if (p!=null) {
@@ -69,7 +73,15 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
         }
         return null;
     }
+    
+    public static double getAgeFactor(final long when, final long now, final double HOUR_DECAY) {
+        final double age = Math.abs(now - when);
+        return Math.exp(-age / (HOUR_DECAY * 60.0*60.0));        
+    }
 
+    public double getAgeFactor(final Detail d, double HOUR_DECAY) {
+        return getAgeFactor(d.getWhen().getTime(), now.getTime(), HOUR_DECAY);
+    }
     
     public double getScaleFactor(final Detail d) {
         if (self.isInstance(EDIS.EARTHQUAKE, d.getID())) {
@@ -79,28 +91,27 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
             double magnitude = d.getValue(RealIs.class, EDIS.earthquakeMagnitude).getValue();
             if (magnitude > MAX_EARTHQUAKE_MAG)
                 magnitude = MAX_EARTHQUAKE_MAG;
-            
-            final double age = self.getTimeBetween(now, d.getWhen());
-            
-            double factor = (magnitude / MAX_EARTHQUAKE_MAG) * Math.exp(-age / (HOUR_DECAY * 60.0*60.0));
+                        
+            double factor = (magnitude / MAX_EARTHQUAKE_MAG) * getAgeFactor(d, HOUR_DECAY);
             return factor;
         }
         return 1.0;
     }
+    
     public double getRadiusFactor(final Detail d) {
         return 1.0;
     }
     
      @Override
      public void get(final double lat, final double lng, final double[] result, String explanation) {
-        double t = 0, b = 0;
+        double t = 0, b = 0, certainty = 0;;
         Iterator<Node> n = self.iterateNodes();
         while (n.hasNext()) {
             final Node i = n.next();
             if (i instanceof Detail) {
                 final Detail d = (Detail) i;
                 
-                Influence ii = getInfluence(d);
+                final Influence ii = getInfluence(d);
                 if (ii!=null) {
                     double scale = ii.importance;
                                         
@@ -114,7 +125,7 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
                         final double[] loc = Geo.getLocation(d);
                         final double dist = Geo.meters((float) lat, (float) lng, (float) loc[0], (float) loc[1]);
                         
-                        final double distDenominator = (dist <= rad) ? 1.0 : (1.0 + dist-rad);
+                        final double distDenominator = (dist <= rad) ? 1.0 : (1.0 + (dist-rad) / rad);
                         
                         final double v = scale / distDenominator;
                         
@@ -123,6 +134,7 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
                         else if (ii.affect == Affect.Benefits)
                             b += v;
                         
+                        certainty= Math.max(certainty, getAgeFactor(d, 3 /* hours */)/distDenominator);
 
                     }
                 }
@@ -131,6 +143,7 @@ public class DefaultHeuristicSurvivalModel implements SurvivalModel {
         
         result[0] = t;
         result[1] = b;
+        result[2] = certainty;
     }
 
     

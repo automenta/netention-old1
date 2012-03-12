@@ -30,6 +30,9 @@ abstract public class Self {
     protected final transient List<Action> actions = new LinkedList();
     protected Scheduler scheduler;
 
+    public static long getTimeBetween(final long l, final long e) {
+        return l - e;
+    }
 
     public static long getTimeBetween(final Date later, final Date earlier) {
         return later.getTime() - earlier.getTime();
