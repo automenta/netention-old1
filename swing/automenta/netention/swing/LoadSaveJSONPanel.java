@@ -16,9 +16,9 @@ import javax.swing.*;
  *
  * @author seh
  */
-public class LoadSaveJSON extends JPanel {
+public class LoadSaveJSONPanel extends JPanel {
 
-    public LoadSaveJSON(final Self self) {
+    public LoadSaveJSONPanel(final Self self) {
         super(new BorderLayout());
 
         final JTextArea jta = new JTextArea();

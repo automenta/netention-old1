@@ -301,7 +301,8 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
                     setToolTipText(p.getID());
                 } else if (nodeObj instanceof Detail) {
                     Detail d = (Detail) nodeObj;
-                    setText("<html><b>" + d.getName() + "</b><br/>" + d.getWhen() + "</html>");
+                    //setText("<html><b>" + d.getName() + "</b><br/>" + d.getWhen() + "</html>");
+                    setText(d.getName());
 
                 }
 
