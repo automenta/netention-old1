@@ -99,14 +99,14 @@ abstract public class Self {
     public Self() {
         super();
         
-//        try {
-//            scheduler = StdSchedulerFactory.getDefaultScheduler();
-//
-//            scheduler.start();
-//        } catch (SchedulerException ex) {
-//            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
-//            System.exit(1);
-//        }
+        try {
+            scheduler = StdSchedulerFactory.getDefaultScheduler();
+
+            scheduler.start();
+        } catch (SchedulerException ex) {
+            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        }
     }
     
     public void stop() {

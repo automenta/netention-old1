@@ -8,13 +8,17 @@ import automenta.netention.*;
 import automenta.netention.geo.Geo;
 import automenta.netention.graph.Pair;
 import automenta.netention.survive.*;
+import automenta.netention.survive.data.OSMxml;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.map.LabeledMarker;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.JFloatSlider;
+import automenta.netention.value.geo.GeoPointIs;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
@@ -22,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,6 +69,8 @@ public class SurvivalParametersPanel extends JPanel {
     private final JPanel categoriesPanel;
     private final JFloatSlider opacitySlider;
     private Date focusDate;
+    
+    private JButton getOSM;
 
     public class HeatmapPanel extends JPanel {
 
@@ -273,6 +280,16 @@ public class SurvivalParametersPanel extends JPanel {
             JPanel optionsPanel = new JPanel();
             optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
             {
+                getOSM = new JButton("Update OSM");
+                getOSM.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateOSM();
+                    }                    
+                });
+                optionsPanel.add(getOSM);
+                
+                
                 opacitySlider = new JFloatSlider(hm.getOpacity(), 0.0, 1.0, JSlider.HORIZONTAL);
                 opacitySlider.setToolTipText("Heatmap Transparency");
                 opacitySlider.addChangeListener(new ChangeListener() {
@@ -320,14 +337,18 @@ public class SurvivalParametersPanel extends JPanel {
         });
         map.getMap().addJMVListener(new JMapViewerEventListener() {
             @Override public void processCommand(JMVCommandEvent jmvce) {
-                updateOverlaysOnSwing();
+                updateOverlaysOnSwing();                
             }            
         });
 
+        redrawAll();
+    }
+    
+    public void redrawAll() {
         redrawMarkers(null);
         map.getMap().addMapMarker(hm);
         
-        updateOverlays();
+        updateOverlays();        
     }
     
     public void redrawMarkers(final java.util.List<Pattern> p) {        
@@ -380,6 +401,73 @@ public class SurvivalParametersPanel extends JPanel {
             };
             map.getMap().addMapMarker(m);        
         }
+    }
+    
+    public boolean isOSMPossible() {
+        Coordinate topLeft = map.getMap().getPosition(0,0);
+        Coordinate botRight = map.getMap().getPosition(map.getWidth(), map.getHeight());
+        
+        double wl = topLeft.getLat() - botRight.getLat();
+        double wh = botRight.getLon() - topLeft.getLon();
+        
+        return ((wl <= 0.25) && (wh <= 0.25));        
+    }
+
+    
+    protected synchronized void updateOSM() {
+        
+        self.queue(new Runnable() {
+
+            @Override
+            public void run() {
+                //http://wiki.openstreetmap.org/wiki/Download
+                //The region is specified by a bounding box, which consists of a minimum and maximum latitude and longitude. Choose as small a region as will be useful to you, since larger regions will result in larger data files, longer download times, and heavier load on the server. The server may reject your region if it is larger than 1/4 degree in either dimension. When you're first starting out, choose a very small region so that you can figure things out quickly with small data sets.
+
+                Coordinate topLeft = map.getMap().getPosition(0,0);
+                Coordinate botRight = map.getMap().getPosition(map.getWidth(), map.getHeight());
+
+                //min lng, min lat, max lng, max lat
+                //ex: http://api.openstreetmap.org/api/0.6/map?bbox=11.54,48.14,11.543,48.145
+                //ex: http://www.informationfreeway.org/api/0.6/node[amenity=hospital][bbox=-6,50,2,61]
+
+                if (isOSMPossible()) {
+                    String url = "http://api.openstreetmap.org/api/0.6/map?bbox=" + topLeft.getLon() + "," + botRight.getLat() + "," + botRight.getLon() + "," + topLeft.getLat();
+                    //String url = "http://www.informationfreeway.org/api/0.6/node[bbox=" + topLeft.getLon() + "," + botRight.getLat() + "," + botRight.getLon() + "," + topLeft.getLat() + "]";
+                    try {
+
+                        final LinkedList<Detail> detailsAdded = new LinkedList();
+
+                        new OSMxml(url) {
+
+                            @Override
+                            public void onAmenity(String id, double lat, double lon, String type) {
+                                Detail d = new Detail(type, Mode.Real, "Located", "Built");
+                                d.setID(id);
+                                d.add("currentLocation", new GeoPointIs(lat, lon));
+
+                                detailsAdded.add(d);
+                                self.addDetail(d);
+                            }
+
+                        };
+
+                        if (detailsAdded.size() > 0) {        
+                            redrawAll();
+                        }
+
+                    }
+                    catch (Exception ex) {
+                        logger.severe(ex.toString());
+                    }
+
+                }
+                else {
+                    logger.severe("Area too large to request OSM data: " + topLeft + ".." + botRight);
+                }
+            }
+            
+        });
+        
     }
     
     public void setDate(Date d) {
@@ -557,6 +645,8 @@ public class SurvivalParametersPanel extends JPanel {
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
                 updateOverlays();
+                
+                getOSM.setEnabled(isOSMPossible());
             }                    
         });
     }

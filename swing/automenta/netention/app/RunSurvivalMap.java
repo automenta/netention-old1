@@ -8,6 +8,7 @@ import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.survive.data.EDIS;
+import automenta.netention.survive.data.IntentionalCommunities;
 import automenta.netention.survive.data.NuclearFacilities;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.SwingWindow;
@@ -48,9 +49,9 @@ public class RunSurvivalMap extends JPanel {
             
         NuclearFacilities.add(self, "schema/IAEA_Nuclear_Facilities.csv");
 
-        new EDIS().init(self, disaster).update(self);
+        //new EDIS().init(self, disaster).update(self);
         
-        //new IntentionalCommunities(self, "schema/ic.org.xml");
+        //new IntentionalCommunities(self, "schema/ic.org.xml", 450);
         
         new SwingWindow(new RunSurvivalMap(self), 800, 600, true);
     }
