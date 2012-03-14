@@ -8,7 +8,7 @@ import automenta.netention.Channel;
 import automenta.netention.NMessage;
 import automenta.netention.craigslist.CraigslistChannel;
 import automenta.netention.email.EMailChannel;
-import automenta.netention.rss.RSSChannel;
+import automenta.netention.feed.RSSChannel;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import flexjson.JSONDeserializer;

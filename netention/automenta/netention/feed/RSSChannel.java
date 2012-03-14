@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.netention.rss;
+package automenta.netention.feed;
 
 import automenta.netention.Channel;
 import automenta.netention.NMessage;

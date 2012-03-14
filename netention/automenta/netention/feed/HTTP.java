@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.netention.rss;
+package automenta.netention.feed;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;

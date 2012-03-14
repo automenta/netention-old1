@@ -12,7 +12,7 @@ import automenta.netention.survive.data.IntentionalCommunities;
 import automenta.netention.survive.data.NuclearFacilities;
 import automenta.netention.swing.map.Map2DPanel;
 import automenta.netention.swing.util.SwingWindow;
-import automenta.netention.swing.widget.survive.SurvivalParametersPanel;
+import automenta.netention.swing.widget.survive.MapControlPanel;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -35,7 +35,7 @@ public class RunSurvivalMap extends JPanel {
         
         split.setRightComponent(new JScrollPane(map));
         
-        split.setLeftComponent(new SurvivalParametersPanel(self, map, null));
+        split.setLeftComponent(new MapControlPanel(self, map, null));
         
     }
  

@@ -1,7 +1,7 @@
 package automenta.netention.craigslist;
 
 import automenta.netention.NMessage;
-import automenta.netention.rss.RSSChannel;
+import automenta.netention.feed.RSSChannel;
 import java.util.Iterator;
 import java.util.List;
 import org.horrabin.horrorss.RssItemBean;

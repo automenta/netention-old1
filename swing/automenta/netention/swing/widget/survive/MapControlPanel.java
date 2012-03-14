@@ -5,6 +5,7 @@
 package automenta.netention.swing.widget.survive;
 
 import automenta.netention.*;
+import automenta.netention.feed.TwitterChannel;
 import automenta.netention.geo.Geo;
 import automenta.netention.graph.Pair;
 import automenta.netention.survive.*;
@@ -30,6 +31,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -44,8 +46,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
  * Controls for determining (in real-time) the parameters of 'threat' and 'benefit' composite indicators which are visualized on a map as a heatmap overlay
  * @author seh
  */
-public class SurvivalParametersPanel extends JPanel {
-    final static Logger logger = Logger.getLogger(SurvivalParametersPanel.class.toString());
+public class MapControlPanel extends JPanel {
+    final static Logger logger = Logger.getLogger(MapControlPanel.class.toString());
             
     JPanel configPanel = new JPanel();
         
@@ -203,7 +205,7 @@ public class SurvivalParametersPanel extends JPanel {
         
     }
     
-    public SurvivalParametersPanel(Self self, Map2DPanel mp, Environment d) {
+    public MapControlPanel(Self self, Map2DPanel mp, Environment d) {
         super(new BorderLayout());
 
         this.self = self;
@@ -289,6 +291,14 @@ public class SurvivalParametersPanel extends JPanel {
                 });
                 optionsPanel.add(getOSM);
                 
+                JButton getTweets = new JButton("Update Tweets");
+                getTweets.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updateTwitter();
+                    }                    
+                });
+                optionsPanel.add(getTweets);
                 
                 opacitySlider = new JFloatSlider(hm.getOpacity(), 0.0, 1.0, JSlider.HORIZONTAL);
                 opacitySlider.setToolTipText("Heatmap Transparency");
@@ -413,6 +423,35 @@ public class SurvivalParametersPanel extends JPanel {
         return ((wl <= 0.25) && (wh <= 0.25));        
     }
 
+    
+    protected synchronized void updateTwitter() {
+        self.queue(new Runnable() {
+
+            @Override
+            public void run() {
+                int cx = map.getMap().getWidth() / 2;
+                int cy = map.getMap().getHeight() / 2;
+                Coordinate c = map.getMap().getPosition(cx, cy);
+                double lat = c.getLat();
+                double lng = c.getLon();
+                
+                try {
+                    double radius = 8.0;
+                    logger.info("Requesting tweets at " + lat +"," + lng + " at radius " + radius + " km");
+                    java.util.List<Detail> nt = TwitterChannel.getTweets(lat, lng, radius);
+                    for (Detail d : nt) {
+                        self.addDetail(d);
+                    }
+                    logger.info("Received " + nt.size() + "  tweets");
+                    redrawAll();
+                } catch (Exception ex) {
+                    Logger.getLogger(MapControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                                    
+            }
+        });
+        
+    }
     
     protected synchronized void updateOSM() {
         

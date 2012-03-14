@@ -13,7 +13,7 @@ import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.NowPanel.NotificationsPanel;
 import automenta.netention.swing.widget.*;
-import automenta.netention.swing.widget.survive.SurvivalParametersPanel;
+import automenta.netention.swing.widget.survive.MapControlPanel;
 import automenta.netention.value.string.StringIs;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -496,7 +496,7 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
         
         content.setRightComponent(new JScrollPane(map));
         
-        content.setLeftComponent(new SurvivalParametersPanel(self, map, environment));
+        content.setLeftComponent(new MapControlPanel(self, map, environment));
         updateUI();
     }
     

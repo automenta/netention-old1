@@ -10,7 +10,7 @@ import automenta.netention.Mode;
 import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.app.RunSelfBrowser;
-import automenta.netention.rss.HTTP;
+import automenta.netention.feed.HTTP;
 import automenta.netention.value.Comment;
 import automenta.netention.value.geo.GeoPointIs;
 import automenta.netention.value.real.RealIs;

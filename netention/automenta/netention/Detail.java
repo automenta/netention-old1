@@ -45,8 +45,9 @@ public class Detail implements Node {
         }
     }
 
-    public void setID(String id) {
+    public Detail setID(String id) {
         this.id = id;
+        return this;
     }        
 
     public void setName(String newName) {
