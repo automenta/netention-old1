@@ -116,6 +116,14 @@ public class Detail implements Node {
     public String toString() {
         return getName();
     }
+    
+    public String toString(int nameLength) {
+        String s = toString();
+        if (s.length() > nameLength) {
+            s = s.substring(0, nameLength-1) + "...";
+        }
+        return s;
+    }
 
     public String getCreator() {
         return creator;

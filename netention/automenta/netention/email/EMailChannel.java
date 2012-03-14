@@ -84,7 +84,7 @@ public class EMailChannel implements Serializable {
         MimeMessage newMessage = new MimeMessage(session);
         newMessage.setFrom(new InternetAddress(m.getFrom()));
 
-        newMessage.setSubject(m.getSubject());
+        newMessage.setSubject(m.getName());
         newMessage.setSentDate(m.getWhen());
         newMessage.setContent(m.getContent(), "text/html");
         

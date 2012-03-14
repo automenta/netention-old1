@@ -6,6 +6,8 @@ package automenta.netention.swing;
 
 import automenta.netention.*;
 import automenta.netention.Self.SelfListener;
+import automenta.netention.html.BasicDetailHTML;
+import automenta.netention.html.DetailHTML;
 import automenta.netention.survive.Environment;
 import automenta.netention.swing.detail.DetailEditPanel;
 import automenta.netention.swing.map.Map2DPanel;
@@ -13,6 +15,7 @@ import automenta.netention.swing.util.ButtonTabPanel;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.NowPanel.NotificationsPanel;
 import automenta.netention.swing.widget.*;
+import automenta.netention.swing.widget.email.MessageEditPanel;
 import automenta.netention.swing.widget.survive.MapControlPanel;
 import automenta.netention.value.string.StringIs;
 import java.awt.BorderLayout;
@@ -195,6 +198,17 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
             });
             newMenu.add(newDetail);
 
+            JMenuItem newText = new JMenuItem("Text");
+            newText.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
+            newText.addActionListener(new ActionListener() {
+
+                @Override public void actionPerformed(ActionEvent e) {
+                    newText();
+                }
+            });
+            newMenu.add(newText);
+            
+            
             newMenu.addSeparator();
             
             
@@ -358,6 +372,18 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
         addTab(ndp, "New Property...");
 
     }
+    
+    public void newText() {
+        ReadTextDocumentPanel rd = new ReadTextDocumentPanel();
+        rd.setSelf(self);
+
+        rd.add(new ReadTextDocumentPanel.Sentenceize("Sentence-ize"));
+        rd.add(new ReadTextDocumentPanel.Paragraphize("Paragraph-ize"));
+        rd.add(new ReadTextDocumentPanel.TwitterSearch("Twitter Search"));
+        rd.add(new ReadTextDocumentPanel.RSSItemize("RSS Item-ize"));
+        
+        new SwingWindow(rd, 800, 600, false);
+    }
 
     public void newDetail() {
 //        final NewDetailPanel ndp = new NewDetailPanel(self) {
@@ -439,8 +465,33 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
 
                         }                        
                     });
+                    
+                    JMenuItem b = new JMenuItem("Synthesize " + details.size() + " details...");
+                    b.addActionListener(new ActionListener() {
+                        final DetailHTML detailHTML = new BasicDetailHTML();
+                        
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            StringBuilder html = new StringBuilder();
+                            StringBuilder names = new StringBuilder();
+                            for (Detail d : details) {
+                                names.append(d.getName() + " ");
+                                final String h = "<html>" + detailHTML.getHTML(self, d, false) + "</html>";
+                                html.append(h);                                
+                            }
+                            
+                            new SwingWindow(new MessageEditPanel(names.toString().trim(), html.toString()), 800, 600);
+                            
+                        }                        
+                    });
+
+                    
+                    j.add(b);
+                    j.addSeparator();
                     j.add(a);
                 }
+                
+
                 
                 j.show(e.getComponent(), e.getX(), e.getY());
                 

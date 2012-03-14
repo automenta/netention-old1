@@ -19,28 +19,32 @@ public class BasicDetailHTML implements DetailHTML {
 
     
     @Override
-    public String getHTML(final Self s, final Detail d) {
+    public String getHTML(final Self s, final Detail d, boolean includeJSON) {
         StringBuffer x = new StringBuffer("");
-        x.append("<h1>" + d.getName() + "</h1><br/>");
+        x.append("<div>");
+        x.append("<h1>" + d.getName().replaceAll("\n", "<br/>") + "</h1>");
         
         List<String> pat = d.getPatterns();
         if (!pat.isEmpty()) {
-            x.append("<b>Patterns</b>");
-            x.append("<ul>");
+            x.append("<p><b>Patterns: </b>");
+            int c = 1;
             for (String t : pat) {
-                x.append("<li>");
                 Pattern pt = s.getPattern(t);
                 x.append(pt.getName());
-                x.append("</li>");
+                if (c!=pat.size())
+                    x.append(", ");
+                c++;
             }
-            x.append("</ul><br/>");
+            x.append("</p>");
         }
         
         for (PropertyValue pv : d.getValues()) {
-            x.append(pv.toHTML(s, this) + "<br/>");
+            x.append("<p>" + pv.toHTML(s, this) + "</p>");
         }
-        x.append("<br/><pre>" + Self.toJSON(d) + "</pre>");
-        x.append("");
+        if (includeJSON)
+            x.append("<br/><pre>" + Self.toJSON(d) + "</pre>");
+        
+        x.append("</div>");
         return x.toString();
     }
 

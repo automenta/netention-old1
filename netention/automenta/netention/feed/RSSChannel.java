@@ -6,6 +6,7 @@ package automenta.netention.feed;
 
 import automenta.netention.Channel;
 import automenta.netention.NMessage;
+import automenta.netention.value.Comment;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,9 +63,14 @@ public class RSSChannel implements Channel {
                       }
                   }
                   
-                  NMessage n = new NMessage(item.getLink(), item.getAuthor(), url, date, item.getTitle(), item.getDescription());
+                  NMessage n = new NMessage(item.getDescription(), item.getAuthor(), url, date, item.getTitle());
                   n.setID(getMessageIDPrefix() + item.getLink());
                   n.addTag(item.getCategory());
+                  
+                  n.add(new Comment(item.getLink())); //Temporary
+                  
+                  //n.addTag(item.getLink());
+                  
                   if (image!=null) {
                       String u = image.getUrl();
                       if (u!=null)

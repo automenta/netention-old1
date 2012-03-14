@@ -13,6 +13,6 @@ import automenta.netention.Self;
  */
 public interface DetailHTML {
 
-    public String getHTML(Self s, Detail d);
+    public String getHTML(Self s, Detail d, boolean includeJSON);
     
 }

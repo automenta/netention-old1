@@ -104,7 +104,7 @@ public class RunSelfBrowser implements Demo {
 
         new AddENTPMflowcycles().add(self);
 
-        NuclearFacilities.add(self, "schema/IAEA_Nuclear_Facilities.csv");
+        //NuclearFacilities.add(self, "schema/IAEA_Nuclear_Facilities.csv");
         
         Pattern disaster; 
         {
@@ -154,7 +154,7 @@ public class RunSelfBrowser implements Demo {
             public void run() {
 
 
-                SwingWindow window = new SwingWindow(new RunSelfBrowser().newPanel(), 900, 800, true) {
+                SwingWindow window = new SwingWindow(new RunSelfBrowser().newPanel(), 1200, 800, true) {
 //                    @Override
 //                    protected void onClosing() {
 //                        //SAVE ON EXIT

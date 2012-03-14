@@ -186,8 +186,7 @@ public class AddDefaultPatterns {
         s.addPattern(new Pattern(NMessage.MessagePattern).setIconURL("media://tango32/apps/internet-mail.png")).setName("Message");
         {
             s.addProperty(new StringProp(NMessage.to, "Recipient"), NMessage.MessagePattern);
-            s.addProperty(new StringProp(NMessage.from, "Author"), NMessage.MessagePattern);
-            s.addProperty(new StringProp(NMessage.subject, "Subject"), NMessage.MessagePattern);
+            s.addProperty(new StringProp(NMessage.from, "Author"), NMessage.MessagePattern);            
             s.addProperty(new StringProp(NMessage.content, "Content").setRich(true), NMessage.MessagePattern);
         }
         s.addPattern(new Pattern(NMessage.StatusPattern, NMessage.MessagePattern).setIconURL("media://tango32/status/software-update-available.png")).setName("Status"); //nice icon name ;)

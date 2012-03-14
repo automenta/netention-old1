@@ -18,14 +18,12 @@ import twitter4j.*;
  * @author SeH
  */
 public class TwitterChannel {
- 
-    public static List<Detail> getTweets(double lat, double lng, double kilometersRadius) throws Exception {
+
+    public static List<Detail> getTweets(Query query) throws Exception {
         List<Detail> l = new LinkedList();
         
         // The factory instance is re-useable and thread safe.
         Twitter twitter = new TwitterFactory().getInstance();
-        Query query = new Query();
-        query.setGeoCode(new GeoLocation(lat, lng), kilometersRadius, Query.KILOMETERS);        
         QueryResult result = twitter.search(query);        
         for (Tweet tweet : result.getTweets()) {
             //System.out.println(tweet.getFromUser() + ":" + tweet.getText());
@@ -42,8 +40,21 @@ public class TwitterChannel {
             l.add(d);
         }        
         return l;
+        
+    }
+
+    public static List<Detail> getTweets(double lat, double lng, double kilometersRadius) throws Exception {
+        Query query = new Query();
+        query.setGeoCode(new GeoLocation(lat, lng), kilometersRadius, Query.KILOMETERS);        
+
+        return getTweets(query);        
+    }
+
+    public static List<Detail> getTweets(String q) throws Exception {
+        return getTweets(new Query(q));
     }
     
     public static void main(String[] args) throws Exception {
     }
+
 }

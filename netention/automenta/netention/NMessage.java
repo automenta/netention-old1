@@ -4,6 +4,7 @@
  */
 package automenta.netention;
 
+import automenta.netention.value.Comment;
 import automenta.netention.value.string.StringIs;
 import flexjson.JSONSerializer;
 import java.util.Date;
@@ -20,7 +21,6 @@ public class NMessage extends Detail /*implements Serializable*/ {
     
     public static final String to = "message.to";
     public static final String from = "message.from";
-    public static final String subject = "message.subject";
     public static final String content = "message.content";
 
     public static boolean hasRecipient(Detail d, String id) {
@@ -46,13 +46,12 @@ public class NMessage extends Detail /*implements Serializable*/ {
         super();
     }
     
-    public NMessage(String name, String from, String to, Date when, String subject, String... content) {
-        super(name, Mode.Real, MessagePattern );
+    public NMessage(String subject, String from, String to, Date when, String... content) {
+        super(subject, Mode.Real, MessagePattern );
         
         setFrom(from);
         setTo(to);
         setWhen(when);
-        setSubject(subject);
         setContent(content);
     }
 
@@ -78,9 +77,6 @@ public class NMessage extends Detail /*implements Serializable*/ {
         return getStringValue(from);
     }
 
-    public String getSubject() {
-        return getStringValue(subject);
-    }
 
     public String getTo() {
         return getStringValue(to);
@@ -125,13 +121,12 @@ public class NMessage extends Detail /*implements Serializable*/ {
     }
 
     public void setContent(String... content) {
-        setStringValue(this.content, content);
+        //setStringValue(this.content, content);
+        for (String c : content)
+            add(new Comment(c));
     }
 
-    public void setSubject(String subject) {
-        setStringValue(this.subject, subject);
-    }
-
+  
     public void setWhen(Date when) {
         setStringValue("message.when", when.toString());
     }

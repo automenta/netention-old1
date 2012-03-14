@@ -131,7 +131,7 @@ public class TabbedChannelPannel extends JPanel {
                             newDetail.setEnabled(true);
                             newDetail.addActionListener(new ActionListener() {
                                 @Override public void actionPerformed(ActionEvent e) {
-                                    newDetail("Message", c.getServer() + "/" + channel, "" /* channel topic */);
+                                    newDetail(c.getServer() + "/" + channel, "" /* channel topic */);
                                 }            
                             });
                             setSelected(vals);
@@ -170,14 +170,14 @@ public class TabbedChannelPannel extends JPanel {
         this.selected = vals;
     }
     
-    public void newDetail(String name, String from, String subject) {
+    public void newDetail(String from, String subject) {
      
         String message = "";
         int x = 0;
         for (Object o : selected)
             message += o.toString() + "<br/>";
         
-        NMessage m = new NMessage(name, from, "", new Date(), subject, message );
+        NMessage m = new NMessage(subject, from, "", new Date(), message );
         self.addDetail(m);
         
         new SwingWindow(new DetailEditPanel(self, m, true) {

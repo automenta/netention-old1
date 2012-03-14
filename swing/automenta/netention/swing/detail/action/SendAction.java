@@ -38,7 +38,7 @@ public class SendAction extends DetailAction {
     public Runnable getRun(final Detail detail) {
         return new Runnable() {
             @Override public void run() {
-                final String html = "<html>" + detailHTML.getHTML(getSelf(), detail) + "</html>";
+                final String html = "<html>" + detailHTML.getHTML(getSelf(), detail, false) + "</html>";
                 new SwingWindow(new MessageEditPanel(detail.getName(), html), 800, 600);
             }            
         };

@@ -46,7 +46,7 @@ public class MessagePanel extends JPanel {
 
             setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-            JLabel l = new JScaledLabel(m.getSubject(), 1.25f, Font.BOLD);
+            JLabel l = new JScaledLabel(m.getName(), 1.25f, Font.BOLD);
             add(l, BorderLayout.CENTER);
             JLabel l2 = new JLabel(m.getTo());
             add(l2, BorderLayout.SOUTH);
@@ -419,7 +419,7 @@ public class MessagePanel extends JPanel {
         public void sendTo(String address) {
             NMessage m = new NMessage();
             m.setTo(address);
-            m.setSubject(subject.getText());
+            m.setName(subject.getText());
             m.setContent("<html>" + editor.getText() + "</html>");
             m.setWhen(new Date());
             messages.send(m);
@@ -489,7 +489,7 @@ public class MessagePanel extends JPanel {
         }
         public String getMessageHTML(NMessage m) {
             String s = "";
-            s += "<h1>" + m.getSubject() + "</h1>";
+            s += "<h1>" + m.getName() + "</h1>";
             if (m.getImage()!=null) {
                 s += "<img src='" + m.getImage() + "'/>";
             }
