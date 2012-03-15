@@ -11,9 +11,11 @@ import automenta.netention.PropertyValue;
 import automenta.netention.action.DetailAction;
 import automenta.netention.value.set.SelectionEquals;
 import automenta.netention.value.set.SelectionIs;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.horrabin.horrorss.RssItemBean;
 
@@ -28,12 +30,19 @@ import org.horrabin.horrorss.RssItemBean;
 public class CraigslistRefreshAction extends DetailAction {
     private static final Logger logger = Logger.getLogger(CraigslistRefreshAction.class.toString());
     
-    final Craigslist cl = Craigslist.get();
+    Craigslist cl;
 
     final boolean complete;
 
     public CraigslistRefreshAction(boolean complete) {
         super();
+        
+        try {
+            cl = Craigslist.get();
+        } catch (IOException ex) {
+            Logger.getLogger(CraigslistRefreshAction.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                
         this.complete = complete;
     }
     

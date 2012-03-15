@@ -5,14 +5,14 @@
 
 package automenta.netention.node;
 
-import automenta.netention.Node.AbstractNode;
+import automenta.netention.Node;
 import java.util.Date;
 
 /**
  *
  * @author seh
  */
-public class TimePoint extends AbstractNode {
+public class TimePoint extends Node {
     public final Date date;
 
     public TimePoint(Date d) {

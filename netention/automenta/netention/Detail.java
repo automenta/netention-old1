@@ -7,15 +7,12 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class Detail implements Node {
+public class Detail extends Node {
     
-    private String id;
-    private String name;
     private Mode mode;
     private List<String> patterns = new LinkedList();
     private List<PropertyValue> values = new LinkedList();
     private String creator;
-    private Date whenCreated;
     private Date whenModified;
     private String iconURL = null;
 
@@ -34,32 +31,21 @@ public class Detail implements Node {
      * @param initialPatterns  the order of these should indicate the most important patterns first.  the primary icon used is the icon of the first pattern
      */
     public Detail(String name, Mode mode, String... initialPatterns) {
-        this.id = UUID.randomUUID().toString();
-        this.name = name;
+        super(UUID.randomUUID().toString());
+        setName(name);
         this.mode = mode;
         this.creator = "Me";
-        this.whenCreated = this.whenModified = new Date();
+        setWhen(new Date());
+        this.whenModified = getWhen();
 
         for (String p : initialPatterns) {
             addPattern(p);
         }
     }
 
-    public Detail setID(String id) {
-        this.id = id;
-        return this;
-    }        
-
-    public void setName(String newName) {
-        this.name = newName;
-    }
 
     public void setMode(Mode newMode) {
         this.mode = newMode;
-    }
-    
-    public Date getWhen() {
-        return whenModified;
     }
     
     public Mode getMode() {
@@ -72,14 +58,6 @@ public class Detail implements Node {
 
     public List<PropertyValue> getValues() {
         return values;
-    }
-
-    public String getID() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public <X extends PropertyValue> X getValue(Class<? extends X> c, String propID) {
@@ -137,13 +115,6 @@ public class Detail implements Node {
         this.iconURL = u;
     }
 
-    public Date getWhenCreated() {
-        return whenCreated;
-    }
-
-    public void setWhenCreated(Date whenCreated) {
-        this.whenCreated = whenCreated;
-    }
 
     public Date getWhenModified() {
         return whenModified;
@@ -182,6 +153,11 @@ public class Detail implements Node {
             }
         }
         return false;
+    }
+
+    public Detail withID(String id) {
+        setID(id);
+        return this;
     }
 
     

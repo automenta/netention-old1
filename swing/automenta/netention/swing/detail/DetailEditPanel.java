@@ -367,7 +367,7 @@ abstract public class DetailEditPanel extends JPanel {
             for (String sp : self.getPatterns()) {
                 Pattern p = self.getPattern(sp);
                 if (p.getParents().isEmpty()) {
-                    roots.add(p.id);
+                    roots.add(p.getID());
                 }
             }
 

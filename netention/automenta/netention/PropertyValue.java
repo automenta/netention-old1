@@ -5,10 +5,13 @@ package automenta.netention;
 
 import automenta.netention.html.DetailHTML;
 
-public abstract class PropertyValue implements Value {
+public class PropertyValue implements Value {
 	
 	private String property;
 
+        public PropertyValue() {
+            property = null;
+        }
 
 	/** property ID or URI */
 	public String getProperty() {

@@ -42,7 +42,7 @@ public class IntentionalCommunities {
     
     public IntentionalCommunities(final Self self, String path, final int limit) {
         
-        Pattern p = self.addPattern(new Pattern(IntentionalCommunity, "Built").setName("Intentional Community").setIconURL("media://tango32/places/user-home.png"));
+        Pattern p = self.addPattern(new Pattern(IntentionalCommunity, "Built").withName("Intentional Community").setIconURL("media://tango32/places/user-home.png"));
         
 	SAXParserFactory factory = SAXParserFactory.newInstance();
         try {

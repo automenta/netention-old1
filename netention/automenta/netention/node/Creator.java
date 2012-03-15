@@ -6,13 +6,13 @@
 package automenta.netention.node;
 
 import automenta.netention.Detail;
-import automenta.netention.Node.AbstractNode;
+import automenta.netention.Node;
 
 /**
  *
  * @author seh
  */
-public class Creator extends AbstractNode {
+public class Creator extends Node {
 
     public Creator(Detail d) {
         this(d.getCreator());

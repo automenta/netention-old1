@@ -43,7 +43,8 @@ public class LogToMessage {
                 final String message = record.getMessage();
                 final String title = name;
                 
-                NMessage m = new NMessage(message, name, self.getID(), new Date(record.getMillis()));
+                NMessage m = new NMessage(record.getLoggerName() +": " + message, name, self.getID(), new Date(record.getMillis()));
+                m.setFrom(record.getLoggerName());
                 self.addDetail(m);
             }
 

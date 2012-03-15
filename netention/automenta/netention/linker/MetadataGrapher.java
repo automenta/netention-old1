@@ -29,7 +29,7 @@ public class MetadataGrapher {
                 Detail d = (Detail)n;
 
                 target.add(d);
-
+                
                 if (creators) {
                     Creator c = new Creator(d);
                     target.add(c);
@@ -54,6 +54,7 @@ public class MetadataGrapher {
                     for (PropertyValue p : d.getValues()) {
                         final PropertyNode pn = new PropertyNode(p);
                         target.add(pn);
+                        
                         target.add(new ValueEdge(new HasProperty(), d, pn));
                     }
                 }

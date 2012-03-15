@@ -8,7 +8,7 @@ package automenta.netention.impl;
 import automenta.netention.*;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import flexjson.JSONDeserializer;
+import com.google.gson.Gson;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Collection;
@@ -21,36 +21,42 @@ import org.apache.commons.collections15.IteratorUtils;
  */
 public class MemorySelfData {
     public String author;
-    public Collection<Node> detailList;
+    public Collection<Detail> detailList;
     public Collection<Pattern> patternList;
     public Collection<Property> propertyList;
     public Date saved;
 
-    public MemorySelfData(String author, Collection<Node> details, Collection<Pattern> patterns, Collection<Property> properties) {
+    public MemorySelfData(String author, Collection<Detail> details, Collection<Pattern> patterns, Collection<Property> properties) {
         this.author = author;
         this.detailList = details;
         this.patternList = patterns;
         this.propertyList = properties;
         this.saved = new Date();
     }
-
-    public MemorySelfData(final Self s) {
-        this(s.getID(), IteratorUtils.toList( s.iterateNodes() ), 
-                Collections2.transform(s.getPatterns(), new Function<String, Pattern>() {
+    
+    public MemorySelfData(final Self s, boolean includeDetails, boolean includePatterns, boolean includeProperties) {
+        this(s.getID(), 
+                includeDetails ? s.getDetails() : null, 
+                includePatterns ? Collections2.transform(s.getPatterns(), new Function<String, Pattern>() {
 
                     @Override
                     public Pattern apply(String f) {
                         return s.getPattern(f);
                     }
                     
-                }), 
-                Collections2.transform(s.getProperties(), new Function<String, Property>() {
+                }) : null, 
+                includeProperties ? Collections2.transform(s.getProperties(), new Function<String, Property>() {
                     @Override
                     public Property apply(String f) {
                         return s.getProperty(f);
                     }                    
-                })
+                }) : null
          );
+        
+    }
+
+    public MemorySelfData(final Self s) {
+        this(s, true, true, true);
     }
 
     public MemorySelfData() {
@@ -68,7 +74,7 @@ public class MemorySelfData {
         this.author = author;
     }
 
-    public void setDetailList(Collection<Node> detailList) {
+    public void setDetailList(Collection<Detail> detailList) {
         this.detailList = detailList;
     }
 
@@ -84,10 +90,11 @@ public class MemorySelfData {
         return author;
     }
 
-    public Collection<Node> getDetailList() {
+    public Collection<Detail> getDetailList() {
         return detailList;
     }
 
+    
     public Collection<Pattern> getPatternList() {
         return patternList;
     }
@@ -99,6 +106,7 @@ public class MemorySelfData {
     public void mergeTo(Self s) {
         if (getDetailList()!=null)
             for (Node d : getDetailList()) {
+                //System.out.println("merging: " + d + " " + d.getClass() + " " + d.getID());
                 if (d instanceof Detail)
                     s.mergeFromDetail((Detail)d);
             }
@@ -115,9 +123,7 @@ public class MemorySelfData {
     }
 
     public static MemorySelfData loadJSON(String path) throws FileNotFoundException {
-        JSONDeserializer<MemorySelfData> msd = new JSONDeserializer<MemorySelfData>();
-        MemorySelfData m = msd.deserialize(new FileReader(path));
-        return m;
+        return new Gson().fromJson(new FileReader(path), MemorySelfData.class);
     }
     
     

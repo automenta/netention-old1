@@ -10,15 +10,16 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import javax.swing.*;
 
 /**
  *
  * @author seh
  */
-public class LoadSaveJSONPanel extends JPanel {
+public class JSONIOPanel extends JPanel {
 
-    public LoadSaveJSONPanel(final Self self) {
+    public JSONIOPanel(final Self self) {
         super(new BorderLayout());
 
         final JTextArea jta = new JTextArea();
@@ -39,9 +40,16 @@ public class LoadSaveJSONPanel extends JPanel {
                     try {
                         MemorySelfData msd = MemorySelfData.loadJSON(path);
                         jta.append("Loaded from " + path + "\n");
+                        if (msd.getDetailList()!=null)
+                            jta.append(msd.getDetailList().size() + " details\n");
+                        if (msd.getPatternList()!=null)
+                            jta.append(msd.getPatternList().size() + " patterns\n");
+                        if (msd.getPropertyList()!=null)
+                            jta.append(msd.getPropertyList().size() + " properties\n");
                         msd.mergeTo(self);
                     } catch (Exception ex) {
                         jta.append(ex.toString() + " when loading from " + path);
+                        jta.append(Arrays.asList(ex.getStackTrace()).toString());
                         ex.printStackTrace();
                     }
 

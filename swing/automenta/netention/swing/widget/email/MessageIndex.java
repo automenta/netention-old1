@@ -11,8 +11,6 @@ import automenta.netention.email.EMailChannel;
 import automenta.netention.feed.RSSChannel;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
 import java.io.*;
 import java.util.*;
 
@@ -53,28 +51,28 @@ public class MessageIndex implements Serializable {
         
     }
 
-    public static MessageIndex load(String filename) throws IOException {
-        MessageIndex ec;
-        try {
-            FileReader fr = new FileReader(filename);
-            ec = new JSONDeserializer<MessageIndex>().use(MessageIndex.class.toString(), MessageIndex.class).deserialize(fr);
-            fr.close();
-        }
-        catch (IOException e) {
-            ec = new MessageIndex();
-        }
-            
-        ec.reindex();
-        
-        ec.addShutdownHook(filename);
-        return ec;
-    }
+//    public static MessageIndex load(String filename) throws IOException {
+//        MessageIndex ec;
+//        try {
+//            FileReader fr = new FileReader(filename);
+//            ec = new JSONDeserializer<MessageIndex>().use(MessageIndex.class.toString(), MessageIndex.class).deserialize(fr);
+//            fr.close();
+//        }
+//        catch (IOException e) {
+//            ec = new MessageIndex();
+//        }
+//            
+//        ec.reindex();
+//        
+//        ec.addShutdownHook(filename);
+//        return ec;
+//    }
 
-    public void save(String filename) throws IOException {
-        FileWriter fw = new FileWriter(new File(filename));
-        new JSONSerializer().include("messages", "addressess", "feeds").deepSerialize(this, fw);        
-        fw.close();
-    }
+//    public void save(String filename) throws IOException {
+//        FileWriter fw = new FileWriter(new File(filename));
+//        new JSONSerializer().include("messages", "addressess", "feeds").deepSerialize(this, fw);        
+//        fw.close();
+//    }
 
     protected void index(final NMessage m) {
         byId.put(m.getID(), m);        

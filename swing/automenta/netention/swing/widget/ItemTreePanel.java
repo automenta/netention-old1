@@ -136,7 +136,7 @@ abstract public class ItemTreePanel extends JPanel implements IndexView {
             for (String sp : self.getPatterns()) {
                 Pattern p = self.getPattern(sp);
                 if (p.getParents().isEmpty()) {
-                    roots.add(p.id);
+                    roots.add(p.getID());
                 }
             }
 

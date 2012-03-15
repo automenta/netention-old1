@@ -5,13 +5,13 @@
 
 package automenta.netention.link;
 
-import automenta.netention.Link.AbstractLink;
+import automenta.netention.Link;
 
 /**
  *
  * @author seh
  */
-public class In extends AbstractLink {
+public class In extends Link {
 
     public In() {
         super("in");

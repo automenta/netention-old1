@@ -79,10 +79,7 @@ public class EDIS {
     }
     
     private void init(Self self, Pattern disaster, String disasterName, String iconURL) {
-        self.addPattern(new Pattern(getPattern(disasterName), disaster.id, "Event")
-                                .setName(disasterName)
-                                .setIconURL(iconURL)
-                );
+        self.addPattern(new Pattern(getPattern(disasterName), disaster.getID(), "Event").withName(disasterName).setIconURL(iconURL) );
     }
     
     
@@ -200,7 +197,7 @@ public class EDIS {
             final String pattern = getPattern(name);
             Detail d = new Detail(name, Mode.Real, pattern);
             
-            d.setWhenCreated(dateV);
+            d.setWhen(dateV);
             d.setID(name + "." + date + "." + latlng);
             d.add(new Comment(ee));
             

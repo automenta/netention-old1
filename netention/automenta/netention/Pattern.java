@@ -5,30 +5,26 @@
 
 package automenta.netention;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
  * a pattern associates with a weighted set of properties (by ID)
  * @author seh
  */
-public class Pattern implements Serializable, Node {
+public class Pattern extends Node  {
 
-    public final String id;    
-    private String name;
     private String description;
     private String iconURL;
     public final Set<String> parents = new HashSet();
     public final HashMap<String, Double> properties = new HashMap(); 
-    private Date when;
     private List<PropertyValue> defaultValues = new LinkedList();
 
+    public Pattern() {
+        super();
+    }
 
     public Pattern(String id, String... superPatterns) {
-        super();
-        this.id = id;
-        this.name = id;
-        this.when = new Date();
+        super(id);        
         for (String p : superPatterns) parents.add(p);
     }
 
@@ -41,20 +37,12 @@ public class Pattern implements Serializable, Node {
         return description;
     }    
 
-    public String getID() {
-        return id;
-    }
 
-    @Override
-    public String toString() {
-        return id;
+    public Pattern withName(String n) {
+        setName(n);
+        return this;
     }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
+    
     public Pattern setIconURL(String iconURL) {
         this.iconURL = iconURL;
         return this;
@@ -64,16 +52,6 @@ public class Pattern implements Serializable, Node {
         return iconURL;
     }
 
-    public Pattern setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    
-    @Override
-    public String getName() {
-        return name;
-    }
 
     public Set<String> getParents() {
         return parents;
@@ -86,10 +64,6 @@ public class Pattern implements Serializable, Node {
         return parents.remove(patternID);
     }
 
-    @Override
-    public Date getWhen() {
-        return when;
-    }
 
     public List<PropertyValue> getDefaultValues() {
         return defaultValues;

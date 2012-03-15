@@ -5,13 +5,13 @@
 
 package automenta.netention.node;
 
-import automenta.netention.Node.AbstractNode;
+import automenta.netention.Node;
 import automenta.netention.PropertyValue;
 
 /**
  * wraps a property value as a node
  */
-public class PropertyNode extends AbstractNode {
+public class PropertyNode extends Node {
 
     public PropertyNode(PropertyValue pv) {
         super(pv.getProperty());

@@ -6,7 +6,6 @@ package automenta.netention;
 
 import automenta.netention.value.Comment;
 import automenta.netention.value.string.StringIs;
-import flexjson.JSONSerializer;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,8 +46,8 @@ public class NMessage extends Detail /*implements Serializable*/ {
     }
     
     public NMessage(String subject, String from, String to, Date when, String... content) {
-        super(subject, Mode.Real, MessagePattern );
-        
+        super(subject, Mode.Real, MessagePattern, "Event" );
+        setID(subject + "@" + when);
         setFrom(from);
         setTo(to);
         setWhen(when);
@@ -92,10 +91,10 @@ public class NMessage extends Detail /*implements Serializable*/ {
         return getStringValue("message.image");
     }
 
-    @Override
-    public String toString() {
-        return new JSONSerializer().include("tags").serialize(this).toString();
-    }
+//    @Override
+//    public String toString() {
+//        return new JSONSerializer().include("tags").serialize(this).toString();
+//    }
 
     public Set<String> getTags() {
         return decodeTagString(getStringValue("message.tags"));

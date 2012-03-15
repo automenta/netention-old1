@@ -5,8 +5,7 @@
 
 package automenta.netention.craigslist;
 
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
+import com.google.gson.Gson;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,13 +33,12 @@ public class Craigslist implements Serializable {
         locations = new HashMap();
     }
 
-    
-    public Craigslist(String path) throws IOException {
-        this();
-        JSONDeserializer<Craigslist> j = new JSONDeserializer();
+
+    public static Craigslist get(String path) throws IOException {
         FileReader wr = new FileReader(path);
-        j.deserializeInto(wr, this);
-        wr.close();        
+        Craigslist cl = new Gson().fromJson(wr, Craigslist.class);        
+        wr.close();
+        return cl;
     }
     
     public Craigslist(Map<String, String> cityURL, Map<String, String> catURL) {
@@ -54,11 +52,10 @@ public class Craigslist implements Serializable {
     }
     
     public void save(String path) throws IOException {
-        JSONSerializer serializer = new JSONSerializer();
 
         FileWriter wr = new FileWriter(path);
-        serializer.include("cities", "categories").prettyPrint(true).deepSerialize(this, wr);
-        wr.close();        
+        new Gson().toJson(this, wr);
+        wr.close();
     }
     
     /** Name -> URL */
@@ -72,17 +69,18 @@ public class Craigslist implements Serializable {
     }
 
     /** returns the cached Craigslist instance, and attempts to loading it from the default JSON path if 'the' is currently null */
-    public static Craigslist get() {
-        if (the==null) {
-            try {            
-                the = new Craigslist(jsonPath);
-            }
-            catch (IOException e) {
-                logger.info("Unable to find " + jsonPath + " ... creating blank Craigslist data");
-                the = new Craigslist();
-            }
-        }
-        
-        return the;
+    public static Craigslist get() throws IOException {
+        return get(jsonPath);
+//        if (the==null) {
+//            try {            
+//                the = new Craigslist(jsonPath);
+//            }
+//            catch (IOException e) {
+//                logger.info("Unable to find " + jsonPath + " ... creating blank Craigslist data");
+//                the = new Craigslist();
+//            }
+//        }
+//        
+//        return the;
     }
 }

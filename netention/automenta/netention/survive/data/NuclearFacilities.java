@@ -82,7 +82,7 @@ public class NuclearFacilities {
                 }
                 
                 md.add("totalReactors", new IntegerIs(totalReactors));
-                md.setWhenCreated(dateCollected);
+                md.setWhen(dateCollected);
                 s.addDetail(md);
                 
                 //System.out.println(md.getValues());

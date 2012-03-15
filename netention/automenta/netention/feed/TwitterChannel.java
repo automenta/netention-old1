@@ -28,8 +28,8 @@ public class TwitterChannel {
         for (Tweet tweet : result.getTweets()) {
             //System.out.println(tweet.getFromUser() + ":" + tweet.getText());
             
-            Detail d = new Detail(tweet.getText(), Mode.Real, NMessage.StatusPattern, "Event").setID("twitter/" + tweet.getId());
-            d.setWhenCreated(tweet.getCreatedAt());            
+            Detail d = new Detail(tweet.getText(), Mode.Real, NMessage.StatusPattern, "Event").withID("twitter/" + tweet.getId());
+            d.setWhen(tweet.getCreatedAt());            
             d.add(NMessage.from, new StringIs("twitter.com/" + tweet.getFromUser()));
             
             GeoLocation geoloc = tweet.getGeoLocation();

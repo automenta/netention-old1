@@ -247,7 +247,7 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    SwingWindow w = new SwingWindow(new LoadSaveJSONPanel(self), 500, 400);
+                    SwingWindow w = new SwingWindow(new JSONIOPanel(self), 500, 400);
                 }
                 
             });

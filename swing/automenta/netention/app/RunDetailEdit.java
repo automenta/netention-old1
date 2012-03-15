@@ -11,7 +11,7 @@ import automenta.netention.demo.Demo;
 import automenta.netention.impl.MemorySelf;
 import automenta.netention.swing.detail.DetailEditPanel;
 import automenta.netention.swing.util.SwingWindow;
-import flexjson.JSONDeserializer;
+import com.google.gson.Gson;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -122,7 +122,7 @@ public class RunDetailEdit implements Demo {
     }
 
     public static Detail getDetail(String json) {
-        Detail md = new JSONDeserializer<Detail>().deserialize(json);
+        Detail md = new Gson().fromJson(json, Detail.class);
         System.out.println(md.getName());
         System.out.println(md.getPatterns());
         System.out.println(md.getValues());

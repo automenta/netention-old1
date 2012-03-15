@@ -85,6 +85,7 @@ public class DefaultHeuristicLinker extends HueristicLinker {
         }
 
         return s / (na + nb);
+        
     }
 
     /**

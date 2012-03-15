@@ -5,14 +5,14 @@
 
 package automenta.netention.link;
 
-import automenta.netention.Link.AbstractLink;
+import automenta.netention.Link;
 import automenta.netention.Link.HasStrength;
 
 /**
  *
  * @author seh
  */
-public class SimilarTo extends AbstractLink implements HasStrength {
+public class SimilarTo extends Link implements HasStrength {
     private final double strength;
 
     public SimilarTo(double strength) {

@@ -5,8 +5,8 @@ import automenta.netention.action.DetailAction;
 import automenta.netention.graph.ValueEdge;
 import automenta.netention.impl.MemorySelfData;
 import automenta.netention.linker.Linker;
+import com.google.gson.Gson;
 import com.syncleus.dann.graph.MutableBidirectedGraph;
-import flexjson.JSONSerializer;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.*;
@@ -255,7 +255,7 @@ abstract public class Self {
         for (final String sp : getPatterns()) {
             final Pattern p = getPattern(sp);
             if (p.getParents().contains(pid)) {
-                s.add(p.id);
+                s.add(p.getID());
             }
         }
         return s;
@@ -274,6 +274,17 @@ abstract public class Self {
             }
         }
         return false;
+    }
+    
+    public List<Detail> getDetails() {
+        final List<Detail> ld = new LinkedList();
+        final Iterator<Node> in = iterateNodes();
+        while (in.hasNext()) {
+            final Node n = in.next();
+            if (n instanceof Detail)
+                ld.add((Detail)n);
+        }
+        return ld;
     }
 
     public static List<Node> getDetailsByTime(Iterator<Node> iterateDetails, final boolean ascend) {
@@ -334,9 +345,11 @@ abstract public class Self {
 
 
     public static String toJSON(Detail detail) {
-        JSONSerializer serializer = new JSONSerializer();
-        serializer.prettyPrint(true);
-        return serializer.include("patterns", "values", "whenCreated", "whenModified").serialize(detail);
+        //TODO re-use Gson()
+        return new Gson().toJson(detail);
+//        JSONSerializer serializer = new JSONSerializer();
+//        serializer.prettyPrint(true);
+//        return serializer.include("patterns", "values", "whenCreated", "whenModified").serialize(detail);
     }
 
     public static void saveJSON(Self self, String path, boolean includeDetails, boolean includeSchema) throws Exception {
@@ -348,21 +361,8 @@ abstract public class Self {
     }    
 
     public static String toJSON(Self s, boolean includeDetails, boolean includeSchema) {
-        JSONSerializer serializer = new JSONSerializer();
-        serializer.prettyPrint(true);
-        serializer.include("patterns", "values", "whenCreated", "whenModified");
-
-        if (includeSchema)
-            serializer.include("propertyList", "patternList");
-        else
-            serializer.exclude("propertyList", "patternList");
-        
-        if (includeDetails)
-            serializer.include("detailList");
-        else
-            serializer.exclude("detailList");
-        
-        return serializer.deepSerialize(new MemorySelfData(s));
+        //TODO re-use Gson()
+        return new Gson().toJson(new MemorySelfData(s, includeDetails, includeSchema, includeSchema));
     }
 
     public void addProperties(Pattern p, Property... properties) {

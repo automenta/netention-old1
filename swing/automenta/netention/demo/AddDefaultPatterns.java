@@ -25,7 +25,7 @@ public class AddDefaultPatterns {
     }
 
     public void add(MemorySelf s) {
-        Pattern thing = s.addPattern(new Pattern("http://www.w3.org/2002/07/owl#Thing").setName("Thing").setIconURL("media://tango32/categories/preferences-system.png").
+        Pattern thing = s.addPattern(new Pattern("http://www.w3.org/2002/07/owl#Thing").withName("Thing").setIconURL("media://tango32/categories/preferences-system.png").
                 setDescription(""));
         {
             s.addProperties(thing,
@@ -88,9 +88,9 @@ public class AddDefaultPatterns {
             Pattern body = s.addPattern(new Pattern("Bodily"));
 
             Pattern emotion;
-            s.addPattern(emotion = new Pattern("Emotion", body.id));
+            s.addPattern(emotion = new Pattern("Emotion", body.getID()));
             
-            s.addPattern(new Pattern("Ingestion", body.id).setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
+            s.addPattern(new Pattern("Ingestion", body.getID()).setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
             {
                 s.addProperties("Ingestion",
                         new SelectionProp("ingestionType", "Type", "Food", "Beverage", "Other"),
@@ -98,7 +98,7 @@ public class AddDefaultPatterns {
                         new RealProp("ingestionMass", "Volume"));
             }
 
-            s.addPattern(new Pattern("Excretion", body.id).setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
+            s.addPattern(new Pattern("Excretion", body.getID()).setIconURL("media://tango32/mimetypes/x-office-calendar.png"));
             {
                 s.addProperties("Excretion",
                         new SelectionProp("excretionType", "Type", "Urine", "Feces", "Other"),
@@ -106,7 +106,7 @@ public class AddDefaultPatterns {
                         new RealProp("excretionVolume", "Volume"));
             }
 
-            s.addPattern(new Pattern("Injury", body.id));
+            s.addPattern(new Pattern("Injury", body.getID()));
             //s.addPattern(new Pattern("Psych").setIconURL("media://tango32/apps/internet-mail.png"));
             {
                 StringProp sp = new StringProp("emotion", "Emotion");
@@ -171,7 +171,7 @@ public class AddDefaultPatterns {
                 sp.setCardinalityMax(-1);
                 sp.setCardinalityMin(1);
 
-                s.addProperties(emotion.id, sp);
+                s.addProperties(emotion.getID(), sp);
             }
 
         }
@@ -202,14 +202,14 @@ public class AddDefaultPatterns {
         }
 
         Pattern valueFlow;
-        s.addPattern(valueFlow = new Pattern("ValueFlow").setName("Value Flow"));
+        s.addPattern(valueFlow = new Pattern("ValueFlow").withName("Value Flow"));
         {
-            s.addProperty(new NodeProp("FlowSource", "Source").setCardinalityMin(1), valueFlow.id);
-            s.addProperty(new NodeProp("FlowTarget", "Target").setCardinalityMin(1), valueFlow.id);
+            s.addProperty(new NodeProp("FlowSource", "Source").setCardinalityMin(1), valueFlow.getID());
+            s.addProperty(new NodeProp("FlowTarget", "Target").setCardinalityMin(1), valueFlow.getID());
         }
 
         Pattern valueFlowOpen;
-        s.addPattern(valueFlowOpen = new Pattern("valueFlowIEML").setName("IEML Value Flow"));
+        s.addPattern(valueFlowOpen = new Pattern("valueFlowIEML").withName("IEML Value Flow"));
         {
             s.addProperties("valueFlowIEML",
                     new StringProp("openMedium", "Medium"),
@@ -219,7 +219,7 @@ public class AddDefaultPatterns {
         }        
         
         Pattern webPattern;
-        s.addPattern(webPattern = new Pattern(web).setName("Web"));
+        s.addPattern(webPattern = new Pattern(web).withName("Web"));
         
         
         //addDefaults(s);
