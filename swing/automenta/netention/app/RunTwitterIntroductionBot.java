@@ -13,6 +13,7 @@ import automenta.netention.impl.MemorySelf;
 import automenta.netention.value.string.StringIs;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import twitter4j.Query;
@@ -29,8 +30,11 @@ public class RunTwitterIntroductionBot {
 
     private final TwitterChannel tc;
 
-    final long minTweetPeriod = 1 * 60 * 1000; //in ms
-    final long analysisPeriod = 3 * 1000; //in ms
+    int refreshAfterCycles = 164;
+    final long minTweetPeriod = 2 * 60 * 1000; //in ms
+    final long analysisPeriod = 5 * 1000; //in ms
+    long dontReuseAgentUntil = 60 * 60 * 2; //in seconds
+    Set<String> queries = new ConcurrentSkipListSet<>();
     
     //heuristics: avg age of tweets since request = level of freshness / activity
     
@@ -68,8 +72,15 @@ public class RunTwitterIntroductionBot {
         }
         
         public void add(Detail d) { details.add(d); }
+
+        public double getAgeFactor(Date detailDate, Date now, double minutesFalloff) {
+            double distMinutes = now.getTime() - detailDate.getTime();
+            distMinutes /= 60.0 * 1000.0;
+            return Math.exp( - (distMinutes/minutesFalloff) );
+            
+        }
         
-        public double getMeanKeywordDensity(String... k) {
+        public double getMeanKeywordDensity(Date when, String... k) {
             double c = 0, n = 0;
             if (details.size() ==0)
                 return 0;
@@ -78,9 +89,12 @@ public class RunTwitterIntroductionBot {
                 double num = 0;
                 for (String r : k)
                     num += getKeywordCount(p, r);
-                double den = getWordCount(p);
-                if (den!=0)
-                    c += (num/den);
+                //double den = getWordCount(p);
+                double den = 1;
+                if (den!=0) {
+                    double ageFactor = getAgeFactor(d.getWhen(), when, 60*2);
+                    c += (num/den) * ageFactor;
+                }
                 n++;
             }
             return c / n;
@@ -122,11 +136,11 @@ public class RunTwitterIntroductionBot {
     }
     
     
-    public String getLeadingAuthors(int num, Date when, long minRepeatAgentTime, final String... keys) {
+    public String getLeadingAuthors(int num, final Date when, long minRepeatAgentTime, final String... keys) {
         List<String> a = new ArrayList(agents.keySet());
         Collections.sort(a, new Comparator<String>() {
             @Override public int compare(String a, String b) {                                
-                return Double.compare(getAgent(b).getMeanKeywordDensity(keys), getAgent(a).getMeanKeywordDensity(keys));
+                return Double.compare(getAgent(b).getMeanKeywordDensity(when, keys), getAgent(a).getMeanKeywordDensity(when, keys));
             }                
         });
 
@@ -143,7 +157,7 @@ public class RunTwitterIntroductionBot {
             
             ag.lastContacted = when;
 
-            System.out.println(Arrays.asList(keys) + ": " + x + " " + getAgent(x).getMeanKeywordDensity(keys) + " instances in  " + getAgent(x).details.size() + " messages\n  " + getAgent(x).details.toString());
+            System.out.println(Arrays.asList(keys) + ": " + x + " " + getAgent(x).getMeanKeywordDensity(when, keys) + " instances in  " + getAgent(x).details.size() + " messages\n  " + getAgent(x).details.toString());
             p += "@" + x.split("/")[1] + " ";
             
             num--;
@@ -160,44 +174,22 @@ public class RunTwitterIntroductionBot {
         return x[p];
     }
     
-    protected void runTweet() {
-//        String k1 = "i am happy";
-//        String k2 = "i am sad";
-//        
-//        addKeyword(k1);
-//        addKeyword(k2);
-        
-//        System.out.println(tc.getTwitter().getScreenName());
+    protected void runHappySad() {
+        queries.add("i am happy");
+        queries.add("i am sad");
         
         int cycles = 1;
         while (true) {
-            
-            
-            String msg = oneOf("So please help", "Will you help");
-            
-            String suffix = oneOf("#Kindness", "#Health", "#Wisdom", "#Happiness");
-            
+           
             Date now = new Date();
-            String[] happinessIndicators = { "happy", "ecstatic", "joy", "thankful", "excited", "beautiful", "awesome" };
-            String[] sadnessIndicators = { "sad", "crying", "hurt", "hate" };
+                        
+            String happyAuthors = getLeadingAuthors(3, now, dontReuseAgentUntil, 
+                    "happy", "ecstatic", "joy", "thankful", "excited", "beautiful", "awesome" );
+            String sadAuthors = getLeadingAuthors(2, now, dontReuseAgentUntil, 
+                    "sad", "crying", "hurt", "hate" );
             
-            long repeatTime = 60 * 60 * 2;
-            
-            String happyAuthors = getLeadingAuthors(3, now, repeatTime, happinessIndicators );
-            String sadAuthors = getLeadingAuthors(2, now, repeatTime, sadnessIndicators );
-            
-            if (!((happyAuthors.length() == 0) || (sadAuthors.length() == 0))) {
-            
-                String message = happyAuthors + " seem #happy. " + 
-                                msg +  " " + sadAuthors + " who seem #sad ? " + suffix;
-
-                System.out.println("TWEETING: " + message);
-                
-                try {
-                    tc.getTwitter().updateStatus(message);
-                } catch (TwitterException ex) {
-                    Logger.getLogger(RunTwitterIntroductionBot.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            if (!((happyAuthors.length() == 0) || (sadAuthors.length() == 0))) {            
+                emit(happyAuthors + " seem #happy. " + oneOf("So please help", "Will you help") +  " " + sadAuthors + " who seem #sad ? " + oneOf("#Kindness", "#Health", "#Wisdom", "#Happiness"));
             }
             
             try {
@@ -206,27 +198,64 @@ public class RunTwitterIntroductionBot {
                 Logger.getLogger(RunTwitterIntroductionBot.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            if ((cycles % 32) == 0) {
-                System.out.println("RESTARTING with FRESH DATA");
-                agents.clear();
-                agentList.clear();                
-            }
-            cycles++;
             
         }
         
     }
     
+    protected void runSmartStupid() {
+        queries.add("i am smart");        
+        queries.add("i am stupid");
+        
+        try {
+            Thread.sleep(minTweetPeriod / 2);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(RunTwitterIntroductionBot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        int cycles = 1;
+        while (true) {
+           
+            Date now = new Date();
+                        
+            String happyAuthors = getLeadingAuthors(3, now, dontReuseAgentUntil, 
+                    "smart", "brilliant", "genius", "helpful", "thankful", "solve"  );
+            String sadAuthors = getLeadingAuthors(2, now, dontReuseAgentUntil, 
+                    "stupid", "frustrated", "give up", "bored", "problem", "confused" );
+            
+            if (!((happyAuthors.length() == 0) || (sadAuthors.length() == 0))) {            
+                emit(happyAuthors + " seem #intelligent. " + oneOf("Can you assist", "Can you help") +  " " + sadAuthors + " with " + oneOf("#Genius", "#Help", "#Ideas", "#Creativity") + " ?");
+            }
+            
+            try {
+                Thread.sleep(minTweetPeriod*2);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(RunTwitterIntroductionBot.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+        }
+        
+    }
+    
+    protected void emit(String message) {
+        System.out.println("TWEETING: " + message);
+
+        try {
+            tc.getTwitter().updateStatus(message);
+        } catch (TwitterException ex) {
+            Logger.getLogger(RunTwitterIntroductionBot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
     public void runAnalyzeUsers() {
-        int k = 0;
-        
-        String[] keywords = { "i am happy", "i am sad" };
-        
+        int k = 1;                     
         
         while (true) {
 
             if (agentList.size()  == 0) {
-                for (String p : keywords) {
+                for (String p : queries) {
                     try {
                         System.out.println("Keyword search: " + p);
                         List<Detail> tw = TwitterChannel.getTweets(p);
@@ -259,6 +288,11 @@ public class RunTwitterIntroductionBot {
                 Logger.getLogger(RunTwitterIntroductionBot.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+            if ((k % refreshAfterCycles) == 0) {
+                System.out.println("RESTARTING with FRESH DATA");
+                agents.clear();
+                agentList.clear();                
+            }
             k++;
         }
     }
@@ -277,7 +311,12 @@ public class RunTwitterIntroductionBot {
         });
         s.queue(new Runnable() {
             @Override public void run() {
-                runTweet();
+                runHappySad();
+            }                        
+        });
+        s.queue(new Runnable() {
+            @Override public void run() {
+                runSmartStupid();
             }                        
         });
         
