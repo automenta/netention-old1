@@ -6,6 +6,7 @@ package automenta.netention.app;
 
 import automenta.netention.Pattern;
 import automenta.netention.Self;
+import automenta.netention.Session;
 import automenta.netention.craigslist.AddCraigslistPatterns;
 import automenta.netention.craigslist.CraigslistRefreshAction;
 import automenta.netention.demo.AddDefaultPatterns;
@@ -16,8 +17,6 @@ import automenta.netention.ieml.AddENTPMflowcycles;
 import automenta.netention.ieml.AddIEMLPatterns;
 import automenta.netention.impl.LogToMessage;
 import automenta.netention.impl.MemorySelf;
-import automenta.netention.survive.data.EDIS;
-import automenta.netention.survive.data.NuclearFacilities;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.SelfSession;
 import automenta.netention.swing.detail.action.SendAction;
@@ -148,6 +147,8 @@ public class RunSelfBrowser implements Demo {
 
     public static void main(String[] args) {
 
+        Session.init();
+        
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override

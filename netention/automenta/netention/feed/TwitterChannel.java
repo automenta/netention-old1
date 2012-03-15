@@ -52,6 +52,9 @@ public class TwitterChannel implements Serializable {
         return key;
     }
     
+    public static String getTwitterAgent(String twitterID) {
+        return "twitter.com/" + twitterID;
+    }
     
     public static List<Detail> getTweets(Query query) throws Exception {
         List<Detail> l = new LinkedList();
@@ -64,7 +67,11 @@ public class TwitterChannel implements Serializable {
             
             Detail d = new Detail(tweet.getText(), Mode.Real, NMessage.StatusPattern, "Event").withID("twitter/" + tweet.getId());
             d.setWhen(tweet.getCreatedAt());            
-            d.add(NMessage.from, new StringIs("twitter.com/" + tweet.getFromUser()));
+            d.add(NMessage.from, new StringIs(getTwitterAgent(tweet.getFromUser())));
+            if (tweet.getUserMentionEntities() != null)
+                for (UserMentionEntity ume : tweet.getUserMentionEntities()) {
+                    d.add(NMessage.mentions, new StringIs(getTwitterAgent(ume.getScreenName())));
+                }
             
             GeoLocation geoloc = tweet.getGeoLocation();
             if (geoloc!=null) {

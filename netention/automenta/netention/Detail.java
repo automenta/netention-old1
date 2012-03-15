@@ -67,6 +67,14 @@ public class Detail extends Node {
                     return (X)pv;
         return null;
     }
+    public <X extends PropertyValue> List<X> getValues(Class<? extends X> c, String propID) {
+        LinkedList<X>  ll = new LinkedList();
+        for (PropertyValue pv : getValues())
+            if (pv.getProperty().equals(propID))
+                if (c.isAssignableFrom(pv.getClass()))
+                    ll.add((X)pv);
+        return ll;
+    }
     
     public boolean add(String propID, PropertyValue p) {
         p.setProperty(propID);
@@ -159,6 +167,12 @@ public class Detail extends Node {
         setID(id);
         return this;
     }
+
+    @Override
+    public int hashCode() {
+        return getID().hashCode();                
+    }
+
 
     
 
