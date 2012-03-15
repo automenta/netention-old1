@@ -9,16 +9,50 @@ import automenta.netention.Mode;
 import automenta.netention.NMessage;
 import automenta.netention.value.geo.GeoPointIs;
 import automenta.netention.value.string.StringIs;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import twitter4j.*;
+import twitter4j.conf.ConfigurationBuilder;
 
 /**
  *
  * @author SeH
  */
-public class TwitterChannel {
+public class TwitterChannel implements Serializable {
 
+    String key;
+    transient private Twitter twitter;
+
+    public TwitterChannel() {
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+        String[] k = key.split(",");
+        
+        if (k.length > 3) {
+            ConfigurationBuilder cb = new ConfigurationBuilder();
+            cb.setDebugEnabled(true)
+            .setOAuthConsumerKey(k[0])
+            .setOAuthConsumerSecret(k[1])
+            .setOAuthAccessToken(k[2])
+            .setOAuthAccessTokenSecret(k[3]);
+
+            TwitterFactory tf = new TwitterFactory(cb.build());
+            this.twitter = tf.getInstance();    
+        }
+    }
+
+    public Twitter getTwitter() {
+        return twitter;
+    }
+    
+    public String getKey() {
+        return key;
+    }
+    
+    
     public static List<Detail> getTweets(Query query) throws Exception {
         List<Detail> l = new LinkedList();
         

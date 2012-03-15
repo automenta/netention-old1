@@ -532,7 +532,7 @@ abstract public class DetailEditPanel extends JPanel {
                                 Runnable rr = new Runnable() {
 
                                     @Override public void run() {
-                                        da.getRun(detail).run();
+                                        da.getRun(self, detail).run();
                                         refreshUI();   
                                     }
                                     

@@ -6,6 +6,7 @@
 package automenta.netention.swing.detail.action;
 
 import automenta.netention.Detail;
+import automenta.netention.Self;
 import automenta.netention.action.DetailAction;
 import automenta.netention.html.DetailHTML;
 import automenta.netention.swing.util.SwingWindow;
@@ -35,11 +36,11 @@ public class SendAction extends DetailAction {
     }
 
     @Override
-    public Runnable getRun(final Detail detail) {
+    public Runnable getRun(final Self self, final Detail detail) {
         return new Runnable() {
             @Override public void run() {
                 final String html = "<html>" + detailHTML.getHTML(getSelf(), detail, false) + "</html>";
-                new SwingWindow(new MessageEditPanel(detail.getName(), html), 800, 600);
+                new SwingWindow(new MessageEditPanel(self, detail.getName(), html), 800, 600);
             }            
         };
     }

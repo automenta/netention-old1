@@ -27,6 +27,7 @@ public class EMailChannel implements Serializable {
     static final int GMAIL_SMTP_PORT = 465;
     transient private Session session;
     transient private Store store;
+    private String from;
 
     public EMailChannel() {
         setDefaults();
@@ -37,6 +38,7 @@ public class EMailChannel implements Serializable {
         smtpServer = "smtp.gmail.com";
         username = "@gmail.com";
         password = "";
+        from = "";
     }
 
 
@@ -82,7 +84,7 @@ public class EMailChannel implements Serializable {
         
         // Create a new message with values from dialog.
         MimeMessage newMessage = new MimeMessage(session);
-        newMessage.setFrom(new InternetAddress(m.getFrom()));
+        newMessage.setFrom(new InternetAddress(from /* m.getFrom() */));
 
         newMessage.setSubject(m.getName());
         newMessage.setSentDate(m.getWhen());
@@ -186,5 +188,9 @@ public class EMailChannel implements Serializable {
         folder.fetch(messages, profile);
         return messages;
 
+    }
+
+    public void setFrom(String f) {
+        this.from = f;
     }
 }

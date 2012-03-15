@@ -8,6 +8,7 @@ package automenta.netention.craigslist;
 import automenta.netention.Detail;
 import automenta.netention.NMessage;
 import automenta.netention.PropertyValue;
+import automenta.netention.Self;
 import automenta.netention.action.DetailAction;
 import automenta.netention.value.set.SelectionEquals;
 import automenta.netention.value.set.SelectionIs;
@@ -118,7 +119,7 @@ public class CraigslistRefreshAction extends DetailAction {
     }
     
     @Override
-    public Runnable getRun(final Detail d) {
+    public Runnable getRun(final Self self, final Detail d) {
         final List<String> locations = getLocations(d);
         final List<String> categories = getCategories(d);
         

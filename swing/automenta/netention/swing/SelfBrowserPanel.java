@@ -234,14 +234,6 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
 
             newMenu.addSeparator();
 
-            JMenuItem ambientMessages = new JMenuItem("Ambient Messages");
-            newMenu.add(ambientMessages);
-        }
-
-        JMenu netMenu = new JMenu(/*"Network"*/);
-        netMenu.setIcon(Icons.getIcon("network"));
-        netMenu.setToolTipText("Network");
-        {
             JMenuItem load = new JMenuItem("Load/Save JSON");
             load.addActionListener(new ActionListener() {
 
@@ -252,16 +244,21 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
                 
             });
             
-            netMenu.add(load);            
-
+            newMenu.add(load);            
         }
+
+//        JMenu netMenu = new JMenu(/*"Network"*/);
+//        netMenu.setIcon(Icons.getIcon("network"));
+//        netMenu.setToolTipText("Network");
+//        {
+//
+//        }
 
         JPanel viewMenu = new ViewMenu();
 
         menubar.add(newMenu);
-        menubar.add(netMenu);
 
-        viewMenu.add(menubar);
+        viewMenu.add(menubar, 0);
         
         add(viewMenu, BorderLayout.NORTH);
 
@@ -480,7 +477,7 @@ public class SelfBrowserPanel extends JPanel implements SelfListener {
                                 html.append(h);                                
                             }
                             
-                            new SwingWindow(new MessageEditPanel(names.toString().trim(), html.toString()), 800, 600);
+                            new SwingWindow(new MessageEditPanel(self, names.toString().trim(), html.toString()), 800, 600);
                             
                         }                        
                     });

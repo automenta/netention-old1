@@ -20,7 +20,7 @@ public class NMessage extends Detail /*implements Serializable*/ {
     
     public static final String to = "message.to";
     public static final String from = "message.from";
-    public static final String content = "message.content";
+    //public static final String content = "message.content";
 
     public static boolean hasRecipient(Detail d, String id) {
         StringIs s = d.getValue(StringIs.class, to);
@@ -69,7 +69,13 @@ public class NMessage extends Detail /*implements Serializable*/ {
     }
     
     public String getContent() {
-        return getStringValue(content);
+        StringBuilder sb = new StringBuilder();
+        for (PropertyValue n : getValues()) {
+            if (n instanceof Comment) {
+                sb.append("<p>" + ((Comment)n ).getText() + "</p>" );
+            }
+        }
+        return sb.toString();
     }
 
     public String getFrom() {

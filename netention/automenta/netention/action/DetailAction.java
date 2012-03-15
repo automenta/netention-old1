@@ -6,6 +6,7 @@
 package automenta.netention.action;
 
 import automenta.netention.Detail;
+import automenta.netention.Self;
 
 /**
  *
@@ -39,7 +40,7 @@ abstract public class DetailAction extends Action {
     
     abstract public double applies(Detail p);
     
-    abstract public Runnable getRun(Detail d);
+    abstract public Runnable getRun(Self s, Detail d);
     
     
 
