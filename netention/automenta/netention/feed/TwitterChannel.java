@@ -12,7 +12,10 @@ import automenta.netention.value.string.StringIs;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import twitter4j.*;
+import twitter4j.Tweet;
 import twitter4j.conf.ConfigurationBuilder;
 
 /**
@@ -55,16 +58,24 @@ public class TwitterChannel implements Serializable {
     public static String getTwitterAgent(String twitterID) {
         return "twitter.com/" + twitterID;
     }
-    
+
+    public void updateStatus(String message) {
+        try {
+            getTwitter().updateStatus(message);
+        } catch (TwitterException ex) {
+            Logger.getLogger(TwitterChannel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static List<Detail> getTweets(Query query) throws Exception {
         List<Detail> l = new LinkedList();
         
         // The factory instance is re-useable and thread safe.
         Twitter twitter = new TwitterFactory().getInstance();
         QueryResult result = twitter.search(query);        
-        for (Tweet tweet : result.getTweets()) {
+        for (Object o : result.getTweets()) {
             //System.out.println(tweet.getFromUser() + ":" + tweet.getText());
-            
+            Tweet tweet = (Tweet)o;
             Detail d = new Detail(tweet.getText(), Mode.Real, NMessage.StatusPattern, "Event").withID("twitter/" + tweet.getId());
             d.setWhen(tweet.getCreatedAt());            
             d.add(NMessage.from, new StringIs(getTwitterAgent(tweet.getFromUser())));

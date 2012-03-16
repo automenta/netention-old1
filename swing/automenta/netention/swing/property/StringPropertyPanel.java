@@ -3,6 +3,7 @@ package automenta.netention.swing.property;
 import automenta.netention.*;
 import automenta.netention.swing.util.TransparentFlowPanel;
 import automenta.netention.value.string.*;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;

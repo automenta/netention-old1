@@ -187,6 +187,7 @@ public class AddDefaultPatterns {
         {
             s.addProperty(new StringProp(NMessage.to, "Recipient"), NMessage.MessagePattern);
             s.addProperty(new StringProp(NMessage.from, "Author"), NMessage.MessagePattern);            
+            s.addProperty(new StringProp(NMessage.mentions, "Mentions").setCardinalityMax(-1).setCardinalityMin(0), NMessage.MessagePattern);            
             //s.addProperty(new StringProp(NMessage.content, "Content").setRich(true), NMessage.MessagePattern);
         }
         s.addPattern(new Pattern(NMessage.StatusPattern, NMessage.MessagePattern).setIconURL("media://tango32/status/software-update-available.png")).setName("Status"); //nice icon name ;)

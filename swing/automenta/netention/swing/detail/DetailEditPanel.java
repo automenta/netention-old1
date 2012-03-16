@@ -464,6 +464,8 @@ abstract public class DetailEditPanel extends JPanel {
 
 
         sentences = new JPanel(new GridBagLayout());
+        sentences.setBackground(getBackgroundColor());
+        
         links = new JPanel(new GridBagLayout());
 
         mainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -492,6 +494,8 @@ abstract public class DetailEditPanel extends JPanel {
 
     }
 
+    public Color getBackgroundColor() { return Color.WHITE; }
+    
     public synchronized void refreshBottomBar() {
 
         bottomBar.removeAll();
