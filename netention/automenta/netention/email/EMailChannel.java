@@ -39,6 +39,12 @@ public class EMailChannel implements Serializable {
         username = "@gmail.com";
         password = "";
         from = "";
+        setFrom(automenta.netention.Session.get("email.email"));
+        setUsername(automenta.netention.Session.get("email.username"));
+        setPassword(automenta.netention.Session.get("email.password"));
+        setSmtpServer(automenta.netention.Session.get("email.smtpServer"));
+        setServer(automenta.netention.Session.get("email.server"));
+
     }
 
 
@@ -193,4 +199,10 @@ public class EMailChannel implements Serializable {
     public void setFrom(String f) {
         this.from = f;
     }
+
+    public String getFrom() {
+        return from;
+    }
+    
+    
 }

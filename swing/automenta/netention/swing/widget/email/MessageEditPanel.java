@@ -56,11 +56,6 @@ public class MessageEditPanel extends JPanel {
         this.self = self;
 
         final EMailChannel ec = new EMailChannel();
-        ec.setFrom(Session.get("email.email"));
-        ec.setUsername(Session.get("email.username"));
-        ec.setPassword(Session.get("email.password"));
-        ec.setSmtpServer(Session.get("email.smtpServer"));
-        ec.setServer(Session.get("email.server"));
         
         int defaultSubjChars = 64;
 

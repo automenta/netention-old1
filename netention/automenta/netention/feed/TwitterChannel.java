@@ -66,6 +66,18 @@ public class TwitterChannel implements Serializable {
             Logger.getLogger(TwitterChannel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
+    @Deprecated public static List<String> getPublicTweetStrings(int count) throws Exception {
+        Twitter twitter = new TwitterFactory().getInstance();
+        List<String> ll = new LinkedList();
+        for (int i = 0; i < count; i++) {
+            for (Object s : twitter.getPublicTimeline()) {
+                ll.add(((Status)s).getText());
+            }
+        }
+        return ll;
+    }
 
     public static List<Detail> getTweets(Query query) throws Exception {
         List<Detail> l = new LinkedList();

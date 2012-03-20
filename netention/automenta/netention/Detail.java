@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class Detail extends Node {
+public class Detail extends Node implements Comparable<Detail> {
     
     private Mode mode;
     private List<String> patterns = new LinkedList();
@@ -24,6 +24,12 @@ public class Detail extends Node {
         this(name, Mode.Unknown);
     }
 
+    @Override
+    public int compareTo(Detail d) {
+        return getID().compareTo(d.getID());
+    }
+
+    
     /**
      * 
      * @param name
