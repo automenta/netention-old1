@@ -35,10 +35,6 @@ public class Community extends MemorySelf {
         return ms + s * 1000 + m * (1000*60) + h * (1000*60*60);
     }
     
-    long analysisPeriod = ms(0,0,1,0);  //in ms
-    long dontReinvestigate = 1 * 60 * 60; //in seconds
-    long waitForNextQueries = 2 * 60; //in seconds
-    int refreshAfterAnalysisCycles = 8 * 12000; //the great cycle... only makes sense relative to analysisPeriod... TODO find better way to specify this
     
     boolean sendToBlogger = false;  //limits to 50 emails before captcha required
     boolean sendToWordpress = true;
@@ -157,8 +153,10 @@ public class Community extends MemorySelf {
 
     }
 
-   public void runAnalyzeUsers() {
+   public void runAnalyzeUsers(long analysisPeriod, long dontReinvestigate, long waitForNextQueries, int refreshAfterAnalysisCycles) {
         int k = 1;                     
+        
+        System.out.println("Resetting after every: " + ((float)(refreshAfterAnalysisCycles * analysisPeriod)/((float)Community.ms(1,0,0,0)) ) + " hours" ) ;
         
         Date now = new Date();
         while (true) {
@@ -176,7 +174,7 @@ public class Community extends MemorySelf {
                             getAgent(a).add(d);
                             al.add(a);
                             if (existing) {
-                                if (getAgent(a).lastUpdated.getTime() - now.getTime() > dontReinvestigate * 1000)
+                                if (getAgent(a).lastUpdated.getTime() - now.getTime() > dontReinvestigate)
                                     if (!agentsToInvestigate.contains(a))
                                         agentsToInvestigate.add(a);
                             }
@@ -211,7 +209,7 @@ public class Community extends MemorySelf {
             else {
                 System.out.println("No more agents to investigate... pausing before querying again");
                 try {
-                    Thread.sleep(waitForNextQueries*1000);
+                    Thread.sleep(waitForNextQueries);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Community.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -263,11 +261,11 @@ public class Community extends MemorySelf {
         
     }
     
-    public void start() {
+    public void start(final long analysisPeriod, final long dontReinvestigate, final long waitForNextQueries, final int refreshAfterAnalysisCycles) {
 
         queue(new Runnable() {
             @Override public void run() {
-                runAnalyzeUsers();
+                runAnalyzeUsers(analysisPeriod, dontReinvestigate, waitForNextQueries, refreshAfterAnalysisCycles);
             }            
         });
         

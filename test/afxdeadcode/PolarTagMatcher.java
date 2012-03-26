@@ -47,14 +47,14 @@ public abstract class PolarTagMatcher implements Runnable {
 
     public void run() {
         try {
-            Thread.sleep(phaseSeconds * 1000);
+            Thread.sleep(phaseSeconds);
         } catch (InterruptedException ex) {
             Logger.getLogger(Community.class.getName()).log(Level.SEVERE, null, ex);
         }
         while (true) {
             operate();
             try {
-                Thread.sleep(period * 1000);
+                Thread.sleep(period);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Community.class.getName()).log(Level.SEVERE, null, ex);
             }
