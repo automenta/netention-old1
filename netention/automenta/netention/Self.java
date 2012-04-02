@@ -30,7 +30,7 @@ abstract public class Self {
     protected final transient List<Action> actions = new LinkedList();
 
     
-    protected Scheduler scheduler;
+    protected static Scheduler scheduler = null;
 
     
 
@@ -103,15 +103,15 @@ abstract public class Self {
     public Self() {
         super();
         
-        try {
-            
-            //NON-SINGLETON SCHEDULER
-            scheduler = new StdSchedulerFactory().getScheduler(this.toString());
-
-            scheduler.start();
-        } catch (SchedulerException ex) {
-            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(1);
+        if (scheduler == null) {
+            try {
+                //NON-SINGLETON SCHEDULER
+                scheduler = new StdSchedulerFactory().getScheduler();    
+                scheduler.start();
+            } catch (SchedulerException ex) {
+                Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
+                System.exit(1);
+            }
         }
     }
     
