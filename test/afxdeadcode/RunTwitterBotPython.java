@@ -25,7 +25,7 @@ public class RunTwitterBotPython {
                     System.out.println("Running " + scriptFile);
                     interp.execfile(scriptFile);
                 }                
-            });
+            }).start();
         }
                         
                 
