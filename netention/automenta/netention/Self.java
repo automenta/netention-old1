@@ -106,7 +106,7 @@ abstract public class Self {
         try {
             
             //NON-SINGLETON SCHEDULER
-            scheduler = StdSchedulerFactory.getDefaultScheduler();
+            scheduler = new StdSchedulerFactory().getScheduler();
 
             scheduler.start();
         } catch (SchedulerException ex) {
