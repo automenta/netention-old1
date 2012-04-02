@@ -108,6 +108,7 @@ abstract public class Self {
             try {
                 //NON-SINGLETON SCHEDULER
                 //scheduler = new StdSchedulerFactory().getScheduler();    
+                DirectSchedulerFactory.getInstance().createVolatileScheduler(6);
                 scheduler = DirectSchedulerFactory.getInstance().getScheduler();
                 scheduler.start();
             } catch (SchedulerException ex) {
