@@ -16,13 +16,13 @@ import redstone.xmlrpc.XmlRpcFault;
 public class WordpressChannel extends Wordpress {
 
     public WordpressChannel() throws Exception {
-        this(Session.get("wordpress.user"), Session.get("wordpress.pass"), Session.get("wordpress.url"));
+        this(Session.get("wordpress.url"), Session.get("wordpress.user"), Session.get("wordpress.pass"));
         
         System.out.println(getUserInfo());
     }
     
     
-    public WordpressChannel(String user, String pass, String url) throws Exception {
+    public WordpressChannel(String url, String user, String pass) throws Exception {
          //Wordpress wp = new Wordpress(user, pass, url);
         super(user, pass, url + "/xmlrpc.php");
         
@@ -42,7 +42,7 @@ public class WordpressChannel extends Wordpress {
     public static void main(String[] args) throws Exception {
         Session.init();
         
-        WordpressChannel x = new WordpressChannel(Session.get("wordpress.user"), Session.get("wordpress.pass"), Session.get("wordpress.url"));
+        WordpressChannel x = new WordpressChannel(Session.get("wordpress.url"), Session.get("wordpress.user"), Session.get("wordpress.pass"));
         
         System.out.println("Posting..");
         System.out.println(x.newPost("Title2", "<b>HTML</b>"));
