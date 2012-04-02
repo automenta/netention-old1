@@ -17,7 +17,7 @@ import org.quartz.*;
 
 import static org.quartz.JobBuilder.*;
 import static org.quartz.TriggerBuilder.*;
-import org.quartz.impl.DirectSchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
 
 
 /**
@@ -28,8 +28,11 @@ abstract public class Self {
     
     protected final transient List<SelfListener> listeners = new LinkedList();
     protected final transient List<Action> actions = new LinkedList();
+
+    
     protected Scheduler scheduler;
-    public static final int DEFAULT_SCHEDULER_THREADS = 4;
+
+    
 
     public static long getTimeBetween(final long l, final long e) {
         return l - e;
@@ -103,11 +106,7 @@ abstract public class Self {
         try {
             
             //NON-SINGLETON SCHEDULER
-            //scheduler = StdSchedulerFactory.getDefaultScheduler();
-            
-            //SINGLETON SCHEDULER
-            DirectSchedulerFactory.getInstance().createVolatileScheduler(DEFAULT_SCHEDULER_THREADS);
-            scheduler = DirectSchedulerFactory.getInstance().getScheduler();
+            scheduler = StdSchedulerFactory.getDefaultScheduler();
 
             scheduler.start();
         } catch (SchedulerException ex) {
