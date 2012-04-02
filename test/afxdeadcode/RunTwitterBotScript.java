@@ -14,7 +14,7 @@ public class RunTwitterBotScript {
 
     
     public static void main(String[] args) throws Exception {
-        String scriptFile = args[1];
+        String scriptFile = args[0];
                 
         PythonInterpreter interp = new PythonInterpreter();
         interp.execfile(scriptFile);
