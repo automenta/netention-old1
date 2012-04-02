@@ -10,6 +10,7 @@ import automenta.netention.NMessage;
 import automenta.netention.value.geo.GeoPointIs;
 import automenta.netention.value.string.StringIs;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -80,14 +81,27 @@ public class TwitterChannel implements Serializable {
     }
 
     public static List<Detail> getTweets(Query query) throws Exception {
-        List<Detail> l = new LinkedList();
+
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setDebugEnabled(false).setGZIPEnabled(true).setIncludeEntitiesEnabled(false).setUseSSL(false);
         
-        // The factory instance is re-useable and thread safe.
-        Twitter twitter = new TwitterFactory().getInstance();
+        TwitterFactory tf = new TwitterFactory(cb.build());        
+        
+        Twitter twitter = tf.getInstance();        
+        
+        query.setResultType(Query.MIXED);        
+        //query.setSince("");
+
         QueryResult result = twitter.search(query);        
+        
+        //System.out.println(query.toString());
+        
+        List<Detail> l = new ArrayList(result.getTweets().size());
         for (Object o : result.getTweets()) {
             //System.out.println(tweet.getFromUser() + ":" + tweet.getText());
             Tweet tweet = (Tweet)o;
+            
+            
             Detail d = new Detail(tweet.getText(), Mode.Real, NMessage.StatusPattern, "Event").withID("twitter/" + tweet.getId());
             d.setWhen(tweet.getCreatedAt());            
             d.add(NMessage.from, new StringIs(getTwitterAgent(tweet.getFromUser())));
@@ -102,7 +116,8 @@ public class TwitterChannel implements Serializable {
                 d.add("currentLocation", new GeoPointIs(geoloc.getLatitude(), geoloc.getLongitude()));                
             }
             l.add(d);
-        }        
+        }                
+        
         return l;
         
     }

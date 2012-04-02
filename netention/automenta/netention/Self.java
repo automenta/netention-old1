@@ -14,10 +14,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.collections15.IteratorUtils;
 import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
 
 import static org.quartz.JobBuilder.*;
 import static org.quartz.TriggerBuilder.*;
+import org.quartz.impl.DirectSchedulerFactory;
 
 
 /**
@@ -29,6 +29,7 @@ abstract public class Self {
     protected final transient List<SelfListener> listeners = new LinkedList();
     protected final transient List<Action> actions = new LinkedList();
     protected Scheduler scheduler;
+    public static final int DEFAULT_SCHEDULER_THREADS = 4;
 
     public static long getTimeBetween(final long l, final long e) {
         return l - e;
@@ -100,7 +101,13 @@ abstract public class Self {
         super();
         
         try {
-            scheduler = StdSchedulerFactory.getDefaultScheduler();
+            
+            //NON-SINGLETON SCHEDULER
+            //scheduler = StdSchedulerFactory.getDefaultScheduler();
+            
+            //SINGLETON SCHEDULER
+            DirectSchedulerFactory.getInstance().createVolatileScheduler(DEFAULT_SCHEDULER_THREADS);
+            scheduler = DirectSchedulerFactory.getInstance().getScheduler();
 
             scheduler.start();
         } catch (SchedulerException ex) {
