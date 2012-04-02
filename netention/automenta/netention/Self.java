@@ -17,6 +17,7 @@ import org.quartz.*;
 
 import static org.quartz.JobBuilder.*;
 import static org.quartz.TriggerBuilder.*;
+import org.quartz.impl.DirectSchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
 
@@ -106,7 +107,8 @@ abstract public class Self {
         if (scheduler == null) {
             try {
                 //NON-SINGLETON SCHEDULER
-                scheduler = new StdSchedulerFactory().getScheduler();    
+                //scheduler = new StdSchedulerFactory().getScheduler();    
+                scheduler = DirectSchedulerFactory.getInstance().getScheduler();
                 scheduler.start();
             } catch (SchedulerException ex) {
                 Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
