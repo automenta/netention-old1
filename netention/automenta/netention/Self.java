@@ -10,15 +10,9 @@ import com.syncleus.dann.graph.MutableBidirectedGraph;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.apache.commons.collections15.IteratorUtils;
-import org.quartz.*;
-
-import static org.quartz.JobBuilder.*;
-import static org.quartz.TriggerBuilder.*;
-import org.quartz.impl.DirectSchedulerFactory;
-import org.quartz.impl.StdSchedulerFactory;
 
 
 /**
@@ -31,7 +25,7 @@ abstract public class Self {
     protected final transient List<Action> actions = new LinkedList();
 
     
-    protected static Scheduler scheduler = null;
+    //protected static Scheduler scheduler = null;
 
     
 
@@ -42,6 +36,7 @@ abstract public class Self {
     public static long getTimeBetween(final Date later, final Date earlier) {
         return later.getTime() - earlier.getTime();
     }
+    private final ExecutorService executors;
 
     public static interface SelfListener {
         public void onDetailsAdded(Detail... d);
@@ -104,55 +99,64 @@ abstract public class Self {
     public Self() {
         super();
         
-        if (scheduler == null) {
-            try {
-                //NON-SINGLETON SCHEDULER
-                //scheduler = new StdSchedulerFactory().getScheduler();    
-                DirectSchedulerFactory.getInstance().createVolatileScheduler(6);
-                scheduler = DirectSchedulerFactory.getInstance().getScheduler();
-                scheduler.start();
-            } catch (SchedulerException ex) {
-                Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
-                System.exit(1);
-            }
-        }
+        executors = Executors.newFixedThreadPool(4);
+        
+//        if (scheduler == null) {
+//            try {
+//                //NON-SINGLETON SCHEDULER
+//                //scheduler = new StdSchedulerFactory().getScheduler();    
+//                DirectSchedulerFactory.getInstance().createVolatileScheduler(6);
+//                scheduler = DirectSchedulerFactory.getInstance().getScheduler();
+//                scheduler.start();
+//            } catch (SchedulerException ex) {
+//                Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
+//                System.exit(1);
+//            }
+//        }
+        
     }
     
     public void stop() {
-        try {
-            scheduler.shutdown();
-        } catch (SchedulerException ex) {
-            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            scheduler.shutdown();
+//        } catch (SchedulerException ex) {
+//            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
     
-    public static class RunnableJob implements Job {
+//    public static class RunnableJob implements Job {
+//
+//        public RunnableJob() {
+//        }
+//
+//        public void execute(JobExecutionContext context) throws JobExecutionException {
+//            JobDataMap data = context.getMergedJobDataMap();
+//            Runnable r = (Runnable)data.get(Runnable.class.toString());
+//            r.run();
+//        }
+//
+//    }
 
-        public RunnableJob() {
-        }
-
-        public void execute(JobExecutionContext context) throws JobExecutionException {
-            JobDataMap data = context.getMergedJobDataMap();
-            Runnable r = (Runnable)data.get(Runnable.class.toString());
-            r.run();
-        }
-
-    }
+//    public void queue(Runnable r) {
+//
+//        JobDataMap m = new JobDataMap();
+//        m.put(Runnable.class.toString(), r);
+//        JobDetail job = newJob(RunnableJob.class).usingJobData(m).build();
+//
+//    
+//        Trigger trigger = newTrigger().startNow().build();
+//
+//        try {
+//            scheduler.scheduleJob(job, trigger);
+//        } catch (SchedulerException ex) {
+//            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//            
+//    }
 
     public void queue(Runnable r) {
 
-        JobDataMap m = new JobDataMap();
-        m.put(Runnable.class.toString(), r);
-        JobDetail job = newJob(RunnableJob.class).usingJobData(m).build();
-
-    
-        Trigger trigger = newTrigger().startNow().build();
-
-        try {
-            scheduler.scheduleJob(job, trigger);
-        } catch (SchedulerException ex) {
-            Logger.getLogger(Self.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        executors.submit(r);
             
     }
     
