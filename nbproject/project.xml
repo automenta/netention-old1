@@ -5,12 +5,11 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>netention-p2p</name>
             <source-roots>
+                <root id="src.test.dir"/>
                 <root id="src.swing.dir"/>
                 <root id="src.netention.dir"/>
             </source-roots>
-            <test-roots>
-                <root id="test.src.dir" name="test"/>
-            </test-roots>
+            <test-roots/>
         </data>
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
             <definitions>./lib/nblibraries.properties</definitions>

@@ -1,5 +1,7 @@
 package afxdeadcode;
 
+import afxdeadcode.bots.HappySad;
+import afxdeadcode.bots.RichPoor;
 import automenta.netention.Detail;
 import automenta.netention.NMessage;
 import automenta.netention.Session;
@@ -27,12 +29,12 @@ public class Community extends MemorySelf {
             
     Map<String, Set<String>> queries = new ConcurrentHashMap<>();
 
-    private final TwitterChannel tc;
-    private final WordpressChannel blog;    
-    public final EMailChannel email;
+    private TwitterChannel tc;
+    private WordpressChannel blog;    
+    public EMailChannel email;
 
-    public static long ms(int h, int m, int s, int ms) {
-        return ms + s * 1000 + m * (1000*60) + h * (1000*60*60);
+    public static long ms(double h, double m, double s, double ms) {
+        return (long)(ms + s * 1000.0 + m * (1000.0*60.0) + h * (1000.0*60.0*60.0));
     }
     
     
@@ -42,7 +44,11 @@ public class Community extends MemorySelf {
 
     @Deprecated boolean includeReportURL = false;
 
-        
+    boolean isGeo = false;
+    double geoLat, geoLng, geoRad;
+    
+
+    
     @Deprecated public static int getKeywordCount(String haystack, String needle) {
         haystack = haystack.toLowerCase();
         needle = needle.toLowerCase();
@@ -141,7 +147,7 @@ public class Community extends MemorySelf {
             }
         }
 
-        if (sendToWordpress) {
+        if ((sendToWordpress) && (blog!=null)) {
             //Wordpress
             String reportURL = "";
             try {
@@ -166,7 +172,9 @@ public class Community extends MemorySelf {
                     final Set<String> al = queries.get(p);
                     try {
                         System.out.println("Keyword search: " + p);
-                        List<Detail> tw = TwitterChannel.getTweets(p);
+                        
+                        List<Detail> tw = isGeo ? TwitterChannel.getTweets(p, geoLat, geoLng, geoRad) : TwitterChannel.getTweets(p);
+                        
                         for (Detail d : tw) {
                             String a = d.getValue(StringIs.class, NMessage.from).getValue();
                             //addMentions(d);
@@ -252,10 +260,17 @@ public class Community extends MemorySelf {
     public Community() throws Exception {
         super();
         
-        this.email = new EMailChannel();
+        //this.email = new EMailChannel();
+        this.email = null;
         
-        this.blog = new WordpressChannel();
+        //this.blog = new WordpressChannel();
+        this.blog = null;
 
+        this.tc = null;
+        
+    }
+    
+    public void setTwitter(String key) {
         this.tc = new TwitterChannel();
         this.tc.setKey(Session.get("twitter.key"));
         
@@ -271,6 +286,19 @@ public class Community extends MemorySelf {
         
         //new SwingWindow(new CommunityBrowser(this), 800, 600, true);
         
+    }
+    
+    public void setGeo(double lat, double lng, double rad) {
+        this.isGeo = true;
+        this.geoLat = lat;
+        this.geoLng = lng;
+        this.geoRad = rad;
+    }
+    public void addHappySad(double minTweetPeriod, double delay) {
+        new HappySad(this, (long)minTweetPeriod, (long)delay);       
+    }
+    public void addRichPoor(long minTweetPeriod, long delay) {
+        new RichPoor(this, minTweetPeriod, delay);       
     }
     
         

@@ -117,8 +117,11 @@ public class TwitterChannel implements Serializable {
     public static List<Detail> getTweets(String q) throws Exception {
         return getTweets(new Query(q));
     }
-    
-    public static void main(String[] args) throws Exception {
-    }
 
+    public static List<Detail> getTweets(String q, double lat, double lng, double radius) throws Exception {
+        Query qi = new Query(q);
+        qi.setGeoCode(new GeoLocation(lat, lng), radius, Query.KILOMETERS);
+        return getTweets(qi);
+    }
+    
 }
