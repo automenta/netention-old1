@@ -33,6 +33,14 @@ public class EMailChannel implements Serializable {
         setDefaults();
     }
 
+    public EMailChannel(String address, String server, String smtpServer, String username, String password) {
+        setFrom(address);
+        setUsername(username);
+        setPassword(password);
+        setSmtpServer(smtpServer);
+        setServer(server);
+    }
+
     protected void setDefaults() {
         server = "imap.gmail.com";
         smtpServer = "smtp.gmail.com";

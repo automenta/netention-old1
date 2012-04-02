@@ -4,7 +4,6 @@ import afxdeadcode.bots.HappySad;
 import afxdeadcode.bots.RichPoor;
 import automenta.netention.Detail;
 import automenta.netention.NMessage;
-import automenta.netention.Session;
 import automenta.netention.email.EMailChannel;
 import automenta.netention.feed.TwitterChannel;
 import automenta.netention.impl.MemorySelf;
@@ -29,17 +28,16 @@ public class Community extends MemorySelf {
             
     Map<String, Set<String>> queries = new ConcurrentHashMap<>();
 
-    private TwitterChannel tc;
-    private WordpressChannel blog;    
-    public EMailChannel email;
+    private TwitterChannel tc = null;
+    private WordpressChannel blog = null;
+    public EMailChannel email = null;
 
     public static long ms(double h, double m, double s, double ms) {
         return (long)(ms + s * 1000.0 + m * (1000.0*60.0) + h * (1000.0*60.0*60.0));
     }
     
+    private String postSummariesToEmail = null;
     
-    boolean sendToBlogger = false;  //limits to 50 emails before captcha required
-    boolean sendToWordpress = true;
     boolean emitToTwitter = true;
 
     @Deprecated boolean includeReportURL = false;
@@ -139,15 +137,15 @@ public class Community extends MemorySelf {
     
     protected void emitReport(String Title, String Content) {
         //Blogger
-        if (sendToBlogger) {
+        if (postSummariesToEmail!=null) {
             try {
-                email.sendMessage(new NMessage(Title, email.getFrom(), Session.get("blogger.postemail"), new Date(), Content));
+                email.sendMessage(new NMessage(Title, email.getFrom(), postSummariesToEmail, new Date(), Content));
             } catch (Exception ex) {
                 Logger.getLogger(Community.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
-        if ((sendToWordpress) && (blog!=null)) {
+        if (blog!=null) {
             //Wordpress
             String reportURL = "";
             try {
@@ -171,7 +169,7 @@ public class Community extends MemorySelf {
                 for (String p : queries.keySet()) {
                     final Set<String> al = queries.get(p);
                     try {
-                        System.out.println("Keyword search: " + p);
+                        //System.out.println("Keyword search: " + p);
                         
                         List<Detail> tw = isGeo ? TwitterChannel.getTweets(p, geoLat, geoLng, geoRad) : TwitterChannel.getTweets(p);
                         
@@ -209,7 +207,7 @@ public class Community extends MemorySelf {
                 }); 
                 
                 final String s = agentsToInvestigate.get(0);
-                System.out.println("Investigating: " + s);
+                //System.out.println("Investigating: " + s);
                 getAgent(s).update(tc);
                 //getAgent(s).print(classifier);
                 agentsToInvestigate.remove(s);
@@ -260,20 +258,25 @@ public class Community extends MemorySelf {
     public Community() throws Exception {
         super();
         
-        //this.email = new EMailChannel();
-        this.email = null;
-        
-        //this.blog = new WordpressChannel();
-        this.blog = null;
-
-        this.tc = null;
         
     }
     
     public void setTwitter(String key) {
         this.tc = new TwitterChannel();
-        this.tc.setKey(Session.get("twitter.key"));
-        
+        this.tc.setKey(key);        
+    }
+    
+    public void setPostEMail(String address, String server, String smtpServer, String username, String password, String postTo) {
+        this.email = new EMailChannel(address, server, smtpServer, username, password);
+        this.postSummariesToEmail = postTo;
+    }
+    
+    public void setPostWordpress(String server, String username, String password) {
+        try {
+            this.blog = new WordpressChannel(server, username, password);
+        } catch (Exception ex) {
+            Logger.getLogger(Community.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void start(final long analysisPeriod, final long dontReinvestigate, final long waitForNextQueries, final int refreshAfterAnalysisCycles) {
