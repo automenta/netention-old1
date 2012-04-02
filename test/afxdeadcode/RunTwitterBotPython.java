@@ -18,10 +18,10 @@ public class RunTwitterBotPython {
         System.out.println("Total memory: " + Runtime.getRuntime().totalMemory());
         System.out.println("Max memory: " + Runtime.getRuntime().maxMemory());
         
-        final PythonInterpreter interp = new PythonInterpreter();
         for (final String scriptFile : args) {
             new Thread(new Runnable() {
                 @Override public void run() {
+                    final PythonInterpreter interp = new PythonInterpreter();
                     System.out.println("Running " + scriptFile);
                     interp.execfile(scriptFile);
                 }                
