@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package automenta.netention.app;
 
 import automenta.netention.Detail;
@@ -144,7 +140,7 @@ public class RunDetailEdit implements Demo {
             public void run() {
                 JPanel p = new RunDetailEdit().newPanel();
 
-                SwingWindow window = new SwingWindow(p, 1400, 800, true);
+                SwingWindow window = new SwingWindow(p, 1200, 800, true);
             }
         });
 

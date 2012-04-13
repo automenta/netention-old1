@@ -29,15 +29,9 @@ public class Detail extends Node implements Comparable<Detail> {
         return getID().compareTo(d.getID());
     }
 
-    
-    /**
-     * 
-     * @param name
-     * @param mode
-     * @param initialPatterns  the order of these should indicate the most important patterns first.  the primary icon used is the icon of the first pattern
-     */
-    public Detail(String name, Mode mode, String... initialPatterns) {
-        super(UUID.randomUUID().toString());
+
+    public Detail(String id, String name, Mode mode, String... initialPatterns) {
+        super(id);
         setName(name);
         this.mode = mode;
         this.creator = "Me";
@@ -46,7 +40,18 @@ public class Detail extends Node implements Comparable<Detail> {
 
         for (String p : initialPatterns) {
             addPattern(p);
-        }
+        }        
+        
+    }
+
+    /**
+     * 
+     * @param name
+     * @param mode
+     * @param initialPatterns  the order of these should indicate the most important patterns first.  the primary icon used is the icon of the first pattern
+     */
+    public Detail(String name, Mode mode, String... initialPatterns) {
+        this(UUID.randomUUID().toString(), name, mode, initialPatterns);
     }
 
 
@@ -60,6 +65,14 @@ public class Detail extends Node implements Comparable<Detail> {
 
     public List<String> getPatterns() {
         return patterns;
+    }
+    
+    public List<Pattern> getPatterns(Self self) {
+        List<Pattern> lp = new LinkedList();
+        for (String x : getPatterns()) {
+            lp.add(self.getPattern(x));
+        }
+        return lp;
     }
 
     public List<PropertyValue> getValues() {
@@ -178,6 +191,7 @@ public class Detail extends Node implements Comparable<Detail> {
     public int hashCode() {
         return getID().hashCode();                
     }
+
 
 
     

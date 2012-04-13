@@ -14,6 +14,7 @@ import automenta.netention.swing.util.JHyperLink;
 import automenta.netention.swing.util.JScaledTextArea;
 import automenta.netention.swing.util.SwingWindow;
 import automenta.netention.swing.widget.CompletePropertiesPanel;
+import automenta.netention.swing.widget.PropertySearch;
 import automenta.netention.value.Comment;
 import automenta.netention.value.bool.BoolProp;
 import automenta.netention.value.integer.IntProp;
@@ -38,6 +39,7 @@ import javax.swing.border.EmptyBorder;
  * @author seh
  */
 abstract public class DetailEditPanel extends JPanel {
+    private static boolean richComments = false;
 
     public final JPanel sentences;
     private Detail detail;
@@ -55,6 +57,8 @@ abstract public class DetailEditPanel extends JPanel {
     public final JPanel bottomBar;
     private final JPanel links;
     private final JSplitPane mainSplit;
+    private JPanel addPropertyPanel;
+
 
     protected class LinkPanel extends JPanel {
 
@@ -640,15 +644,18 @@ abstract public class DetailEditPanel extends JPanel {
                 if (0 == JOptionPane.showConfirmDialog(DetailEditPanel.this, "Change mode to " + modeName + "?  This will reset all properties.", "Change Mode", JOptionPane.YES_NO_OPTION)) {
                     detail.setMode(nextMode);
 
-                    List<Property> existingProperties = new LinkedList();
-                    for (PropertyValue p : detail.getValues()) {
-                        existingProperties.add(self.getProperty(p.getProperty()));
+                    List<PropertyValue> existingProperties = new LinkedList(detail.getValues());
+                    
+                    detail.getValues().clear();
+                    for (PropertyValue p : existingProperties) {
+                        if (p instanceof Comment) {
+                            addComment( ((Comment)p).getText() ) ;
+                        }
+                        else {
+                            addProperty(self.getProperty(p.getProperty()));
+                        }
                     }
 
-                    detail.getValues().clear();
-                    for (Property p : existingProperties) {
-                        addProperty(p);
-                    }
 
                     saveToDetail();
 
@@ -830,6 +837,16 @@ abstract public class DetailEditPanel extends JPanel {
                     bb.add(b);
                 }
 
+                JButton pm = new JButton("P=V");
+                pm.setToolTipText("Find Property");
+                pm.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        addSearchedProperty();
+                    }                    
+                });
+                bb.add(pm);
+                
                 JButton cm = new JButton("Abc");
                 cm.setToolTipText("Add Comment");
                 cm.addActionListener(new ActionListener() {
@@ -864,8 +881,8 @@ abstract public class DetailEditPanel extends JPanel {
 
                 }
                 
-                JPanel addPropertyPanel = new JPanel(new BorderLayout());
-                addPropertyPanel.add(bb);
+                addPropertyPanel = new JPanel(new BorderLayout());
+                addPropertyPanel.add(bb, BorderLayout.CENTER);
                 gc.gridy++;
                 sentences.add(addPropertyPanel, gc);
 
@@ -956,7 +973,10 @@ abstract public class DetailEditPanel extends JPanel {
 
     public static JComponent getLinePanel(Self self, Detail detail, final PropertyValue pv, boolean editable) {
         if (pv instanceof Comment) {
-            return new CommentPanel(self, detail, (Comment)pv, editable);
+            if (richComments)
+                return new RichCommentPanel(self, detail, (Comment)pv, editable);
+            else
+                return new CommentPanel(self, detail, (Comment)pv, editable);
         }
         
         Property prop = self.getProperty(pv.getProperty());
@@ -1035,16 +1055,57 @@ abstract public class DetailEditPanel extends JPanel {
         patternChanged();
         refreshUI();
     }
-    synchronized protected void addComment() {
-        Comment c = new Comment();
+    
+    synchronized protected  void addComment(String text) {
+        Comment c = new Comment(text);
         detail.getValues().add(c);
-        refreshUI();
+        refreshUI();        
+    }
+    
+    synchronized protected void addSearchedProperty() {
+        PropertySearch ps = new PropertySearch(self, detail) {
+
+            @Override
+            public void onSelected(String property, List<String> patterns) {
+                    addProperty(self.getProperty(property));
+                    for (String x : patterns)
+                        addPattern(self.getPattern(x));
+                    addPropertyPanel.remove(this);
+                    addPropertyPanel.updateUI();
+                
+            }
+
+            @Override
+            public void onCancel() {
+                addPropertyPanel.remove(this);
+                addPropertyPanel.updateUI();
+            }
+            
+        };
+        addPropertyPanel.add(ps, BorderLayout.SOUTH);
+        addPropertyPanel.updateUI();
+//            new SearchResult() {
+//
+//            @Override
+//            public void onSelected(String property, List<String> patterns) {
+//                    addProperty(self.getProperty(property));
+//                    for (String x : patterns)
+//                        addPattern(self.getPattern(x));
+//                
+//            }
+//            
+//        });
+    }
+    
+    synchronized protected void addComment() {
+        addComment("");
     }
 
     synchronized protected void addProperty(Property p) {
         PropertyValue pv = p.newDefaultValue(detail.getMode());
         pv.setProperty(p.getID());
         detail.getValues().add(pv);
+        
         refreshUI();
     }
 

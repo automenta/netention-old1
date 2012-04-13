@@ -38,6 +38,18 @@ abstract public class Self {
     }
     private final ExecutorService executors;
 
+    
+    public List<Pattern> getPatternsOfProperty(final String p) {
+        final List<Pattern> r = new LinkedList();
+        for (final String patID : getPatterns()) {
+            final Pattern pa = getPattern(patID);
+            if (pa.properties.keySet().contains(p)) {
+                r.add(pa);
+            }
+        }
+        return r;
+    }
+
     public static interface SelfListener {
         public void onDetailsAdded(Detail... d);
         public void onDetailsRemoved(Detail... d);

@@ -10,27 +10,22 @@ import automenta.netention.Self;
 import automenta.netention.Value;
 import automenta.netention.value.Comment;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import net.atlanticbb.tantlinger.shef.HTMLEditorPane;
 
 /**
  *
  * @author seh
  */
-public class CommentPanel extends PropertyOptionPanel {
+public class RichCommentPanel extends PropertyOptionPanel {
 
-    final int rows = 2;
-    final int cols = 40;
-    
-    public CommentPanel(Self self, Detail d, final Comment comment, boolean editable) {
+    public RichCommentPanel(Self self, Detail d, final Comment comment, boolean editable) {
         super(self, d, comment, editable);
         
         
         setCurrentOption(new PropertyOption<Comment>(" ") {
 
-            final JTextArea p = new JTextArea(rows, cols);
+            final HTMLEditorPane p = new HTMLEditorPane();
             
             @Override
             public Comment widgetToValue(Comment value) {
@@ -46,9 +41,7 @@ public class CommentPanel extends PropertyOptionPanel {
 
             @Override
             public JPanel newEditPanel(Comment value) {
-                JPanel j = new JPanel(new BorderLayout(4,4));
-                
-                p.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                JPanel j = new JPanel(new BorderLayout());
                 
                 p.setText(value.getText());
                 j.add(p, BorderLayout.CENTER);
