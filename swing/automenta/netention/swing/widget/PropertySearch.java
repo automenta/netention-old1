@@ -8,6 +8,7 @@ import automenta.netention.Detail;
 import automenta.netention.Pattern;
 import automenta.netention.Self;
 import automenta.netention.swing.util.Autocompletion;
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,7 @@ import javax.swing.*;
  */
 abstract public class PropertySearch extends JPanel implements ActionListener {
 
+    //TODO improve layout
     
     private final Self self;
     private final JComboBox comboBox;
@@ -40,12 +42,17 @@ abstract public class PropertySearch extends JPanel implements ActionListener {
     abstract public void onCancel();
 
     public PropertySearch(Self s, Detail d) {
-        super(new FlowLayout());
+        super(new BorderLayout());
 
         this.self = s;
         this.detail = d;
 
-        List<String> properties = new ArrayList(s.getProperties());
+        List<String> properties = new ArrayList(s.getProperties().size());
+        for (String ps : s.getProperties()) {
+            if (self.acceptsAnotherProperty(d, ps))
+                properties.add(ps);
+        }
+        
         Collections.sort(properties, new Comparator<String>() {
 
             @Override
@@ -71,7 +78,7 @@ abstract public class PropertySearch extends JPanel implements ActionListener {
             }
         });
 
-        JButton ok = new JButton("OK");
+        JButton ok = new JButton("Add");
         ok.addActionListener(new ActionListener() {
 
             @Override
@@ -92,10 +99,15 @@ abstract public class PropertySearch extends JPanel implements ActionListener {
 
         patternSelect = new JPanel();
         
-        add(comboBox);
-        add(patternSelect);
-        add(ok);
-        add(cancel);
+        JPanel top = new JPanel(new FlowLayout());
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        add(top, BorderLayout.CENTER);
+        add(bottom, BorderLayout.SOUTH);
+        
+        top.add(comboBox);
+        top.add(patternSelect);
+        bottom.add(ok);
+        bottom.add(cancel);
 
 
         updatePatterns();
@@ -117,6 +129,7 @@ abstract public class PropertySearch extends JPanel implements ActionListener {
         for (Pattern pp : lp) {
             JToggleButton j = new JToggleButton(pp.getName());
             j.setSelected(c == 0);
+            j.setEnabled(!((lp.size() == 1) && (c == 0)));
             patternAdd.put(pp, j);
             patternSelect.add(j);
             c++;

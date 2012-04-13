@@ -67,7 +67,12 @@ public class Icons {
         objectToIconPath.put("person", "media/tango32/emotes/face-smile.png");
     }
 
-    public static ImageIcon getFileIcon(String origPath) {
+    
+    public static ImageIcon getFileIcon(String path) {
+        return getFileIcon(path, -1, -1);        
+    }
+
+    public static ImageIcon getFileIcon(String origPath, int sw, int sh) {
         String path = origPath;
         if (icons.containsKey(origPath)) {
             return icons.get(origPath);
@@ -88,7 +93,11 @@ public class Icons {
             }
 
             try {
-                i = new ImageIcon(ImageIO.read(new File("./" + path)));
+                Image im = ImageIO.read(new File("./" + path));
+                if (sw != -1) {
+                    im = im.getScaledInstance(sw, sh, Image.SCALE_DEFAULT);
+                }
+                i = new ImageIcon(im);
             } catch (Exception ex) {
                 Logger.getLogger(Icons.class.getName()).log(Level.SEVERE, null, ex);
             }

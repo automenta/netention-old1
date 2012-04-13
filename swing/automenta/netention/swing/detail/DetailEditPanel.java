@@ -825,6 +825,7 @@ abstract public class DetailEditPanel extends JPanel {
         if (isEditable()) {
 
             {
+                
                 JMenuBar bb = new JMenuBar();
                 bb.setOpaque(false);
                 bb.setBorderPainted(false);
@@ -837,7 +838,7 @@ abstract public class DetailEditPanel extends JPanel {
                     bb.add(b);
                 }
 
-                JButton pm = new JButton("P=V");
+                JButton pm = new JButton(Icons.getFileIcon("media://tango32/actions/edit-find.png", 24, 24));
                 pm.setToolTipText("Find Property");
                 pm.addActionListener(new ActionListener() {
                     @Override
@@ -847,7 +848,7 @@ abstract public class DetailEditPanel extends JPanel {
                 });
                 bb.add(pm);
                 
-                JButton cm = new JButton("Abc");
+                JButton cm = new JButton(Icons.getFileIcon("media://tango32/actions/format-indent-more.png", 24, 24));
                 cm.setToolTipText("Add Comment");
                 cm.addActionListener(new ActionListener() {
                     @Override
@@ -859,7 +860,7 @@ abstract public class DetailEditPanel extends JPanel {
 
                 if (buildAvailablePropertiesMenu(b) > 0) {
 
-                    JButton c = new JButton("...");
+                    JButton c = new JButton(Icons.getFileIcon("media://tango32/actions/media-seek-forward.png", 24, 24));
                     c.setToolTipText("Complete All");
                     c.addActionListener(new ActionListener() {
 
@@ -883,6 +884,8 @@ abstract public class DetailEditPanel extends JPanel {
                 
                 addPropertyPanel = new JPanel(new BorderLayout());
                 addPropertyPanel.add(bb, BorderLayout.CENTER);
+                addPropertyPanel.setOpaque(false);
+                gc.anchor = GridBagConstraints.EAST;
                 gc.gridy++;
                 sentences.add(addPropertyPanel, gc);
 
@@ -901,7 +904,10 @@ abstract public class DetailEditPanel extends JPanel {
 
         refreshBottomBar();
 
-        mainSplit.setDividerLocation(0.5f);
+        mainSplit.setContinuousLayout(true);
+        mainSplit.setOneTouchExpandable(true);
+        mainSplit.setResizeWeight(1.0);
+        mainSplit.setDividerLocation(0.8f);
 
         updateUI();
 
@@ -1084,17 +1090,6 @@ abstract public class DetailEditPanel extends JPanel {
         };
         addPropertyPanel.add(ps, BorderLayout.SOUTH);
         addPropertyPanel.updateUI();
-//            new SearchResult() {
-//
-//            @Override
-//            public void onSelected(String property, List<String> patterns) {
-//                    addProperty(self.getProperty(property));
-//                    for (String x : patterns)
-//                        addPattern(self.getPattern(x));
-//                
-//            }
-//            
-//        });
     }
     
     synchronized protected void addComment() {
