@@ -8,6 +8,9 @@ import automenta.netention.Link.HasStrength;
 import automenta.netention.*;
 import automenta.netention.action.DetailAction;
 import automenta.netention.graph.ValueEdge;
+import automenta.netention.index.SchemaIndex;
+import automenta.netention.index.SchemaIndex.SchemaComponent;
+import automenta.netention.index.SchemaIndex.SchemaResult;
 import automenta.netention.swing.Icons;
 import automenta.netention.swing.property.*;
 import automenta.netention.swing.util.JHyperLink;
@@ -29,6 +32,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
 import java.util.*;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -39,6 +43,8 @@ import javax.swing.border.EmptyBorder;
  * @author seh
  */
 abstract public class DetailEditPanel extends JPanel {
+    private static final Logger logger = Logger.getLogger(DetailEditPanel.class.toString());
+    
     private static boolean richComments = false;
 
     public final JPanel sentences;
@@ -58,6 +64,8 @@ abstract public class DetailEditPanel extends JPanel {
     private final JPanel links;
     private final JSplitPane mainSplit;
     private JPanel addPropertyPanel;
+    private JPanel belowName;
+    private final SchemaIndex index;
 
 
     protected class LinkPanel extends JPanel {
@@ -423,6 +431,7 @@ abstract public class DetailEditPanel extends JPanel {
 
         this.self = s;
         this.detail = d;
+        this.index = new SchemaIndex(s); //TODO pass this as constructor arg to avoid reconstructing it each time this component is generated
 
         setEditable(editable);
 
@@ -672,7 +681,69 @@ abstract public class DetailEditPanel extends JPanel {
     }
 
     protected void setDetailName(String s) {
-        detail.setName(s.trim());
+        s = s.trim();
+        
+        if (detail.getName().equals(s))
+            return;
+        
+        detail.setName(s);
+        
+        final String x = s;
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                List<SchemaResult> suggestions = index.getSuggestions(x);
+                belowName.removeAll();
+                for (final SchemaResult r : suggestions) {
+                    if (r.type == SchemaComponent.Pattern) {
+                        if (canAddPattern(r.id)) {
+                            final JButton j = new JButton(r.toString());
+                            j.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent ae) {
+                                    addPattern(self.getPattern(r.id));
+                                    belowName.remove(j);
+                                    belowName.updateUI();
+                                }                                
+                            });
+                            belowName.add(j);
+                        }
+                    }
+                    else if (r.type == SchemaComponent.Property) {
+                        if (self.acceptsAnotherProperty(detail, r.id)) {
+                            final JButton j = new JButton(r.toString());
+                            j.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent ae) {
+                                    List<Pattern> lp = self.getPatternsOfProperty(r.id);
+                                    for (Pattern alreadyAdded : detail.getPatterns(self)) {
+                                        lp.remove(alreadyAdded);
+                                    }
+                                    
+                                    addProperty(self.getProperty(r.id));
+                                    
+                                    if (lp.size() == 1) {
+                                        addPattern(lp.get(0));
+                                    }
+                                    else if (lp.size() > 1) {
+                                        //TODO pop up a question box allowing selection                                        
+                                        logger.severe("Multiple patterns relevant to added, but adding only the first. TODO pop up a question box allowing selection: " + lp);
+                                        addPattern(lp.get(0));                                        
+                                    }
+                                    
+                                    belowName.remove(j);
+                                    belowName.updateUI();
+                                }                                
+                            });
+                            belowName.add(j);
+                        }
+                    }
+                }
+                belowName.updateUI();
+            }
+            
+        });
     }
 
     public synchronized void setDetail(Detail d) {
@@ -723,9 +794,13 @@ abstract public class DetailEditPanel extends JPanel {
             }
         });
         
+        //belowName = new JPanel(new FlowLayout());
+        belowName = new JPanel(new GridLayout(0, 3, 4, 4));
+        
         JPanel subjectWrapper = new JPanel(new BorderLayout());
         //subjectWrapper.add(new JScrollPane(nameEdit, JScrollPane.VERTICAL_SCROLLBAR, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
         subjectWrapper.add(nameEdit, BorderLayout.CENTER);
+        subjectWrapper.add(belowName, BorderLayout.SOUTH);
         int w = 4;        
         subjectWrapper.setBorder(BorderFactory.createEmptyBorder(w, w, w, w));
         
@@ -1033,10 +1108,14 @@ abstract public class DetailEditPanel extends JPanel {
             detail.setMode(Mode.Imaginary);
         }
     }
+    
+    public boolean canAddPattern(String patternID) {
+        return !detail.getPatterns().contains(patternID);
+    }
 
     synchronized protected void addPattern(Pattern p) {
 
-        if (!detail.getPatterns().contains(p.getID())) {
+        if (canAddPattern(p.getID())) {
             saveToDetail(); //TODO this assumes that the data is to be updated when patterns changed.  is this right?
 
             detail.getPatterns().add(p.getID());

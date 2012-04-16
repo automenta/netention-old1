@@ -64,7 +64,7 @@ public class AddDefaultPatterns {
                     new StringProp("emailAddress", "E-Mail"),
                     new StringProp("webAddress", "Website"),
                     new StringProp("birthdate", "Birthdate"),
-                    new SelectionProp("gender", "Gender", "male", "female", "other"),
+                    new SelectionProp("gender", "Gender", "male", "female"),
                     new SelectionProp("speaks", "Spoken Language", "English", "Spanish", "Arabic", "Cantonese", "French", "German", "Japanese", "Other"));
         }
 
