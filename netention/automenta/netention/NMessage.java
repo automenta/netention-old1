@@ -48,7 +48,6 @@ public class NMessage extends Detail /*implements Serializable*/ {
     
     public NMessage(String subject, String from, String to, Date when, String... content) {
         super(subject, Mode.Real, MessagePattern, "Event" );
-        setID(subject + "@" + when);
         setFrom(from);
         setTo(to);
         setWhen(when);

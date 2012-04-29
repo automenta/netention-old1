@@ -65,6 +65,10 @@ public class SchemaIndex {
             return (type == SchemaComponent.Pattern ? "Is" : "Has") + " " + id /*+ ":" + score*/;
         }
         
+        public String toString(Self s) {
+            return (type == SchemaComponent.Pattern ? "Is" : "Has") + " " + 
+                    (type == SchemaComponent.Pattern ? s.getPattern(id).getName() : s.getProperty(id).getName() ) /*+ ":" + score*/;
+        }
         
         
     }

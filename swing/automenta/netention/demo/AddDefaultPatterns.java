@@ -110,6 +110,7 @@ public class AddDefaultPatterns {
             //s.addPattern(new Pattern("Psych").setIconURL("media://tango32/apps/internet-mail.png"));
             {
                 StringProp sp = new StringProp("emotion", "Emotion");
+                sp.setDescription("How it feels");
                 {
                     //http://simple.wikipedia.org/wiki/List_of_emotions
 

@@ -698,7 +698,7 @@ abstract public class DetailEditPanel extends JPanel {
                 for (final SchemaResult r : suggestions) {
                     if (r.type == SchemaComponent.Pattern) {
                         if (canAddPattern(r.id)) {
-                            final JButton j = new JButton(r.toString());
+                            final JButton j = new JButton(r.toString(self));
                             j.addActionListener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent ae) {
@@ -712,7 +712,7 @@ abstract public class DetailEditPanel extends JPanel {
                     }
                     else if (r.type == SchemaComponent.Property) {
                         if (self.acceptsAnotherProperty(detail, r.id)) {
-                            final JButton j = new JButton(r.toString());
+                            final JButton j = new JButton(r.toString(self));
                             j.addActionListener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent ae) {

@@ -17,6 +17,7 @@ import automenta.netention.ieml.AddENTPMflowcycles;
 import automenta.netention.ieml.AddIEMLPatterns;
 import automenta.netention.impl.LogToMessage;
 import automenta.netention.impl.MemorySelf;
+import automenta.netention.rdf.AddOWLPatterns;
 import automenta.netention.swing.SelfBrowserPanel;
 import automenta.netention.swing.SelfSession;
 import automenta.netention.swing.detail.action.SendAction;
@@ -56,13 +57,13 @@ public class RunSelfBrowser implements Demo {
     public static MemorySelf newDefaultSelf() {
         MemorySelf self = new MemorySelf("me", "Me");
 
-        {
-            
-            self.addAction(new SendAction(new BasicDetailHTML()));
-            self.addAction(new CraigslistRefreshAction(false));
-            self.addAction(new CraigslistRefreshAction(true));
-                        
-        }
+//        {
+//            
+//            self.addAction(new SendAction(new BasicDetailHTML()));
+//            self.addAction(new CraigslistRefreshAction(false));
+//            self.addAction(new CraigslistRefreshAction(true));
+//                        
+//        }
         
         
         new AddDefaultPatterns().add(self);
@@ -86,20 +87,20 @@ public class RunSelfBrowser implements Demo {
         new AddIEMLPatterns().add(self);
 
         //ImportOWL.load("schema/SUMO.owl", self);
-        /*
-        {
-            AddOWLPatterns.add("schema/sumodlfull.owl", self);
-
-            self.getPattern("http://stuarthendren.net/resource/sumodlfull.owl#Artifact").addParent("Built");
-        }
-        */
+        
+//        {
+//            AddOWLPatterns.add("schema/sumodlfull.owl", self);
+//
+//            self.getPattern("http://stuarthendren.net/resource/sumodlfull.owl#Artifact").addParent("Built");
+//        }
+        
         
 
         //ImportOWL.load("schema/foaf.owl", self);
         //ImportOWL.load("schema/biography.owl", self);
         //ImportOWL.load("schema/sweetAll.owl", self);
 
-        new AddCraigslistPatterns().add(self);
+//        new AddCraigslistPatterns().add(self);
 
         new AddENTPMflowcycles().add(self);
 

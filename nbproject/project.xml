@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>netention-p2p</name>
             <source-roots>
+                <root id="src.web.dir"/>
                 <root id="src.test.dir"/>
                 <root id="src.swing.dir"/>
                 <root id="src.netention.dir"/>

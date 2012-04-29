@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+<style>
+    body {
+        font-family: sans-serif;
+        height: 100%;
+    }
+    
+    #left {
+        float: left;
+        width: 25%;
+        border-right: black solid 1px;
+        height: 100%;
+    }
+    #right {
+        width: 74%;
+        float:  right;
+        scrolls: auto;
+    }
+    
+    div.channelFocusable {
+        padding: 15px;        
+        cursor: pointer;
+        font-size: 150%;
+        line-height: 150%;
+    }
+    div.channelFocusable:hover {
+        background-color: #eee;
+    }
+    
+    .channelFocused {
+        background-color: #ccc;
+    }
+    #menu {
+        background-color: #333;
+        color: white;
+        font-size: 125%;
+        width: 100%;
+        clear: both;
+    }
+    #menu a {
+        color: white;
+        text-decoration: none;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    #menu a:hover {
+        color: white;
+        text-decoration: none;
+        background-color: #666;
+    }
+    
+</style>
+<script>
+
+    var views = [ "What", "When", "Where", "Who"  ];
+
+    var r1 = { 'title': 'Title', 'content': 'Content'};
+    
+    var data = {
+        'World': [ r1, r1, r1 ],
+        'U.S.': [ r1, r1 ],
+        'Business':  [],
+        'Technology': [r1 ]
+        /*Business
+        Technology
+        Entertainment
+        Health
+        Spotlight
+        Elections
+        Science'*/
+    };
+    
+    var lastFocused = null;
+    
+    function unFocus(l) {
+        var l = document.getElementById('channel.' + l);        
+        l.className = l.className.replace(' channelFocused', '');        
+    }
+    
+    function setFocus(c) {
+        if (lastFocused!=null)
+            unFocus(lastFocused);
+        
+        var l = document.getElementById('channel.' + c);        
+        l.className += ' channelFocused';
+        updateChannel(c);
+        
+        lastFocused = c;
+    }
+    
+    function update() {
+       var m = $('#menu');
+       m.empty();
+       for (var i = 0; i < views.length; i++) {
+           m.append("<a href=''>" + views[i] + "</a>");
+       }
+       
+        
+       var l = $('#left');
+       l.empty();
+       for(var key in data) {
+           var id = 'channel.' + key;
+           
+           l.append("<div id='" + id + "' onClick='setFocus(\"" + key + "\");' class='channelFocusable'>" + key + "</div><br/>");
+           $()
+//           $('#' + id).click(function() {
+//                setFocus(id)
+//           });
+       }
+       
+    }
+    
+    function updateChannel(c) {
+        var r = $('#right');
+        r.empty();
+        var x = data[c];
+        var n = x.length;
+        for (i = 0; i < x.length; i++) {
+            var p = x[i];
+            r.append('<h1>' + p.title + '</h1>');
+            r.append(p.content);
+            if (i!=n-1)
+                r.append('<hr/>');
+        }
+        
+    }
+     
+</script>
+    
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body onLoad="update();">
+        <div id="menu"></div>
+        <div id="left">
+        </div>
+        <div id="right">
+        </div>
+    </body>
+</html>

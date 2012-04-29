@@ -63,6 +63,10 @@ public class ReadTextDocumentPanel extends JPanel {
         abstract public List<? extends Detail> get(String input);
     }
     
+    public String getText() {
+        return textArea.getText();
+    }
+    
     public ReadTextDocumentPanel() {
         super(new BorderLayout(8,8));
 
